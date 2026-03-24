@@ -1,157 +1,220 @@
-﻿<!DOCTYPE html>
-
-<html lang="en-US">
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <title>My tutorials, examples, and demos</title>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="/libs/bootstrap@5.3.3/bootstrap.min.css">
-    <meta name="viewport" content="initial-scale=1, width=device-width">
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Graphics &amp; Game Dev Tutorials | Ivan Enzhaev</title>
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+</style>
 </head>
 
-<body>
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
     <div class="container">
-        <br>
-        <p>My email address for feedback and small freelance tasks: <img src="images/my-email.png"></p>
-
-        <h4>Firebase tutorials</h4>
-
-        <ul>
-            <li><a href="/tutorials/firebase/tic-tac-toe/index.html" target="_blank">Tic-Tac-Toe</a> (Firebase, HTML, CSS, and JavaScript)</li>
-        </ul>
-
-        <p><a href="/examples/webgl10-js/k-matsuda-and-r-lea/public/index.html">Examples from WebGL Programming Guide by K. Matsuda, R. Lea</a></p>
-
-        <p><a href="/tutorials/setting-up/sdl3/public/index.html">Setting up SDL3 for Android, Web, and Windows</a> using CMake and MinGW-w64</p>
-
-        <ul>
-            <li><a href="/tutorials/setting-up/sdl3-for-android/public/index.html">Setting up SDL3 for Android</a> using CMake and MinGW-w64</li>
-            <li>(not ready eyt) <a href="/tutorials/setting-up/sdl3-for-web/public/index.html">Setting up SDL3 for Web</a> using CMake and MinGW-w64</li>
-            <!-- <a href="/tutorials/setting-up/sdl3-for-web/public/index.html"></a> -->
-            <li><a href="/tutorials/setting-up/sdl3-for-windows/public/index.html">Setting up SDL3 for Windows</a> using CMake and MinGW-w64</li>
-        </ul>
-
-        <p><a href="/tutorials/setting-up/how-to-setup-js-libraries-as-es6-modules/public/index.html">How to set up JavaScript libraries as ES6-modules</a></p>
-
-        <h3>My notes about LibGDX</h3>
-
-        <ul>
-            <li><a href="./tutorials/libgdx/notes-about-tut3d-libgdx/public/index.html">Notes about Tut3D</a></li>
-        </ul>
-
-        <h3>Examples</h3>
-
-        <ul>
-            <li><a href="https://github.com/8Observer8/load-3d-models-dae-openglwindow-opengles2-qt6-cpp">Loading models from DAE COLLADA</a> using pure OpenGL ES 2.0, C++, Qt6, for Android, Desktop, and WebAssembly. This example shows how to parse XML (.dae) using QDomDocument. It was tested on Android 7.1.1, Windows 10, and WebAssembly. It uses QOpenGLWindow.</li>
-            <img src="./images/load-3d-models-dae-openglwindow-opengles2-qt6-cpp.png">
-        </ul>
-
-        <h3>My step by step tutorials for Windows 10, 64-bit:</h3>
-        <br>
-
-        <!-- <h4>Qt, Android, Desktop, and WebAssembly:</h4>
-
-        <ul>
-            <li>Download and install Qt for development for Android, Desktop, and Web (with WebAssembly)</li>
-            <li>Set up Android SDK, NDK, and JDK in Qt Creator</li>
-            <li>Set up WebAssembly in Qt Creator</li>
-            <li>Set up Box2D in Qt Creator</li>
-            <li>Set up Bullet Physics in Qt Creator</li>
-            <li>Set up OpenAL-Soft for Desktop and WebAssembly in Qt Creator</li>
-            <li>Set up OpenAL-Soft for Android in Qt Creator</li>
-        </ul> -->
-
-        <h4>My tutorials for SDL3, Android, WebAssembly, and OpenGL ES 2.0:</h4>
-
-        <ul>
-            <li><a href="./tutorials/sdl3/how-to-run-sd3-app-on-web/public/index.html">How to run SDL3 app on Web with WebAssembly</a></li>
-            <li><a href="./tutorials/sdl3/how-to-run-sdl3-app-on-android/public/index.html">How to run SDL3 app on Android</a></li>
-            <li><a href="./tutorials/sdl3/how-to-run-sdl3-with-opengles2-on-webassembly/public/index.html">How to run SDL3 with OpenGL ES 2.0 on WebAssembly</a></li>
-            <li><a href="./tutorials/sdl3/how-to-run-sdl3-with-opengles2-on-android/public/index.html">How to run SDL3 with OpenGL ES 2.0 on Android</a></li>
-            <li><a href="./tutorials/sdl3/convert-sdl3-api-rendering-to-opengles2-rendering/public/index.html">Convert rendering using the SDL3 API to rendering using OpenGL ES 2.0</a></li>
-        </ul>
-
-        <h4>My tutorials for Deploy:</h4>
-
-        <ul>
-            <li><a href="/tutorials/deploy/building-and-running-the-project-in-debug-and-release-for-client/public/index.html">Building and running the project in debug and release for client</a></li>
-            <li><a href="/tutorials/deploy/building-and-running-the-project-in-debug-and-release-for-client-and-server/public/index.html">Building and running the project in debug and release for client and server</a></li>
-            <li><a href="/tutorials/deploy/distribute-your-builds-on-the-free-netlify-hosting/public/index.html">Distribute your builds on the free 'www.netlify.com' hosting</a></li>
-            <li><a href="/tutorials/deploy/activate-a-developer-mode-on-android-to-debug-with-usb-cable/public/index.html">Activate a developer mode on your device to debug with USB-cable</a></li>
-        </ul>
-
-        <h3>My demos:</h3>
-        <ol>
-            <li><a href="https://8observer8.github.io/webgl10-js/simple-lighthouse-oimophysics-webgl-js/" target="_blank">Simple lighthouse</a></li>
-            <li>
-                Output of English, Russian and Chinese fonts with stroke and Distance Field (the text is not pixelated when the camera zooms in) on JS and Rollup. Fonts converted to Distance Field using Hiero. <a href="https://8observer8.github.io/webgl10-js/shapes-with-text-webgl-js/" target="_blank">Demo in the browser</a><br>
-                <img src="https://8observer8.github.io/webgl10-js/shapes-with-text-webgl-js/screenshots/shapes-with-text-webgl-js.gif">
-            </li>
-            <li>
-                Imported door animation for Blender from COLLADA format (.dae). Click detection is with color ID method. There are shadows. <a href="https://8observer8.github.io/webgl10-js/door-with-ortho-shadow-map-webgl-js/" target="_blank">Demo in browser</a><br>
-                <img src="https://8observer8.github.io/webgl10-js/door-with-ortho-shadow-map-webgl-js/screenshots/door-with-ortho-shadow-map.gif">
-            </li>
-            <li>
-                Debug Drawer, OpenGL ES 2.0, Qt6, C++. <a href="https://www.dropbox.com/scl/fi/gnhhktw0a200qr6qtg3n6/debug-drawer.apk?rlkey=ocose5ke911n27mykzdn9wvxt&dl=1">Download APK</a>
-            </li>
-            <li>
-                OpenAL example to play music in Qt6 and C++. <a href="https://www.dropbox.com/scl/fi/6xv37rdfbgwi5zv5i4mz6/music-openal.apk?rlkey=a6yigdq991lfc9ency8uzcx9g&dl=1">Download APK</a>
-            </li>
-            <li>
-                Custom buttons in OpenGL 2.1 on QOpenGLWindow. <a href="https://github.com/8Observer8/button-click-opengl-qt6-cpp">GitHub repo</a><br>
-                <img src="https://user-images.githubusercontent.com/3908473/267752808-aff6e00a-8f64-4ae2-a0cd-5248ae23a8e4.gif">
-            </li>
-            <!-- <li>
-                The debug drawer of Box2D-WASM colliders using Melon.js and JavaScript. <a href="https://8observer8.github.io/webgl10-js/debug-drawer-box2dwasm-melonjs-js/" target="_blank">Demo in browser</a><br>
-                <img src="https://8observer8.github.io/webgl10-js/debug-drawer-box2dwasm-melonjs-js/screenshots/debug-drawer-box2dwasm-melonjs-js.gif">
-            </li>
-            <li>
-                The debug drawer of Box2D-WASM colliders using Phaser3 and JavaScript. <a href="https://8observer8.github.io/webgl10-js/debug-drawer-box2dwasm-phaser3-js/" target="_blank">Demo in browser</a><br>
-                <img src="https://8observer8.github.io/webgl10-js/debug-drawer-box2dwasm-phaser3-js/screenshots/debug-drawer-box2dwasm-phaser3-js.gif">
-            </li>
-            <li>
-                Falling box, user data, contact listener using Box2D-WASM, Phaser3, and JavaScript. <a href="https://8observer8.github.io/webgl10-js/falling-box-contact-listener-box2dwasm-phaser3-js/" target="_blank">Demo in browser</a><br>
-                <img src="https://8observer8.github.io/webgl10-js/falling-box-contact-listener-box2dwasm-phaser3-js/screenshots/falling-box-contact-listener-box2dwasm-phaser3-js.gif">
-            </li> -->
-            <!-- <li>
-                <p>Detecting objects with a ray in Box2D, OpenGL 2.1/ES2, Qt6, C++</p>
-
-                <p>Android:</p>
-                <img src="gifs/falling-circle-ray-casting-box2d-opengl-qt6-cpp/android.gif">
-
-                <p>Desktop:</p>
-                <img src="gifs/falling-circle-ray-casting-box2d-opengl-qt6-cpp/desktop.gif">
-
-                <ul>
-                    <li><a href="https://www.dropbox.com/scl/fi/kvrih68lquenb0j4nft50/falling-circle-ray-casting-box2d-opengl-qt6-cpp-exe.zip?rlkey=sw6v7nhb9p22zuw2sqeumkv0z&dl=1">Demo for Windows 10, 64-bits</a> (7.99 MB)</li>
-                    <li><a href="https://www.dropbox.com/scl/fi/p4hpcojk535qy7tbrol5g/falling-circle-ray-casting.apk?rlkey=m9w75e735el5fuwbv14v7390m&dl=1">APK-file for Android</a> (8.24 MB)</li>
-                    <li><a href="https://boosty.to/ivan_8observer8/posts/c1694719-dee9-4968-a4c9-9b5f0aeac9a7">Source code on Boosty</a></li>
-                    <li><a href="https://github.com/8Observer8/falling-circle-ray-casting-box2d-opengl-qt6-cpp">Source code on GitHub</a></li>
-                </ul> -->
-                <!-- E:\_Projects\Physics\ray-casting\falling-circle-ray-casting-box2d-opengl-qt6-cpp -->
-            <!-- </li> -->
-        </ol>
-
-        <!-- <h4>Basic Examples in JavaScript, pure WebGL 1.0 and <a href="https://glmatrix.net/">glMatrix</a>:</h4>
-        <ol> -->
-            <!-- <li><a href="https://8observer8.github.io/webgl-opengl-examples/gl-repeat/">GL_REPEAT</a></li> -->
-            <!-- E:\_Projects\WebGL\a-few-rectangles-webgl-js -->
-            <!-- <li><b>a-few-rectangles-webgl-js</b> - <a href="https://github.com/8Observer8/a-few-rectangles-webgl-js">GitHub Repository</a> - A few rectangles with different colors, and transformations: translation, rotation, scale. This example is in one index.html file.</li> -->
-            <!-- E:\_Projects\WebGL\Segments\segments-webgl-js -->
-            <!-- <li><b>segments-webgl-js</b> - <a href="https://github.com/8Observer8/segments-webgl-js">GitHub Repository</a> - Segments are drawn as rectangles. The program sets the start point, end point, thickness, and color for each segment. This example is in one index.html file.</li> -->
-            <!-- E:\_Projects\WebGL\Segments\polyline-webgl-js -->
-            <!-- <li><b>polyline-webgl-js</b> - <a href="https://github.com/8Observer8/polyline-webgl-js">GitHub Repository</a> - Draws a polyline using segments. Joints are formed by disks. This example is in one index.html file.</li> -->
-            <!-- E:\_Projects\WebGL\Curves\Bezier\bezierjs-webgl-js -->
-            <!-- <li><b>bezierjs-webgl-js</b> - <a href="https://github.com/8Observer8/bezierjs-webgl-js">GitHub Repository</a> - Draws a Bezier curve using polyline. This example is in one index.html file.</li> -->
-            <!-- E:\_Projects\WebGL\Curves\Bezier\moving-along-a-bezier-curve-js -->
-            <!-- <li><b>moving-along-a-bezier-curve-js</b> - <a href="https://github.com/8Observer8/moving-along-a-bezier-curve-js">GitHub Repository</a> - Animate the movement of a disk along a Bezier curve. This example is in one index.html file.</li> -->
-            <!-- E:\_Projects\WebGL\PathFinding\port-of-jesse-freeman-astar-webgl-js -->
-            <!-- https://www.youtube.com/playlist?list=PLhPNOL0P0EY1ksFFhhoN5SsNYHaw8U2AP -->
-            <!-- <li><b>port-of-jesse-freeman-astar-webgl-js</b> - <a href="https://github.com/8Observer8/port-of-jesse-freeman-astar-webgl-js">GitHub Repository</a> - My port of the <a href="https://www.linkedin.com/learning/unity-5-2d-pathfinding">Unity 5 2D: Pathfinding by Jessy Freeman</a> tutorial example to WebGL. This example is in one index.html file.</li> -->
-            <!-- E:\_Projects\OpenGL\Text\font\font-rollup-webgl-js -->
-            <!-- <li><a href="./webgl10-js/font-rollup/index.html">font-rollup-webgl-js</a> - <a href="https://github.com/8Observer8/font-rollup-webgl-js">GitHub Repository</a> - Rendering BMFont text generated from .ttf in the Hiero application. This example uses Rollup as the bundler.</li> -->
-        <!-- </ol> -->
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+        <div class="navbar-nav ms-auto">
+            <span class="nav-item">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+        </div>
     </div>
+</nav>
+
+    <main class="flex-grow-1">
+        <!-- npx @11ty/eleventy --serve -->
+<div class="container pb-5">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Graphics & Game Dev Tutorials</span>
+            <span class="data-ru">Туториалы по графике и играм</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">A collection of examples for SDL3, WebGPU, WebGL 2.0, and more.</span>
+            <span class="data-ru">Коллекция примеров для SDL3, WebGPU, WebGL 2.0 и других технологий.</span>
+        </p>
+    </header>
+
+    
+    <h3 class="category-header">
+        <span>SDL3 for Android</span>
+    </h3>
+
+    <div class="row g-4 mb-5">
+        
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <span class="badge bg-primary badge-tech mb-2">
+                        Android + C/C++
+                    </span>
+                    <h5 class="card-title">
+                        <span class="data-en">Environment Setup</span>
+                        <span class="data-ru">Environment Setup</span>
+                    </h5>
+                    <p class="card-text text-muted small">
+                        <span class="data-en">Manual installation of SDK, NDK, JDK, and CMake.</span>
+                        <span class="data-ru">Установка Android SDK, NDK, JDK, CMake и т.д.</span>
+                    </p>
+                    <a href="/tutorials/setup/android-env/" class="btn btn-outline-dark btn-sm lang-link-dynamic">View</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <span class="badge bg-dark badge-tech mb-2">
+                        SDL3 Core
+                    </span>
+                    <h5 class="card-title">
+                        <span class="data-en">SDL3 Callbacks Tutorial</span>
+                        <span class="data-ru">SDL3 Callbacks Tutorial</span>
+                    </h5>
+                    <p class="card-text text-muted small">
+                        <span class="data-en">Using SDL_AppInit and main loop alternatives.</span>
+                        <span class="data-ru">Использование SDL3-callbacks вместо функции main().</span>
+                    </p>
+                    <a href="/tutorials/android/sdl3/callbacks/" class="btn btn-outline-dark btn-sm lang-link-dynamic">View</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <span class="badge bg-dark badge-tech mb-2">
+                        SDL3 Core
+                    </span>
+                    <h5 class="card-title">
+                        <span class="data-en">SDL3 Audio Tutorial</span>
+                        <span class="data-ru">SDL3 Audio Tutorial</span>
+                    </h5>
+                    <p class="card-text text-muted small">
+                        <span class="data-en">Audio with SDL3_mixer</span>
+                        <span class="data-ru">Работа со звуком (SDL3_mixer)</span>
+                    </p>
+                    <a href="/tutorials/android/sdl3/audio-mixer/" class="btn btn-outline-dark btn-sm lang-link-dynamic">View</a>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+</div>
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+
+<script>
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // Logic for dynamic links (persisting language across pages)
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (link) {
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(
+                link.href,
+                window.location.origin + window.location.pathname,
+            );
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+</script>
 </body>
 
 </html>

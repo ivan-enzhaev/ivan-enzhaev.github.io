@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDL3 Audio Tutorial | Ivan Enzhaev</title>
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+        <div class="navbar-nav ms-auto">
+            <span class="nav-item">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+        <header class="mb-5 border-bottom pb-3">
+            <h1 class="fw-bold">
+                <span class="data-en">SDL3 for Android: Audio with SDL3_mixer</span>
+                <span class="data-ru">SDL3 для Android: Работа со звуком через SDL3_mixer</span>
+            </h1>
+            <p class="lead text-muted">
+                <span class="data-en">Playing sound effects on screen touch using the SDL3_mixer library.</span>
+                <span class="data-ru">Воспроизведение звуковых эффектов при касании экрана с помощью библиотеки SDL3_mixer.</span>
+            </p>
+        </header>
+
+        <p>
+            <span class="data-en">SDL3_mixer is the standard library for audio playback.</span>
+            <span class="data-ru">SDL3_mixer — это библиотека для воспроизведения аудио.</span>
+        </p>
+
+        <div class="alert alert-secondary">
+            <span class="data-en">If you haven't set up your environment yet, follow the</span>
+            <span class="data-ru">Если у вас не установлены Android SDK, NDK, JDK и т.д., сделайте это по инструкции:</span>
+            <a href="/tutorials/setup/android-env/index.html" class="fw-bold text-dark lang-link-dynamic">
+                <span class="data-en">Environment Setup Guide</span>
+                <span class="data-ru">Установка Android SDK, NDK, JDK, CMake</span>
+            </a>
+        </div>
+
+        <h3 class="category-header">
+            <span class="data-en">1. Download Resources</span>
+            <span class="data-ru">1. Загрузка ресурсов</span>
+        </h3>
+
+        <ul>
+            <li>
+                <span class="data-en">Download the <a href="https://github.com/madebr/sdlcross/tree/7ab6a37b5f57608ebbbb5b8b4fb395922a55378b" target="_blank" rel="noopener noreferrer">source code for this example</a>.</span>
+                <span class="data-ru">Скачайте <a href="https://github.com/madebr/sdlcross/tree/7ab6a37b5f57608ebbbb5b8b4fb395922a55378b" target="_blank" rel="noopener noreferrer">исходный код этого примера</a>.</span>
+            </li>
+            <li>
+                <span class="data-en">Download the Android development binaries (AAR files):</span>
+                <span class="data-ru">Скачайте файлы .aar для Android:</span>
+                <ul>
+                    <li><a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.0">SDL3-devel-3.4.0-android.zip</a></li>
+                    <li><a href="https://github.com/libsdl-org/SDL_mixer/releases/tag/prerelease-3.1.2">SDL3_mixer-devel-3.1.2-android.zip</a></li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3 class="category-header">
+            <span class="data-en">2. Project Configuration</span>
+            <span class="data-ru">2. Конфигурация проекта</span>
+        </h3>
+
+        <p>
+            <span class="data-en">Extract the AAR files and copy them to <code>android-project/app/libs</code>.</span>
+            <span class="data-ru">Извлеките файлы .aar и скопируйте их в папку <code>android-project/app/libs</code>.</span>
+        </p>
+
+
+
+        <p>
+            <span class="data-en">Open <code>android-project/app/build.gradle</code> and add the dependencies:</span>
+            <span class="data-ru">Откройте <code>android-project/app/build.gradle</code> и добавьте зависимости:</span>
+        </p>
+        <pre><code class="language-gradle">dependencies {
+    implementation files('libs/SDL3-3.4.0.aar')
+    implementation files('libs/SDL3_mixer-3.1.2.aar')
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+}</code></pre>
+
+        <h3 class="category-header">
+            <span class="data-en">3. CMake and ABI Settings</span>
+            <span class="data-ru">3. Настройки CMake и ABI</span>
+        </h3>
+        <p>
+            <span class="data-en">In the same <code>build.gradle</code> file, find the <code>externalNativeBuild</code> section. We need to enable the Mixer and target the correct architecture (ARM64 for modern devices):</span>
+            <span class="data-ru">В том же файле <code>build.gradle</code> найдите секцию <code>externalNativeBuild</code>. Нам нужно включить Mixer и указать архитектуру (ARM64):</span>
+        </p>
+        <pre><code class="language-gradle">externalNativeBuild {
+    cmake {
+        arguments '-DANDROID_STL=c++_shared', '-DWITH_IMAGE=OFF', '-DWITH_MIXER=ON', '-DWITH_NET=OFF', '-DWITH_BOX2D=OFF'
+        // abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+        abiFilters 'arm64-v8a'
+    }
+}</code></pre>
+
+        <h3 class="category-header">
+            <span class="data-en">4. Build and Run</span>
+            <span class="data-ru">4. Сборка и запуск</span>
+        </h3>
+        <div class="row">
+            <div class="col-md-6">
+                <h6><span class="data-en">Terminal 1: Assemble</span><span class="data-ru">Консоль 1: Сборка</span></h6>
+                <pre><code class="language-bash">gradlew assembleDebug</code></pre>
+            </div>
+            <div class="col-md-6">
+                <h6><span class="data-en">Terminal 2: Install</span><span class="data-ru">Консоль 2: Установка</span></h6>
+                <pre><code class="language-bash">adb install -r app-debug.apk</code></pre>
+            </div>
+        </div>
+
+        <h3 class="category-header">
+            <span class="data-en">5. Debugging Audio</span>
+            <span class="data-ru">5. Отладка звука</span>
+        </h3>
+        <p>
+            <span class="data-en">If the app crashes or you hear no sound, use <code>adb logcat</code> to see the system logs:</span>
+            <span class="data-ru">Если приложение закрывается или звука нет, используйте <code>adb logcat</code> для просмотра логов:</span>
+        </p>
+        <pre><code class="language-bash">adb logcat SDL:V DEBUG:I *:S</code></pre>
+
+        <div class="alert alert-info">
+            <span class="data-en"><strong>Note:</strong> Ensure your phone is in Developer Mode and "Install via USB" is enabled in settings.</span>
+            <span class="data-ru"><strong>Примечание:</strong> Убедитесь, что телефон находится в режиме разработчика и включена опция "Установка через USB".</span>
+        </div>
+</div>
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+        </block>
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+    </block>
+    
+</block>
+
+
+<script>
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // Logic for dynamic links (persisting language across pages)
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (link) {
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(
+                link.href,
+                window.location.origin + window.location.pathname,
+            );
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+</script>
+</body>
+
+</html>

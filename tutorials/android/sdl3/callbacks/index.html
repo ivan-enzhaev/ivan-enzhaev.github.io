@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDL3 Callbacks Tutorial | Ivan Enzhaev</title>
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+        <div class="navbar-nav ms-auto">
+            <span class="nav-item">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold text-dark">
+            <span class="data-en">Using SDL3 Callbacks instead of main()</span>
+            <span class="data-ru">Использование SDL3-callbacks вместо main()</span>
+        </h1>
+    </header>
+
+    <p>
+        <span class="data-en">If you look at the <a href="https://github.com/libsdl-org/SDL/tree/main/examples" target="_blank"  rel="noopener noreferrer">official SDL3 examples</a>, you will notice that the traditional <code>main()</code> function is gone. Instead, SDL3 uses four mandatory callback functions:</span>
+        <span class="data-ru">Если вы откроете официальные <a href="https://github.com/libsdl-org/SDL/tree/main/examples">примеры SDL3</a>, вы заметите, что привычная функция <code>main()</code> отсутствует. Вместо неё используются четыре функции:</span>
+    </p>
+
+    <ul class="list-group mb-4">
+        <li class="list-group-item"><strong>SDL_AppInit:</strong> <span class="data-en">Initialization. Runs once at the start.</span><span class="data-ru">Инициализация. Срабатывает один раз в начале.</span></li>
+        <li class="list-group-item"><strong>SDL_AppEvent:</strong> <span class="data-en">Event handling (mouse, keys, window resizing).</span><span class="data-ru">Обработка событий (мышь, клавиши, изменение размера окна).</span></li>
+        <li class="list-group-item"><strong>SDL_AppIterate:</strong> <span class="data-en">The main loop. Runs many times per second for logic/rendering.</span><span class="data-ru">Основной цикл. Выполняется многократно в секунду для логики и отрисовки.</span></li>
+        <li class="list-group-item"><strong>SDL_AppQuit:</strong> <span class="data-en">Cleanup. Runs once before the application closes.</span><span class="data-ru">Очистка ресурсов. Выполняется перед закрытием приложения.</span></li>
+    </ul>
+
+    <h3 class="category-header">
+        <span class="data-en">Prerequisites</span>
+        <span class="data-ru">Предварительные условия</span>
+    </h3>
+    <div class="alert alert-secondary">
+        <span class="data-en">First, complete the initial setup guide:</span>
+        <span class="data-ru">Сначала пройдите базовую инструкцию по сборке:</span>
+        <a href="/tutorials/setup/android-env/index.html" class="fw-bold text-dark lang-link-dynamic">SDL3 Android Setup Guide</a>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">Example: Clear Screen (clear.c)</span>
+        <span class="data-ru">Пример: Очистка экрана (clear.c)</span>
+    </h3>
+
+    <p>
+        <span class="data-en">Copy this code into your <code>main.c</code>. It smoothly transitions the background color using a sine wave.</span>
+        <span class="data-ru">Скопируйте этот код в ваш <code>main.c</code>. Он плавно меняет цвет фона, используя синусоиду.</span>
+    </p>
+
+    <pre><code class="language-c">#define SDL_MAIN_USE_CALLBACKS 1
+#include &lt;SDL3/SDL.h&gt;
+#include &lt;SDL3/SDL_main.h&gt;
+
+static SDL_Window *window = NULL;
+static SDL_Renderer *renderer = NULL;
+
+SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
+    (void)appstate; (void)argc; (void)argv;
+    if (!SDL_Init(SDL_INIT_VIDEO)) return SDL_APP_FAILURE;
+    if (!SDL_CreateWindowAndRenderer("SDL3 Callback Example", 640, 480, 0, &window, &renderer)) return SDL_APP_FAILURE;
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
+    (void)appstate;
+    if (event->type == SDL_EVENT_QUIT) return SDL_APP_SUCCESS;
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppIterate(void *appstate) {
+    (void)appstate;
+    const double now = ((double)SDL_GetTicks()) / 1000.0;
+    const float red = (float) (0.5 + 0.5 * SDL_sin(now));
+    const float green = (float) (0.5 + 0.5 * SDL_sin(now + SDL_PI_D * 2 / 3));
+    const float blue = (float) (0.5 + 0.5 * SDL_sin(now + SDL_PI_D * 4 / 3));
+    
+    SDL_SetRenderDrawColorFloat(renderer, red, green, blue, SDL_ALPHA_OPAQUE_FLOAT);
+    SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);
+    return SDL_APP_CONTINUE;
+}
+
+void SDL_AppQuit(void *appstate, SDL_AppResult result) {
+    (void)appstate; (void)result;
+}</code></pre>
+
+    <h3 class="category-header">
+        <span class="data-en">Dealing with Compilation Errors</span>
+        <span class="data-ru">Решение ошибок компиляции</span>
+    </h3>
+
+    <p>
+        <span class="data-en">If your build fails with <code>unused parameter 'appstate'</code>, it's because of the <code>-Werror</code> flag in <code>CMakeLists.txt</code>. You have two choices:</span>
+        <span class="data-ru">Если сборка падает с ошибкой <code>unused parameter 'appstate'</code>, это происходит из-за флага <code>-Werror</code> в <code>CMakeLists.txt</code>. У вас есть два пути:</span>
+    </p>
+
+    <ol>
+        <li>
+            <strong><span class="data-en">Relax the rules:</span><span class="data-ru">Смягчить правила:</span></strong>
+            <span class="data-en">Remove <code>-Werror</code> from <code>target_compile_options</code> in <code>CMakeLists.txt</code>.</span>
+            <span class="data-ru">Удалите <code>-Werror</code> из <code>target_compile_options</code> в <code>CMakeLists.txt</code>.</span>
+        </li>
+        <li>
+            <strong><span class="data-en">Professional way:</span><span class="data-ru">Профессиональный путь:</span></strong>
+            <span class="data-en">Add <code>(void)appstate;</code> inside your functions as shown in the code block above to explicitly tell the compiler the parameter is intentionally unused.</span>
+            <span class="data-ru">Добавьте <code>(void)appstate;</code> внутри функций (как в коде выше), чтобы явно сообщить компилятору, что параметр не используется намеренно.</span>
+        </li>
+    </ol>
+
+    <h3 class="category-header">
+        <span class="data-en">Build and Install</span>
+        <span class="data-ru">Сборка и установка</span>
+    </h3>
+    <p>
+        <span class="data-en">Run these commands in separate terminals for efficiency:</span>
+        <span class="data-ru">Запускайте эти команды в разных консолях для удобства:</span>
+    </p>
+    <div class="row">
+        <div class="col-md-6">
+            <h6><span class="data-en">Terminal 1: Build</span><span class="data-ru">Консоль 1: Сборка</span></h6>
+            <pre><code class="language-bash">gradlew assembleDebug</code></pre>
+        </div>
+        <div class="col-md-6">
+            <h6><span class="data-en">Terminal 2: Install</span><span class="data-ru">Консоль 2: Установка</span></h6>
+            <pre><code class="language-bash">adb install -r app-debug.apk</code></pre>
+        </div>
+    </div>
+</div>
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+        </block>
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+    </block>
+    
+</block>
+
+
+<script>
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // Logic for dynamic links (persisting language across pages)
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (link) {
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(
+                link.href,
+                window.location.origin + window.location.pathname,
+            );
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+</script>
+</body>
+
+</html>
