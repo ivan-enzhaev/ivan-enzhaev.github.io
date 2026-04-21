@@ -4,9 +4,11 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Graphics &amp; Game Dev Tutorials | Ivan Enzhaev</title>
+<title>Building SFML 2.6.2 from Source | Ivan Enzhaev</title>
 <link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
 
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 
 
 <style>
@@ -99,158 +101,100 @@
 </nav>
 
     <main class="flex-grow-1">
-        <!-- npx @11ty/eleventy --serve -->
-<div class="container pb-5">
-    <header class="text-center mb-5">
-        <h1 class="display-4 fw-bold">
-            <span class="data-en">Graphics & Game Dev Tutorials</span>
-            <span class="data-ru">Туториалы по графике и играм</span>
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold text-dark">
+            <span class="data-en">Building SFML from Source</span>
+            <span class="data-ru">Сборка SFML из исходного кода</span>
         </h1>
-        <p class="lead text-muted">
-            <span class="data-en">A collection of examples for SDL3, WebGPU, WebGL 2.0, and more.</span>
-            <span class="data-ru">Коллекция примеров для SDL3, WebGPU, WebGL 2.0 и других технологий.</span>
-        </p>
     </header>
 
-    
     <h3 class="category-header">
-        <span>Tools</span>
+        <span class="data-en">1. Preparation</span>
+        <span class="data-ru">1. Подготовка</span>
     </h3>
 
-    <div class="row g-4 mb-5">
-        
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <!-- <span class="badge bg-primary badge-tech mb-2">
-                        Android + C/C++
-                    </span> -->
-                    <h5 class="card-title">
-                        <span class="data-en">Android Environment Setup</span>
-                        <span class="data-ru">Android Environment Setup</span>
-                    </h5>
-                    <p class="card-text text-muted small">
-                        <span class="data-en">Manual installation of SDK, NDK, JDK, and CMake.</span>
-                        <span class="data-ru">Установка Android SDK, NDK, JDK, CMake и т.д.</span>
-                    </p>
-                    <a href="/tutorials/tools/android/android-env/" class="btn btn-outline-dark btn-sm lang-link-dynamic">View</a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <!-- <span class="badge bg-primary badge-tech mb-2">
-                        MinGW 13.1 + CMake + IDEs
-                    </span> -->
-                    <h5 class="card-title">
-                        <span class="data-en">C/C++ Development Environment Setup</span>
-                        <span class="data-ru">C/C++ Development Environment Setup</span>
-                    </h5>
-                    <p class="card-text text-muted small">
-                        <span class="data-en">Installing MinGW 13.1, CMake, Qt Creator, and CLion for professional C/C++ development.</span>
-                        <span class="data-ru">Установка MinGW 13.1, CMake, Qt Creator и CLion для профессиональной разработки на C/C++.</span>
-                    </p>
-                    <a href="/tutorials/tools/mingw/setup-mingw/" class="btn btn-outline-dark btn-sm lang-link-dynamic">View</a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <!-- <span class="badge bg-primary badge-tech mb-2">
-                        MinGW 13.1 + CMake + IDEs
-                    </span> -->
-                    <h5 class="card-title">
-                        <span class="data-en">C/C++ Development Environment Setup</span>
-                        <span class="data-ru">C/C++ Development Environment Setup</span>
-                    </h5>
-                    <p class="card-text text-muted small">
-                        <span class="data-en">Installing MinGW 13.1, CMake, Qt Creator, and CLion for professional C/C++ development.</span>
-                        <span class="data-ru">Установка MinGW 13.1, CMake, Qt Creator и CLion для профессиональной разработки на C/C++.</span>
-                    </p>
-                    <a href="/tutorials/tools/mingw/setup/setup-mingw/" class="btn btn-outline-dark btn-sm lang-link-dynamic">View</a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <!-- <span class="badge bg-info badge-tech mb-2">
-                        MinGW 13.1 + CMake
-                    </span> -->
-                    <h5 class="card-title">
-                        <span class="data-en">Building SFML 2.6.2 from Source</span>
-                        <span class="data-ru">Building SFML 2.6.2 from Source</span>
-                    </h5>
-                    <p class="card-text text-muted small">
-                        <span class="data-en">Step-by-step guide to compiling SFML 2.6.2 from source using MinGW 13.1 for maximum compatibility.</span>
-                        <span class="data-ru">Пошаговое руководство по компиляции SFML 2.6.2 из исходного кода с использованием MinGW 13.1.</span>
-                    </p>
-                    <a href="/tutorials/tools/mingw/setup-sfml2/" class="btn btn-outline-dark btn-sm lang-link-dynamic">View</a>
-                </div>
-            </div>
-        </div>
-        
-    </div>
-    
+    <ul>
+        <li>
+            <span class="data-en">Install <strong>CMake</strong> and <strong>MinGW</strong> using this <a href="/tutorials/tools/mingw/setup-mingw" target="_blank" rel="noopener noreferrer">step-by-step instruction</a>.</span>
+            <span class="data-ru"></span>
+        </li>
+        <li>
+            <span class="data-en">Download the <strong>Source Code</strong> from the <a href="https://www.sfml-dev.org/download/sfml/2.6.2/" target="_blank" rel="noopener noreferrer">SFML Website</a>.</span>
+            <span class="data-ru">Скачайте <strong>Source Code</strong> с <a href="https://www.sfml-dev.org/download/sfml/2.6.2/" target="_blank" rel="noopener noreferrer">сайта SFML</a>.</span>
+        </li>
+        <li>
+            <span class="data-en">Extract it to a folder (e.g., <code>C:/SFML-source</code>).</span>
+            <span class="data-ru">Распакуйте его в папку (например, <code>C:/SFML-source</code>).</span>
+        </li>
+        <li>
+            <span class="data-en">Open CMD inside that folder.</span>
+            <span class="data-ru">Откройте CMD внутри этой папки.</span>
+        </li>
+    </ul>
+
     <h3 class="category-header">
-        <span>SDL3 for Android - SDL3_Renderer</span>
+        <span class="data-en">2. Configure (CMake)</span>
+        <span class="data-ru">2. Конфигурация (CMake)</span>
     </h3>
 
-    <div class="row g-4 mb-5">
-        
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <!-- <span class="badge bg-primary badge-tech mb-2">
-                        SDL3 Renderer
-                    </span> -->
-                    <h5 class="card-title">
-                        <span class="data-en">Setting up a template project</span>
-                        <span class="data-ru">Setting up a template project</span>
-                    </h5>
-                    <p class="card-text text-muted small">
-                        <span class="data-en">Building and running an SDL3 application on Android using the Renderer API.</span>
-                        <span class="data-ru">Сборка и запуск приложения SDL3 на Android с использованием Renderer API.</span>
-                    </p>
-                    <a href="/tutorials/sdl3-renderer/android/start-android/" class="btn btn-outline-dark btn-sm lang-link-dynamic">View</a>
-                </div>
-            </div>
-        </div>
-        
-    </div>
-    
+    <p>
+        <span class="data-en">Run this command to generate the build files. We use <code>MinSizeRel</code> for optimized, smaller binaries and set the install path to <code>C:/libs</code>.</span>
+        <span class="data-ru">Запустите эту команду для генерации файлов сборки. Мы используем <code>MinSizeRel</code> для оптимизированных файлов и устанавливаем путь в <code>C:/libs</code>.</span>
+    </p>
+
+    <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist -DCMAKE_INSTALL_PREFIX="C:/libs/SFML-2.6.2-mingw" -DCMAKE_BUILD_TYPE=MinSizeRel</code></pre>
+
     <h3 class="category-header">
-        <span>SFML2 for Desktop</span>
+        <span class="data-en">3. Build & Install</span>
+        <span class="data-ru">3. Сборка и установка</span>
     </h3>
 
-    <div class="row g-4 mb-5">
-        
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <!-- <span class="badge bg-success badge-tech mb-2">
-                        MinGW 13.1 + SFML + CMake
-                    </span> -->
-                    <h5 class="card-title">
-                        <span class="data-en">Building FamTrinli&#39;s 16 Games</span>
-                        <span class="data-ru">Building FamTrinli&#39;s 16 Games</span>
-                    </h5>
-                    <p class="card-text text-muted small">
-                        <span class="data-en">A guide to building and running the famous &#34;16 Games in C++&#34; using modern tools and IDEs.</span>
-                        <span class="data-ru">Руководство по сборке и запуску знаменитых &#34;16 игр на C++&#34; с использованием современных инструментов и IDE.</span>
-                    </p>
-                    <a href="/tutorials/sfml2/16-games-mingw/" class="btn btn-outline-dark btn-sm lang-link-dynamic">View</a>
-                </div>
-            </div>
-        </div>
-        
+    <p>
+        <span class="data-en">Now, compile the source code and install it to the specified prefix:</span>
+        <span class="data-ru">Теперь скомпилируйте исходный код и установите его по указанному пути:</span>
+    </p>
+
+    <pre><code class="language-bash"># Compile the library
+cmake --build dist
+
+# Install files to C:/libs/SFML-2.6.2-mingw
+cmake --install dist</code></pre>
+
+    <div class="alert alert-success mt-4">
+        <h5 class="fw-bold"><span class="data-en">Success!</span><span class="data-ru">Успех!</span></h5>
+        <span class="data-en">You now have a custom-built SFML directory in <code>C:/libs/SFML-2.6.2-mingw</code>. You can point your <strong>config.bat</strong> to this path in your game projects:</span>
+        <span class="data-ru">Теперь у вас есть готовая библиотека SFML в <code>C:/libs/SFML-2.6.2-mingw</code>. Вы можете указать этот путь в вашем <strong>config.bat</strong> для игровых проектов:</span>
+        <br><br>
+        <code>-DSFML_DIR=C:/libs/SFML-2.6.2-mingw/lib/cmake/SFML</code>
     </div>
-    
+
+    <h3 class="category-header mt-5">
+        <span class="data-en">Common Errors</span>
+        <span class="data-ru">Частые ошибки</span>
+    </h3>
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>Problem</th>
+                    <th>Solution</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="data-en">sh.exe was found in your PATH</span><span class="data-ru">sh.exe найден в PATH</span></td>
+                    <td><span class="data-en">MinGW cannot build if Git Bash or other shells are in PATH. Remove them temporarily.</span><span class="data-ru">MinGW не может выполнить сборку, если в PATH есть Git Bash. Удалите его временно.</span></td>
+                </tr>
+                <tr>
+                    <td><span class="data-en">Access Denied (Install)</span><span class="data-ru">Доступ запрещен (Install)</span></td>
+                    <td><span class="data-en">Run CMD as <strong>Administrator</strong> to allow installation into <code>C:/libs</code>.</span><span class="data-ru">Запустите CMD от <strong>имени администратора</strong>, чтобы разрешить установку в <code>C:/libs</code>.</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
         
@@ -354,6 +298,22 @@ function copyToClipboard(text) {
     </div>
 </footer>
     
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+    </block>
+    
+</block>
+
 
 <script>
     function setLanguage(lang) {

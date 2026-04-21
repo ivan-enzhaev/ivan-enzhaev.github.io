@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Setting up a template project | Ivan Enzhaev</title>
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold">
+            <span class="data-en">SDL3 for Android: 2D Graphics with SDL_Renderer</span>
+            <span class="data-ru">SDL3 для Android: 2D-графика через SDL_Renderer</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">A guide to setting up, building, and installing an SDL3 project on an Android device.</span>
+            <span class="data-ru">Руководство по настройке, сборке и установке проекта SDL3 на Android-устройство.</span>
+        </p>
+    </header>
+
+    <div class="alert alert-secondary">
+        <span class="data-en">If you haven't set up your environment (Android SDK, NDK, JDK), follow the</span>
+        <span class="data-ru">Если у вас не установлены Android SDK, NDK, JDK и т.д., сделайте это по инструкции:</span>
+        <a href="/tutorials/tools/android/android-env/index.html" class="fw-bold text-dark lang-link-dynamic">
+            <span class="data-en">Environment Setup Guide</span>
+            <span class="data-ru">Установка Android SDK, NDK, JDK, CMake</span>
+        </a>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">Download the AAR library</span>
+        <span class="data-ru">1. Загрузка примеров</span>
+    </h3>
+
+    <ul>
+        <li>
+            <span class="data-en">Download the Android development binaries (AAR) - specifically <b>SDL3-devel-3.4.4-android.zip</b> - from the <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.4" target="_blank" rel="noopener noreferrer">official SDL3 release page</a></span>
+            <span class="data-ru">Скачайте файлы для разработки под Android (AAR): <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.0">SDL3-devel-3.4.0-android.zip</a>.</span>
+        </li>
+        <li>
+            <span class="data-en">Move <b>SDL3-devel-3.4.4-android.zip</b> to the <b>C:/libs</b> folder (or your preferred directory)</span>
+        </li>
+        <li>
+            <span class="data-en">Extract the ZIP file into a folder named <b>SDL3-devel-3.4.4-android</b></span>
+            <br>
+            <img src="sdl3-devel-3.4.2-android.png">
+        </li>
+    </ul>
+
+    <h3 class="category-header">
+        <span class="data-en">Download a Template</span>
+        <span class="data-ru">1. Загрузка примеров</span>
+    </h3>
+    <ul>
+        <li>
+            <span class="data-en">Download the <a href="https://github.com/madebr/sdlcross/tree/7ab6a37b5f57608ebbbb5b8b4fb395922a55378b" target="_blank" rel="noopener noreferrer">SDL3 Renderer Example</a> (displays squares on touch). If the previous repository is unavailable, please use my fork: <a href="https://github.com/8Observer8/sdlcross" target="_blank" rel="noopener noreferrer">link</a></span>
+            <span class="data-ru">Скачайте <a href="https://github.com/madebr/sdlcross/tree/0dd5f523c8702ee6a296adf27ca22d42a3ba97d0" target="_blank">пример с SDL3 Renderer API</a> (рисует квадраты при касании).</span>
+        </li>
+        <li>
+            <span class="data-en">Extract it to a folder of your choice</span>
+        </li>
+        <li>
+            <span class="data-en">Open this folder in your preferred code editor (e.g., <a href="https://www.sublimetext.com/download" target="_blank" rel="noopener noreferrer">Sublime Text 4</a>, Notepad++, etc.)</span>
+        </li>
+    </ul>
+
+    <h3 class="category-header">
+        <span class="data-en">Project Configuration in the "android-project/app/build.gradle" file</span>
+        <span class="data-ru">2. Конфигурация проекта</span>
+    </h3>
+
+    <!-- <p>
+            <span class="data-en">Extract <code>SDL3-3.4.0.aar</code> and place it in <code>app/libs</code>. Then, update your <code>app/build.gradle</code>:</span>
+            <span class="data-ru">Извлеките <code>SDL3-3.4.0.aar</code> и поместите его в <code>app/libs</code>. Затем обновите <code>app/build.gradle</code>:</span>
+        </p> -->
+
+    <ul>
+        <li>
+            <span class="data-en">Open this file <b>android-project/app/build.gradle</b></span>
+        </li>
+        <li>Open the <b>android-project/app/build.gradle</b> file. It looks like this:</li>
+
+        <pre><code class="language-gradle">dependencies {
+    implementation files('libs/SDL3-3.2.22.aar')
+    implementation files('libs/SDL3_image-3.2.4.aar')
+
+    /* Use [create-prefab-aar.py](https://gist.github.com/madebr/3563a41ec9d287b6754c5fe764f56a1c)
+     * to creat a Android prefab archive for Box2D.
+     */
+    //implementation files('libs/box2d-3.2.0.aar')
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+}</code></pre>
+
+        <li>
+            Delete the <b>implementation files('libs/SDL3_image-3.2.4.aar')</b> because we will not load an image in this guide
+        </li>
+
+        <li>
+            Set a path to the AAR file in this line <b>implementation files('libs/SDL3-3.2.22.aar')</b> (use / instead of \ in the path). Now we have this code:</li>
+
+        <pre><code class="language-gradle">dependencies {
+    implementation files('C:/libs/SDL3-devel-3.4.2-android/SDL3-3.4.2.aar')
+
+    /* Use [create-prefab-aar.py](https://gist.github.com/madebr/3563a41ec9d287b6754c5fe764f56a1c)
+     * to creat a Android prefab archive for Box2D.
+     */
+    //implementation files('libs/box2d-3.2.0.aar')
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+}
+</code></pre>
+
+        <li>
+
+            You see this code:
+
+            <pre><code class="language-gradle">        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_STL=c++_shared', '-DWITH_IMAGE=ON', '-DWITH_MIXER=OFF', '-DWITH_NET=OFF', '-DWITH_BOX2D=OFF'
+                abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+                // abiFilters 'arm64-v8a'
+            }
+        }</code></pre>
+
+        </li>
+
+        <li>
+            Disable the image drawing by setting <b>DWITH_IMAGE</b> to <b>OFF</b> like this <b>'-DWITH_IMAGE=OFF'</b>
+
+            <pre><code class="language-gradle">        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_STL=c++_shared', '-DWITH_IMAGE=OFF', '-DWITH_MIXER=OFF', '-DWITH_NET=OFF', '-DWITH_BOX2D=OFF'
+                abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+                // abiFilters 'arm64-v8a'
+            }
+        }</code></pre>
+
+        </li>
+
+        <li>
+            Disable building to all ABI (add a comment before <b>abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'</b>) and enable <b>arm64-v8a</b> only (delete a comment before <b>abiFilters 'arm64-v8a'</b>)
+
+            <pre><code class="language-gradle">        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_STL=c++_shared', '-DWITH_IMAGE=OFF', '-DWITH_MIXER=OFF', '-DWITH_NET=OFF', '-DWITH_BOX2D=OFF'
+                // abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+                abiFilters 'arm64-v8a'
+            }
+        }</code></pre>
+
+        </li>
+
+
+    </ul>
+
+    <h3 class="category-header">
+        <span class="data-en">Build and Deploy</span>
+        <span class="data-ru">3. Сборка и развертывание</span>
+    </h3>
+
+    <p>
+        <span class="data-en">Open a terminal in the <b>android-project</b> and run the following commands:</span>
+        <span class="data-ru">Откройте терминал в корне проекта и выполните следующие команды:</span>
+    </p>
+
+    <!-- <div class="row">
+        <div class="col-md-6">
+            <h6><span class="data-en">Step 1: Compile</span></h6>
+            <pre><code class="language-bash">gradlew assembleDebug</code></pre>
+        </div>
+        <div class="col-md-6">
+            <h6><span class="data-en">Step 2: Install (use the second terminal for this)</span></h6>
+            <pre><code class="language-bash">cd app/build/outputs/apk/debug</code></pre>
+            <pre><code class="language-bash">adb install -r app-debug.apk</code></pre>
+        </div>
+    </div> -->
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h6 class="fw-bold"><span class="data-en">Step 1: Compile</span></h6>
+            <pre><code class="language-bash">gradlew assembleDebug</code></pre>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h6 class="fw-bold"><span class="data-en">Step 2: Install (use the second terminal for this)</span></h6>
+            <div class="bg-light p-2 rounded border-start border-4 border-primary mb-2">
+                <pre class="m-0"><code class="language-bash">cd app/build/outputs/apk/debug</code></pre>
+                <pre class="m-0"><code class="language-bash">adb install -r app-debug.apk</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="category-header">
+        Changing a code a rebuild
+    </h3>
+
+    <ul>
+        <li>You can change something in the <b>src/main.c</b> file (for example, a background color)</li>
+        <li>Switch to the first terminal and press the up arrow key to select the <b>gradlew assembleDebug</b>. Press Enter to build a project</li>
+        <li>switch to the second terminal and press the up arrow key to select the <b>adb install -r app-debug.apk</b>. Press Enter to build a project</li>
+    </ul>
+
+    <h3 class="category-header">
+        <span class="data-en">Useful Tips</span>
+        <span class="data-ru">4. Полезные советы</span>
+    </h3>
+    <ul>
+        <li>
+            <span class="data-en">Check connected devices: <code>adb devices</code>.</span>
+            <span class="data-ru">Проверка подключенных устройств: <code>adb devices</code>.</span>
+        </li>
+        <li>
+            <span class="data-en">Use <a href="https://github.com/Genymobile/scrcpy" target="_blank" rel="noopener noreferrer">scrcpy</a> to mirror your phone screen to your PC via USB.</span>
+            <span class="data-ru">Используйте <a href="https://github.com/Genymobile/scrcpy">scrcpy</a> для вывода экрана телефона на ПК через USB.</span>
+        </li>
+    </ul>
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">Sberbank</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number</span>
+                        <span class="data-ru">Перевод по номеру телефона</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959')">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">Bybit (USDT TRC20)</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="Bybit USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp')">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert("Copied to clipboard / Скопировано!");
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+        </block>
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+    </block>
+    
+    <block>
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // Logic for dynamic links (persisting language across pages)
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (link) {
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(
+                link.href,
+                window.location.origin + window.location.pathname,
+            );
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+</script>
+</body>
+
+</html>
