@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C/C++ Development Environment Setup | Ivan Enzhaev</title>
+<title>Setting up SFML with find_package (MinGW) | Ivan Enzhaev</title>
 <link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
 
 
@@ -104,78 +104,169 @@
         
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
-        <h1 class="fw-bold text-dark">
-            <span class="data-en">C/C++ Development Environment Setup</span>
-            <span class="data-ru">Настройка среды разработки на C/C++</span>
+        <h1 class="fw-bold">
+            <span class="data-en">SFML Desktop: Setup with find_package (MinGW 13.1)</span>
+            <span class="data-ru">SFML для Desktop: Настройка через find_package (MinGW 13.1)</span>
         </h1>
+        <p class="lead text-muted">
+            <span class="data-en">A guide to configuring SFML with CMake and MinGW on Windows.</span>
+            <span class="data-ru">Руководство по настройке SFML с использованием CMake и MinGW на Windows.</span>
+        </p>
     </header>
 
-    <h3 class="category-header">
-        <span class="data-en">1. MinGW 13.1 (WinLibs)</span>
-        <span class="data-ru">1. MinGW 13.1 (WinLibs)</span>
-    </h3>
-
-    <p>
-        <span class="data-en">Go to <a href="https://winlibs.com/" target="_blank" rel="noopener noreferrer">winlibs.com</a>. Download the <strong>GCC 13.1.0</strong> release (Win64, POSIX threads, SEH exceptions):</span>
-        <span class="data-ru">Перейдите на <a href="https://winlibs.com/" target="_blank" rel="noopener noreferrer">winlibs.com</a>. Скачайте версию <strong>GCC 13.1.0</strong> (Win64, POSIX threads, SEH exceptions):</span>
-        <img src="/assets/img/tutorials/tools/mingw/setup-mingw/mingw-link.png" alt="WinLibs GCC 13.1.0 Download Link" class="img-fluid border rounded mt-3 shadow-sm">
-    </p>
-
-    <div class="alert alert-info">
-        <span class="data-en"><strong>Installation:</strong> Extract the folder to a simple path without spaces, for example: <code>C:\mingw64</code>.</span>
-        <span class="data-ru"><strong>Установка:</strong> Извлеките папку по простому пути без пробелов, например: <code>C:\mingw64</code>.</span>
+    <div class="alert alert-primary">
+        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed my <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">Environment Setup Guide</a> (MinGW 13.1 & CMake).</span>
+        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">руководства по настройке среды</a> (MinGW 13.1 и CMake).</span>
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">2. CMake Installation</span>
-        <span class="data-ru">2. Установка CMake</span>
+        <span class="data-en">1. Obtain SFML 2.6.2</span>
+        <span class="data-ru">1. Получение SFML 2.6.2</span>
     </h3>
-    <p>
-        <span class="data-en">Download the Windows x64 Installer (<code>.msi</code>) from the <a href="https://cmake.org/download/" target="_blank" rel="noopener noreferrer">Official CMake Website</a>.</span>
-        <span class="data-ru">Скачайте установщик Windows x64 (<code>.msi</code>) с <a href="https://cmake.org/download/" target="_blank" rel="noopener noreferrer">официального сайта CMake</a>.</span>
-    </p>
-    <div class="alert alert-warning">
-        <span class="data-en">During installation, select: <strong>"Add CMake to the system PATH for all users"</strong>.</span>
-        <span class="data-ru">Во время установки выберите: <strong>"Add CMake to the system PATH for all users"</strong>.</span>
-    </div>
 
-    <h3 class="category-header">
-        <span class="data-en">3. Path Configuration</span>
-        <span class="data-ru">3. Настройка переменных окружения</span>
-    </h3>
-    <p>
-        <span class="data-en">Add the MinGW <code>bin</code> folder to your System Path to use <code>g++</code> and <code>make</code> in any terminal.</span>
-        <span class="data-ru">Добавьте папку <code>bin</code> вашего MinGW в системную переменную Path, чтобы использовать <code>g++</code> и <code>make</code> в любом терминале.</span>
-    </p>
-    <pre><code class="language-bash"># Add this to your System PATH:
-C:\mingw64\bin</code></pre>
-
-<h3 class="category-header">
-        <span class="data-en">4. IDE & Editor Setup (Sublime, Qt Creator, CLion)</span>
-        <span class="data-ru">4. Установка IDE и редакторов (Sublime, Qt Creator, CLion)</span>
-    </h3>
     <ul>
         <li>
-            <strong>Sublime Text 4:</strong> 
-            <span class="data-en">Download from the <a href="https://www.sublimetext.com/download" target="_blank" rel="noopener noreferrer">official website</a>. It is a sophisticated text editor for code, markup, and prose that works perfectly with MinGW via the build systems.</span>
-            <span class="data-ru">Скачайте с <a href="https://www.sublimetext.com/download" target="_blank" rel="noopener noreferrer">официального сайта</a>. Это продвинутый текстовый редактор для кода, разметки и прозы, который отлично работает с MinGW через системы сборки.</span>
+            <span class="data-en">You can download the pre-built version for <b>MinGW 13.1 (64-bit)</b> from the <a href="https://www.sfml-dev.org/download/sfml/2.6.2/" target="_blank" rel="noopener noreferrer">official SFML download page</a>.</span>
+            <span class="data-ru">Вы можете скачать готовую сборку для <b>MinGW 13.1 (64-bit)</b> на <a href="https://www.sfml-dev.org/download/sfml/2.6.2/" target="_blank">официальной странице загрузки SFML</a>.</span>
         </li>
         <li>
-            <strong>Qt Creator:</strong> 
-            <span class="data-en">Download the standalone Windows installer (<code>.msi</code>) from the <a href="https://github.com/qt-creator/qt-creator/releases" target="_blank" rel="noopener noreferrer">Official GitHub Releases</a>. This provides the IDE without requiring a full Qt Framework installation.</span>
-            <span class="data-ru">Скачайте автономный установщик Windows (<code>.msi</code>) с <a href="https://github.com/qt-creator/qt-creator/releases" target="_blank" rel="noopener noreferrer">официальных релизов GitHub</a>. Это позволит установить IDE без необходимости загрузки всего фреймворка Qt.</span>
+            <span class="data-en">Alternatively, you can build it yourself following my guide: <a href="/tutorials/sfml2/build-sfml2">Building SFML 2.6.2 from Source</a>.</span>
+            <span class="data-ru">Или же вы можете собрать её самостоятельно по моей инструкции: <a href="/tutorials/sfml2/build-sfml2">Сборка SFML 2.6.2 из исходников</a>.</span>
         </li>
-<li>
-            <strong>CLion:</strong> 
-            <span class="data-en">Install via <a href="https://www.jetbrains.com/clion/download/" target="_blank" rel="noopener noreferrer">JetBrains</a>. CLion is now <strong>free for non-commercial use</strong> (learning, hobby development, and open-source)</span>
-            <span class="data-ru">Установите через <a href="https://www.jetbrains.com/clion/download/" target="_blank" rel="noopener noreferrer">JetBrains</a>. CLion теперь <strong>бесплатна для некоммерческого использования</strong> (обучение, хобби, open-source)</span>
+        <li>
+            <span class="data-en">Extract it to <code>C:/libs/SFML-2.6.2-mingw</code>.</span>
+            <span class="data-ru">Распакуйте библиотеку в <code>C:/libs/SFML-2.6.2-mingw</code>.</span>
         </li>
     </ul>
 
-    <div class="alert alert-success">
-        <span class="data-en"><strong>Verification:</strong> Open CMD and type <code>g++ --version</code> and <code>cmake --version</code> to ensure everything is working!</span>
-        <span class="data-ru"><strong>Проверка:</strong> Откройте CMD и введите <code>g++ --version</code> и <code>cmake --version</code>, чтобы убедиться, что всё работает!</span>
+    <h3 class="category-header">
+        <span class="data-en">2. Project Configuration (CMakeLists.txt)</span>
+        <span class="data-ru">2. Конфигурация проекта (CMakeLists.txt)</span>
+    </h3>
+
+    <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+project(setting-up-sfml-with-find-package)
+
+set(SFML_DIR "C:/libs/SFML-2.6.2-mingw/lib/cmake/SFML")
+
+find_package(SFML 2.6 COMPONENTS system window graphics REQUIRED)
+
+# Define the executable
+add_executable(app)
+
+target_sources(app
+PRIVATE
+    src/main.cpp
+)
+
+target_link_libraries(app sfml-system sfml-window sfml-graphics)
+
+# This code copies the SFML DLLs to the build directory
+add_custom_command(TARGET app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    $&lt;TARGET_RUNTIME_DLLS:app&gt; $&lt;TARGET_FILE_DIR:app&gt;
+    COMMAND_EXPAND_LISTS
+)
+
+# Copy Assets (ONLY if the folder exists!)
+if(EXISTS "${CMAKE_SOURCE_DIR}/assets")
+    add_custom_command(TARGET app POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/assets" "$&lt;TARGET_FILE_DIR:app&gt;/assets"
+    )
+endif()
+
+target_link_options(app PRIVATE -mconsole)</code></pre>
+
+    <h3 class="category-header">
+        <span class="data-en">3. Source Code (main.cpp)</span>
+        <span class="data-ru">3. Исходный код (main.cpp)</span>
+    </h3>
+
+    <pre><code class="language-cpp">#include &lt;SFML/Graphics.hpp&gt;
+
+int main()
+{
+    sf::RenderWindow window(sf::VideoMode(400, 300), "SFML2 Rotated Rectangle");
+
+    sf::RectangleShape rectangle(sf::Vector2f(150.f, 50.f));
+    rectangle.setFillColor(sf::Color::Green);
+
+    // Set the origin to the center of the rectangle
+    rectangle.setOrigin(75.f, 25.f);
+
+    rectangle.setPosition(200.f, 150.f);
+    rectangle.setRotation(20.f);
+
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+
+        window.clear();
+        window.draw(rectangle);
+        window.display();
+    }
+
+    return 0;
+}</code></pre>
+
+    <h3 class="category-header">
+        <span class="data-en">4. Automation Scripts</span>
+        <span class="data-ru">4. Скрипты автоматизации</span>
+    </h3>
+
+    <p>
+        <span class="data-en">Create these <b>.bat</b> files in your project root to speed up development:</span>
+        <span class="data-ru">Создайте эти <b>.bat</b> файлы в корне проекта для ускорения разработки:</span>
+    </p>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h6>config-exe.bat</h6>
+            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist/win ^
+-DCMAKE_BUILD_TYPE=Debug</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6>build-exe.bat</h6>
+            <pre><code class="language-bash">cd dist\win
+cmake --build .
+cd ..\..</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6>run-exe.bat</h6>
+            <pre><code class="language-bash">dist\win\app</code></pre>
+        </div>
     </div>
+
+    <h3 class="category-header">
+        <span class="data-en">5. How to Build and Run</span>
+        <span class="data-ru">5. Как собрать и запустить</span>
+    </h3>
+
+    <ul>
+        <li>
+            <span class="data-en">You can open this project in <b>Sublime Text 4</b>.</span>
+            <span class="data-ru">Вы можете открыть этот проект в <b>Sublime Text 4</b>.</span>
+        </li>
+        <li>
+            <span class="data-en">To build and run from the command line (CMD), use these commands in order:</span>
+            <span class="data-ru">Чтобы собрать и запустить проект через командную строку (CMD), используйте эти команды по порядку:</span>
+            <div class="bg-light p-2 mt-2 rounded border-start border-4 border-primary">
+                <code>config-exe</code><br>
+                <code>build-exe</code><br>
+                <code>run-exe</code>
+            </div>
+        </li>
+        <li>
+            <span class="data-en">Alternatively, you can open the <code>CMakeLists.txt</code> directly in <b>Qt Creator</b> or <b>CLion</b>.</span>
+            <span class="data-ru">Кроме того, вы можете открыть <code>CMakeLists.txt</code> напрямую в <b>Qt Creator</b> или <b>CLion</b>.</span>
+        </li>
+    </ul>
 </div>
 
         
@@ -282,6 +373,22 @@ function copyToClipboard(text) {
 <block>
     <script src="/libs/prism/1.30.0/prism.min.js"></script>
 
+    
+    <block>
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+        </block>
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+    </block>
     
     <block>
         

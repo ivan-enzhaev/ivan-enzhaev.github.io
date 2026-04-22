@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C/C++ Development Environment Setup | Ivan Enzhaev</title>
+<title>Building SFML 2.6.2 from Source | Ivan Enzhaev</title>
 <link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
 
 
@@ -105,76 +105,95 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold text-dark">
-            <span class="data-en">C/C++ Development Environment Setup</span>
-            <span class="data-ru">Настройка среды разработки на C/C++</span>
+            <span class="data-en">Building SFML from Source</span>
+            <span class="data-ru">Сборка SFML из исходного кода</span>
         </h1>
     </header>
 
     <h3 class="category-header">
-        <span class="data-en">1. MinGW 13.1 (WinLibs)</span>
-        <span class="data-ru">1. MinGW 13.1 (WinLibs)</span>
+        <span class="data-en">1. Preparation</span>
+        <span class="data-ru">1. Подготовка</span>
     </h3>
 
-    <p>
-        <span class="data-en">Go to <a href="https://winlibs.com/" target="_blank" rel="noopener noreferrer">winlibs.com</a>. Download the <strong>GCC 13.1.0</strong> release (Win64, POSIX threads, SEH exceptions):</span>
-        <span class="data-ru">Перейдите на <a href="https://winlibs.com/" target="_blank" rel="noopener noreferrer">winlibs.com</a>. Скачайте версию <strong>GCC 13.1.0</strong> (Win64, POSIX threads, SEH exceptions):</span>
-        <img src="/assets/img/tutorials/tools/mingw/setup-mingw/mingw-link.png" alt="WinLibs GCC 13.1.0 Download Link" class="img-fluid border rounded mt-3 shadow-sm">
-    </p>
-
-    <div class="alert alert-info">
-        <span class="data-en"><strong>Installation:</strong> Extract the folder to a simple path without spaces, for example: <code>C:\mingw64</code>.</span>
-        <span class="data-ru"><strong>Установка:</strong> Извлеките папку по простому пути без пробелов, например: <code>C:\mingw64</code>.</span>
-    </div>
-
-    <h3 class="category-header">
-        <span class="data-en">2. CMake Installation</span>
-        <span class="data-ru">2. Установка CMake</span>
-    </h3>
-    <p>
-        <span class="data-en">Download the Windows x64 Installer (<code>.msi</code>) from the <a href="https://cmake.org/download/" target="_blank" rel="noopener noreferrer">Official CMake Website</a>.</span>
-        <span class="data-ru">Скачайте установщик Windows x64 (<code>.msi</code>) с <a href="https://cmake.org/download/" target="_blank" rel="noopener noreferrer">официального сайта CMake</a>.</span>
-    </p>
-    <div class="alert alert-warning">
-        <span class="data-en">During installation, select: <strong>"Add CMake to the system PATH for all users"</strong>.</span>
-        <span class="data-ru">Во время установки выберите: <strong>"Add CMake to the system PATH for all users"</strong>.</span>
-    </div>
-
-    <h3 class="category-header">
-        <span class="data-en">3. Path Configuration</span>
-        <span class="data-ru">3. Настройка переменных окружения</span>
-    </h3>
-    <p>
-        <span class="data-en">Add the MinGW <code>bin</code> folder to your System Path to use <code>g++</code> and <code>make</code> in any terminal.</span>
-        <span class="data-ru">Добавьте папку <code>bin</code> вашего MinGW в системную переменную Path, чтобы использовать <code>g++</code> и <code>make</code> в любом терминале.</span>
-    </p>
-    <pre><code class="language-bash"># Add this to your System PATH:
-C:\mingw64\bin</code></pre>
-
-<h3 class="category-header">
-        <span class="data-en">4. IDE & Editor Setup (Sublime, Qt Creator, CLion)</span>
-        <span class="data-ru">4. Установка IDE и редакторов (Sublime, Qt Creator, CLion)</span>
-    </h3>
     <ul>
         <li>
-            <strong>Sublime Text 4:</strong> 
-            <span class="data-en">Download from the <a href="https://www.sublimetext.com/download" target="_blank" rel="noopener noreferrer">official website</a>. It is a sophisticated text editor for code, markup, and prose that works perfectly with MinGW via the build systems.</span>
-            <span class="data-ru">Скачайте с <a href="https://www.sublimetext.com/download" target="_blank" rel="noopener noreferrer">официального сайта</a>. Это продвинутый текстовый редактор для кода, разметки и прозы, который отлично работает с MinGW через системы сборки.</span>
+            <span class="data-en">Install <strong>CMake</strong> and <strong>MinGW</strong> using this <a href="/tutorials/tools/mingw/setup-mingw" target="_blank" rel="noopener noreferrer">step-by-step instruction</a>.</span>
+            <span class="data-ru"></span>
         </li>
         <li>
-            <strong>Qt Creator:</strong> 
-            <span class="data-en">Download the standalone Windows installer (<code>.msi</code>) from the <a href="https://github.com/qt-creator/qt-creator/releases" target="_blank" rel="noopener noreferrer">Official GitHub Releases</a>. This provides the IDE without requiring a full Qt Framework installation.</span>
-            <span class="data-ru">Скачайте автономный установщик Windows (<code>.msi</code>) с <a href="https://github.com/qt-creator/qt-creator/releases" target="_blank" rel="noopener noreferrer">официальных релизов GitHub</a>. Это позволит установить IDE без необходимости загрузки всего фреймворка Qt.</span>
+            <span class="data-en">Download the <strong>Source Code</strong> from the <a href="https://www.sfml-dev.org/download/sfml/2.6.2/" target="_blank" rel="noopener noreferrer">SFML Website</a>.</span>
+            <span class="data-ru">Скачайте <strong>Source Code</strong> с <a href="https://www.sfml-dev.org/download/sfml/2.6.2/" target="_blank" rel="noopener noreferrer">сайта SFML</a>.</span>
         </li>
-<li>
-            <strong>CLion:</strong> 
-            <span class="data-en">Install via <a href="https://www.jetbrains.com/clion/download/" target="_blank" rel="noopener noreferrer">JetBrains</a>. CLion is now <strong>free for non-commercial use</strong> (learning, hobby development, and open-source)</span>
-            <span class="data-ru">Установите через <a href="https://www.jetbrains.com/clion/download/" target="_blank" rel="noopener noreferrer">JetBrains</a>. CLion теперь <strong>бесплатна для некоммерческого использования</strong> (обучение, хобби, open-source)</span>
+        <li>
+            <span class="data-en">Extract it to a folder (e.g., <code>C:/SFML-source</code>).</span>
+            <span class="data-ru">Распакуйте его в папку (например, <code>C:/SFML-source</code>).</span>
+        </li>
+        <li>
+            <span class="data-en">Open CMD inside that folder.</span>
+            <span class="data-ru">Откройте CMD внутри этой папки.</span>
         </li>
     </ul>
 
-    <div class="alert alert-success">
-        <span class="data-en"><strong>Verification:</strong> Open CMD and type <code>g++ --version</code> and <code>cmake --version</code> to ensure everything is working!</span>
-        <span class="data-ru"><strong>Проверка:</strong> Откройте CMD и введите <code>g++ --version</code> и <code>cmake --version</code>, чтобы убедиться, что всё работает!</span>
+    <h3 class="category-header">
+        <span class="data-en">2. Configure (CMake)</span>
+        <span class="data-ru">2. Конфигурация (CMake)</span>
+    </h3>
+
+    <p>
+        <span class="data-en">Run this command to generate the build files. We use <code>MinSizeRel</code> for optimized, smaller binaries and set the install path to <code>C:/libs</code>.</span>
+        <span class="data-ru">Запустите эту команду для генерации файлов сборки. Мы используем <code>MinSizeRel</code> для оптимизированных файлов и устанавливаем путь в <code>C:/libs</code>.</span>
+    </p>
+
+    <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist -DCMAKE_INSTALL_PREFIX="C:/libs/SFML-2.6.2-mingw" -DCMAKE_BUILD_TYPE=MinSizeRel</code></pre>
+
+    <h3 class="category-header">
+        <span class="data-en">3. Build & Install</span>
+        <span class="data-ru">3. Сборка и установка</span>
+    </h3>
+
+    <p>
+        <span class="data-en">Now, compile the source code and install it to the specified prefix:</span>
+        <span class="data-ru">Теперь скомпилируйте исходный код и установите его по указанному пути:</span>
+    </p>
+
+    <pre><code class="language-bash"># Compile the library
+cmake --build dist
+
+# Install files to C:/libs/SFML-2.6.2-mingw
+cmake --install dist</code></pre>
+
+    <div class="alert alert-success mt-4">
+        <h5 class="fw-bold"><span class="data-en">Success!</span><span class="data-ru">Успех!</span></h5>
+        <span class="data-en">You now have a custom-built SFML directory in <code>C:/libs/SFML-2.6.2-mingw</code>. You can point your <strong>config.bat</strong> to this path in your game projects:</span>
+        <span class="data-ru">Теперь у вас есть готовая библиотека SFML в <code>C:/libs/SFML-2.6.2-mingw</code>. Вы можете указать этот путь в вашем <strong>config.bat</strong> для игровых проектов:</span>
+        <br><br>
+        <code>-DSFML_DIR=C:/libs/SFML-2.6.2-mingw/lib/cmake/SFML</code>
+    </div>
+
+    <h3 class="category-header mt-5">
+        <span class="data-en">Common Errors</span>
+        <span class="data-ru">Частые ошибки</span>
+    </h3>
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>Problem</th>
+                    <th>Solution</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="data-en">sh.exe was found in your PATH</span><span class="data-ru">sh.exe найден в PATH</span></td>
+                    <td><span class="data-en">MinGW cannot build if Git Bash or other shells are in PATH. Remove them temporarily.</span><span class="data-ru">MinGW не может выполнить сборку, если в PATH есть Git Bash. Удалите его временно.</span></td>
+                </tr>
+                <tr>
+                    <td><span class="data-en">Access Denied (Install)</span><span class="data-ru">Доступ запрещен (Install)</span></td>
+                    <td><span class="data-en">Run CMD as <strong>Administrator</strong> to allow installation into <code>C:/libs</code>.</span><span class="data-ru">Запустите CMD от <strong>имени администратора</strong>, чтобы разрешить установку в <code>C:/libs</code>.</span></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
