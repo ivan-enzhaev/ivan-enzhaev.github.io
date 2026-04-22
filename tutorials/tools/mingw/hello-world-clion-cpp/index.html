@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Building Hello World in C (Console) | Ivan Enzhaev</title>
+<title>Building Hello World in C++ (CLion) | Ivan Enzhaev</title>
 <link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
 
 
@@ -105,128 +105,122 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold text-dark">
-            <span class="data-en">Building "Hello World!" in C from Console</span>
-            <span class="data-ru">Сборка "Hello World!" на Си из консоли</span>
+            <span class="data-en">Building "Hello World!" in C++ via CLion</span>
+            <span class="data-ru">Сборка "Hello World!" на C++ через CLion</span>
         </h1>
     </header>
 
     <h3 class="category-header">
-        <span class="data-en">1. Project Setup</span>
-        <span class="data-ru">1. Подготовка проекта</span>
-    </h3>
-    <ul>
-        <li>
-            <span class="data-en">Create a new folder named <code>hello-world-c</code>.</span>
-            <span class="data-ru">Создайте новую папку под названием <code>hello-world-c</code>.</span>
-        </li>
-        <li>
-            <span class="data-en">Open this folder in your text editor (Sublime Text 4, Notepad++, etc.).</span>
-            <span class="data-ru">Откройте эту папку в текстовом редакторе (Sublime Text 4, Notepad++ и т.д.).</span>
-        </li>
-        <li>
-            <span class="data-en">Create a <code>CMakeLists.txt</code> file and paste the following code:</span>
-            <span class="data-ru">Создайте файл <code>CMakeLists.txt</code> и скопируйте в него код:</span>
-        </li>
-    </ul>
-
-    <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
-project(hello-world-c)
-
-# Set C standard (Must be before add_executable)
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_STANDARD_REQUIRED ON)
-
-# Name of the executable (app.exe on Windows)
-add_executable(app)
-
-# Add source files
-target_sources(app
-    PRIVATE
-    src/main.c
-)</code></pre>
-
-    <h3 class="category-header mt-5">
-        <span class="data-en">2. Source Code</span>
-        <span class="data-ru">2. Исходный код</span>
+        <span class="data-en">1. Project Structure</span>
+        <span class="data-ru">1. Структура проекта</span>
     </h3>
     <p>
-        <span class="data-en">Create a folder named <code>src</code>, and inside it, create a file named <code>main.c</code>:</span>
-        <span class="data-ru">Создайте папку <code>src</code>, а в ней файл <code>main.c</code>:</span>
+        <span class="data-en">Set up your project directory with a <code>src</code> folder:</span>
+        <span class="data-ru">Подготовьте папку проекта с подпапкой <code>src</code>:</span>
     </p>
-    <pre><code class="language-clang">#include &lt;stdio.h&gt;
 
-int main()
-{
-    printf("Hello World!\n");
+    <div class="row">
+        <div class="col-md-6">
+            <h6><code>CMakeLists.txt</code></h6>
+            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+project(hello-world-cpp)
+
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_executable(app src/main.cpp)</code></pre>
+        </div>
+        <div class="col-md-6">
+            <h6><code>src/main.cpp</code></h6>
+            <pre><code class="language-cpp">#include &lt;iostream&gt;
+
+int main() {
+    std::cout << "Hello World!" << std::endl;
     return 0;
 }</code></pre>
-
-    <hr class="my-5">
-
-    <h3 class="category-header">
-        <span class="data-en">3. Configuration & Build</span>
-        <span class="data-ru">3. Конфигурирование и сборка</span>
-    </h3>
-    <p>
-        <span class="data-en">Open CMD in the project folder and run the configuration command:</span>
-        <span class="data-ru">Откройте консоль в папке проекта и введите команду конфигурирования:</span>
-    </p>
-    <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist/win -DCMAKE_BUILD_TYPE=Debug</code></pre>
-
-    <div class="alert alert-info shadow-sm mt-3">
-        <ul class="mb-0">
-            <li><strong>-G "MinGW Makefiles"</strong>: <span class="data-en">Use MinGW as the generator.</span><span class="data-ru">используем MinGW.</span></li>
-            <li><strong>-S .</strong>: <span class="data-en">Source is in the current folder.</span><span class="data-ru">исходники в текущей папке.</span></li>
-            <li><strong>-B dist/win</strong>: <span class="data-en">Store build files in <code>dist/win</code>.</span><span class="data-ru">папка для конфигурационных файлов.</span></li>
-            <li><strong>-DCMAKE_BUILD_TYPE=Debug</strong>: <span class="data-en">Faster build for development.</span><span class="data-ru">отладочная сборка.</span></li>
-        </ul>
+        </div>
     </div>
 
-    <p class="mt-4">
-        <span class="data-en">Now compile and run the application:</span>
-        <span class="data-ru">Теперь скомпилируйте и запустите приложение:</span>
+    <hr class="my-5">
+
+    <h3 class="category-header">
+        <span class="data-en">2. Opening the Project</span>
+        <span class="data-ru">2. Открытие проекта</span>
+    </h3>
+    <ol>
+        <li>
+            <span class="data-en">Launch <strong>CLion</strong>.</span>
+            <span class="data-ru">Запустите <strong>CLion</strong>.</span>
+        </li>
+        <li>
+            <span class="data-en">Click <strong>Open</strong> and select the <code>CMakeLists.txt</code> file.</span>
+            <span class="data-ru">Нажмите <strong>Open</strong> и выберите файл <code>CMakeLists.txt</code>.</span>
+        </li>
+        <li>
+            <span class="data-en">Choose <strong>Open as Project</strong> when prompted.</span>
+            <span class="data-ru">Выберите <strong>Open as Project</strong> при появлении запроса.</span>
+        </li>
+    </ol>
+
+    <h3 class="category-header mt-5">
+        <span class="data-en">3. Toolchain Configuration</span>
+        <span class="data-ru">3. Настройка окружения</span>
+    </h3>
+    <p>
+        <span class="data-en">Ensure your compiler is detected correctly:</span>
+        <span class="data-ru">Убедитесь, что компилятор определен правильно:</span>
     </p>
-    <pre><code class="language-bash">cd dist\win
-cmake --build .
-app</code></pre>
+    <div class="alert alert-info border-0 shadow-sm">
+        <span class="data-en">Check <strong>File > Settings > Build, Execution, Deployment > Toolchains</strong>. CLion should automatically find your MinGW 13.1 installation.</span>
+        <span class="data-ru">Проверьте <strong>File > Settings > Build, Execution, Deployment > Toolchains</strong>. CLion должен автоматически найти установленный MinGW 13.1.</span>
+    </div>
 
     <hr class="my-5">
 
     <h3 class="category-header">
-        <span class="data-en">4. Automation Scripts (Batch files)</span>
-        <span class="data-ru">4. Скрипты автоматизации (.bat)</span>
+        <span class="data-en">4. Build and Run</span>
+        <span class="data-ru">4. Сборка и запуск</span>
+    </h3>
+    <div class="row align-items-center text-center g-4">
+        <div class="col-md-6">
+            <div class="p-4 border rounded bg-light h-100">
+                <i class="bi bi-hammer text-secondary" style="font-size: 2rem;"></i>
+                <h6 class="mt-2 fw-bold"><span class="data-en">Build Project</span><span class="data-ru">Собрать проект</span></h6>
+                <kbd class="bg-dark text-white">Ctrl + F9</kbd>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="p-4 border rounded bg-light h-100">
+                <i class="bi bi-play-circle-fill text-success" style="font-size: 2rem;"></i>
+                <h6 class="mt-2 fw-bold"><span class="data-en">Run Application</span><span class="data-ru">Запустить приложение</span></h6>
+                <kbd class="bg-dark text-white">Shift + F10</kbd>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="category-header mt-5">
+        <span class="data-en">5. Output and Console</span>
+        <span class="data-ru">5. Консоль вывода</span>
     </h3>
     <p>
-        <span class="data-en">To speed up your workflow, create these three files in the project root:</span>
-        <span class="data-ru">Чтобы работать быстрее, создайте три этих файла в корне проекта:</span>
+        <span class="data-en">The program output is displayed in the <strong>Run</strong> window at the bottom:</span>
+        <span class="data-ru">Вывод программы отображается в окне <strong>Run</strong> внизу:</span>
     </p>
-
-    <div class="row g-3">
-        <div class="col-md-4">
-            <div class="p-3 bg-light rounded h-100">
-                <strong>config-exe.bat</strong>
-                <pre class="mb-0 mt-2 small"><code>cmake -G "MinGW Makefiles" -S . -B dist/win -DCMAKE_BUILD_TYPE=Debug</code></pre>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="p-3 bg-light rounded h-100">
-                <strong>build-exe.bat</strong>
-                <pre class="mb-0 mt-2 small"><code>cd dist\win
-cmake --build .
-cd ..\..</code></pre>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="p-3 bg-light rounded h-100">
-                <strong>run-exe.bat</strong>
-                <pre class="mb-0 mt-2 small"><code>dist\win\app</code></pre>
-            </div>
-        </div>
+    <div class="bg-dark text-white p-3 rounded font-monospace shadow-sm">
+        <span class="text-secondary">C:\Projects\hello-world-cpp\cmake-build-debug\app.exe</span><br>
+        Hello World!<br><br>
+        <span class="text-info">Process finished with exit code 0</span>
     </div>
 
     <div class="alert alert-success mt-4 shadow-sm">
-        <span class="data-en"><strong>Usage:</strong> Now you can just type <code>build-exe</code> and <code>run-exe</code> in your terminal. Use the <strong>UP Arrow</strong> key in CMD to quickly cycle through previous commands!</span>
-        <span class="data-ru"><strong>Использование:</strong> Теперь вы можете просто вводить <code>build-exe</code> и <code>run-exe</code>. Используйте клавишу <strong>Стрелка Вверх</strong> в CMD, чтобы быстро выбирать предыдущие команды!</span>
+        <h5 class="fw-bold">
+            <i class="bi bi-lightbulb"></i> 
+            <span class="data-en">Tip</span>
+            <span class="data-ru">Совет</span>
+        </h5>
+        <span class="data-en">In CLion, you don't need to manually create build folders. The IDE creates <code>cmake-build-debug</code> (or similar) by default to keep your source directory clean.</span>
+        <span class="data-ru">В CLion не нужно вручную создавать папки для сборки. IDE сама создает <code>cmake-build-debug</code>, оставляя папку с исходным кодом чистой.</span>
     </div>
 </div>
 
@@ -339,13 +333,13 @@ function copyToClipboard(text) {
         
 
         
-        <block>
-            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
-        </block>
-        
     </block>
     
     <block>
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+        </block>
         
 
         

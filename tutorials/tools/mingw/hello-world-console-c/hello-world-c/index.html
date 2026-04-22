@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Building Hello World in C++ (Console) | Ivan Enzhaev</title>
+<title>Building Hello World in C (Sublime Text 4 + Console) | Ivan Enzhaev</title>
 <link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
 
 
@@ -105,8 +105,8 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold text-dark">
-            <span class="data-en">Building "Hello World!" in C++ from Console</span>
-            <span class="data-ru">Сборка "Hello World!" на C++ из консоли</span>
+            <span class="data-en">Building "Hello World!" in C from Console</span>
+            <span class="data-ru">Сборка "Hello World!" на Си из консоли</span>
         </h1>
     </header>
 
@@ -116,8 +116,8 @@
     </h3>
     <ul>
         <li>
-            <span class="data-en">Create a new folder named <code>hello-world-cpp</code>.</span>
-            <span class="data-ru">Создайте новую папку под названием <code>hello-world-cpp</code>.</span>
+            <span class="data-en">Create a new folder named <code>hello-world-c</code>.</span>
+            <span class="data-ru">Создайте новую папку под названием <code>hello-world-c</code>.</span>
         </li>
         <li>
             <span class="data-en">Open this folder in your text editor (Sublime Text 4, Notepad++, etc.).</span>
@@ -130,11 +130,11 @@
     </ul>
 
     <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
-project(hello-world-cpp)
+project(hello-world-c)
 
-# Set C++ standard (Using C++20 for MinGW 13.1)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# Set C standard (Must be before add_executable)
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 
 # Name of the executable (app.exe on Windows)
 add_executable(app)
@@ -142,7 +142,7 @@ add_executable(app)
 # Add source files
 target_sources(app
     PRIVATE
-    src/main.cpp
+    src/main.c
 )</code></pre>
 
     <h3 class="category-header mt-5">
@@ -150,14 +150,14 @@ target_sources(app
         <span class="data-ru">2. Исходный код</span>
     </h3>
     <p>
-        <span class="data-en">Create a folder named <code>src</code>, and inside it, create a file named <code>main.cpp</code>:</span>
-        <span class="data-ru">Создайте папку <code>src</code>, а в ней файл <code>main.cpp</code>:</span>
+        <span class="data-en">Create a folder named <code>src</code>, and inside it, create a file named <code>main.c</code>:</span>
+        <span class="data-ru">Создайте папку <code>src</code>, а в ней файл <code>main.c</code>:</span>
     </p>
-    <pre><code class="language-cpp">#include &lt;iostream&gt;
+    <pre><code class="language-clang">#include &lt;stdio.h&gt;
 
-int main() 
+int main()
 {
-    std::cout << "Hello World!" << std::endl;
+    printf("Hello World!\n");
     return 0;
 }</code></pre>
 
@@ -346,10 +346,6 @@ function copyToClipboard(text) {
     </block>
     
     <block>
-        
-        <block>
-            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
-        </block>
         
 
         

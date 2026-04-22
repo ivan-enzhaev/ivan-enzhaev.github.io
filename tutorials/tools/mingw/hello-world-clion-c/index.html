@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Building Hello World in C (CLion) | Ivan Enzhaev</title>
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold text-dark">
+            <span class="data-en">Building "Hello World!" in C via CLion</span>
+            <span class="data-ru">Сборка "Hello World!" на Си через CLion</span>
+        </h1>
+    </header>
+
+    <h3 class="category-header">
+        <span class="data-en">1. Project Structure</span>
+        <span class="data-ru">1. Структура проекта</span>
+    </h3>
+    <p>
+        <span class="data-en">Set up your project directory with a <code>src</code> folder:</span>
+        <span class="data-ru">Подготовьте папку проекта с подпапкой <code>src</code>:</span>
+    </p>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h6><code>CMakeLists.txt</code></h6>
+            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+project(hello-world-c)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
+add_executable(app src/main.c)</code></pre>
+        </div>
+        <div class="col-md-6">
+            <h6><code>src/main.c</code></h6>
+            <pre><code class="language-clang">#include &lt;stdio.h&gt;
+
+int main() {
+    printf("Hello World!\n");
+    return 0;
+}</code></pre>
+        </div>
+    </div>
+
+    <hr class="my-5">
+
+    <h3 class="category-header">
+        <span class="data-en">2. Opening the Project</span>
+        <span class="data-ru">2. Открытие проекта</span>
+    </h3>
+    <ol>
+        <li>
+            <span class="data-en">Launch <strong>CLion</strong>.</span>
+            <span class="data-ru">Запустите <strong>CLion</strong>.</span>
+        </li>
+        <li>
+            <span class="data-en">Click <strong>Open</strong> and select the <code>CMakeLists.txt</code> file or the root project folder.</span>
+            <span class="data-ru">Нажмите <strong>Open</strong> и выберите файл <code>CMakeLists.txt</code> или саму папку проекта.</span>
+        </li>
+        <li>
+            <span class="data-en">When prompted, choose <strong>Open as Project</strong>.</span>
+            <span class="data-ru">При появлении запроса выберите <strong>Open as Project</strong>.</span>
+        </li>
+    </ol>
+
+    <h3 class="category-header mt-5">
+        <span class="data-en">3. Toolchain Configuration</span>
+        <span class="data-ru">3. Настройка окружения</span>
+    </h3>
+    <p>
+        <span class="data-en">If it is your first time, ensure CLion detects <strong>MinGW</strong>:</span>
+        <span class="data-ru">Если вы запускаете впервые, убедитесь, что CLion видит <strong>MinGW</strong>:</span>
+    </p>
+    <div class="alert alert-info border-0 shadow-sm">
+        <span class="data-en">Go to <strong>File > Settings > Build, Execution, Deployment > Toolchains</strong>. Ensure MinGW 13.1 is the default.</span>
+        <span class="data-ru">Перейдите в <strong>File > Settings > Build, Execution, Deployment > Toolchains</strong>. Убедитесь, что MinGW 13.1 выбран по умолчанию.</span>
+    </div>
+
+    <hr class="my-5">
+
+    <h3 class="category-header">
+        <span class="data-en">4. Build and Run</span>
+        <span class="data-ru">4. Сборка и запуск</span>
+    </h3>
+    <div class="row align-items-center text-center g-4">
+        <div class="col-md-6">
+            <div class="p-4 border rounded bg-light h-100">
+                <i class="bi bi-hammer text-secondary" style="font-size: 2rem;"></i>
+                <h6 class="mt-2 fw-bold"><span class="data-en">Build Project</span><span class="data-ru">Собрать проект</span></h6>
+                <kbd class="bg-dark text-white">Ctrl + F9</kbd>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="p-4 border rounded bg-light h-100">
+                <i class="bi bi-play-circle-fill text-success" style="font-size: 2rem;"></i>
+                <h6 class="mt-2 fw-bold"><span class="data-en">Run Application</span><span class="data-ru">Запустить приложение</span></h6>
+                <kbd class="bg-dark text-white">Shift + F10</kbd>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="category-header mt-5">
+        <span class="data-en">5. Output and Console</span>
+        <span class="data-ru">5. Консоль вывода</span>
+    </h3>
+    <p>
+        <span class="data-en">The result will appear in the <strong>Run</strong> tool window at the bottom:</span>
+        <span class="data-ru">Результат появится в окне <strong>Run</strong> в нижней части экрана:</span>
+    </p>
+    <div class="bg-dark text-white p-3 rounded font-monospace shadow-sm">
+        <span class="text-secondary">C:\Projects\hello-world-c\dist\win\app.exe</span><br>
+        Hello World!<br><br>
+        <span class="text-info">Process finished with exit code 0</span>
+    </div>
+
+    <div class="alert alert-success mt-4 shadow-sm">
+        <h5 class="fw-bold"><i class="bi bi-lightbulb"></i> Tip / Совет</h5>
+        <span class="data-en">CLion uses its own "CMake Profiles" for build locations. You can customize where the <code>app.exe</code> is stored in <strong>Settings > Build, Execution, Deployment > CMake</strong> under "Build directory".</span>
+        <span class="data-ru">CLion использует собственные "CMake Profiles". Вы можете настроить путь сохранения <code>app.exe</code> в <strong>Settings > Build, Execution, Deployment > CMake</strong> в поле "Build directory".</span>
+    </div>
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">Sberbank</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number</span>
+                        <span class="data-ru">Перевод по номеру телефона</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959')">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">Bybit (USDT TRC20)</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="Bybit USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp')">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert("Copied to clipboard / Скопировано!");
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // Logic for dynamic links (persisting language across pages)
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (link) {
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(
+                link.href,
+                window.location.origin + window.location.pathname,
+            );
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+</script>
+</body>
+
+</html>

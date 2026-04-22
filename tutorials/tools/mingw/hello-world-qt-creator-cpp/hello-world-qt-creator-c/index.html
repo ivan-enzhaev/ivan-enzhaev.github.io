@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C/C++ Development Environment Setup | Ivan Enzhaev</title>
+<title>Building Hello World in C++ (Qt Creator) | Ivan Enzhaev</title>
 <link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
 
 
@@ -105,75 +105,120 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold text-dark">
-            <span class="data-en">C/C++ Development Environment Setup</span>
-            <span class="data-ru">Настройка среды разработки на C/C++</span>
+            <span class="data-en">Building "Hello World!" in C++ via Qt Creator</span>
+            <span class="data-ru">Сборка "Hello World!" на C++ через Qt Creator</span>
         </h1>
     </header>
 
     <h3 class="category-header">
-        <span class="data-en">1. MinGW 13.1 (WinLibs)</span>
-        <span class="data-ru">1. MinGW 13.1 (WinLibs)</span>
+        <span class="data-en">1. Project Structure</span>
+        <span class="data-ru">1. Структура проекта</span>
     </h3>
-
     <p>
-        <span class="data-en">Go to <a href="https://winlibs.com/" target="_blank" rel="noopener noreferrer">winlibs.com</a>. Download the <strong>GCC 13.1.0</strong> release (Win64, POSIX threads, SEH exceptions).</span>
-        <span class="data-ru">Перейдите на <a href="https://winlibs.com/" target="_blank" rel="noopener noreferrer">winlibs.com</a>. Скачайте версию <strong>GCC 13.1.0</strong> (Win64, POSIX threads, SEH exceptions).</span>
+        <span class="data-en">Create a folder and set up your files exactly as in the console version:</span>
+        <span class="data-ru">Создайте папку и подготовьте файлы так же, как в консольной версии:</span>
     </p>
 
-    <div class="alert alert-info">
-        <span class="data-en"><strong>Installation:</strong> Extract the folder to a simple path without spaces, for example: <code>C:\mingw64</code>.</span>
-        <span class="data-ru"><strong>Установка:</strong> Извлеките папку по простому пути без пробелов, например: <code>C:\mingw64</code>.</span>
+    <div class="row">
+        <div class="col-md-6">
+            <h6><code>CMakeLists.txt</code></h6>
+            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+project(hello-world-cpp)
+
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_executable(app src/main.cpp)</code></pre>
+        </div>
+        <div class="col-md-6">
+            <h6><code>src/main.cpp</code></h6>
+            <pre><code class="language-cpp">#include &lt;iostream&gt;
+
+int main() {
+    std::cout << "Hello World!" << std::endl;
+    return 0;
+}</code></pre>
+        </div>
     </div>
 
+    <hr class="my-5">
+
     <h3 class="category-header">
-        <span class="data-en">2. CMake Installation</span>
-        <span class="data-ru">2. Установка CMake</span>
+        <span class="data-en">2. Opening the Project</span>
+        <span class="data-ru">2. Открытие проекта</span>
+    </h3>
+    <ol>
+        <li>
+            <span class="data-en">Launch <strong>Qt Creator</strong>.</span>
+            <span class="data-ru">Запустите <strong>Qt Creator</strong>.</span>
+        </li>
+        <li>
+            <span class="data-en">Go to <strong>File > Open File or Project...</strong></span>
+            <span class="data-ru">Выберите <strong>Файл > Открыть файл или проект...</strong></span>
+        </li>
+        <li>
+            <span class="data-en">Select the <code>CMakeLists.txt</code> file in your folder.</span>
+            <span class="data-ru">Выберите файл <code>CMakeLists.txt</code> в вашей папке.</span>
+        </li>
+    </ol>
+
+    <h3 class="category-header mt-5">
+        <span class="data-en">3. Configure Project (Kits)</span>
+        <span class="data-ru">3. Настройка проекта (Kits)</span>
     </h3>
     <p>
-        <span class="data-en">Download the Windows x64 Installer (<code>.msi</code>) from the <a href="https://cmake.org/download/" target="_blank">Official CMake Website</a>.</span>
-        <span class="data-ru">Скачайте установщик Windows x64 (<code>.msi</code>) с <a href="https://cmake.org/download/" target="_blank">официального сайта CMake</a>.</span>
+        <span class="data-en">In the "Configure Project" tab, ensure your <strong>MinGW 13.1</strong> kit is selected.</span>
+        <span class="data-ru">На вкладке "Configure Project" убедитесь, что выбран комплект (Kit) с <strong>MinGW 13.1</strong>.</span>
     </p>
-    <div class="alert alert-warning">
-        <span class="data-en">During installation, select: <strong>"Add CMake to the system PATH for all users"</strong>.</span>
-        <span class="data-ru">Во время установки выберите: <strong>"Add CMake to the system PATH for all users"</strong>.</span>
+    <div class="alert alert-primary">
+        <span class="data-en">Click the <strong>Configure Project</strong> button to generate the CMake cache.</span>
+        <span class="data-ru">Нажмите кнопку <strong>Configure Project</strong>, чтобы сгенерировать кэш CMake.</span>
     </div>
 
+    <hr class="my-5">
+
     <h3 class="category-header">
-        <span class="data-en">3. Path Configuration</span>
-        <span class="data-ru">3. Настройка переменных окружения</span>
+        <span class="data-en">4. Build and Run</span>
+        <span class="data-ru">4. Сборка и запуск</span>
+    </h3>
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <ul>
+                <li>
+                    <span class="data-en">Press <strong>Ctrl + B</strong> to build the project.</span>
+                    <span class="data-ru">Нажмите <strong>Ctrl + B</strong> для сборки проекта.</span>
+                </li>
+                <li>
+                    <span class="data-en">Press <strong>Ctrl + R</strong> to run the application.</span>
+                    <span class="data-ru">Нажмите <strong>Ctrl + R</strong> для запуска приложения.</span>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-4 text-center">
+            <div class="p-3 border rounded bg-light">
+                <i class="bi bi-play-fill text-success" style="font-size: 2rem;"></i>
+                <p class="mb-0 small fw-bold text-uppercase">Ctrl + R</p>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="category-header mt-5">
+        <span class="data-en">5. Viewing Output</span>
+        <span class="data-ru">5. Просмотр вывода</span>
     </h3>
     <p>
-        <span class="data-en">Add the MinGW <code>bin</code> folder to your System Path to use <code>g++</code> and <code>make</code> in any terminal.</span>
-        <span class="data-ru">Добавьте папку <code>bin</code> вашего MinGW в системную переменную Path, чтобы использовать <code>g++</code> и <code>make</code> в любом терминале.</span>
+        <span class="data-en">Check the <strong>Application Output</strong> panel at the bottom of Qt Creator. You should see:</span>
+        <span class="data-ru">Проверьте панель <strong>Вывод приложения</strong> в нижней части Qt Creator. Вы должны увидеть:</span>
     </p>
-    <pre><code class="language-bash"># Add this to your System PATH:
-C:\mingw64\bin</code></pre>
+    <div class="bg-dark text-success p-3 rounded font-monospace shadow-sm">
+        Hello World!
+    </div>
 
-<h3 class="category-header">
-        <span class="data-en">4. IDE & Editor Setup (Sublime, Qt Creator, CLion)</span>
-        <span class="data-ru">4. Установка IDE и редакторов (Sublime, Qt Creator, CLion)</span>
-    </h3>
-    <ul>
-        <li>
-            <strong>Sublime Text 4:</strong> 
-            <span class="data-en">Download from the <a href="https://www.sublimetext.com/download" target="_blank">official website</a>. It is a sophisticated text editor for code, markup, and prose that works perfectly with MinGW via the build systems.</span>
-            <span class="data-ru">Скачайте с <a href="https://www.sublimetext.com/download" target="_blank">официального сайта</a>. Это продвинутый текстовый редактор для кода, разметки и прозы, который отлично работает с MinGW через системы сборки.</span>
-        </li>
-        <li>
-            <strong>Qt Creator:</strong> 
-            <span class="data-en">Download the standalone Windows installer (<code>.msi</code>) from the <a href="https://github.com/qt-creator/qt-creator/releases" target="_blank">Official GitHub Releases</a>. This provides the IDE without requiring a full Qt Framework installation.</span>
-            <span class="data-ru">Скачайте автономный установщик Windows (<code>.msi</code>) с <a href="https://github.com/qt-creator/qt-creator/releases" target="_blank">официальных релизов GitHub</a>. Это позволит установить IDE без необходимости загрузки всего фреймворка Qt.</span>
-        </li>
-<li>
-            <strong>CLion:</strong> 
-            <span class="data-en">Install via <a href="https://www.jetbrains.com/clion/download/" target="_blank">JetBrains</a>. CLion is now <strong>free for non-commercial use</strong> (learning, hobby development, and open-source)</span>
-            <span class="data-ru">Установите через <a href="https://www.jetbrains.com/clion/download/" target="_blank">JetBrains</a>. CLion теперь <strong>бесплатна для некоммерческого использования</strong> (обучение, хобби, open-source)</span>
-        </li>
-    </ul>
-
-    <div class="alert alert-success">
-        <span class="data-en"><strong>Verification:</strong> Open CMD and type <code>g++ --version</code> and <code>cmake --version</code> to ensure everything is working!</span>
-        <span class="data-ru"><strong>Проверка:</strong> Откройте CMD и введите <code>g++ --version</code> и <code>cmake --version</code>, чтобы убедиться, что всё работает!</span>
+    <div class="alert alert-success mt-4 shadow-sm">
+        <h5 class="fw-bold"><i class="bi bi-info-circle"></i> Tip / Совет</h5>
+        <span class="data-en">Qt Creator automatically handles the build directory. If you ever need to reset the project, you can right-click the project name and select <strong>Clear CMake Configuration</strong>.</span>
+        <span class="data-ru">Qt Creator автоматически управляет папкой сборки. Если вам когда-нибудь понадобится сбросить проект, вы можете нажать правой кнопкой на название проекта и выбрать <strong>Clear CMake Configuration</strong>.</span>
     </div>
 </div>
 
@@ -286,9 +331,15 @@ function copyToClipboard(text) {
         
 
         
+    </block>
+    
+    <block>
+        
         <block>
-            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
         </block>
+        
+
         
     </block>
     
