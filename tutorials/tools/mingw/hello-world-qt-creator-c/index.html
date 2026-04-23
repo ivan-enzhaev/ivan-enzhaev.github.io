@@ -110,6 +110,11 @@
         </h1>
     </header>
 
+    <div class="alert alert-primary">
+        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed my <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">Environment Setup Guide</a> (MinGW 13.1 & CMake).</span>
+        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">руководства по настройке среды</a> (MinGW 13.1 и CMake).</span>
+    </div>
+
     <h3 class="category-header">
         <span class="data-en">1. Project Structure</span>
         <span class="data-ru">1. Структура проекта</span>
@@ -125,16 +130,17 @@
             <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
 project(hello-world-c)
 
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 add_executable(app src/main.c)</code></pre>
         </div>
         <div class="col-md-6">
             <h6><code>src/main.c</code></h6>
-            <pre><code class="language-clang">#include &lt;stdio.h&gt;
+            <pre><code class="language-c">#include &lt;stdio.h&gt;
 
-int main() {
+int main()
+{
     printf("Hello World!\n");
     return 0;
 }</code></pre>
@@ -194,12 +200,12 @@ int main() {
                 </li>
             </ul>
         </div>
-        <div class="col-md-4 text-center">
+        <!-- <div class="col-md-4 text-center">
             <div class="p-3 border rounded bg-light">
                 <i class="bi bi-play-fill text-success" style="font-size: 2rem;"></i>
                 <p class="mb-0 small fw-bold text-uppercase">Ctrl + R</p>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <h3 class="category-header mt-5">
@@ -214,11 +220,16 @@ int main() {
         Hello World!
     </div>
 
-    <div class="alert alert-success mt-4 shadow-sm">
-        <h5 class="fw-bold"><i class="bi bi-info-circle"></i> Tip / Совет</h5>
-        <span class="data-en">Qt Creator automatically handles the build directory (usually named <code>build-hello-world...</code>). You don't need manual <code>.bat</code> scripts when using this IDE!</span>
-        <span class="data-ru">Qt Creator автоматически управляет папкой сборки. Вам не нужны <code>.bat</code> скрипты при использовании этой IDE!</span>
+    <div class="alert alert-success mt-4">
+        <span class="data-en"><strong>Tip:</strong> Qt Creator automatically handles the build directory. If you ever need to reset the project, you can right-click the project name and select <strong>Clear CMake Configuration</strong>.</span>
+        <span class="data-ru"><strong>Совет:</strong> Qt Creator автоматически управляет папкой сборки. Если вам когда-нибудь понадобится сбросить проект, вы можете нажать правой кнопкой на название проекта и выбрать <strong>Clear CMake Configuration</strong>.</span>
     </div>
+
+    <!-- <div class="alert alert-success mt-4 shadow-sm">
+        <h5 class="fw-bold"><i class="bi bi-info-circle"></i> Tip / Совет</h5>
+        <span class="data-en"></span>
+        <span class="data-ru"></span>
+    </div> -->
 </div>
 
         
@@ -330,9 +341,25 @@ function copyToClipboard(text) {
         
 
         
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
     </block>
     
     <block>
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+        </block>
+        
+
+        
+
         
 
         

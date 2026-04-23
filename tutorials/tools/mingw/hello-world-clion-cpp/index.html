@@ -110,6 +110,11 @@
         </h1>
     </header>
 
+    <div class="alert alert-primary">
+        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed my <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">Environment Setup Guide</a> (MinGW 13.1 & CMake).</span>
+        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">руководства по настройке среды</a> (MinGW 13.1 и CMake).</span>
+    </div>
+
     <h3 class="category-header">
         <span class="data-en">1. Project Structure</span>
         <span class="data-ru">1. Структура проекта</span>
@@ -135,7 +140,8 @@ add_executable(app src/main.cpp)</code></pre>
             <h6><code>src/main.cpp</code></h6>
             <pre><code class="language-cpp">#include &lt;iostream&gt;
 
-int main() {
+int main()
+{
     std::cout << "Hello World!" << std::endl;
     return 0;
 }</code></pre>
@@ -208,12 +214,12 @@ int main() {
         <span class="data-ru">Вывод программы отображается в окне <strong>Run</strong> внизу:</span>
     </p>
     <div class="bg-dark text-white p-3 rounded font-monospace shadow-sm">
-        <span class="text-secondary">C:\Projects\hello-world-cpp\cmake-build-debug\app.exe</span><br>
+        <!-- <span class="text-secondary">C:\Projects\hello-world-cpp\cmake-build-debug\app.exe</span><br> -->
         Hello World!<br><br>
         <span class="text-info">Process finished with exit code 0</span>
     </div>
 
-    <div class="alert alert-success mt-4 shadow-sm">
+    <!-- <div class="alert alert-success mt-4 shadow-sm">
         <h5 class="fw-bold">
             <i class="bi bi-lightbulb"></i> 
             <span class="data-en">Tip</span>
@@ -221,7 +227,7 @@ int main() {
         </h5>
         <span class="data-en">In CLion, you don't need to manually create build folders. The IDE creates <code>cmake-build-debug</code> (or similar) by default to keep your source directory clean.</span>
         <span class="data-ru">В CLion не нужно вручную создавать папки для сборки. IDE сама создает <code>cmake-build-debug</code>, оставляя папку с исходным кодом чистой.</span>
-    </div>
+    </div> -->
 </div>
 
         
@@ -333,13 +339,26 @@ function copyToClipboard(text) {
         
 
         
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
     </block>
     
     <block>
         
+
+        
         <block>
             <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
         </block>
+        
+
         
 
         

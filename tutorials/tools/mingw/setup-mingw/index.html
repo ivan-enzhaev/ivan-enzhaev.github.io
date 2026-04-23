@@ -122,9 +122,20 @@
     </p>
 
     <div class="alert alert-info">
-        <span class="data-en"><strong>Installation:</strong> Extract the folder to a simple path without spaces, for example: <code>C:\mingw64</code>.</span>
-        <span class="data-ru"><strong>Установка:</strong> Извлеките папку по простому пути без пробелов, например: <code>C:\mingw64</code>.</span>
+        <span class="data-en"><strong>Installation:</strong> Extract the folder to a simple path without spaces, for example: <code>C:\mingw64_13.1</code></span>
+        <span class="data-ru"><strong>Установка:</strong> Извлеките папку по простому пути без пробелов, например: <code>C:\mingw64_13.1</code>.</span>
     </div>
+
+    <h3 class="category-header">
+        <span class="data-en">3. Path Configuration</span>
+        <span class="data-ru">3. Настройка переменных окружения</span>
+    </h3>
+    <p>
+        <span class="data-en">Add the MinGW <code>bin</code> folder to your System Path to use <code>g++</code> and <code>make</code> in any terminal.</span>
+        <span class="data-ru">Добавьте папку <code>bin</code> вашего MinGW в системную переменную Path, чтобы использовать <code>g++</code> и <code>make</code> в любом терминале.</span>
+    </p>
+    <pre><code class="language-bash"># Add this to your System PATH:
+C:\mingw64_13.1\bin</code></pre>
 
     <h3 class="category-header">
         <span class="data-en">2. CMake Installation</span>
@@ -140,17 +151,6 @@
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">3. Path Configuration</span>
-        <span class="data-ru">3. Настройка переменных окружения</span>
-    </h3>
-    <p>
-        <span class="data-en">Add the MinGW <code>bin</code> folder to your System Path to use <code>g++</code> and <code>make</code> in any terminal.</span>
-        <span class="data-ru">Добавьте папку <code>bin</code> вашего MinGW в системную переменную Path, чтобы использовать <code>g++</code> и <code>make</code> в любом терминале.</span>
-    </p>
-    <pre><code class="language-bash"># Add this to your System PATH:
-C:\mingw64\bin</code></pre>
-
-<h3 class="category-header">
         <span class="data-en">4. IDE & Editor Setup (Sublime, Qt Creator, CLion)</span>
         <span class="data-ru">4. Установка IDE и редакторов (Sublime, Qt Creator, CLion)</span>
     </h3>
@@ -287,9 +287,13 @@ function copyToClipboard(text) {
         
 
         
+
+        
         <block>
             <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
         </block>
+        
+
         
     </block>
     

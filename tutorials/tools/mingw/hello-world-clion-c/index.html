@@ -110,6 +110,11 @@
         </h1>
     </header>
 
+    <div class="alert alert-primary">
+        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed my <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">Environment Setup Guide</a> (MinGW 13.1 & CMake).</span>
+        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">руководства по настройке среды</a> (MinGW 13.1 и CMake).</span>
+    </div>
+
     <h3 class="category-header">
         <span class="data-en">1. Project Structure</span>
         <span class="data-ru">1. Структура проекта</span>
@@ -125,16 +130,18 @@
             <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
 project(hello-world-c)
 
-set(CMAKE_C_STANDARD 11)
+# Set C standard
+set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 add_executable(app src/main.c)</code></pre>
         </div>
         <div class="col-md-6">
             <h6><code>src/main.c</code></h6>
-            <pre><code class="language-clang">#include &lt;stdio.h&gt;
+            <pre><code class="language-c">#include &lt;stdio.h&gt;
 
-int main() {
+int main()
+{
     printf("Hello World!\n");
     return 0;
 }</code></pre>
@@ -207,16 +214,16 @@ int main() {
         <span class="data-ru">Результат появится в окне <strong>Run</strong> в нижней части экрана:</span>
     </p>
     <div class="bg-dark text-white p-3 rounded font-monospace shadow-sm">
-        <span class="text-secondary">C:\Projects\hello-world-c\dist\win\app.exe</span><br>
+        <!-- <span class="text-secondary">C:\Projects\hello-world-c\dist\win\app.exe</span><br> -->
         Hello World!<br><br>
         <span class="text-info">Process finished with exit code 0</span>
     </div>
 
-    <div class="alert alert-success mt-4 shadow-sm">
+    <!-- <div class="alert alert-success mt-4 shadow-sm">
         <h5 class="fw-bold"><i class="bi bi-lightbulb"></i> Tip / Совет</h5>
         <span class="data-en">CLion uses its own "CMake Profiles" for build locations. You can customize where the <code>app.exe</code> is stored in <strong>Settings > Build, Execution, Deployment > CMake</strong> under "Build directory".</span>
         <span class="data-ru">CLion использует собственные "CMake Profiles". Вы можете настроить путь сохранения <code>app.exe</code> в <strong>Settings > Build, Execution, Deployment > CMake</strong> в поле "Build directory".</span>
-    </div>
+    </div> -->
 </div>
 
         
@@ -328,9 +335,25 @@ function copyToClipboard(text) {
         
 
         
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
     </block>
     
     <block>
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+        </block>
+        
+
+        
+
         
 
         

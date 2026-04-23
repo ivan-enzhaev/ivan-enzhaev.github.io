@@ -110,6 +110,11 @@
         </h1>
     </header>
 
+    <div class="alert alert-primary">
+        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed my <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">Environment Setup Guide</a> (MinGW 13.1 & CMake).</span>
+        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">руководства по настройке среды</a> (MinGW 13.1 и CMake).</span>
+    </div>
+
     <h3 class="category-header">
         <span class="data-en">1. Project Setup</span>
         <span class="data-ru">1. Подготовка проекта</span>
@@ -133,7 +138,7 @@
 project(hello-world-c)
 
 # Set C standard (Must be before add_executable)
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 # Name of the executable (app.exe on Windows)
@@ -153,7 +158,7 @@ target_sources(app
         <span class="data-en">Create a folder named <code>src</code>, and inside it, create a file named <code>main.c</code>:</span>
         <span class="data-ru">Создайте папку <code>src</code>, а в ней файл <code>main.c</code>:</span>
     </p>
-    <pre><code class="language-clang">#include &lt;stdio.h&gt;
+    <pre><code class="language-c">#include &lt;stdio.h&gt;
 
 int main()
 {
@@ -225,8 +230,8 @@ cd ..\..</code></pre>
     </div>
 
     <div class="alert alert-success mt-4 shadow-sm">
-        <span class="data-en"><strong>Usage:</strong> Now you can just type <code>build-exe</code> and <code>run-exe</code> in your terminal. Use the <strong>UP Arrow</strong> key in CMD to quickly cycle through previous commands!</span>
-        <span class="data-ru"><strong>Использование:</strong> Теперь вы можете просто вводить <code>build-exe</code> и <code>run-exe</code>. Используйте клавишу <strong>Стрелка Вверх</strong> в CMD, чтобы быстро выбирать предыдущие команды!</span>
+        <span class="data-en"><strong>Usage:</strong> Now you can just type <code>config-exe</code>, <code>build-exe</code>, and <code>run-exe</code> in your terminal. Use the <strong>UP Arrow</strong> key in CMD to quickly cycle through previous commands!</span>
+        <span class="data-ru"><strong>Использование:</strong> Теперь вы можете просто вводить <code>config-exe</code>, <code>build-exe</code> и <code>run-exe</code>. Используйте клавишу <strong>Стрелка Вверх</strong> в CMD, чтобы быстро выбирать предыдущие команды!</span>
     </div>
 </div>
 
@@ -339,13 +344,39 @@ function copyToClipboard(text) {
         
 
         
+
+        
+
+        
         <block>
-            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
         </block>
         
     </block>
     
     <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+    </block>
+    
+    <block>
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+        </block>
+        
+
+        
+
         
 
         

@@ -110,13 +110,18 @@
         </h1>
     </header>
 
+    <div class="alert alert-primary">
+        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed my <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">Environment Setup Guide</a> (MinGW 13.1 & CMake).</span>
+        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">руководства по настройке среды</a> (MinGW 13.1 и CMake).</span>
+    </div>
+
     <h3 class="category-header">
         <span class="data-en">1. Project Structure</span>
         <span class="data-ru">1. Структура проекта</span>
     </h3>
     <p>
-        <span class="data-en">Create a folder and set up your files exactly as in the console version:</span>
-        <span class="data-ru">Создайте папку и подготовьте файлы так же, как в консольной версии:</span>
+        <span class="data-en">Create a folder and set up your files:</span>
+        <span class="data-ru">Создайте папку и подготовьте файлы:</span>
     </p>
 
     <div class="row">
@@ -129,13 +134,14 @@ project(hello-world-cpp)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(app src/main.cpp)</code></pre>
+add_executable(app)</code></pre>
         </div>
         <div class="col-md-6">
             <h6><code>src/main.cpp</code></h6>
             <pre><code class="language-cpp">#include &lt;iostream&gt;
 
-int main() {
+int main()
+{
     std::cout << "Hello World!" << std::endl;
     return 0;
 }</code></pre>
@@ -195,12 +201,12 @@ int main() {
                 </li>
             </ul>
         </div>
-        <div class="col-md-4 text-center">
+        <!-- <div class="col-md-4 text-center">
             <div class="p-3 border rounded bg-light">
                 <i class="bi bi-play-fill text-success" style="font-size: 2rem;"></i>
                 <p class="mb-0 small fw-bold text-uppercase">Ctrl + R</p>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <h3 class="category-header mt-5">
@@ -215,10 +221,15 @@ int main() {
         Hello World!
     </div>
 
-    <div class="alert alert-success mt-4 shadow-sm">
+    <!-- <div class="alert alert-success mt-4 shadow-sm">
         <h5 class="fw-bold"><i class="bi bi-info-circle"></i> Tip / Совет</h5>
         <span class="data-en">Qt Creator automatically handles the build directory. If you ever need to reset the project, you can right-click the project name and select <strong>Clear CMake Configuration</strong>.</span>
         <span class="data-ru">Qt Creator автоматически управляет папкой сборки. Если вам когда-нибудь понадобится сбросить проект, вы можете нажать правой кнопкой на название проекта и выбрать <strong>Clear CMake Configuration</strong>.</span>
+    </div> -->
+
+    <div class="alert alert-success mt-4">
+        <span class="data-en"><strong>Tip:</strong> Qt Creator automatically handles the build directory. If you ever need to reset the project, you can right-click the project name and select <strong>Clear CMake Configuration</strong>.</span>
+        <span class="data-ru"><strong>Совет:</strong> Qt Creator автоматически управляет папкой сборки. Если вам когда-нибудь понадобится сбросить проект, вы можете нажать правой кнопкой на название проекта и выбрать <strong>Clear CMake Configuration</strong>.</span>
     </div>
 </div>
 
@@ -331,13 +342,26 @@ function copyToClipboard(text) {
         
 
         
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
     </block>
     
     <block>
         
+
+        
         <block>
             <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
         </block>
+        
+
         
 
         
