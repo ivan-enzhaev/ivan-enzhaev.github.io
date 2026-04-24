@@ -140,12 +140,35 @@
     </ul>
 
     <h3 class="category-header">
-        <span class="data-en">2. Project Configuration (CMakeLists.txt)</span>
-        <span class="data-ru">2. Конфигурация проекта (CMakeLists.txt)</span>
+        <span class="data-en">2. Add SFML to System PATH</span>
+        <span class="data-ru">2. Добавление SFML в системный PATH</span>
+    </h3>
+    <p>
+        <span class="data-en">To ensure your applications can find the SFML <code>.dll</code> files at runtime, you should add the library's bin folder to your Environment Variables:</span>
+        <span class="data-ru">Чтобы приложения могли находить <code>.dll</code> файлы SFML при запуске, необходимо добавить папку bin библиотеки в переменные среды:</span>
+    </p>
+    <div class="bg-light p-3 rounded border-start border-4 border-warning mb-4">
+        <code>C:\libs\SFML-2.6.2-mingw\bin</code>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">3. Project Configuration (CMakeLists.txt)</span>
+        <span class="data-ru">3. Конфигурация проекта (CMakeLists.txt)</span>
     </h3>
 
+    <ul>
+        <li>
+            <span class="data-en">Create a new empty folder for your project (e.g., <code>rectangle-sfml2-cpp</code>).</span>
+            <span class="data-ru">Создайте новую пустую папку для вашего проекта (например, <code>rectangle-sfml2-cpp</code>).</span>
+        </li>
+        <li>
+            <span class="data-en">Inside that folder, create a file named <code>CMakeLists.txt</code> and paste the following content:</span>
+            <span class="data-ru">Внутри этой папки создайте файл с именем <code>CMakeLists.txt</code> и вставьте следующее содержимое:</span>
+        </li>
+    </ul>
+
     <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
-project(setting-up-sfml-with-find-package)
+project(rectangle-sfml2-cpp)
 
 set(SFML_DIR "C:/libs/SFML-2.6.2-mingw/lib/cmake/SFML")
 
@@ -179,9 +202,20 @@ endif()
 target_link_options(app PRIVATE -mconsole)</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">3. Source Code (main.cpp)</span>
-        <span class="data-ru">3. Исходный код (main.cpp)</span>
+        <span class="data-en">4. Source Code (src/main.cpp)</span>
+        <span class="data-ru">4. Исходный код (src/main.cpp)</span>
     </h3>
+
+    <ul>
+        <li>
+            <span class="data-en">Create a folder named <b><code>src</code></b> in your project root.</span>
+            <span class="data-ru">Создайте папку <b><code>src</code></b> в корне вашего проекта.</span>
+        </li>
+        <li>
+            <span class="data-en">Inside the <code>src</code> folder, create a file named <b><code>main.cpp</code></b> with the following content:</span>
+            <span class="data-ru">Внутри папки <code>src</code> создайте файл с именем <b><code>main.cpp</code></b> со следующим содержимым:</span>
+        </li>
+    </ul>
 
     <pre><code class="language-cpp">#include &lt;SFML/Graphics.hpp&gt;
 
@@ -216,8 +250,49 @@ int main()
 }</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">4. Automation Scripts</span>
-        <span class="data-ru">4. Скрипты автоматизации</span>
+        <span class="data-en">5. Opening the Project in IDEs</span>
+        <span class="data-ru">5. Открытие проекта в IDE</span>
+    </h3>
+
+    <h5>CLion</h5>
+    <ul>
+        <li>
+            <span class="data-en">Go to <b>File > Open</b> and select the project folder containing your <code>CMakeLists.txt</code>.</span>
+            <span class="data-ru">Перейдите в <b>File > Open</b> и выберите папку проекта, содержащую <code>CMakeLists.txt</code>.</span>
+        </li>
+        <li>
+            <span class="data-en">When prompted, click <b>Open as Project</b>. CLion will automatically detect the CMake configuration.</span>
+            <span class="data-ru">При появлении запроса нажмите <b>Open as Project</b>. CLion автоматически обнаружит конфигурацию CMake.</span>
+        </li>
+    </ul>
+
+    <h5>Qt Creator</h5>
+    <ul>
+        <li>
+            <span class="data-en">Go to <b>File > Open File or Project</b> and select the <code>CMakeLists.txt</code> file.</span>
+            <span class="data-ru">Перейдите в <b>File > Open File or Project</b> и выберите файл <code>CMakeLists.txt</code>.</span>
+        </li>
+        <li>
+            <span class="data-en">In the "Configure Project" tab, ensure your <b>Desktop Qt MinGW</b> kit is selected and click <b>Configure Project</b>.</span>
+            <span class="data-ru">На вкладке "Configure Project" убедитесь, что выбран комплект <b>Desktop Qt MinGW</b>, и нажмите <b>Configure Project</b>.</span>
+        </li>
+    </ul>
+
+    <h5>Sublime Text 4 + CMD</h5>
+    <ul>
+        <li>
+            <span class="data-en">Open Sublime Text and drag-and-drop the project folder into the editor.</span>
+            <span class="data-ru">Откройте Sublime Text и перетащите папку проекта в редактор.</span>
+        </li>
+        <li>
+            <span class="data-en">Open a Command Prompt (CMD) in the project root directory.</span>
+            <span class="data-ru">Откройте командную строку (CMD) в корневой директории проекта.</span>
+        </li>
+    </ul>
+
+    <h3 class="category-header">
+        <span class="data-en">6. Automation Scripts</span>
+        <span class="data-ru">6. Скрипты автоматизации</span>
     </h3>
 
     <p>
@@ -244,8 +319,57 @@ cd ..\..</code></pre>
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">5. How to Build and Run</span>
-        <span class="data-ru">5. Как собрать и запустить</span>
+        <span class="data-en">7. How to Build and Run</span>
+        <span class="data-ru">7. Как собрать и запустить</span>
+    </h3>
+
+    <ul>
+        <li>
+            <span class="data-en">To build and run from the <b>CMD</b> (recommended for Sublime Text), use:</span>
+            <span class="data-ru">Чтобы собрать и запустить через <b>CMD</b> (рекомендуется для Sublime Text), используйте:</span>
+            <div class="bg-light p-2 mt-2 rounded border-start border-4 border-primary">
+                <code>config-exe</code><br>
+                <code>build-exe</code><br>
+                <code>run-exe</code>
+            </div>
+        </li>
+        <li>
+            <span class="data-en">In <b>CLion</b> or <b>Qt Creator</b>, simply press the <b>Run</b> button (green arrow) to compile and start the app.</span>
+            <span class="data-ru">В <b>CLion</b> или <b>Qt Creator</b> просто нажмите кнопку <b>Run</b> (зеленая стрелка), чтобы скомпилировать и запустить приложение.</span>
+        </li>
+    </ul>
+
+    <!-- <h3 class="category-header">
+        <span class="data-en">5. Automation Scripts</span>
+        <span class="data-ru">5. Скрипты автоматизации</span>
+    </h3>
+
+    <p>
+        <span class="data-en">Create these <b>.bat</b> files in your project root to speed up development:</span>
+        <span class="data-ru">Создайте эти <b>.bat</b> файлы в корне проекта для ускорения разработки:</span>
+    </p>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h6>config-exe.bat</h6>
+            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist/win ^
+-DCMAKE_BUILD_TYPE=Debug</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6>build-exe.bat</h6>
+            <pre><code class="language-bash">cd dist\win
+cmake --build .
+cd ..\..</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6>run-exe.bat</h6>
+            <pre><code class="language-bash">dist\win\app</code></pre>
+        </div>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">6. How to Build and Run</span>
+        <span class="data-ru">6. Как собрать и запустить</span>
     </h3>
 
     <ul>
@@ -266,7 +390,7 @@ cd ..\..</code></pre>
             <span class="data-en">Alternatively, you can open the <code>CMakeLists.txt</code> directly in <b>Qt Creator</b> or <b>CLion</b>.</span>
             <span class="data-ru">Кроме того, вы можете открыть <code>CMakeLists.txt</code> напрямую в <b>Qt Creator</b> или <b>CLion</b>.</span>
         </li>
-    </ul>
+    </ul> -->
 </div>
 
         
