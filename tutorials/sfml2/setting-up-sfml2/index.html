@@ -537,7 +537,7 @@ cd ..\..</code></pre>
                     <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
                         +7 (917) 212-29-59
                     </div>
-                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959')">
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
                         <span class="data-en">Copy Number</span>
                         <span class="data-ru">Копировать номер</span>
                     </button>
@@ -565,7 +565,7 @@ cd ..\..</code></pre>
                         <!-- TYourActualBybitWalletAddressHere... -->
                         TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
                     </div>
-                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp')">
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
                         <span class="data-en">Copy Address</span>
                         <span class="data-ru">Копировать адрес</span>
                     </button>
@@ -583,9 +583,39 @@ cd ..\..</code></pre>
 </div>
 
 <script>
-function copyToClipboard(text) {
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
     navigator.clipboard.writeText(text).then(() => {
-        alert("Copied to clipboard / Скопировано!");
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
     });
 }
 </script>
