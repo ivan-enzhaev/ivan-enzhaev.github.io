@@ -71,6 +71,35 @@
         outline: none;
         caret-color: transparent;
     }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+    }
+
+    /* The Copy Button */
+    .copy-button {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        padding: 4px 8px;
+        font-size: 12px;
+        color: #ffffff;
+        background-color: #343a40; /* matches your btn-dark theme */
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+
+    .copy-button:hover {
+        opacity: 1;
+    }
+
+    .copy-button.copied {
+        background-color: #28a745; /* Success Green */
+    }
 </style>
 </head>
 
@@ -364,6 +393,37 @@ function copyToClipboard(text) {
         const urlParams = new URLSearchParams(window.location.search);
         setLanguage(urlParams.get("lang") || "en");
     };
+
+
+    document.querySelectorAll('pre').forEach((pre) => {
+        // 1. Wrap the pre tag in a container for positioning
+        const wrapper = document.createElement('div');
+        wrapper.className = 'code-container';
+        pre.parentNode.insertBefore(wrapper, pre);
+        wrapper.appendChild(pre);
+
+        // 2. Create the button
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        wrapper.appendChild(button);
+
+        // 3. Add click logic
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
 </script>
 </body>
 
