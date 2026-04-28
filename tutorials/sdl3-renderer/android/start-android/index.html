@@ -173,6 +173,12 @@
             
 
             
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
         </div>
     </div>
 </nav>
@@ -193,65 +199,64 @@
 
     <div class="alert alert-secondary">
         <span class="data-en">If you haven't set up your environment (Android SDK, NDK, JDK), follow the</span>
-        <span class="data-ru">Если у вас не установлены Android SDK, NDK, JDK и т.д., сделайте это по инструкции:</span>
+        <span class="data-ru">Если вы еще не настроили окружение (Android SDK, NDK, JDK), следуйте инструкции:</span>
         <a href="/tutorials/tools/android/android-env/index.html" class="fw-bold text-dark lang-link-dynamic">
             <span class="data-en">Environment Setup Guide</span>
-            <span class="data-ru">Установка Android SDK, NDK, JDK, CMake</span>
+            <span class="data-ru">Руководство по настройке окружения</span>
         </a>
     </div>
 
     <h3 class="category-header">
         <span class="data-en">Download the AAR library</span>
-        <span class="data-ru">1. Загрузка примеров</span>
+        <span class="data-ru">1. Загрузка библиотеки AAR</span>
     </h3>
 
     <ul>
         <li>
             <span class="data-en">Download the Android development binaries (AAR) - specifically <b>SDL3-devel-3.4.4-android.zip</b> - from the <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.4" target="_blank" rel="noopener noreferrer">official SDL3 release page</a></span>
-            <span class="data-ru">Скачайте файлы для разработки под Android (AAR): <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.0">SDL3-devel-3.4.0-android.zip</a>.</span>
+            <span class="data-ru">Скачайте бинарные файлы для разработки под Android (AAR) — а именно <b>SDL3-devel-3.4.4-android.zip</b> — с <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.4" target="_blank" rel="noopener noreferrer">официальной страницы релизов SDL3</a>.</span>
         </li>
         <li>
             <span class="data-en">Move <b>SDL3-devel-3.4.4-android.zip</b> to the <b>C:/libs</b> folder (or your preferred directory)</span>
+            <span class="data-ru">Переместите архив <b>SDL3-devel-3.4.4-android.zip</b> в папку <b>C:/libs</b> (или любой другой удобный каталог).</span>
         </li>
         <li>
-            <span class="data-en">Extract the ZIP file into a folder named <b>SDL3-devel-3.4.4-android</b></span>
+            <span class="data-en">Extract the ZIP file into a folder named <b>SDL3-devel-3.4.4-android</b> like this:</span>
+            <span class="data-ru">Распакуйте ZIP-файл в папку с названием <b>SDL3-devel-3.4.4-android</b> вот так:</span>
             <br>
-            <img src="sdl3-devel-3.4.2-android.png">
+            <img src="/assets/img/tutorials/sdl3-renderer/android/start-android/sdl3-devel-3.4.4-android.png">
         </li>
     </ul>
 
     <h3 class="category-header">
         <span class="data-en">Download a Template</span>
-        <span class="data-ru">1. Загрузка примеров</span>
+        <span class="data-ru">2. Загрузка шаблона</span>
     </h3>
     <ul>
         <li>
             <span class="data-en">Download the <a href="https://github.com/madebr/sdlcross/tree/7ab6a37b5f57608ebbbb5b8b4fb395922a55378b" target="_blank" rel="noopener noreferrer">SDL3 Renderer Example</a> (displays squares on touch). If the previous repository is unavailable, please use my fork: <a href="https://github.com/8Observer8/sdlcross" target="_blank" rel="noopener noreferrer">link</a></span>
-            <span class="data-ru">Скачайте <a href="https://github.com/madebr/sdlcross/tree/0dd5f523c8702ee6a296adf27ca22d42a3ba97d0" target="_blank">пример с SDL3 Renderer API</a> (рисует квадраты при касании).</span>
+            <span class="data-ru">Скачайте <a href="https://github.com/madebr/sdlcross/tree/7ab6a37b5f57608ebbbb5b8b4fb395922a55378b" target="_blank" rel="noopener noreferrer">пример SDL3 Renderer</a> (рисует квадраты при касании). Если репозиторий недоступен, используйте мой форк: <a href="https://github.com/8Observer8/sdlcross" target="_blank" rel="noopener noreferrer">ссылка</a>.</span>
         </li>
         <li>
             <span class="data-en">Extract it to a folder of your choice</span>
+            <span class="data-ru">Распакуйте его в любую папку на ваш выбор.</span>
         </li>
         <li>
             <span class="data-en">Open this folder in your preferred code editor (e.g., <a href="https://www.sublimetext.com/download" target="_blank" rel="noopener noreferrer">Sublime Text 4</a>, Notepad++, etc.)</span>
+            <span class="data-ru">Откройте эту папку в вашем любимом текстовом редакторе (например, <a href="https://www.sublimetext.com/download" target="_blank" rel="noopener noreferrer">Sublime Text 4</a>, Notepad++ и т.д.).</span>
         </li>
     </ul>
 
     <h3 class="category-header">
         <span class="data-en">Project Configuration in the "android-project/app/build.gradle" file</span>
-        <span class="data-ru">2. Конфигурация проекта</span>
+        <span class="data-ru">3. Конфигурация проекта в файле "android-project/app/build.gradle"</span>
     </h3>
-
-    <!-- <p>
-            <span class="data-en">Extract <code>SDL3-3.4.0.aar</code> and place it in <code>app/libs</code>. Then, update your <code>app/build.gradle</code>:</span>
-            <span class="data-ru">Извлеките <code>SDL3-3.4.0.aar</code> и поместите его в <code>app/libs</code>. Затем обновите <code>app/build.gradle</code>:</span>
-        </p> -->
 
     <ul>
         <li>
-            <span class="data-en">Open this file <b>android-project/app/build.gradle</b></span>
+            <span class="data-en">Open the <b>android-project/app/build.gradle</b> file. It looks like this:</span>
+            <span class="data-ru">Откройте файл <b>android-project/app/build.gradle</b>. Он выглядит следующим образом:</span>
         </li>
-        <li>Open the <b>android-project/app/build.gradle</b> file. It looks like this:</li>
 
         <pre><code class="language-gradle">dependencies {
     implementation files('libs/SDL3-3.2.22.aar')
@@ -265,14 +270,17 @@
 }</code></pre>
 
         <li>
-            Delete the <b>implementation files('libs/SDL3_image-3.2.4.aar')</b> because we will not load an image in this guide
+            <span class="data-en">Delete the <b>implementation files('libs/SDL3_image-3.2.4.aar')</b> because we will not load an image in this guide</span>
+            <span class="data-ru">Удалите строку <b>implementation files('libs/SDL3_image-3.2.4.aar')</b>, так как в этом руководстве мы не будем загружать изображения.</span>
         </li>
 
         <li>
-            Set a path to the AAR file in this line <b>implementation files('libs/SDL3-3.2.22.aar')</b> (use / instead of \ in the path). Now we have this code:</li>
+            <span class="data-en">Set a path to the AAR file in this line <b>implementation files('libs/SDL3-3.2.22.aar')</b> (use / instead of \ in the path). Now we have this code:</span>
+            <span class="data-ru">Укажите путь к AAR-файлу в строке <b>implementation files('libs/SDL3-3.2.22.aar')</b> (используйте / вместо \ в пути). Теперь код выглядит так:</span>
+        </li>
 
         <pre><code class="language-gradle">dependencies {
-    implementation files('C:/libs/SDL3-devel-3.4.2-android/SDL3-3.4.2.aar')
+    implementation files('C:/libs/SDL3-devel-3.4.4-android/SDL3-3.4.4.aar')
 
     /* Use [create-prefab-aar.py](https://gist.github.com/madebr/3563a41ec9d287b6754c5fe764f56a1c)
      * to creat a Android prefab archive for Box2D.
@@ -283,9 +291,8 @@
 </code></pre>
 
         <li>
-
-            You see this code:
-
+            <span class="data-en">You see this code:</span>
+            <span class="data-ru">Найдите следующий блок кода:</span>
             <pre><code class="language-gradle">        externalNativeBuild {
             cmake {
                 arguments '-DANDROID_STL=c++_shared', '-DWITH_IMAGE=ON', '-DWITH_MIXER=OFF', '-DWITH_NET=OFF', '-DWITH_BOX2D=OFF'
@@ -293,11 +300,11 @@
                 // abiFilters 'arm64-v8a'
             }
         }</code></pre>
-
         </li>
 
         <li>
-            Disable the image drawing by setting <b>DWITH_IMAGE</b> to <b>OFF</b> like this <b>'-DWITH_IMAGE=OFF'</b>
+            <span class="data-en">Disable the image drawing by setting <b>DWITH_IMAGE</b> to <b>OFF</b> like this <b>'-DWITH_IMAGE=OFF'</b></span>
+            <span class="data-ru">Отключите поддержку изображений, установив <b>DWITH_IMAGE</b> в значение <b>OFF</b>: <b>'-DWITH_IMAGE=OFF'</b>.</span>
 
             <pre><code class="language-gradle">        externalNativeBuild {
             cmake {
@@ -306,11 +313,11 @@
                 // abiFilters 'arm64-v8a'
             }
         }</code></pre>
-
         </li>
 
         <li>
-            Disable building to all ABI (add a comment before <b>abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'</b>) and enable <b>arm64-v8a</b> only (delete a comment before <b>abiFilters 'arm64-v8a'</b>)
+            <span class="data-en">Disable building to all ABI (add a comment before <b>abiFilters 'armeabi-v7a', ...</b>) and enable <b>arm64-v8a</b> only (delete a comment before <b>abiFilters 'arm64-v8a'</b>)</span>
+            <span class="data-ru">Отключите сборку для всех ABI (закомментируйте строку <b>abiFilters 'armeabi-v7a', ...</b>) и включите только <b>arm64-v8a</b> (раскомментируйте соответствующую строку).</span>
 
             <pre><code class="language-gradle">        externalNativeBuild {
             cmake {
@@ -319,44 +326,35 @@
                 abiFilters 'arm64-v8a'
             }
         }</code></pre>
-
         </li>
-
-
     </ul>
 
     <h3 class="category-header">
         <span class="data-en">Build and Deploy</span>
-        <span class="data-ru">3. Сборка и развертывание</span>
+        <span class="data-ru">4. Сборка и установка</span>
     </h3>
 
     <p>
         <span class="data-en">Open a terminal in the <b>android-project</b> and run the following commands:</span>
-        <span class="data-ru">Откройте терминал в корне проекта и выполните следующие команды:</span>
+        <span class="data-ru">Откройте терминал в папке <b>android-project</b> и выполните следующие команды:</span>
     </p>
-
-    <!-- <div class="row">
-        <div class="col-md-6">
-            <h6><span class="data-en">Step 1: Compile</span></h6>
-            <pre><code class="language-bash">gradlew assembleDebug</code></pre>
-        </div>
-        <div class="col-md-6">
-            <h6><span class="data-en">Step 2: Install (use the second terminal for this)</span></h6>
-            <pre><code class="language-bash">cd app/build/outputs/apk/debug</code></pre>
-            <pre><code class="language-bash">adb install -r app-debug.apk</code></pre>
-        </div>
-    </div> -->
 
     <div class="row mb-4">
         <div class="col-12">
-            <h6 class="fw-bold"><span class="data-en">Step 1: Compile</span></h6>
+            <h6 class="fw-bold">
+                <span class="data-en">Step 1: Compile</span>
+                <span class="data-ru">Шаг 1: Компиляция</span>
+            </h6>
             <pre><code class="language-bash">gradlew assembleDebug</code></pre>
         </div>
     </div>
 
     <div class="row mb-4">
         <div class="col-12">
-            <h6 class="fw-bold"><span class="data-en">Step 2: Install (use the second terminal for this)</span></h6>
+            <h6 class="fw-bold">
+                <span class="data-en">Step 2: Install (use the second terminal for this)</span>
+                <span class="data-ru">Шаг 2: Установка (используйте для этого второе окно терминала)</span>
+            </h6>
             <div class="bg-light p-2 rounded border-start border-4 border-primary mb-2">
                 <pre class="m-0"><code class="language-bash">cd app/build/outputs/apk/debug</code></pre>
                 <pre class="m-0"><code class="language-bash">adb install -r app-debug.apk</code></pre>
@@ -365,27 +363,37 @@
     </div>
 
     <h3 class="category-header">
-        Changing a code a rebuild
+        <span class="data-en">Changing a code and rebuild</span>
+        <span class="data-ru">Изменение кода и пересборка</span>
     </h3>
 
     <ul>
-        <li>You can change something in the <b>src/main.c</b> file (for example, a background color)</li>
-        <li>Switch to the first terminal and press the up arrow key to select the <b>gradlew assembleDebug</b>. Press Enter to build a project</li>
-        <li>switch to the second terminal and press the up arrow key to select the <b>adb install -r app-debug.apk</b>. Press Enter to build a project</li>
+        <li>
+            <span class="data-en">You can change something in the <b>src/main.c</b> file (for example, a background color)</span>
+            <span class="data-ru">Вы можете изменить что-нибудь в файле <b>src/main.c</b> (например, цвет фона).</span>
+        </li>
+        <li>
+            <span class="data-en">Switch to the first terminal and press the up arrow key to select the <b>gradlew assembleDebug</b>. Press Enter to build a project</span>
+            <span class="data-ru">Переключитесь в первый терминал и нажмите клавишу "вверх", чтобы выбрать команду <b>gradlew assembleDebug</b>. Нажмите Enter для сборки проекта.</span>
+        </li>
+        <li>
+            <span class="data-en">Switch to the second terminal and press the up arrow key to select the <b>adb install -r app-debug.apk</b>. Press Enter to install the project</span>
+            <span class="data-ru">Переключитесь во второй терминал и нажмите "вверх", чтобы выбрать <b>adb install -r app-debug.apk</b>. Нажмите Enter для установки приложения.</span>
+        </li>
     </ul>
 
     <h3 class="category-header">
         <span class="data-en">Useful Tips</span>
-        <span class="data-ru">4. Полезные советы</span>
+        <span class="data-ru">5. Полезные советы</span>
     </h3>
     <ul>
         <li>
-            <span class="data-en">Check connected devices: <code>adb devices</code>.</span>
-            <span class="data-ru">Проверка подключенных устройств: <code>adb devices</code>.</span>
+            <span class="data-en">Check connected devices: <code>adb devices</code></span>
+            <span class="data-ru">Проверка подключенных устройств: <code>adb devices</code></span>
         </li>
         <li>
             <span class="data-en">Use <a href="https://github.com/Genymobile/scrcpy" target="_blank" rel="noopener noreferrer">scrcpy</a> to mirror your phone screen to your PC via USB.</span>
-            <span class="data-ru">Используйте <a href="https://github.com/Genymobile/scrcpy">scrcpy</a> для вывода экрана телефона на ПК через USB.</span>
+            <span class="data-ru">Используйте <a href="https://github.com/Genymobile/scrcpy" target="_blank" rel="noopener noreferrer">scrcpy</a> для трансляции экрана телефона на ПК через USB.</span>
         </li>
     </ul>
 </div>
