@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Building FamTrinli&#39;s 16 Games | Ivan Enzhaev</title>
+<title>Building Hello World in C (Sublime Text 4 + Console) | Ivan Enzhaev</title>
 <link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
 
 
@@ -188,13 +188,9 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold text-dark">
-            <span class="data-en">Building 16 Games in C++ (SFML)</span>
-            <span class="data-ru">Сборка 16 игр на C++ (SFML)</span>
+            <span class="data-en">Building "Hello World!" in C from Console</span>
+            <span class="data-ru">Сборка "Hello World!" на Си из консоли</span>
         </h1>
-        <p class="text-muted">
-            <span class="data-en">Following the classic tutorial series by <strong>FamTrinli</strong>.</span>
-            <span class="data-ru">По мотивам классической серии уроков от <strong>FamTrinli</strong>.</span>
-        </p>
     </header>
 
     <div class="alert alert-primary">
@@ -203,84 +199,122 @@
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">1. Project Organization</span>
-        <span class="data-ru">1. Организация проекта</span>
+        <span class="data-en">1. Project Setup</span>
+        <span class="data-ru">1. Подготовка проекта</span>
+    </h3>
+    <ul>
+        <li>
+            <span class="data-en">Create a new folder named <code>hello-world-c</code>.</span>
+            <span class="data-ru">Создайте новую папку под названием <code>hello-world-c</code>.</span>
+        </li>
+        <li>
+            <span class="data-en">Open this folder in your text editor (Sublime Text 4, Notepad++, etc.).</span>
+            <span class="data-ru">Откройте эту папку в текстовом редакторе (Sublime Text 4, Notepad++ и т.д.).</span>
+        </li>
+        <li>
+            <span class="data-en">Create a <code>CMakeLists.txt</code> file and paste the following code:</span>
+            <span class="data-ru">Создайте файл <code>CMakeLists.txt</code> и скопируйте в него код:</span>
+        </li>
+    </ul>
+
+    <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+project(hello-world-c)
+
+# Set C standard (Must be before add_executable)
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
+# Name of the executable (app.exe on Windows)
+add_executable(app)
+
+# Add source files
+target_sources(app
+    PRIVATE
+    src/main.c
+)</code></pre>
+
+    <h3 class="category-header mt-5">
+        <span class="data-en">2. Source Code</span>
+        <span class="data-ru">2. Исходный код</span>
     </h3>
     <p>
-        <span class="data-en">For each game (e.g., <code>04 Snake</code>), copy your source files (<code>main.cpp</code> and the <code>images/</code> folder) into a directory and add the following three scripts:</span>
-        <span class="data-ru">Для каждой игры (например, <code>04 Snake</code>) скопируйте исходные файлы (<code>main.cpp</code> и папку <code>images/</code>) в директорию и добавьте следующие три скрипта:</span>
+        <span class="data-en">Create a folder named <code>src</code>, and inside it, create a file named <code>main.c</code>:</span>
+        <span class="data-ru">Создайте папку <code>src</code>, а в ней файл <code>main.c</code>:</span>
     </p>
+    <pre><code class="language-c">#include &lt;stdio.h&gt;
 
-    <div class="row">
-        <div class="col-md-6">
-            <h6><code>CMakeLists.txt</code></h6>
-            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.20)
-project(FamTrinliGames)
-
-add_executable(app main.cpp)
-
-find_package(SFML 2.6 COMPONENTS system window graphics REQUIRED)
-target_link_libraries(app sfml-system sfml-window sfml-graphics)
-
-target_compile_features(app PRIVATE cxx_std_20)
-target_link_options(app PRIVATE -static)
-
-# Copy images to build folder automatically
-add_custom_command(TARGET app POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/images $&lt;TARGET_FILE_DIR:app&gt;/images)</code></pre>
-        </div>
-        <div class="col-md-6">
-            <h6><span class="data-en">Automation Scripts</span><span class="data-ru">Скрипты автоматизации</span></h6>
-            <p><strong>config.bat</strong></p>
-            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist -DSFML_DIR=E:/libs/sfml-2.6.2-mingw/release/lib/cmake/SFML</code></pre>
-            <p><strong>build.bat</strong></p>
-            <pre><code class="language-bash">cmake --build dist</code></pre>
-            <p><strong>run-exe.bat</strong></p>
-            <pre><code class="language-bash">dist\app.exe</code></pre>
-        </div>
-    </div>
+int main()
+{
+    printf("Hello World!\n");
+    return 0;
+}</code></pre>
 
     <hr class="my-5">
 
     <h3 class="category-header">
-        <span class="data-en">2. Method A: Sublime Text 4 + CMD</span>
-        <span class="data-ru">2. Способ А: Sublime Text 4 + CMD</span>
+        <span class="data-en">3. Configuration & Build</span>
+        <span class="data-ru">3. Конфигурирование и сборка</span>
     </h3>
-    <ol>
-        <li><span class="data-en">Open the project folder in <strong>Sublime Text 4</strong> to edit the code.</span><span class="data-ru">Откройте папку проекта в <strong>Sublime Text 4</strong> для редактирования кода.</span></li>
-        <li><span class="data-en">Open CMD in the folder and run the scripts in order:</span><span class="data-ru">Откройте CMD в папке и запустите скрипты по порядку:</span></li>
-    </ol>
-    <pre><code class="language-bash">config.bat   # Only needs to be run once
-build.bat    # Run this every time you change the code
-run-exe.bat  # Launch the game</code></pre>
+    <p>
+        <span class="data-en">Open CMD in the project folder and run the configuration command:</span>
+        <span class="data-ru">Откройте консоль в папке проекта и введите команду конфигурирования:</span>
+    </p>
+    <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist/win -DCMAKE_BUILD_TYPE=Debug</code></pre>
+
+    <div class="alert alert-info shadow-sm mt-3">
+        <ul class="mb-0">
+            <li><strong>-G "MinGW Makefiles"</strong>: <span class="data-en">Use MinGW as the generator.</span><span class="data-ru">используем MinGW.</span></li>
+            <li><strong>-S .</strong>: <span class="data-en">Source is in the current folder.</span><span class="data-ru">исходники в текущей папке.</span></li>
+            <li><strong>-B dist/win</strong>: <span class="data-en">Store build files in <code>dist/win</code>.</span><span class="data-ru">папка для конфигурационных файлов.</span></li>
+            <li><strong>-DCMAKE_BUILD_TYPE=Debug</strong>: <span class="data-en">Faster build for development.</span><span class="data-ru">отладочная сборка.</span></li>
+        </ul>
+    </div>
+
+    <p class="mt-4">
+        <span class="data-en">Now compile and run the application:</span>
+        <span class="data-ru">Теперь скомпилируйте и запустите приложение:</span>
+    </p>
+    <pre><code class="language-bash">cd dist\win
+cmake --build .
+app</code></pre>
+
+    <hr class="my-5">
 
     <h3 class="category-header">
-        <span class="data-en">3. Method B: Qt Creator</span>
-        <span class="data-ru">3. Способ Б: Qt Creator</span>
+        <span class="data-en">4. Automation Scripts (Batch files)</span>
+        <span class="data-ru">4. Скрипты автоматизации (.bat)</span>
     </h3>
-    <ul>
-        <li><span class="data-en">File > Open File or Project > Select <code>CMakeLists.txt</code>.</span><span class="data-ru">Файл > Открыть файл или проект > Выберите <code>CMakeLists.txt</code>.</span></li>
-        <li><span class="data-en">In <strong>Projects</strong> tab, add the SFML path to CMake configuration:</span><span class="data-ru">Вкладка <strong>Проекты</strong>, добавьте путь к SFML в конфигурацию CMake:</span></li>
-    </ul>
-    <pre><code class="language-bash">-DSFML_DIR=E:/libs/sfml-2.6.2-mingw/release/lib/cmake/SFML</code></pre>
-    <p><span class="data-en">Press <strong>Ctrl+R</strong> to build and run.</span><span class="data-ru">Нажмите <strong>Ctrl+R</strong> для сборки и запуска.</span></p>
+    <p>
+        <span class="data-en">To speed up your workflow, create these three files in the project root:</span>
+        <span class="data-ru">Чтобы работать быстрее, создайте три этих файла в корне проекта:</span>
+    </p>
 
-    <h3 class="category-header">
-        <span class="data-en">4. Method C: CLion (Free Non-Commercial)</span>
-        <span class="data-ru">4. Способ В: CLion (Бесплатно)</span>
-    </h3>
-    <ol>
-        <li><span class="data-en">Open CLion and select <strong>Open</strong>, then choose the project folder.</span><span class="data-ru">Откройте CLion, нажмите <strong>Open</strong> и выберите папку проекта.</span></li>
-        <li><span class="data-en">Go to <strong>Settings > Build, Execution, Deployment > CMake</strong>.</span><span class="data-ru">Перейдите в <strong>Settings > Build, Execution, Deployment > CMake</strong>.</span></li>
-        <li><span class="data-en">In "CMake options", paste:</span><span class="data-ru">В поле "CMake options" вставьте:</span></li>
-    </ol>
-    <pre><code class="language-bash">-DSFML_DIR=E:/libs/sfml-2.6.2-mingw/release/lib/cmake/SFML</code></pre>
-    <p><span class="data-en">Click the <strong>Green Play Button</strong> at the top right.</span><span class="data-ru">Нажмите <strong>зеленую кнопку Play</strong> в правом верхнем углу.</span></p>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="p-3 bg-light rounded h-100">
+                <strong>config-exe.bat</strong>
+                <pre class="mb-0 mt-2 small"><code>cmake -G "MinGW Makefiles" -S . -B dist/win -DCMAKE_BUILD_TYPE=Debug</code></pre>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-3 bg-light rounded h-100">
+                <strong>build-exe.bat</strong>
+                <pre class="mb-0 mt-2 small"><code>cd dist\win
+cmake --build .
+cd ..\..</code></pre>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-3 bg-light rounded h-100">
+                <strong>run-exe.bat</strong>
+                <pre class="mb-0 mt-2 small"><code>dist\win\app</code></pre>
+            </div>
+        </div>
+    </div>
 
-    <div class="alert alert-success mt-4">
-        <span class="data-en"><strong>Tip:</strong> Since we used <code>-static</code> in the CMake file, you don't need to copy SFML .dll files into your folder!</span>
-        <span class="data-ru"><strong>Совет:</strong> Так как мы использовали <code>-static</code> в файле CMake, вам не нужно копировать .dll файлы SFML в папку с игрой!</span>
+    <div class="alert alert-success mt-4 shadow-sm">
+        <span class="data-en"><strong>Usage:</strong> Now you can just type <code>config-exe</code>, <code>build-exe</code>, and <code>run-exe</code> in your terminal. Use the <strong>UP Arrow</strong> key in CMD to quickly cycle through previous commands!</span>
+        <span class="data-ru"><strong>Использование:</strong> Теперь вы можете просто вводить <code>config-exe</code>, <code>build-exe</code> и <code>run-exe</code>. Используйте клавишу <strong>Стрелка Вверх</strong> в CMD, чтобы быстро выбирать предыдущие команды!</span>
     </div>
 </div>
 
@@ -425,6 +459,22 @@ function copyToClipboard(text, button) {
         
 
         
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
         <block>
             <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
         </block>
@@ -437,15 +487,15 @@ function copyToClipboard(text, button) {
     
     <block>
         
-
-        
-
-        
-
-        
         <block>
-            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
         </block>
+        
+
+        
+
+        
+
         
 
         

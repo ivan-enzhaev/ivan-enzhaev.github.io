@@ -257,7 +257,7 @@
             <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
 project(rectangle-sdl3-c LANGUAGES C)
 
-set(SDL3_DIR "C:/libs/SDL3-mingw/lib/cmake/SDL3")
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.4-mingw/lib/cmake/SDL3")
 find_package(SDL3 REQUIRED)
 
 add_executable(app)
@@ -284,7 +284,7 @@ target_link_options(app PRIVATE -mconsole)</code></pre>
             <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
 project(rectangle-sdl3-cpp LANGUAGES CXX)
 
-set(SDL3_DIR "C:/libs/SDL3-mingw/lib/cmake/SDL3")
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.4-mingw/lib/cmake/SDL3")
 find_package(SDL3 REQUIRED)
 
 add_executable(app)
@@ -606,6 +606,8 @@ function copyToClipboard(text, button) {
         
 
         
+
+        
     </block>
     
     <block>
@@ -616,6 +618,8 @@ function copyToClipboard(text, button) {
             <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
             <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
         </block>
+        
+
         
 
         
@@ -635,6 +639,8 @@ function copyToClipboard(text, button) {
             <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
         </block>
         
+
+        
     </block>
     
     <block>
@@ -646,6 +652,8 @@ function copyToClipboard(text, button) {
         <block>
             <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
         </block>
+        
+
         
 
         

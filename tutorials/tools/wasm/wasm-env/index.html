@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Building FamTrinli&#39;s 16 Games | Ivan Enzhaev</title>
+<title>Emscripten (Wasm) Setup | Ivan Enzhaev</title>
 <link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
 
 
@@ -188,99 +188,145 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold text-dark">
-            <span class="data-en">Building 16 Games in C++ (SFML)</span>
-            <span class="data-ru">Сборка 16 игр на C++ (SFML)</span>
+            <span class="data-en">Emscripten (Wasm) Environment Setup</span>
+            <span class="data-ru">Установка окружения Emscripten (Wasm)</span>
         </h1>
-        <p class="text-muted">
-            <span class="data-en">Following the classic tutorial series by <strong>FamTrinli</strong>.</span>
-            <span class="data-ru">По мотивам классической серии уроков от <strong>FamTrinli</strong>.</span>
-        </p>
     </header>
 
-    <div class="alert alert-primary">
-        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed my <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">Environment Setup Guide</a> (MinGW 13.1 & CMake).</span>
-        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">руководства по настройке среды</a> (MinGW 13.1 и CMake).</span>
-    </div>
-
     <h3 class="category-header">
-        <span class="data-en">1. Project Organization</span>
-        <span class="data-ru">1. Организация проекта</span>
+        <span class="data-en">1. Prerequisites: Git</span>
+        <span class="data-ru">1. Подготовка: Git</span>
     </h3>
     <p>
-        <span class="data-en">For each game (e.g., <code>04 Snake</code>), copy your source files (<code>main.cpp</code> and the <code>images/</code> folder) into a directory and add the following three scripts:</span>
-        <span class="data-ru">Для каждой игры (например, <code>04 Snake</code>) скопируйте исходные файлы (<code>main.cpp</code> и папку <code>images/</code>) в директорию и добавьте следующие три скрипта:</span>
+        <span class="data-en">To clone the Emscripten SDK, you first need to install Git. Download the installer from the <a href="https://git-scm.com/install/windows" target="_blank" rel="noopener noreferrer">official site</a> and follow the standard installation steps.</span>
+        <span class="data-ru">Для клонирования Emscripten SDK сначала необходимо установить Git. Скачайте установщик с <a href="https://git-scm.com/install/windows" target="_blank" rel="noopener noreferrer">официального сайта</a> и следуйте стандартной процедуре установки.</span>
     </p>
 
-    <div class="row">
-        <div class="col-md-6">
-            <h6><code>CMakeLists.txt</code></h6>
-            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.20)
-project(FamTrinliGames)
+    <h3 class="category-header">
+        <span class="data-en">2. Emscripten SDK (emsdk) Installation</span>
+        <span class="data-ru">2. Установка Emscripten SDK (emsdk)</span>
+    </h3>
+    <p>
+        <span class="data-en">Open CMD at the root of your drive (e.g., <code>C:\</code>) and run:</span>
+        <span class="data-ru">Откройте CMD в корне диска (например, <code>C:\</code>) и выполните:</span>
+    </p>
+    <pre><code class="language-bash"># Clone the repository
+git clone https://github.com/emscripten-core/emsdk.git
+cd emsdk
 
-add_executable(app main.cpp)
+# Install and activate version 4.0.15
+emsdk install 4.0.15
+emsdk activate 4.0.15</code></pre>
 
-find_package(SFML 2.6 COMPONENTS system window graphics REQUIRED)
-target_link_libraries(app sfml-system sfml-window sfml-graphics)
-
-target_compile_features(app PRIVATE cxx_std_20)
-target_link_options(app PRIVATE -static)
-
-# Copy images to build folder automatically
-add_custom_command(TARGET app POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/images $&lt;TARGET_FILE_DIR:app&gt;/images)</code></pre>
-        </div>
-        <div class="col-md-6">
-            <h6><span class="data-en">Automation Scripts</span><span class="data-ru">Скрипты автоматизации</span></h6>
-            <p><strong>config.bat</strong></p>
-            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist -DSFML_DIR=E:/libs/sfml-2.6.2-mingw/release/lib/cmake/SFML</code></pre>
-            <p><strong>build.bat</strong></p>
-            <pre><code class="language-bash">cmake --build dist</code></pre>
-            <p><strong>run-exe.bat</strong></p>
-            <pre><code class="language-bash">dist\app.exe</code></pre>
-        </div>
+    <div class="alert alert-warning">
+        <span class="data-en"><strong>Note:</strong> Always build your libraries with the same emsdk version. Do not mix versions. Add <code>C:\emsdk\upstream\emscripten</code> to your <strong>Path</strong> environment variable.</span>
+        <span class="data-ru"><strong>Примечание:</strong> Всегда собирайте библиотеки одной и той же версией emsdk. Не смешивайте версии. Добавьте путь <code>C:\emsdk\upstream\emscripten</code> в переменную окружения <strong>Path</strong>.</span>
     </div>
 
-    <hr class="my-5">
-
     <h3 class="category-header">
-        <span class="data-en">2. Method A: Sublime Text 4 + CMD</span>
-        <span class="data-ru">2. Способ А: Sublime Text 4 + CMD</span>
-    </h3>
-    <ol>
-        <li><span class="data-en">Open the project folder in <strong>Sublime Text 4</strong> to edit the code.</span><span class="data-ru">Откройте папку проекта в <strong>Sublime Text 4</strong> для редактирования кода.</span></li>
-        <li><span class="data-en">Open CMD in the folder and run the scripts in order:</span><span class="data-ru">Откройте CMD в папке и запустите скрипты по порядку:</span></li>
-    </ol>
-    <pre><code class="language-bash">config.bat   # Only needs to be run once
-build.bat    # Run this every time you change the code
-run-exe.bat  # Launch the game</code></pre>
-
-    <h3 class="category-header">
-        <span class="data-en">3. Method B: Qt Creator</span>
-        <span class="data-ru">3. Способ Б: Qt Creator</span>
+        <span class="data-en">3. CMake & Node.js</span>
+        <span class="data-ru">3. CMake и Node.js</span>
     </h3>
     <ul>
-        <li><span class="data-en">File > Open File or Project > Select <code>CMakeLists.txt</code>.</span><span class="data-ru">Файл > Открыть файл или проект > Выберите <code>CMakeLists.txt</code>.</span></li>
-        <li><span class="data-en">In <strong>Projects</strong> tab, add the SFML path to CMake configuration:</span><span class="data-ru">Вкладка <strong>Проекты</strong>, добавьте путь к SFML в конфигурацию CMake:</span></li>
+        <li>
+            <span class="data-en">Install <a href="https://github.com/Kitware/CMake/releases" target="_blank" rel="noopener noreferrer">CMake</a> (msi installer). Verify with <code>cmake --version</code></span>
+            <span class="data-ru">Установите <a href="https://github.com/Kitware/CMake/releases" target="_blank" rel="noopener noreferrer">CMake</a> (msi установщик). Проверьте командой <code>cmake --version</code></span>
+        </li>
+        <li>
+            <span class="data-en">Install <a href="https://nodejs.org/" target="_blank">Node.js</a>. Then, install a local server:</span>
+            <span class="data-ru">Установите <a href="https://nodejs.org/" target="_blank">Node.js</a>. Затем установите локальный сервер:</span>
+            <pre><code class="language-bash">npm i http-server -g</code></pre>
+        </li>
     </ul>
-    <pre><code class="language-bash">-DSFML_DIR=E:/libs/sfml-2.6.2-mingw/release/lib/cmake/SFML</code></pre>
-    <p><span class="data-en">Press <strong>Ctrl+R</strong> to build and run.</span><span class="data-ru">Нажмите <strong>Ctrl+R</strong> для сборки и запуска.</span></p>
 
     <h3 class="category-header">
-        <span class="data-en">4. Method C: CLion (Free Non-Commercial)</span>
-        <span class="data-ru">4. Способ В: CLion (Бесплатно)</span>
+        <span class="data-en">4. "Hello World" Project</span>
+        <span class="data-ru">4. Проект "Hello World"</span>
     </h3>
-    <ol>
-        <li><span class="data-en">Open CLion and select <strong>Open</strong>, then choose the project folder.</span><span class="data-ru">Откройте CLion, нажмите <strong>Open</strong> и выберите папку проекта.</span></li>
-        <li><span class="data-en">Go to <strong>Settings > Build, Execution, Deployment > CMake</strong>.</span><span class="data-ru">Перейдите в <strong>Settings > Build, Execution, Deployment > CMake</strong>.</span></li>
-        <li><span class="data-en">In "CMake options", paste:</span><span class="data-ru">В поле "CMake options" вставьте:</span></li>
-    </ol>
-    <pre><code class="language-bash">-DSFML_DIR=E:/libs/sfml-2.6.2-mingw/release/lib/cmake/SFML</code></pre>
-    <p><span class="data-en">Click the <strong>Green Play Button</strong> at the top right.</span><span class="data-ru">Нажмите <strong>зеленую кнопку Play</strong> в правом верхнем углу.</span></p>
+    <p>
+        <span class="data-en">Structure your project <code>hello-wasm-c</code> as follows:</span>
+        <span class="data-ru">Создайте структуру проекта <code>hello-wasm-c</code> следующим образом:</span>
+    </p>
 
-    <div class="alert alert-success mt-4">
-        <span class="data-en"><strong>Tip:</strong> Since we used <code>-static</code> in the CMake file, you don't need to copy SFML .dll files into your folder!</span>
-        <span class="data-ru"><strong>Совет:</strong> Так как мы использовали <code>-static</code> в файле CMake, вам не нужно копировать .dll файлы SFML в папку с игрой!</span>
+    <p><strong>src/main.c:</strong></p>
+    <pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;emscripten.h&gt;
+
+// Function that will be called by the browser every iteration (frame)
+void loop()
+{
+    // User input processing or frame updates usually happen here
+}
+
+int main()
+{
+    printf("Hello from WebAssembly!\n");
+
+    // Sets the main application loop. 
+    // 0 — use the browser's default frame rate.
+    // 1 — simulate an infinite loop (prevents exiting main).
+    emscripten_set_main_loop(loop, 0, 1); 
+
+    return 0;
+}</code></pre>
+
+    <p><strong>CMakeLists.txt:</strong></p>
+    <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+project(hello-wasm-c)
+
+# Set the C standard (required before add_executable)
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
+# Define the output application name (on Windows it would be app.exe, 
+# while for the web it will be app.js / app.wasm)
+add_executable(app)
+
+# Add source files to the executable build
+target_sources(app
+PRIVATE
+    src/main.c
+)</code></pre>
+
+    <p><strong>public/index.html:</strong></p>
+    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+    &lt;canvas id="canvas"&gt;&lt;/canvas&gt;
+    &lt;script async src="./js/app.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;
+</code></pre></code></pre>
+
+    <h3 class="category-header">
+        <span class="data-en">5. Build and Run</span>
+        <span class="data-ru">5. Сборка и запуск</span>
+    </h3>
+    <p>
+        <span class="data-en">Configure and build the project:</span>
+        <span class="data-ru">Сконфигурируйте и соберите проект:</span>
+    </p>
+    <pre><code class="language-bash"># Configure
+emcmake cmake -S . -B dist -DCMAKE_BUILD_TYPE=Debug
+
+# Build
+cmake --build dist</code></pre>
+
+    <p>
+        <span class="data-en">Move <code>app.js</code> and <code>app.wasm</code> to your <code>public/js/</code> folder, create an <code>index.html</code> linking the script, and start the server:</span>
+        <span class="data-ru">Переместите <code>app.js</code> и <code>app.wasm</code> в <code>public/js/</code>, создайте <code>index.html</code> с подключением скрипта и запустите сервер:</span>
+    </p>
+    <pre><code class="language-bash">http-server -c-1</code></pre>
+    <div class="alert alert-info">
+        <span class="data-en">Open <strong>localhost:8080</strong> and check the browser console (F12) to see the output.</span>
+        <span class="data-ru">Откройте <strong>localhost:8080</strong> и проверьте консоль браузера (F12), чтобы увидеть результат.</span>
     </div>
 </div>
 
@@ -437,6 +483,22 @@ function copyToClipboard(text, button) {
     
     <block>
         
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
 
         
 
@@ -448,6 +510,22 @@ function copyToClipboard(text, button) {
         </block>
         
 
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-markup.min.js"></script>
+        </block>
         
     </block>
     

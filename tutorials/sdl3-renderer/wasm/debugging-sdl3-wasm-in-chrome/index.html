@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Building FamTrinli&#39;s 16 Games | Ivan Enzhaev</title>
+<title>Debugging SDL3 WebAssembly in Chrome (DWARF) | Ivan Enzhaev</title>
 <link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
 
 
@@ -187,102 +187,95 @@
         
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
-        <h1 class="fw-bold text-dark">
-            <span class="data-en">Building 16 Games in C++ (SFML)</span>
-            <span class="data-ru">Сборка 16 игр на C++ (SFML)</span>
+        <h1 class="fw-bold">
+            <span class="data-en">Debugging SDL3 WebAssembly in Chrome</span>
+            <span class="data-ru">Отладка SDL3 WebAssembly в Chrome</span>
         </h1>
-        <p class="text-muted">
-            <span class="data-en">Following the classic tutorial series by <strong>FamTrinli</strong>.</span>
-            <span class="data-ru">По мотивам классической серии уроков от <strong>FamTrinli</strong>.</span>
+        <p class="lead text-muted">
+            <span class="data-en">A guide to source-level debugging using the DWARF extension.</span>
+            <span class="data-ru">Руководство по отладке на уровне исходного кода с использованием расширения DWARF.</span>
         </p>
     </header>
 
-    <div class="alert alert-primary">
-        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed my <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">Environment Setup Guide</a> (MinGW 13.1 & CMake).</span>
-        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">руководства по настройке среды</a> (MinGW 13.1 и CMake).</span>
-    </div>
+    <h3 class="category-header">
+        <span class="data-en">1. Prerequisites</span>
+        <span class="data-ru">1. Предварительные требования</span>
+    </h3>
+
+    <ul>
+        <li>
+            <span class="data-en">Ensure you have <b>emsdk</b> installed. If not, follow my <a href="/tutorials/tools/wasm/wasm-env/" target="_blank">Emscripten Setup Guide</a>.</span>
+            <span class="data-ru">Убедитесь, что у вас установлен <b>emsdk</b>. Если нет, воспользуйтесь моим <a href="/tutorials/tools/wasm/wasm-env/" target="_blank">руководством по настройке Emscripten</a>.</span>
+        </li>
+        <li>
+            <span class="data-en">Install the <b>C/C++ DevTools Support (DWARF)</b> extension: <a href="https://chromewebstore.google.com/detail/cc++-devtools-support-dwa/pdcpmagijalfljmkmjngeonclgbbannb" target="_blank">Chrome Web Store</a>. This allows Chrome to read the debug information inside the <code>.wasm</code> file.</span>
+            <span class="data-ru">Установите расширение <b>C/C++ DevTools Support (DWARF)</b>: <a href="https://chromewebstore.google.com/detail/cc++-devtools-support-dwa/pdcpmagijalfljmkmjngeonclgbbannb" target="_blank">Chrome Web Store</a>. Это позволит Chrome читать отладочную информацию внутри файла <code>.wasm</code>.</span>
+        </li>
+        <li>
+            <span class="data-en">Install <b>http-server</b> via npm to serve your files:</span>
+            <span class="data-ru">Установите <b>http-server</b> через npm для запуска локального сервера:</span>
+            <pre><code class="language-bash">npm install -g http-server</code></pre>
+        </li>
+    </ul>
 
     <h3 class="category-header">
-        <span class="data-en">1. Project Organization</span>
-        <span class="data-ru">1. Организация проекта</span>
+        <span class="data-en">2. Download and Build the Example</span>
+        <span class="data-ru">2. Загрузка и сборка примера</span>
     </h3>
+
     <p>
-        <span class="data-en">For each game (e.g., <code>04 Snake</code>), copy your source files (<code>main.cpp</code> and the <code>images/</code> folder) into a directory and add the following three scripts:</span>
-        <span class="data-ru">Для каждой игры (например, <code>04 Snake</code>) скопируйте исходные файлы (<code>main.cpp</code> и папку <code>images/</code>) в директорию и добавьте следующие три скрипта:</span>
+        <span class="data-en">Download the example project: <a href="https://github.com/ivan-enzhaev/rectangles-debug-wasm-sdl3-c" target="_blank">rectangles-debug-wasm-sdl3-c</a>.</span>
+        <span class="data-ru">Скачайте пример проекта: <a href="https://github.com/ivan-enzhaev/rectangles-debug-wasm-sdl3-c" target="_blank">rectangles-debug-wasm-sdl3-c</a>.</span>
     </p>
 
-    <div class="row">
-        <div class="col-md-6">
-            <h6><code>CMakeLists.txt</code></h6>
-            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.20)
-project(FamTrinliGames)
+    <p>
+        <span class="data-en">Open your terminal and run the following commands to build the project with debug symbols:</span>
+        <span class="data-ru">Откройте терминал и выполните следующие команды для сборки проекта с отладочными символами:</span>
+    </p>
 
-add_executable(app main.cpp)
-
-find_package(SFML 2.6 COMPONENTS system window graphics REQUIRED)
-target_link_libraries(app sfml-system sfml-window sfml-graphics)
-
-target_compile_features(app PRIVATE cxx_std_20)
-target_link_options(app PRIVATE -static)
-
-# Copy images to build folder automatically
-add_custom_command(TARGET app POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/images $&lt;TARGET_FILE_DIR:app&gt;/images)</code></pre>
-        </div>
-        <div class="col-md-6">
-            <h6><span class="data-en">Automation Scripts</span><span class="data-ru">Скрипты автоматизации</span></h6>
-            <p><strong>config.bat</strong></p>
-            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist -DSFML_DIR=E:/libs/sfml-2.6.2-mingw/release/lib/cmake/SFML</code></pre>
-            <p><strong>build.bat</strong></p>
-            <pre><code class="language-bash">cmake --build dist</code></pre>
-            <p><strong>run-exe.bat</strong></p>
-            <pre><code class="language-bash">dist\app.exe</code></pre>
-        </div>
-    </div>
-
-    <hr class="my-5">
+    <pre><code class="language-bash">cd rectangles-debug-wasm-sdl3-c
+config-wasm
+build-wasm
+http-server -c-1</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">2. Method A: Sublime Text 4 + CMD</span>
-        <span class="data-ru">2. Способ А: Sublime Text 4 + CMD</span>
+        <span class="data-en">3. Debugging in Chrome</span>
+        <span class="data-ru">3. Отладка в Chrome</span>
     </h3>
+
     <ol>
-        <li><span class="data-en">Open the project folder in <strong>Sublime Text 4</strong> to edit the code.</span><span class="data-ru">Откройте папку проекта в <strong>Sublime Text 4</strong> для редактирования кода.</span></li>
-        <li><span class="data-en">Open CMD in the folder and run the scripts in order:</span><span class="data-ru">Откройте CMD в папке и запустите скрипты по порядку:</span></li>
+        <li>
+            <span class="data-en">Open Chrome and navigate to <code>http://localhost:8080/</code>.</span>
+            <span class="data-ru">Откройте Chrome и перейдите по адресу <code>http://localhost:8080/</code>.</span>
+        </li>
+        <li>
+            <span class="data-en">Open <b>DevTools</b> (F12 or Ctrl+Shift+I).</span>
+            <span class="data-ru">Откройте <b>DevTools</b> (F12 или Ctrl+Shift+I).</span>
+        </li>
+        <li>
+            <span class="data-en">Go to the <b>Sources</b> tab. On the left panel, you should see a <code>file://</code> entry representing your source tree.</span>
+            <span class="data-ru">Перейдите на вкладку <b>Sources</b>. На левой панели вы должны увидеть запись <code>file://</code>, представляющую дерево ваших исходников.</span>
+        </li>
+        <li>
+            <span class="data-en">Find <code>main.c</code>, click on a line number to <b>set a breakpoint</b>.</span>
+            <span class="data-ru">Найдите <code>main.c</code>, нажмите на номер строки, чтобы <b>установить точку остановки (breakpoint)</b>.</span>
+        </li>
+        <li>
+            <span class="data-en">Refresh the page. The execution will pause at your breakpoint.</span>
+            <span class="data-ru">Обновите страницу. Выполнение программы остановится на вашей точке остановки.</span>
+        </li>
+        <li>
+            <span class="data-en">Press <b>F10</b> to step over lines and inspect variables!</span>
+            <span class="data-ru">Нажимайте <b>F10</b>, чтобы идти по шагам и проверять значения переменных!</span>
+        </li>
     </ol>
-    <pre><code class="language-bash">config.bat   # Only needs to be run once
-build.bat    # Run this every time you change the code
-run-exe.bat  # Launch the game</code></pre>
-
-    <h3 class="category-header">
-        <span class="data-en">3. Method B: Qt Creator</span>
-        <span class="data-ru">3. Способ Б: Qt Creator</span>
-    </h3>
-    <ul>
-        <li><span class="data-en">File > Open File or Project > Select <code>CMakeLists.txt</code>.</span><span class="data-ru">Файл > Открыть файл или проект > Выберите <code>CMakeLists.txt</code>.</span></li>
-        <li><span class="data-en">In <strong>Projects</strong> tab, add the SFML path to CMake configuration:</span><span class="data-ru">Вкладка <strong>Проекты</strong>, добавьте путь к SFML в конфигурацию CMake:</span></li>
-    </ul>
-    <pre><code class="language-bash">-DSFML_DIR=E:/libs/sfml-2.6.2-mingw/release/lib/cmake/SFML</code></pre>
-    <p><span class="data-en">Press <strong>Ctrl+R</strong> to build and run.</span><span class="data-ru">Нажмите <strong>Ctrl+R</strong> для сборки и запуска.</span></p>
-
-    <h3 class="category-header">
-        <span class="data-en">4. Method C: CLion (Free Non-Commercial)</span>
-        <span class="data-ru">4. Способ В: CLion (Бесплатно)</span>
-    </h3>
-    <ol>
-        <li><span class="data-en">Open CLion and select <strong>Open</strong>, then choose the project folder.</span><span class="data-ru">Откройте CLion, нажмите <strong>Open</strong> и выберите папку проекта.</span></li>
-        <li><span class="data-en">Go to <strong>Settings > Build, Execution, Deployment > CMake</strong>.</span><span class="data-ru">Перейдите в <strong>Settings > Build, Execution, Deployment > CMake</strong>.</span></li>
-        <li><span class="data-en">In "CMake options", paste:</span><span class="data-ru">В поле "CMake options" вставьте:</span></li>
-    </ol>
-    <pre><code class="language-bash">-DSFML_DIR=E:/libs/sfml-2.6.2-mingw/release/lib/cmake/SFML</code></pre>
-    <p><span class="data-en">Click the <strong>Green Play Button</strong> at the top right.</span><span class="data-ru">Нажмите <strong>зеленую кнопку Play</strong> в правом верхнем углу.</span></p>
 
     <div class="alert alert-success mt-4">
-        <span class="data-en"><strong>Tip:</strong> Since we used <code>-static</code> in the CMake file, you don't need to copy SFML .dll files into your folder!</span>
-        <span class="data-ru"><strong>Совет:</strong> Так как мы использовали <code>-static</code> в файле CMake, вам не нужно копировать .dll файлы SFML в папку с игрой!</span>
+        <span class="data-en">Success! You are now debugging C code directly in the browser.</span>
+        <span class="data-ru">Успех! Теперь вы отлаживаете C-код прямо в браузере.</span>
     </div>
 </div>
+
 
         
         
@@ -442,10 +435,6 @@ function copyToClipboard(text, button) {
 
         
 
-        
-        <block>
-            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
-        </block>
         
 
         

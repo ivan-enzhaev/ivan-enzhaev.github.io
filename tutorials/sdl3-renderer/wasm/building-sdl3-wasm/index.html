@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Building FamTrinli&#39;s 16 Games | Ivan Enzhaev</title>
+<title>Building SDL3 for WebAssembly | Ivan Enzhaev</title>
 <link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
 
 
@@ -188,99 +188,98 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold text-dark">
-            <span class="data-en">Building 16 Games in C++ (SFML)</span>
-            <span class="data-ru">Сборка 16 игр на C++ (SFML)</span>
+            <span class="data-en">Building SDL3 for Wasm</span>
+            <span class="data-ru">Сборка SDL3 для Wasm</span>
         </h1>
-        <p class="text-muted">
-            <span class="data-en">Following the classic tutorial series by <strong>FamTrinli</strong>.</span>
-            <span class="data-ru">По мотивам классической серии уроков от <strong>FamTrinli</strong>.</span>
-        </p>
     </header>
 
-    <div class="alert alert-primary">
-        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed my <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">Environment Setup Guide</a> (MinGW 13.1 & CMake).</span>
-        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">руководства по настройке среды</a> (MinGW 13.1 и CMake).</span>
-    </div>
+    <h3 class="category-header">
+        <span class="data-en">1. Preparation</span>
+        <span class="data-ru">1. Подготовка</span>
+    </h3>
+
+    <ul>
+        <li>
+            <span class="data-en">Install <strong>Emscripten SDK 4.0.15</strong>, <strong>CMake</strong>, and <strong>Node.js</strong> using this <a href="/tutorials/tools/wasm/wasm-env" target="_blank" rel="noopener noreferrer">step-by-step instruction</a></span>
+            <span class="data-ru">Установите <strong>Emscripten SDK 4.0.15</strong>, <strong>CMake</strong> и <strong>Node.js</strong>, используя эту <a href="/tutorials/tools/wasm/wasm-env" target="_blank" rel="noopener noreferrer">пошаговую инструкцию</a></span>
+        </li>
+        <li>
+            <span class="data-en">Download the <strong>SDL3 3.4.4 Source Code</strong> from the <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.4" target="_blank" rel="noopener noreferrer">official GitHub releases</a></span>
+            <span class="data-ru">Скачайте <strong>исходный код SDL3 3.4.4</strong> с <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.4" target="_blank" rel="noopener noreferrer">официальных релизов GitHub</a></span>
+            <br>
+            <img src="/assets/img/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/sdl3-source.png" alt="Official SDL Source Download Link" class="img-fluid border rounded mt-3 shadow-sm">
+        </li>
+        <li>
+            <span class="data-en">Extract it to a folder (e.g., <code>C:/SDL-source</code>).</span>
+            <span class="data-ru">Распакуйте архив в папку (например, <code>C:/SDL-source</code>).</span>
+        </li>
+        <li>
+            <span class="data-en">Open CMD inside that folder.</span>
+            <span class="data-ru">Откройте CMD внутри этой папки.</span>
+        </li>
+    </ul>
 
     <h3 class="category-header">
-        <span class="data-en">1. Project Organization</span>
-        <span class="data-ru">1. Организация проекта</span>
+        <span class="data-en">2. Configure (emcmake)</span>
+        <span class="data-ru">2. Конфигурация (emcmake)</span>
     </h3>
+
     <p>
-        <span class="data-en">For each game (e.g., <code>04 Snake</code>), copy your source files (<code>main.cpp</code> and the <code>images/</code> folder) into a directory and add the following three scripts:</span>
-        <span class="data-ru">Для каждой игры (например, <code>04 Snake</code>) скопируйте исходные файлы (<code>main.cpp</code> и папку <code>images/</code>) в директорию и добавьте следующие три скрипта:</span>
+        <span class="data-en">Run this command to generate the build files using the Emscripten toolchain wrapper. We use <code>MinSizeRel</code> for a lightweight build.</span>
+        <span class="data-ru">Запустите эту команду для генерации файлов сборки через оболочку Emscripten. Мы используем <code>MinSizeRel</code> для получения легковесной библиотеки.</span>
     </p>
 
-    <div class="row">
-        <div class="col-md-6">
-            <h6><code>CMakeLists.txt</code></h6>
-            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.20)
-project(FamTrinliGames)
-
-add_executable(app main.cpp)
-
-find_package(SFML 2.6 COMPONENTS system window graphics REQUIRED)
-target_link_libraries(app sfml-system sfml-window sfml-graphics)
-
-target_compile_features(app PRIVATE cxx_std_20)
-target_link_options(app PRIVATE -static)
-
-# Copy images to build folder automatically
-add_custom_command(TARGET app POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/images $&lt;TARGET_FILE_DIR:app&gt;/images)</code></pre>
-        </div>
-        <div class="col-md-6">
-            <h6><span class="data-en">Automation Scripts</span><span class="data-ru">Скрипты автоматизации</span></h6>
-            <p><strong>config.bat</strong></p>
-            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist -DSFML_DIR=E:/libs/sfml-2.6.2-mingw/release/lib/cmake/SFML</code></pre>
-            <p><strong>build.bat</strong></p>
-            <pre><code class="language-bash">cmake --build dist</code></pre>
-            <p><strong>run-exe.bat</strong></p>
-            <pre><code class="language-bash">dist\app.exe</code></pre>
-        </div>
-    </div>
-
-    <hr class="my-5">
+    <pre><code class="language-bash">emcmake cmake -S . -B dist -DCMAKE_INSTALL_PREFIX="C:/libs/SDL3-devel-3.4.4-wasm" -DCMAKE_BUILD_TYPE=MinSizeRel</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">2. Method A: Sublime Text 4 + CMD</span>
-        <span class="data-ru">2. Способ А: Sublime Text 4 + CMD</span>
+        <span class="data-en">3. Build & Install</span>
+        <span class="data-ru">3. Сборка и установка</span>
     </h3>
-    <ol>
-        <li><span class="data-en">Open the project folder in <strong>Sublime Text 4</strong> to edit the code.</span><span class="data-ru">Откройте папку проекта в <strong>Sublime Text 4</strong> для редактирования кода.</span></li>
-        <li><span class="data-en">Open CMD in the folder and run the scripts in order:</span><span class="data-ru">Откройте CMD в папке и запустите скрипты по порядку:</span></li>
-    </ol>
-    <pre><code class="language-bash">config.bat   # Only needs to be run once
-build.bat    # Run this every time you change the code
-run-exe.bat  # Launch the game</code></pre>
 
-    <h3 class="category-header">
-        <span class="data-en">3. Method B: Qt Creator</span>
-        <span class="data-ru">3. Способ Б: Qt Creator</span>
-    </h3>
-    <ul>
-        <li><span class="data-en">File > Open File or Project > Select <code>CMakeLists.txt</code>.</span><span class="data-ru">Файл > Открыть файл или проект > Выберите <code>CMakeLists.txt</code>.</span></li>
-        <li><span class="data-en">In <strong>Projects</strong> tab, add the SFML path to CMake configuration:</span><span class="data-ru">Вкладка <strong>Проекты</strong>, добавьте путь к SFML в конфигурацию CMake:</span></li>
-    </ul>
-    <pre><code class="language-bash">-DSFML_DIR=E:/libs/sfml-2.6.2-mingw/release/lib/cmake/SFML</code></pre>
-    <p><span class="data-en">Press <strong>Ctrl+R</strong> to build and run.</span><span class="data-ru">Нажмите <strong>Ctrl+R</strong> для сборки и запуска.</span></p>
+    <p>
+        <span class="data-en">Compile the source code:</span>
+        <span class="data-ru">Скомпилируйте исходный код:</span>
+    </p>
+    <pre><code class="language-bash">cmake --build dist</code></pre>
 
-    <h3 class="category-header">
-        <span class="data-en">4. Method C: CLion (Free Non-Commercial)</span>
-        <span class="data-ru">4. Способ В: CLion (Бесплатно)</span>
-    </h3>
-    <ol>
-        <li><span class="data-en">Open CLion and select <strong>Open</strong>, then choose the project folder.</span><span class="data-ru">Откройте CLion, нажмите <strong>Open</strong> и выберите папку проекта.</span></li>
-        <li><span class="data-en">Go to <strong>Settings > Build, Execution, Deployment > CMake</strong>.</span><span class="data-ru">Перейдите в <strong>Settings > Build, Execution, Deployment > CMake</strong>.</span></li>
-        <li><span class="data-en">In "CMake options", paste:</span><span class="data-ru">В поле "CMake options" вставьте:</span></li>
-    </ol>
-    <pre><code class="language-bash">-DSFML_DIR=E:/libs/sfml-2.6.2-mingw/release/lib/cmake/SFML</code></pre>
-    <p><span class="data-en">Click the <strong>Green Play Button</strong> at the top right.</span><span class="data-ru">Нажмите <strong>зеленую кнопку Play</strong> в правом верхнем углу.</span></p>
+    <p>
+        <span class="data-en">Install the headers and libraries to the specified prefix:</span>
+        <span class="data-ru">Установите заголовочные файлы и библиотеки по указанному пути:</span>
+    </p>
+    <pre><code class="language-bash">cmake --install dist</code></pre>
 
     <div class="alert alert-success mt-4">
-        <span class="data-en"><strong>Tip:</strong> Since we used <code>-static</code> in the CMake file, you don't need to copy SFML .dll files into your folder!</span>
-        <span class="data-ru"><strong>Совет:</strong> Так как мы использовали <code>-static</code> в файле CMake, вам не нужно копировать .dll файлы SFML в папку с игрой!</span>
+        <h5 class="fw-bold"><span class="data-en">Success!</span><span class="data-ru">Успех!</span></h5>
+        <span class="data-en">You now have a Wasm-compatible SDL3 build in <code>C:/libs/SDL3-devel-3.4.4-wasm</code>. Use this path in your project's CMake configuration:</span>
+        <span class="data-ru">Теперь у вас есть сборка SDL3 для Wasm в <code>C:/libs/SDL3-devel-3.4.4-wasm</code>. Используйте этот путь в конфигурации CMake вашего проекта:</span>
+        <br><br>
+        <code>-DSDL3_DIR=C:/libs/SDL3-devel-3.4.4-wasm/lib/cmake/SDL3</code>
+    </div>
+
+    <h3 class="category-header mt-5">
+        <span class="data-en">Common Troubleshooting</span>
+        <span class="data-ru">Устранение неполадок</span>
+    </h3>
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>Problem</th>
+                    <th>Solution</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="data-en">emcmake command not found</span><span class="data-ru">Команда emcmake не найдена</span></td>
+                    <td><span class="data-en">Ensure you have run <code>emsdk activate 4.0.15</code> and added the emscripten path to your system environment.</span><span class="data-ru">Убедитесь, что вы выполнили <code>emsdk activate 4.0.15</code> и добавили пути emscripten в переменные среды.</span></td>
+                </tr>
+                <tr>
+                    <td><span class="data-en">Permission denied</span><span class="data-ru">Отказано в доступе</span></td>
+                    <td><span class="data-en">Run CMD as <strong>Administrator</strong> to allow writing to the <code>C:/libs</code> directory.</span><span class="data-ru">Запустите CMD от <strong>имени администратора</strong>, чтобы разрешить запись в директорию <code>C:/libs</code>.</span></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -430,22 +429,6 @@ function copyToClipboard(text, button) {
         </block>
         
 
-        
-
-        
-    </block>
-    
-    <block>
-        
-
-        
-
-        
-
-        
-        <block>
-            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
-        </block>
         
 
         

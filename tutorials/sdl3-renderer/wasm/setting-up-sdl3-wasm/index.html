@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Building FamTrinli&#39;s 16 Games | Ivan Enzhaev</title>
+<title>Setting up SDL3 for WebAssembly (Emscripten) | Ivan Enzhaev</title>
 <link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
 
 
@@ -187,101 +187,278 @@
         
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
-        <h1 class="fw-bold text-dark">
-            <span class="data-en">Building 16 Games in C++ (SFML)</span>
-            <span class="data-ru">Сборка 16 игр на C++ (SFML)</span>
+        <h1 class="fw-bold">
+            <span class="data-en">SDL3 WebAssembly: Setup for C and C++ (Emscripten)</span>
+            <span class="data-ru">SDL3 для WebAssembly: Настройка для C и C++ (Emscripten)</span>
         </h1>
-        <p class="text-muted">
-            <span class="data-en">Following the classic tutorial series by <strong>FamTrinli</strong>.</span>
-            <span class="data-ru">По мотивам классической серии уроков от <strong>FamTrinli</strong>.</span>
+        <p class="lead text-muted">
+            <span class="data-en">A guide to configuring SDL3 with CMake and Emscripten (emsdk) for WebAssembly.</span>
+            <span class="data-ru">Руководство по настройке SDL3 с использованием CMake и Emscripten (emsdk) для WebAssembly.</span>
         </p>
     </header>
 
-    <div class="alert alert-primary">
-        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed my <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">Environment Setup Guide</a> (MinGW 13.1 & CMake).</span>
-        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">руководства по настройке среды</a> (MinGW 13.1 и CMake).</span>
-    </div>
+    <h3 class="category-header">
+        <span class="data-en">1. Obtain SDL3 for Wasm</span>
+        <span class="data-ru">1. Получение SDL3 для Wasm</span>
+    </h3>
+
+    <ul>
+        <li>
+            <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed the <a href="/tutorials/tools/wasm/wasm-env/" target="_blank" rel="noopener noreferrer">Emscripten Setup Guide</a>.</span>
+            <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/wasm/wasm-env/" target="_blank" rel="noopener noreferrer">руководства по настройке Emscripten</a>.</span>
+        </li>
+        <li>
+            <span class="data-en">Download my pre-built SDL 3.4.4 lib for <b>emsdk 4.0.15</b>: <a href="/libs/wasm/sdl3/SDL3-devel-3.4.4-wasm.zip">SDL3-devel-3.4.4-wasm.zip</a>. Extract the archive to <code>C:/libs/SDL3-devel-3.4.4-wasm</code></span>
+            <span class="data-ru">Скачайте мою готовую сборку SDL 3.4.4 для <b>emsdk 4.0.15</b>: <a href="/libs/wasm/sdl3/SDL3-devel-3.4.4-wasm.zip">SDL3-devel-3.4.4-wasm.zip</a>. Распакуйте архив в <code>C:/libs/SDL3-devel-3.4.4-wasm</code></span>
+        </li>
+        <li>
+            <span class="data-en">Alternatively, you can build it yourself following my guide: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/">Building SDL3 for WebAssembly</a>.</span>
+            <span class="data-ru">Или же вы можете собрать её самостоятельно по моей инструкции: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/">Building SDL3 for WebAssembly</a>.</span>
+        </li>
+    </ul>
 
     <h3 class="category-header">
-        <span class="data-en">1. Project Organization</span>
-        <span class="data-ru">1. Организация проекта</span>
+        <span class="data-en">2. Project Configuration (CMakeLists.txt)</span>
+        <span class="data-ru">2. Конфигурация проекта (CMakeLists.txt)</span>
     </h3>
-    <p>
-        <span class="data-en">For each game (e.g., <code>04 Snake</code>), copy your source files (<code>main.cpp</code> and the <code>images/</code> folder) into a directory and add the following three scripts:</span>
-        <span class="data-ru">Для каждой игры (например, <code>04 Snake</code>) скопируйте исходные файлы (<code>main.cpp</code> и папку <code>images/</code>) в директорию и добавьте следующие три скрипта:</span>
-    </p>
+
+    <ul>
+        <li>
+            <span class="data-en">Create a new empty folder for your project (e.g., <code>rectangles-sdl3</code>).</span>
+            <span class="data-ru">Создайте новую пустую папку для вашего проекта (например, <code>rectangles-sdl3</code>).</span>
+        </li>
+        <li>
+            <span class="data-en">Inside that folder, create a file named <code>CMakeLists.txt</code> and paste the following content:</span>
+            <span class="data-ru">Внутри этой папки создайте файл с именем <code>CMakeLists.txt</code> и вставьте следующее содержимое:</span>
+        </li>
+    </ul>
 
     <div class="row">
-        <div class="col-md-6">
-            <h6><code>CMakeLists.txt</code></h6>
-            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.20)
-project(FamTrinliGames)
+        <div class="col-lg-6 mb-4">
+            <h6 class="fw-bold text-primary">CMakeLists.txt (C version)</h6>
+            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+project(rectangles-sdl3)
 
-add_executable(app main.cpp)
+# Set the C standard
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 
-find_package(SFML 2.6 COMPONENTS system window graphics REQUIRED)
-target_link_libraries(app sfml-system sfml-window sfml-graphics)
+# Specify the exact location of the library configuration files
+# The variable name must strictly match: LibraryName_DIR
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.4-wasm/lib/cmake/SDL3")
 
-target_compile_features(app PRIVATE cxx_std_20)
-target_link_options(app PRIVATE -static)
+# Check for the presence of the library in the system
+# If it is not found, CMake will abort the configuration with an error
+# REQUIRED means the library is mandatory for the build
+find_package(SDL3 REQUIRED)
 
-# Copy images to build folder automatically
-add_custom_command(TARGET app POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/images $&lt;TARGET_FILE_DIR:app&gt;/images)</code></pre>
+# Set the name of the future application (on the web it will be app.js / app.wasm,
+# while on Windows it would be app.exe)
+add_executable(app)
+
+# Add source code to the project
+target_sources(app
+    PRIVATE
+    src/main.c
+)
+ 
+# Link the library to our application (configures linking and include paths)
+target_link_libraries(app PRIVATE SDL3::SDL3)
+</code></pre>
         </div>
-        <div class="col-md-6">
-            <h6><span class="data-en">Automation Scripts</span><span class="data-ru">Скрипты автоматизации</span></h6>
-            <p><strong>config.bat</strong></p>
-            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist -DSFML_DIR=E:/libs/sfml-2.6.2-mingw/release/lib/cmake/SFML</code></pre>
-            <p><strong>build.bat</strong></p>
-            <pre><code class="language-bash">cmake --build dist</code></pre>
-            <p><strong>run-exe.bat</strong></p>
-            <pre><code class="language-bash">dist\app.exe</code></pre>
+
+        <div class="col-lg-6 mb-4">
+            <h6 class="fw-bold text-success">CMakeLists.txt (C++ version)</h6>
+            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+project(rectangles-sdl3)
+
+# Set the C++ standard
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Specify the exact location of the library configuration files
+# The variable name must strictly match: LibraryName_DIR
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.4-wasm/lib/cmake/SDL3")
+
+# Check for the presence of the library in the system
+# If it is not found, CMake will abort the configuration with an error
+# REQUIRED means the library is mandatory for the build
+find_package(SDL3 REQUIRED)
+
+# Set the name of the future application (on the web it will be app.js / app.wasm,
+# while on Windows it would be app.exe)
+add_executable(app)
+
+# Add source code to the project
+target_sources(app
+    PRIVATE
+    src/main.cpp
+)
+ 
+# Link the library to our application (configures linking and include paths)
+target_link_libraries(app PRIVATE SDL3::SDL3)
+</code></pre>
         </div>
     </div>
 
-    <hr class="my-5">
+    <h3 class="category-header">
+        <span class="data-en">3. Source Code</span>
+        <span class="data-ru">3. Исходный код</span>
+    </h3>
+
+    <h6 class="fw-bold text-primary">src/main.c (or src/main.cpp):</h6>
+
+    <pre><code class="language-c">#define SDL_MAIN_USE_CALLBACKS 1 // Use callback functions instead of main()
+
+#include &lt;SDL3/SDL.h&gt;
+#include &lt;SDL3/SDL_main.h&gt;
+
+// We will use this renderer to draw into this window every frame
+static SDL_Window *window = NULL;
+static SDL_Renderer *renderer = NULL;
+
+// This function runs once at startup
+SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
+{
+    if (!SDL_Init(SDL_INIT_VIDEO))
+    {
+        SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    if (!SDL_CreateWindowAndRenderer("SDL3 Rectangles", 500, 500, SDL_WINDOW_RESIZABLE, &window, &renderer))
+    {
+        SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    SDL_SetRenderVSync(renderer, 1);
+
+    return SDL_APP_CONTINUE; // Continue program execution!
+}
+
+// This function runs whenever a new event occurs (mouse input, key presses, etc.)
+SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
+{
+    if (event->type == SDL_EVENT_QUIT)
+    {
+        return SDL_APP_SUCCESS; // Terminate the program, reporting success to the OS
+    }
+    return SDL_APP_CONTINUE; // Continue program execution!
+}
+
+// This function runs once per frame and is the heart of the program
+SDL_AppResult SDL_AppIterate(void *appstate)
+{
+    SDL_SetRenderDrawColor(renderer, 38, 43, 51, 255);
+
+    // Clear the window with the draw color
+    SDL_RenderClear(renderer);
+
+    SDL_FRect rect1;
+    rect1.x = 100;
+    rect1.y = 50;
+    rect1.w = 200;
+    rect1.h = 60;
+    SDL_SetRenderDrawColor(renderer, 220, 80, 80, SDL_ALPHA_OPAQUE);
+    SDL_RenderFillRect(renderer, &rect1);
+
+    SDL_FRect rect2;
+    rect2.x = 50;
+    rect2.y = 200;
+    rect2.w = 100;
+    rect2.h = 50;
+    SDL_SetRenderDrawColor(renderer, 80, 180, 100, SDL_ALPHA_OPAQUE);
+    SDL_RenderFillRect(renderer, &rect2);
+
+    // Present the freshly cleared result to the screen
+    SDL_RenderPresent(renderer);
+
+    return SDL_APP_CONTINUE; // Continue program execution!
+}
+
+// This function runs once upon shutdown
+void SDL_AppQuit(void *appstate, SDL_AppResult result)
+{
+    // SDL will clean up the window and renderer for us
+}</code></pre>
+
+    <h6 class="fw-bold text-primary">public/index.html:</h6>
+
+    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+    &lt;canvas id="canvas"&gt;&lt;/canvas&gt;
+    &lt;script async src="./js/app.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;
+</code></pre></code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">2. Method A: Sublime Text 4 + CMD</span>
-        <span class="data-ru">2. Способ А: Sublime Text 4 + CMD</span>
+        <span class="data-en">4. Automation Scripts (.bat)</span>
+        <span class="data-ru">4. Скрипты автоматизации (.bat)</span>
     </h3>
-    <ol>
-        <li><span class="data-en">Open the project folder in <strong>Sublime Text 4</strong> to edit the code.</span><span class="data-ru">Откройте папку проекта в <strong>Sublime Text 4</strong> для редактирования кода.</span></li>
-        <li><span class="data-en">Open CMD in the folder and run the scripts in order:</span><span class="data-ru">Откройте CMD в папке и запустите скрипты по порядку:</span></li>
-    </ol>
-    <pre><code class="language-bash">config.bat   # Only needs to be run once
-build.bat    # Run this every time you change the code
-run-exe.bat  # Launch the game</code></pre>
+    <div class="row">
+        <div class="col-md-6">
+            <h6>config-wasm.bat</h6>
+            <pre><code class="language-bash">emcmake cmake -S . -B dist/web ^
+-DCMAKE_BUILD_TYPE=Debug
+</code></pre>
+        </div>
+        <div class="col-md-6">
+            <h6>build-wasm.bat</h6>
+            <pre><code class="language-bash">cd dist\web
+cmake --build .
 
-    <h3 class="category-header">
-        <span class="data-en">3. Method B: Qt Creator</span>
-        <span class="data-ru">3. Способ Б: Qt Creator</span>
-    </h3>
-    <ul>
-        <li><span class="data-en">File > Open File or Project > Select <code>CMakeLists.txt</code>.</span><span class="data-ru">Файл > Открыть файл или проект > Выберите <code>CMakeLists.txt</code>.</span></li>
-        <li><span class="data-en">In <strong>Projects</strong> tab, add the SFML path to CMake configuration:</span><span class="data-ru">Вкладка <strong>Проекты</strong>, добавьте путь к SFML в конфигурацию CMake:</span></li>
-    </ul>
-    <pre><code class="language-bash">-DSFML_DIR=E:/libs/sfml-2.6.2-mingw/release/lib/cmake/SFML</code></pre>
-    <p><span class="data-en">Press <strong>Ctrl+R</strong> to build and run.</span><span class="data-ru">Нажмите <strong>Ctrl+R</strong> для сборки и запуска.</span></p>
-
-    <h3 class="category-header">
-        <span class="data-en">4. Method C: CLion (Free Non-Commercial)</span>
-        <span class="data-ru">4. Способ В: CLion (Бесплатно)</span>
-    </h3>
-    <ol>
-        <li><span class="data-en">Open CLion and select <strong>Open</strong>, then choose the project folder.</span><span class="data-ru">Откройте CLion, нажмите <strong>Open</strong> и выберите папку проекта.</span></li>
-        <li><span class="data-en">Go to <strong>Settings > Build, Execution, Deployment > CMake</strong>.</span><span class="data-ru">Перейдите в <strong>Settings > Build, Execution, Deployment > CMake</strong>.</span></li>
-        <li><span class="data-en">In "CMake options", paste:</span><span class="data-ru">В поле "CMake options" вставьте:</span></li>
-    </ol>
-    <pre><code class="language-bash">-DSFML_DIR=E:/libs/sfml-2.6.2-mingw/release/lib/cmake/SFML</code></pre>
-    <p><span class="data-en">Click the <strong>Green Play Button</strong> at the top right.</span><span class="data-ru">Нажмите <strong>зеленую кнопку Play</strong> в правом верхнем углу.</span></p>
-
-    <div class="alert alert-success mt-4">
-        <span class="data-en"><strong>Tip:</strong> Since we used <code>-static</code> in the CMake file, you don't need to copy SFML .dll files into your folder!</span>
-        <span class="data-ru"><strong>Совет:</strong> Так как мы использовали <code>-static</code> в файле CMake, вам не нужно копировать .dll файлы SFML в папку с игрой!</span>
+cd ..\..
+mkdir public\js
+set current_dir=%~dp0
+copy "%current_dir%dist\web\app.wasm" "%current_dir%public\js"
+copy "%current_dir%dist\web\app.js" "%current_dir%public\js"
+</code></pre>
+        </div>
     </div>
+
+    <h3 class="category-header">
+        <span class="data-en">5. Build and Run</span>
+        <span class="data-ru">5. Сборка и запуск</span>
+    </h3>
+    <p>
+        <span class="data-en">Configure and build the project:</span>
+        <span class="data-ru">Сконфигурируйте и соберите проект:</span>
+    </p>
+    <pre><code class="language-bash"># Configure
+config-wasm
+
+# Build
+build-wasm</code></pre>
+
+    <pre><code class="language-bash">http-server -c-1</code></pre>
+    <div class="alert alert-info">
+        <span class="data-en">Open <strong>localhost:8080</strong> and check the browser console (F12) to see the output.</span>
+        <span class="data-ru">Откройте <strong>localhost:8080</strong> и проверьте консоль браузера (F12), чтобы увидеть результат.</span>
+    </div>
+
+    <!-- <div class="alert alert-info mt-5">
+        <h5 class="fw-bold"><i class="fas fa-rocket"></i> <span class="data-en">What's Next?</span><span class="data-ru">Что дальше?</span></h5>
+        <p class="mb-0">
+            <span class="data-en">For WebAssembly, using <code>emscripten_set_main_loop</code> is the classic way. However, SDL3 introduces a new <b>Main Callback</b> system which is even better for Wasm.</span>
+            <span class="data-ru">Для WebAssembly использование <code>emscripten_set_main_loop</code> — классический способ. Однако в SDL3 появилась новая система <b>Main Callback</b>, которая еще лучше подходит для Wasm.</span>
+        </p>
+        <div class="mt-3">
+            <a href="/tutorials/sdl3-renderer/wasm/sdl3-callbacks/" class="btn btn-outline-info btn-sm">
+                <span class="data-en">Go to the Callback Tutorial →</span>
+                <span class="data-ru">Перейти к уроку по Callbacks →</span>
+            </a>
+        </div>
+    </div> -->
 </div>
 
         
@@ -421,13 +598,30 @@ function copyToClipboard(text, button) {
     
     <block>
         
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+        </block>
+        
 
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
         
 
         
         <block>
-            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
         </block>
+        
+
         
 
         
@@ -446,6 +640,22 @@ function copyToClipboard(text, button) {
         <block>
             <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
         </block>
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
         
 
         

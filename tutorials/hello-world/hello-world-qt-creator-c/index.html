@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Building FamTrinli&#39;s 16 Games | Ivan Enzhaev</title>
+<title>Building Hello World in C (Qt Creator) | Ivan Enzhaev</title>
 <link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
 
 
@@ -188,13 +188,9 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold text-dark">
-            <span class="data-en">Building 16 Games in C++ (SFML)</span>
-            <span class="data-ru">Сборка 16 игр на C++ (SFML)</span>
+            <span class="data-en">Building "Hello World!" in C via Qt Creator</span>
+            <span class="data-ru">Сборка "Hello World!" на Си через Qt Creator</span>
         </h1>
-        <p class="text-muted">
-            <span class="data-en">Following the classic tutorial series by <strong>FamTrinli</strong>.</span>
-            <span class="data-ru">По мотивам классической серии уроков от <strong>FamTrinli</strong>.</span>
-        </p>
     </header>
 
     <div class="alert alert-primary">
@@ -203,85 +199,120 @@
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">1. Project Organization</span>
-        <span class="data-ru">1. Организация проекта</span>
+        <span class="data-en">1. Project Structure</span>
+        <span class="data-ru">1. Структура проекта</span>
     </h3>
     <p>
-        <span class="data-en">For each game (e.g., <code>04 Snake</code>), copy your source files (<code>main.cpp</code> and the <code>images/</code> folder) into a directory and add the following three scripts:</span>
-        <span class="data-ru">Для каждой игры (например, <code>04 Snake</code>) скопируйте исходные файлы (<code>main.cpp</code> и папку <code>images/</code>) в директорию и добавьте следующие три скрипта:</span>
+        <span class="data-en">Create a folder and set up your files exactly as in the console version:</span>
+        <span class="data-ru">Создайте папку и подготовьте файлы так же, как в консольной версии:</span>
     </p>
 
     <div class="row">
         <div class="col-md-6">
             <h6><code>CMakeLists.txt</code></h6>
-            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.20)
-project(FamTrinliGames)
+            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+project(hello-world-c)
 
-add_executable(app main.cpp)
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 
-find_package(SFML 2.6 COMPONENTS system window graphics REQUIRED)
-target_link_libraries(app sfml-system sfml-window sfml-graphics)
-
-target_compile_features(app PRIVATE cxx_std_20)
-target_link_options(app PRIVATE -static)
-
-# Copy images to build folder automatically
-add_custom_command(TARGET app POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/images $&lt;TARGET_FILE_DIR:app&gt;/images)</code></pre>
+add_executable(app src/main.c)</code></pre>
         </div>
         <div class="col-md-6">
-            <h6><span class="data-en">Automation Scripts</span><span class="data-ru">Скрипты автоматизации</span></h6>
-            <p><strong>config.bat</strong></p>
-            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist -DSFML_DIR=E:/libs/sfml-2.6.2-mingw/release/lib/cmake/SFML</code></pre>
-            <p><strong>build.bat</strong></p>
-            <pre><code class="language-bash">cmake --build dist</code></pre>
-            <p><strong>run-exe.bat</strong></p>
-            <pre><code class="language-bash">dist\app.exe</code></pre>
+            <h6><code>src/main.c</code></h6>
+            <pre><code class="language-c">#include &lt;stdio.h&gt;
+
+int main()
+{
+    printf("Hello World!\n");
+    return 0;
+}</code></pre>
         </div>
     </div>
 
     <hr class="my-5">
 
     <h3 class="category-header">
-        <span class="data-en">2. Method A: Sublime Text 4 + CMD</span>
-        <span class="data-ru">2. Способ А: Sublime Text 4 + CMD</span>
+        <span class="data-en">2. Opening the Project</span>
+        <span class="data-ru">2. Открытие проекта</span>
     </h3>
     <ol>
-        <li><span class="data-en">Open the project folder in <strong>Sublime Text 4</strong> to edit the code.</span><span class="data-ru">Откройте папку проекта в <strong>Sublime Text 4</strong> для редактирования кода.</span></li>
-        <li><span class="data-en">Open CMD in the folder and run the scripts in order:</span><span class="data-ru">Откройте CMD в папке и запустите скрипты по порядку:</span></li>
+        <li>
+            <span class="data-en">Launch <strong>Qt Creator</strong>.</span>
+            <span class="data-ru">Запустите <strong>Qt Creator</strong>.</span>
+        </li>
+        <li>
+            <span class="data-en">Go to <strong>File > Open File or Project...</strong></span>
+            <span class="data-ru">Выберите <strong>Файл > Открыть файл или проект...</strong></span>
+        </li>
+        <li>
+            <span class="data-en">Select the <code>CMakeLists.txt</code> file in your folder.</span>
+            <span class="data-ru">Выберите файл <code>CMakeLists.txt</code> в вашей папке.</span>
+        </li>
     </ol>
-    <pre><code class="language-bash">config.bat   # Only needs to be run once
-build.bat    # Run this every time you change the code
-run-exe.bat  # Launch the game</code></pre>
+
+    <h3 class="category-header mt-5">
+        <span class="data-en">3. Configure Project (Kits)</span>
+        <span class="data-ru">3. Настройка проекта (Kits)</span>
+    </h3>
+    <p>
+        <span class="data-en">In the "Configure Project" tab, ensure your <strong>MinGW 13.1</strong> kit is selected.</span>
+        <span class="data-ru">На вкладке "Configure Project" убедитесь, что выбран комплект (Kit) с <strong>MinGW 13.1</strong>.</span>
+    </p>
+    <div class="alert alert-primary">
+        <span class="data-en">Click the <strong>Configure Project</strong> button to generate the CMake cache.</span>
+        <span class="data-ru">Нажмите кнопку <strong>Configure Project</strong>, чтобы сгенерировать кэш CMake.</span>
+    </div>
+
+    <hr class="my-5">
 
     <h3 class="category-header">
-        <span class="data-en">3. Method B: Qt Creator</span>
-        <span class="data-ru">3. Способ Б: Qt Creator</span>
+        <span class="data-en">4. Build and Run</span>
+        <span class="data-ru">4. Сборка и запуск</span>
     </h3>
-    <ul>
-        <li><span class="data-en">File > Open File or Project > Select <code>CMakeLists.txt</code>.</span><span class="data-ru">Файл > Открыть файл или проект > Выберите <code>CMakeLists.txt</code>.</span></li>
-        <li><span class="data-en">In <strong>Projects</strong> tab, add the SFML path to CMake configuration:</span><span class="data-ru">Вкладка <strong>Проекты</strong>, добавьте путь к SFML в конфигурацию CMake:</span></li>
-    </ul>
-    <pre><code class="language-bash">-DSFML_DIR=E:/libs/sfml-2.6.2-mingw/release/lib/cmake/SFML</code></pre>
-    <p><span class="data-en">Press <strong>Ctrl+R</strong> to build and run.</span><span class="data-ru">Нажмите <strong>Ctrl+R</strong> для сборки и запуска.</span></p>
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <ul>
+                <li>
+                    <span class="data-en">Press <strong>Ctrl + B</strong> to build the project.</span>
+                    <span class="data-ru">Нажмите <strong>Ctrl + B</strong> для сборки проекта.</span>
+                </li>
+                <li>
+                    <span class="data-en">Press <strong>Ctrl + R</strong> to run the application.</span>
+                    <span class="data-ru">Нажмите <strong>Ctrl + R</strong> для запуска приложения.</span>
+                </li>
+            </ul>
+        </div>
+        <!-- <div class="col-md-4 text-center">
+            <div class="p-3 border rounded bg-light">
+                <i class="bi bi-play-fill text-success" style="font-size: 2rem;"></i>
+                <p class="mb-0 small fw-bold text-uppercase">Ctrl + R</p>
+            </div>
+        </div> -->
+    </div>
 
-    <h3 class="category-header">
-        <span class="data-en">4. Method C: CLion (Free Non-Commercial)</span>
-        <span class="data-ru">4. Способ В: CLion (Бесплатно)</span>
+    <h3 class="category-header mt-5">
+        <span class="data-en">5. Viewing Output</span>
+        <span class="data-ru">5. Просмотр вывода</span>
     </h3>
-    <ol>
-        <li><span class="data-en">Open CLion and select <strong>Open</strong>, then choose the project folder.</span><span class="data-ru">Откройте CLion, нажмите <strong>Open</strong> и выберите папку проекта.</span></li>
-        <li><span class="data-en">Go to <strong>Settings > Build, Execution, Deployment > CMake</strong>.</span><span class="data-ru">Перейдите в <strong>Settings > Build, Execution, Deployment > CMake</strong>.</span></li>
-        <li><span class="data-en">In "CMake options", paste:</span><span class="data-ru">В поле "CMake options" вставьте:</span></li>
-    </ol>
-    <pre><code class="language-bash">-DSFML_DIR=E:/libs/sfml-2.6.2-mingw/release/lib/cmake/SFML</code></pre>
-    <p><span class="data-en">Click the <strong>Green Play Button</strong> at the top right.</span><span class="data-ru">Нажмите <strong>зеленую кнопку Play</strong> в правом верхнем углу.</span></p>
+    <p>
+        <span class="data-en">Check the <strong>Application Output</strong> (Вывод приложения) panel at the bottom of Qt Creator. You should see:</span>
+        <span class="data-ru">Проверьте панель <strong>Вывод приложения</strong> в нижней части Qt Creator. Вы должны увидеть:</span>
+    </p>
+    <div class="bg-dark text-success p-3 rounded font-monospace">
+        Hello World!
+    </div>
 
     <div class="alert alert-success mt-4">
-        <span class="data-en"><strong>Tip:</strong> Since we used <code>-static</code> in the CMake file, you don't need to copy SFML .dll files into your folder!</span>
-        <span class="data-ru"><strong>Совет:</strong> Так как мы использовали <code>-static</code> в файле CMake, вам не нужно копировать .dll файлы SFML в папку с игрой!</span>
+        <span class="data-en"><strong>Tip:</strong> Qt Creator automatically handles the build directory. If you ever need to reset the project, you can right-click the project name and select <strong>Clear CMake Configuration</strong>.</span>
+        <span class="data-ru"><strong>Совет:</strong> Qt Creator автоматически управляет папкой сборки. Если вам когда-нибудь понадобится сбросить проект, вы можете нажать правой кнопкой на название проекта и выбрать <strong>Clear CMake Configuration</strong>.</span>
     </div>
+
+    <!-- <div class="alert alert-success mt-4 shadow-sm">
+        <h5 class="fw-bold"><i class="bi bi-info-circle"></i> Tip / Совет</h5>
+        <span class="data-en"></span>
+        <span class="data-ru"></span>
+    </div> -->
 </div>
 
         
@@ -425,11 +456,11 @@ function copyToClipboard(text, button) {
         
 
         
-        <block>
-            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
-        </block>
-        
 
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
         
 
         
@@ -437,15 +468,15 @@ function copyToClipboard(text, button) {
     
     <block>
         
-
-        
-
-        
-
-        
         <block>
-            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
         </block>
+        
+
+        
+
+        
+
         
 
         

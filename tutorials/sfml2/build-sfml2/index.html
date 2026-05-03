@@ -235,15 +235,16 @@
     </h3>
 
     <p>
-        <span class="data-en">Now, compile the source code and install it to the specified prefix:</span>
-        <span class="data-ru">Теперь скомпилируйте исходный код и установите его по указанному пути:</span>
+        <span class="data-en">Now, compile the source code:</span>
+        <span class="data-ru">Теперь скомпилируйте исходный код:</span>
     </p>
+    <pre><code class="language-bash">cmake --build dist</code></pre>
 
-    <pre><code class="language-bash"># Compile the library
-cmake --build dist
-
-# Install files to C:/libs/SFML-2.6.2-mingw
-cmake --install dist</code></pre>
+    <p>
+        <span class="data-en">Install the files to the specified prefix (e.g., <code>C:/libs/SFML-2.6.2-mingw</code>):</span>
+        <span class="data-ru">Установите файлы по указанному пути (например, <code>C:/libs/SFML-2.6.2-mingw</code>):</span>
+    </p>
+    <pre><code class="language-bash">cmake --install dist</code></pre>
 
     <div class="alert alert-success mt-4">
         <h5 class="fw-bold"><span class="data-en">Success!</span><span class="data-ru">Успех!</span></h5>
@@ -424,6 +425,8 @@ function copyToClipboard(text, button) {
         <block>
             <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
         </block>
+        
+
         
 
         
