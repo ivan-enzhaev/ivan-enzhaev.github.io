@@ -525,9 +525,39 @@ function copyToClipboard(text, button) {
     }
 
     // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+    //     if (link) {
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // Logic for dynamic links (persisting language across pages)
     document.addEventListener("click", function(e) {
         const link = e.target.closest(".lang-link-dynamic");
+        
         if (link) {
+            // Check if the link is intended to open in a new tab
+            if (link.target === "_blank") {
+                // Allow the browser to handle the click naturally, 
+                // but we still want to append the language param.
+                const currentLang = document.documentElement.getAttribute("lang") || "en";
+                const targetUrl = new URL(link.href);
+                targetUrl.searchParams.set("lang", currentLang);
+                
+                // Update the href right before the browser follows it
+                link.href = targetUrl.toString();
+                return; // Exit the function so e.preventDefault() isn't called
+            }
+
+            // Existing logic for same-tab navigation
             e.preventDefault();
             const currentLang = document.documentElement.getAttribute("lang") || "en";
             const targetUrl = new URL(

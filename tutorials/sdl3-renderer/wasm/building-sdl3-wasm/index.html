@@ -204,14 +204,14 @@
             <span class="data-ru">Установите <strong>Emscripten SDK 4.0.15</strong>, <strong>CMake</strong> и <strong>Node.js</strong>, используя эту <a href="/tutorials/tools/wasm/wasm-env" target="_blank" rel="noopener noreferrer">пошаговую инструкцию</a></span>
         </li>
         <li>
-            <span class="data-en">Download the <strong>SDL3 3.4.4 Source Code</strong> from the <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.4" target="_blank" rel="noopener noreferrer">official GitHub releases</a></span>
-            <span class="data-ru">Скачайте <strong>исходный код SDL3 3.4.4</strong> с <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.4" target="_blank" rel="noopener noreferrer">официальных релизов GitHub</a></span>
+            <span class="data-en">Download the <strong>SDL3 3.4.8 Source Code</strong> from the <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">official GitHub releases</a></span>
+            <span class="data-ru">Скачайте <strong>исходный код SDL3 3.4.8</strong> с <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.4" target="_blank" rel="noopener noreferrer">официальных релизов GitHub</a></span>
             <br>
             <img src="/assets/img/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/sdl3-source.png" alt="Official SDL Source Download Link" class="img-fluid border rounded mt-3 shadow-sm">
         </li>
         <li>
-            <span class="data-en">Extract it to a folder (e.g., <code>C:/SDL-source</code>).</span>
-            <span class="data-ru">Распакуйте архив в папку (например, <code>C:/SDL-source</code>).</span>
+            <span class="data-en">Extract it to a folder (e.g., <code>C:/libs</code>).</span>
+            <span class="data-ru">Распакуйте архив в папку (например, <code>C:/libs</code>).</span>
         </li>
         <li>
             <span class="data-en">Open CMD inside that folder.</span>
@@ -229,7 +229,7 @@
         <span class="data-ru">Запустите эту команду для генерации файлов сборки через оболочку Emscripten. Мы используем <code>MinSizeRel</code> для получения легковесной библиотеки.</span>
     </p>
 
-    <pre><code class="language-bash">emcmake cmake -S . -B dist -DCMAKE_INSTALL_PREFIX="C:/libs/SDL3-devel-3.4.4-wasm" -DCMAKE_BUILD_TYPE=MinSizeRel</code></pre>
+    <pre><code class="language-bash">emcmake cmake -S . -B dist -DCMAKE_INSTALL_PREFIX="C:/libs/SDL3-devel-3.4.8-wasm" -DCMAKE_BUILD_TYPE=MinSizeRel</code></pre>
 
     <h3 class="category-header">
         <span class="data-en">3. Build & Install</span>
@@ -250,10 +250,10 @@
 
     <div class="alert alert-success mt-4">
         <h5 class="fw-bold"><span class="data-en">Success!</span><span class="data-ru">Успех!</span></h5>
-        <span class="data-en">You now have a Wasm-compatible SDL3 build in <code>C:/libs/SDL3-devel-3.4.4-wasm</code>. Use this path in your project's CMake configuration:</span>
-        <span class="data-ru">Теперь у вас есть сборка SDL3 для Wasm в <code>C:/libs/SDL3-devel-3.4.4-wasm</code>. Используйте этот путь в конфигурации CMake вашего проекта:</span>
+        <span class="data-en">You now have a Wasm-compatible SDL3 build in <code>C:/libs/SDL3-devel-3.4.8-wasm</code>. Use this path in your project's CMake configuration:</span>
+        <span class="data-ru">Теперь у вас есть сборка SDL3 для Wasm в <code>C:/libs/SDL3-devel-3.4.8-wasm</code>. Используйте этот путь в конфигурации CMake вашего проекта:</span>
         <br><br>
-        <code>-DSDL3_DIR=C:/libs/SDL3-devel-3.4.4-wasm/lib/cmake/SDL3</code>
+        <code>-DSDL3_DIR=C:/libs/SDL3-devel-3.4.8-wasm/lib/cmake/SDL3</code>
     </div>
 
     <h3 class="category-header mt-5">
@@ -457,9 +457,39 @@ function copyToClipboard(text, button) {
     }
 
     // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+    //     if (link) {
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // Logic for dynamic links (persisting language across pages)
     document.addEventListener("click", function(e) {
         const link = e.target.closest(".lang-link-dynamic");
+        
         if (link) {
+            // Check if the link is intended to open in a new tab
+            if (link.target === "_blank") {
+                // Allow the browser to handle the click naturally, 
+                // but we still want to append the language param.
+                const currentLang = document.documentElement.getAttribute("lang") || "en";
+                const targetUrl = new URL(link.href);
+                targetUrl.searchParams.set("lang", currentLang);
+                
+                // Update the href right before the browser follows it
+                link.href = targetUrl.toString();
+                return; // Exit the function so e.preventDefault() isn't called
+            }
+
+            // Existing logic for same-tab navigation
             e.preventDefault();
             const currentLang = document.documentElement.getAttribute("lang") || "en";
             const targetUrl = new URL(

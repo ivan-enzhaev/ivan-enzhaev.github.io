@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Setting up SDL3 for WebAssembly (Emscripten) | Ivan Enzhaev</title>
+<title>Setting up SDL3_image with find_package (MinGW) | Ivan Enzhaev</title>
 <link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
 
 
@@ -188,278 +188,311 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">SDL3 WebAssembly: Setup for C and C++ (Emscripten)</span>
-            <span class="data-ru">SDL3 для WebAssembly: Настройка для C и C++ (Emscripten)</span>
+            <span class="data-en">SDL3 Desktop: SDL3_image Setup (MinGW 13.1)</span>
+            <span class="data-ru">SDL3 для Desktop: Настройка SDL3_image (MinGW 13.1)</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to configuring SDL3 with CMake and Emscripten (emsdk) for WebAssembly.</span>
-            <span class="data-ru">Руководство по настройке SDL3 с использованием CMake и Emscripten (emsdk) для WebAssembly.</span>
+            <span class="data-en">A guide to configuring the SDL3_image extension library with CMake and MinGW.</span>
+            <span class="data-ru">Руководство по настройке библиотеки расширения SDL3_image с использованием CMake и MinGW.</span>
         </p>
     </header>
 
+    <div class="alert alert-primary">
+        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have SDL3 already configured. See the <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3/" target="_blank">SDL3 Setup Guide</a>.</span>
+        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что SDL3 уже настроен. См. <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3/" target="_blank">руководство по настройке SDL3</a>.</span>
+    </div>
+
     <h3 class="category-header">
-        <span class="data-en">1. Obtain SDL3 for Wasm</span>
-        <span class="data-ru">1. Получение SDL3 для Wasm</span>
+        <span class="data-en">1. Obtain SDL3_image 3.4.4</span>
+        <span class="data-ru">1. Получение SDL3_image 3.4.4</span>
     </h3>
 
     <ul>
         <li>
-            <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed the <a href="/tutorials/tools/wasm/wasm-env/" target="_blank" rel="noopener noreferrer">Emscripten Setup Guide</a>.</span>
-            <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/wasm/wasm-env/" target="_blank" rel="noopener noreferrer">руководства по настройке Emscripten</a>.</span>
+            <span class="data-en">
+                Download two archives from the <a href="https://github.com/libsdl-org/SDL_image/releases/tag/release-3.4.4" target="_blank" rel="noopener noreferrer">official release page</a>:
+            </span>
+            <span class="data-ru">
+                Скачайте два архива со страницы <a href="https://github.com/libsdl-org/SDL_image/releases/tag/release-3.4.4" target="_blank" rel="noopener noreferrer">официального релиза</a>:
+            </span>
+            <!-- <div class="alert alert-primary mt-2">
+                <span class="data-en">
+                    <strong>Note:</strong> Ensure you move the headers and libraries so the structure is <code>SDL3_image-devel-3.4.4-mingw/include</code>, <code>SDL3_image-devel-3.4.4-mingw/lib</code>, etc.
+                </span>
+                <span class="data-ru">
+                    <strong>Примечание:</strong> Переместите заголовочные файлы и библиотеки так, чтобы структура папок была <code>SDL3_image-devel-3.4.4-mingw/include</code>, <code>SDL3_image-devel-3.4.4-mingw/lib</code> и т. д.
+                </span>
+            </div> -->
+            <br>
+            <img src="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3-image/download-sdl3.png" alt="Download Link" class="img-fluid border rounded mt-3 shadow-sm">
         </li>
         <li>
-            <span class="data-en">Download my pre-built SDL 3.4.4 lib for <b>emsdk 4.0.15</b>: <a href="/libs/wasm/sdl3/SDL3-devel-3.4.4-wasm.zip">SDL3-devel-3.4.4-wasm.zip</a>. Extract the archive to <code>C:/libs/SDL3-devel-3.4.4-wasm</code></span>
-            <span class="data-ru">Скачайте мою готовую сборку SDL 3.4.4 для <b>emsdk 4.0.15</b>: <a href="/libs/wasm/sdl3/SDL3-devel-3.4.4-wasm.zip">SDL3-devel-3.4.4-wasm.zip</a>. Распакуйте архив в <code>C:/libs/SDL3-devel-3.4.4-wasm</code></span>
+            <span class="data-en">
+                Extract the <b>SDL3_image-devel-3.4.4-mingw.zip</b> archive to the <code>C:/libs/SDL3_image-devel-3.4.4-mingw</code> folder.
+            </span>
+            <span class="data-ru">
+                Распакуйте архив <b>SDL3_image-devel-3.4.4-mingw.zip</b> в папку <code>C:/libs/SDL3_image-devel-3.4.4-mingw</code>.
+            </span>
         </li>
         <li>
-            <span class="data-en">Alternatively, you can build it yourself following my guide: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/">Building SDL3 for WebAssembly</a>.</span>
-            <span class="data-ru">Или же вы можете собрать её самостоятельно по моей инструкции: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/">Building SDL3 for WebAssembly</a>.</span>
+            <span class="data-en">
+                Move the headers and libraries so the structure is <code>SDL3_image-devel-3.4.4-mingw/include</code>, etc:
+            </span>
+            <span class="data-ru">
+                Переместите заголовочные файлы и библиотеки так, чтобы структура папок была <code>SDL3_image-devel-3.4.4-mingw/include</code> и т. д.:
+            </span>
+            <br>
+            <img src="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3-image/setting-up-sdl3-image.png" alt="Folder structure Link" class="img-fluid border rounded mt-3 shadow-sm">
+        </li>
+        <li>
+            <span class="data-en">Extract the <b>SDL3_image-3.4.4-win32-x64.zip</b> archive so the path is exactly <code>C:/libs/SDL3_image-3.4.4-win32-x64</code>:</span>
+            <span class="data-ru">Распакуйте архив <b>SDL3_image-3.4.4-win32-x64.zip</b> так, чтобы путь был именно <code>C:/libs/SDL3_image-3.4.4-win32-x64</code>:</span>
+            <br>
+            <img src="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3-image/setting-up-sdl3-image2.png" alt="Folder structure Link" class="img-fluid border rounded mt-3 shadow-sm">
         </li>
     </ul>
 
     <h3 class="category-header">
-        <span class="data-en">2. Project Configuration (CMakeLists.txt)</span>
-        <span class="data-ru">2. Конфигурация проекта (CMakeLists.txt)</span>
+        <span class="data-en">2. Add SDL3 to Environment Variables (Path)</span>
+        <span class="data-ru">2. Добавление SDL3 в переменные среды (Path)</span>
+    </h3>
+    <p class="mt-3">
+        <span class="data-en">To ensure your applications can find the <code>SDL3.dll</code> file at runtime, you should add the following path to the <b>Path</b> variable in your <b>User variables</b> section:</span>
+        <span class="data-ru">Чтобы приложения могли находить <code>SDL3.dll</code> файл при запуске, добавьте следующий путь в переменную <b>Path</b> в разделе <b>Переменные среды пользователя</b>:</span>
+    </p>
+    <div class="bg-light p-3 rounded border-start border-4 border-warning mb-4">
+        <code>C:\libs\SDL3_image-3.4.4-win32-x64</code>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">3. Project Structure and Assets</span>
+        <span class="data-ru">3. Структура проекта и ресурсы</span>
     </h3>
 
-    <ul>
-        <li>
-            <span class="data-en">Create a new empty folder for your project (e.g., <code>rectangles-sdl3</code>).</span>
-            <span class="data-ru">Создайте новую пустую папку для вашего проекта (например, <code>rectangles-sdl3</code>).</span>
-        </li>
-        <li>
-            <span class="data-en">Inside that folder, create a file named <code>CMakeLists.txt</code> and paste the following content:</span>
-            <span class="data-ru">Внутри этой папки создайте файл с именем <code>CMakeLists.txt</code> и вставьте следующее содержимое:</span>
-        </li>
-    </ul>
+    <div class="mb-4">
+        <p>
+            <span class="data-en">Before creating the files, download the required asset:</span>
+            <span class="data-ru">Перед созданием файлов скачайте необходимый ресурс:</span>
+        </p>
+        <ul>
+            <li>
+                <span class="data-en">Download the PNG file with transparent background: <a href="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3-image/right-arrow.zip">right-arrow.zip</a></span>
+                <span class="data-ru">Скачайте PNG-файл с прозрачным фоном: <a href="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3-image/right-arrow.zip">right-arrow.zip</a></span>
+            </li>
+            <li>
+                <span class="data-en">Note: This is a free file taken from <a href="https://www.flaticon.com/free-icons/arrow" target="_blank" rel="noopener noreferrer">this link</a>.</span>
+                <span class="data-ru">Примечание. Это бесплатный файл, который был взят <a href="https://www.flaticon.com/free-icons/arrow" target="_blank" rel="noopener noreferrer">по ссылке</a>.</span>
+            </li>
+            <!-- <li>
+                <span class="data-en">Inside the project folder, create a nested folder <code>assets/images</code> and copy the downloaded file into it.</span>
+                <span class="data-ru">Внутри папки проекта создайте вложенную папку <code>assets/images</code> и скопируйте в неё скачанный файл.</span>
+            </li> -->
+        </ul>
+    </div>
 
     <div class="row">
         <div class="col-lg-6 mb-4">
-            <h6 class="fw-bold text-primary">CMakeLists.txt (C version)</h6>
-            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
-project(rectangles-sdl3)
-
-# Set the C standard
-set(CMAKE_C_STANDARD 17)
-set(CMAKE_C_STANDARD_REQUIRED ON)
-
-# Specify the exact location of the library configuration files
-# The variable name must strictly match: LibraryName_DIR
-set(SDL3_DIR "C:/libs/SDL3-devel-3.4.4-wasm/lib/cmake/SDL3")
-
-# Check for the presence of the library in the system
-# If it is not found, CMake will abort the configuration with an error
-# REQUIRED means the library is mandatory for the build
-find_package(SDL3 REQUIRED)
-
-# Set the name of the future application (on the web it will be app.js / app.wasm,
-# while on Windows it would be app.exe)
-add_executable(app)
-
-# Add source code to the project
-target_sources(app
-    PRIVATE
-    src/main.c
-)
- 
-# Link the library to our application (configures linking and include paths)
-target_link_libraries(app PRIVATE SDL3::SDL3)
-</code></pre>
+            <p class="data-en"><strong>C Project:</strong> Create an empty folder named <code>image-sdl3-c</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.c</code> files:</p>
+            <p class="data-ru"><strong>Проект на C:</strong> Создайте пустую папку с именем <code>image-sdl3-c</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.c</code>:</p>
+            <pre><code>image-sdl3-c/
+├── CMakeLists.txt
+├── assets/images/
+│   └── right-arrow.png
+└── src/
+    └── main.c</code></pre>
         </div>
-
         <div class="col-lg-6 mb-4">
-            <h6 class="fw-bold text-success">CMakeLists.txt (C++ version)</h6>
-            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
-project(rectangles-sdl3)
-
-# Set the C++ standard
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Specify the exact location of the library configuration files
-# The variable name must strictly match: LibraryName_DIR
-set(SDL3_DIR "C:/libs/SDL3-devel-3.4.4-wasm/lib/cmake/SDL3")
-
-# Check for the presence of the library in the system
-# If it is not found, CMake will abort the configuration with an error
-# REQUIRED means the library is mandatory for the build
-find_package(SDL3 REQUIRED)
-
-# Set the name of the future application (on the web it will be app.js / app.wasm,
-# while on Windows it would be app.exe)
-add_executable(app)
-
-# Add source code to the project
-target_sources(app
-    PRIVATE
-    src/main.cpp
-)
- 
-# Link the library to our application (configures linking and include paths)
-target_link_libraries(app PRIVATE SDL3::SDL3)
-</code></pre>
+            <p class="data-en"><strong>C++ Project:</strong> Create an empty folder named <code>image-sdl3-cpp</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.cpp</code> files:</p>
+            <p class="data-ru"><strong>Проект на C++:</strong> Создайте пустую папку с именем <code>image-sdl3-cpp</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.cpp</code>:</p>
+            <pre><code>image-sdl3-cpp/
+├── CMakeLists.txt
+├── assets/images/
+│   └── right-arrow.png
+└── src/
+    └── main.cpp</code></pre>
         </div>
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">3. Source Code</span>
-        <span class="data-ru">3. Исходный код</span>
+        <span class="data-en">4. CMake Configuration</span>
+        <span class="data-ru">4. Конфигурация CMake</span>
     </h3>
 
-    <h6 class="fw-bold text-primary">src/main.c (or src/main.cpp):</h6>
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <p class="data-en"><strong>C Project:</strong> Copy and paste the following code into the <code>CMakeLists.txt</code> file:</p>
+            <p class="data-ru"><strong>Проект на C:</strong> Скопируйте и вставьте следующее содержимое в файл <code>CMakeLists.txt</code>:</p>
+                <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+cmake_minimum_required(VERSION 3.21)
+project(image-sdl3-c)
 
-    <pre><code class="language-c">#define SDL_MAIN_USE_CALLBACKS 1 // Use callback functions instead of main()
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.8-mingw/lib/cmake/SDL3")
+set(SDL3_image_DIR "C:/libs/SDL3_image-devel-3.4.4-mingw/lib/cmake/SDL3_image")
 
+find_package(SDL3 REQUIRED)
+find_package(SDL3_image REQUIRED)
+
+add_executable(app)
+target_sources(app PRIVATE src/main.c)
+
+# Copy the assets folder to the dist folder
+if(EXISTS "${CMAKE_SOURCE_DIR}/assets")
+    add_custom_command(TARGET app POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${CMAKE_SOURCE_DIR}/assets"
+                "$&lt;TARGET_FILE_DIR:app&gt;/assets"
+        COMMENT "Copying assets directory"
+    )
+endif()
+
+target_link_libraries(app PRIVATE SDL3_image::SDL3_image SDL3::SDL3)
+target_link_options(app PRIVATE -mconsole)</code></pre>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <p class="data-en"><strong>C++ Project:</strong> Copy and paste the following code into the <code>CMakeLists.txt</code> file:</p>
+            <p class="data-ru"><strong>Проект на C++:</strong> Скопируйте и вставьте следующее содержимое в файл <code>CMakeLists.txt</code>:</p>
+                <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+cmake_minimum_required(VERSION 3.21)
+project(image-sdl3-cpp)
+
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.8-mingw/lib/cmake/SDL3")
+set(SDL3_image_DIR "C:/libs/SDL3_image-devel-3.4.4-mingw/lib/cmake/SDL3_image")
+
+find_package(SDL3 REQUIRED)
+find_package(SDL3_image REQUIRED)
+
+add_executable(app)
+target_sources(app PRIVATE src/main.cpp) 
+
+# Copy the assets folder to the dist folder
+if(EXISTS "${CMAKE_SOURCE_DIR}/assets")
+    add_custom_command(TARGET app POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${CMAKE_SOURCE_DIR}/assets"
+                "$&lt;TARGET_FILE_DIR:app&gt;/assets"
+        COMMENT "Copying assets directory"
+    )
+endif()
+
+target_link_libraries(app PRIVATE SDL3_image::SDL3_image SDL3::SDL3)
+target_link_options(app PRIVATE -mconsole)</code></pre>
+        </div>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">5. Source Code</span>
+        <span class="data-ru">5. Исходный код</span>
+    </h3>
+
+            <p class="data-en">Copy and paste the following code into the <code>src/main.c</code> (or <code>src/main.cpp</code>) file:</p>
+            <p class="data-ru">Скопируйте и вставьте следующее содержимое в файл <code>src/main.c</code> (или <code>src/main.cpp</code>):
+
+            <p><strong>main.c / main.cpp</strong></p>
+
+            <pre><code class="language-c">#define SDL_MAIN_USE_CALLBACKS 1
 #include &lt;SDL3/SDL.h&gt;
 #include &lt;SDL3/SDL_main.h&gt;
+#include &lt;SDL3_image/SDL_image.h&gt;
 
-// We will use this renderer to draw into this window every frame
 static SDL_Window *window = NULL;
 static SDL_Renderer *renderer = NULL;
+static SDL_Texture *texture = NULL;
 
-// This function runs once at startup
-SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
-{
-    if (!SDL_Init(SDL_INIT_VIDEO))
-    {
-        SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
+SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
+    if (!SDL_Init(SDL_INIT_VIDEO)) return SDL_APP_FAILURE;
+
+    if (!SDL_CreateWindowAndRenderer("SDL3 Image C", 250, 250, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
         return SDL_APP_FAILURE;
     }
 
-    if (!SDL_CreateWindowAndRenderer("SDL3 Rectangles", 500, 500, SDL_WINDOW_RESIZABLE, &window, &renderer))
-    {
-        SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
+    const char *texturePath = "assets/images/right-arrow.png";
+    texture = IMG_LoadTexture(renderer, texturePath);
+    if (!texture) {
+        SDL_Log("Load failed: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
-
-    SDL_SetRenderVSync(renderer, 1);
-
-    return SDL_APP_CONTINUE; // Continue program execution!
+    return SDL_APP_CONTINUE;
 }
 
-// This function runs whenever a new event occurs (mouse input, key presses, etc.)
-SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
-{
-    if (event->type == SDL_EVENT_QUIT)
-    {
-        return SDL_APP_SUCCESS; // Terminate the program, reporting success to the OS
-    }
-    return SDL_APP_CONTINUE; // Continue program execution!
+SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
+    if (event->type == SDL_EVENT_QUIT) return SDL_APP_SUCCESS;
+    return SDL_APP_CONTINUE;
 }
 
-// This function runs once per frame and is the heart of the program
-SDL_AppResult SDL_AppIterate(void *appstate)
-{
-    SDL_SetRenderDrawColor(renderer, 38, 43, 51, 255);
-
-    // Clear the window with the draw color
+SDL_AppResult SDL_AppIterate(void *appstate) {
+    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
     SDL_RenderClear(renderer);
 
-    SDL_FRect rect1;
-    rect1.x = 100;
-    rect1.y = 50;
-    rect1.w = 200;
-    rect1.h = 60;
-    SDL_SetRenderDrawColor(renderer, 220, 80, 80, SDL_ALPHA_OPAQUE);
-    SDL_RenderFillRect(renderer, &rect1);
+    SDL_FRect srcRect = { 0, 0, 512, 512 };
+    SDL_FRect destRect = { 50, 50, 100, 100 };
+    SDL_RenderTexture(renderer, texture, &srcRect, &destRect);
 
-    SDL_FRect rect2;
-    rect2.x = 50;
-    rect2.y = 200;
-    rect2.w = 100;
-    rect2.h = 50;
-    SDL_SetRenderDrawColor(renderer, 80, 180, 100, SDL_ALPHA_OPAQUE);
-    SDL_RenderFillRect(renderer, &rect2);
-
-    // Present the freshly cleared result to the screen
     SDL_RenderPresent(renderer);
-
-    return SDL_APP_CONTINUE; // Continue program execution!
+    return SDL_APP_CONTINUE;
 }
 
-// This function runs once upon shutdown
-void SDL_AppQuit(void *appstate, SDL_AppResult result)
-{
-    // SDL will clean up the window and renderer for us
+void SDL_AppQuit(void *appstate, SDL_AppResult result) {
+    SDL_DestroyTexture(texture);
 }</code></pre>
 
-    <h6 class="fw-bold text-primary">public/index.html:</h6>
-
-    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-
-&lt;head&gt;
-    &lt;meta charset="utf-8"&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-&lt;/head&gt;
-
-&lt;body&gt;
-    &lt;canvas id="canvas"&gt;&lt;/canvas&gt;
-    &lt;script async src="./js/app.js"&gt;&lt;/script&gt;
-&lt;/body&gt;
-
-&lt;/html&gt;
-</code></pre></code></pre>
-
-    <h3 class="category-header">
-        <span class="data-en">4. Automation Scripts (.bat)</span>
-        <span class="data-ru">4. Скрипты автоматизации (.bat)</span>
+    <!-- <h3 class="category-header">
+        <span class="data-en">6. Running the Project</span>
+        <span class="data-ru">6. Запуск проекта</span>
     </h3>
-    <div class="row">
-        <div class="col-md-6">
-            <h6>config-wasm.bat</h6>
-            <pre><code class="language-bash">emcmake cmake -S . -B dist/web ^
--DCMAKE_BUILD_TYPE=Debug
-</code></pre>
-        </div>
-        <div class="col-md-6">
-            <h6>build-wasm.bat</h6>
-            <pre><code class="language-bash">cd dist\web
-cmake --build .
-
-cd ..\..
-mkdir public\js
-set current_dir=%~dp0
-copy "%current_dir%dist\web\app.wasm" "%current_dir%public\js"
-copy "%current_dir%dist\web\app.js" "%current_dir%public\js"
-</code></pre>
-        </div>
-    </div>
+    <p class="data-en">Use your existing <code>.bat</code> scripts. Ensure the <b>assets</b> folder is copied to the <code>dist/win</code> directory so the executable can find the image.</p>
+    <p class="data-ru">Используйте ваши существующие <code>.bat</code> скрипты. Убедитесь, что папка <b>assets</b> скопирована в директорию <code>dist/win</code>, чтобы исполняемый файл мог найти изображение.</p> -->
 
     <h3 class="category-header">
-        <span class="data-en">5. Build and Run</span>
-        <span class="data-ru">5. Сборка и запуск</span>
+        <span class="data-en">6. Opening the Project in IDEs</span>
+        <span class="data-ru">6. Открытие проекта в IDE</span>
     </h3>
     <p>
-        <span class="data-en">Configure and build the project:</span>
-        <span class="data-ru">Сконфигурируйте и соберите проект:</span>
+        <span class="data-en">Open the <b>CMakeLists.txt</b> file in <b>CLion</b> or <b>Qt Creator</b>. CMake will handle the rest.</span>
+        <span class="data-ru">Откройте файл <b>CMakeLists.txt</b> в <b>CLion</b> или <b>Qt Creator</b>. CMake позаботится об остальном.</span>
     </p>
-    <pre><code class="language-bash"># Configure
-config-wasm
+    <h3 class="category-header">
+        <span class="data-en">7. Automation Scripts (.bat)</span>
+        <span class="data-ru">7. Скрипты автоматизации (.bat)</span>
+    </h3>
 
-# Build
-build-wasm</code></pre>
+    <p class="data-en">
+        You can open the project folder in <b>Sublime Text 4</b> (or <b>Notepad++</b>). Create the following <code>.bat</code> scripts in the project root directory to automate the configuration, building, and running of your application:
+    </p>
+    <p class="data-ru">
+        Вы можете открыть папку проекта в <b>Sublime Text 4</b> (или <b>Notepad++</b>). Создайте следующие <code>.bat</code> скрипты в корневой директории проекта для автоматизации конфигурации, сборки и запуска вашего приложения:
+    </p>
 
-    <pre><code class="language-bash">http-server -c-1</code></pre>
-    <div class="alert alert-info">
-        <span class="data-en">Open <strong>localhost:8080</strong> and check the browser console (F12) to see the output.</span>
-        <span class="data-ru">Откройте <strong>localhost:8080</strong> и проверьте консоль браузера (F12), чтобы увидеть результат.</span>
+    <div class="row">
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">1. config-exe.bat</h6>
+            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist/exe</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">2. build-exe.bat</h6>
+            <pre><code class="language-bash">cd dist\exe
+cmake --build .
+cd ..\..</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">3. run-exe.bat</h6>
+            <pre><code class="language-bash">dist\exe\app</code></pre>
+        </div>
     </div>
 
-    <!-- <div class="alert alert-info mt-5">
-        <h5 class="fw-bold"><i class="fas fa-rocket"></i> <span class="data-en">What's Next?</span><span class="data-ru">Что дальше?</span></h5>
-        <p class="mb-0">
-            <span class="data-en">For WebAssembly, using <code>emscripten_set_main_loop</code> is the classic way. However, SDL3 introduces a new <b>Main Callback</b> system which is even better for Wasm.</span>
-            <span class="data-ru">Для WebAssembly использование <code>emscripten_set_main_loop</code> — классический способ. Однако в SDL3 появилась новая система <b>Main Callback</b>, которая еще лучше подходит для Wasm.</span>
-        </p>
-        <div class="mt-3">
-            <a href="/tutorials/sdl3-renderer/wasm/sdl3-callbacks/" class="btn btn-outline-info btn-sm">
-                <span class="data-en">Go to the Callback Tutorial →</span>
-                <span class="data-ru">Перейти к уроку по Callbacks →</span>
-            </a>
-        </div>
-    </div> -->
+    <p class="data-en">
+        To build and launch the application, run these scripts in the terminal in the following order:
+    </p>
+    <p class="data-ru">
+        Чтобы собрать и запустить приложение, выполните эти скрипты в терминале в следующем порядке:
+    </p>
+
+    <div class="bg-light p-3 border rounded">
+        <pre class="mb-0"><code class="language-bash">config-exe
+build-exe
+run-exe</code></pre>
+    </div>
 </div>
+
 
         
         
@@ -597,10 +630,6 @@ function copyToClipboard(text, button) {
 
     
     <block>
-        
-        <block>
-            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
-        </block>
         
 
         

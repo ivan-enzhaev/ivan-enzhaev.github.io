@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Android Environment Setup | Ivan Enzhaev</title>
+<title>Building SDL3_mixer for WebAssembly | Ivan Enzhaev</title>
 <link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
 
 
@@ -188,81 +188,101 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold text-dark">
-            <span class="data-en">Android Environment Setup</span>
-            <span class="data-ru">Установка окружения Android</span>
+            <span class="data-en">Building SDL3_mixer for Wasm</span>
+            <span class="data-ru">Сборка SDL3_mixer для Wasm</span>
         </h1>
     </header>
 
     <h3 class="category-header">
-        <span class="data-en">1. Android SDK Command-Line Tools</span>
-        <span class="data-ru">1. Android SDK Command-Line Tools</span>
+        <span class="data-en">1. Preparation</span>
+        <span class="data-ru">1. Подготовка</span>
     </h3>
 
-    <p>
-        <span class="data-en">Go to the <a href="https://developer.android.com/studio" target="_blank" rel="noopener noreferrer">Android Studio download page</a>. Scroll to the bottom and download the <strong>commandlinetools-win-xxxxxx_latest.zip</strong> archive.</span>
-        <span class="data-ru">Перейдите по ссылке <a href="https://developer.android.com/studio" target="_blank">Android Studio</a> и в самом низу страницы скачайте архив <strong>commandlinetools-win-xxxxxx_latest.zip</strong>.</span>
-    </p>
-
-    <div class="alert alert-info">
-        <span class="data-en"><strong>Important:</strong> Create a folder named <code>AndroidSDK</code> (e.g., on <code>C:\</code>). Extract the archive so your path looks like this:</span>
-        <span class="data-ru"><strong>Важно:</strong> Создайте папку <code>AndroidSDK</code> (например, на диске <code>C:\</code>). Извлеките архив так, чтобы путь выглядел следующим образом:</span>
-        <br><code class="fw-bold">C:\AndroidSDK\cmdline-tools\latest\</code>
-    </div>
-
-    <p>
-        <span class="data-en">Note: Inside <code>cmdline-tools</code>, you must create a folder named <code>latest</code> and move the original <code>bin</code>, <code>lib</code>, <code>source.properties</code>, and <code>notice.txt</code> into it.</span>
-        <span class="data-ru">Примечание: Внутри папки <code>cmdline-tools</code> необходимо создать папку <code>latest</code> и переместить в неё содержимое (bin, lib и т.д.).</span>
-    </p>
-
-    <h3 class="category-header">
-        <span class="data-en">2. Licenses and Component Installation</span>
-        <span class="data-ru">2. Лицензии и установка компонентов</span>
-    </h3>
-
-    <p>
-        <span class="data-en">Open CMD in <code>C:\AndroidSDK\cmdline-tools\latest\bin</code> and run the following to accept licenses (press <strong>Y + Enter</strong> for all):</span>
-        <span class="data-ru">Откройте CMD в папке <code>C:\AndroidSDK\cmdline-tools\latest\bin</code> и выполните команду для принятия лицензий (нажимайте <strong>Y + Enter</strong>):</span>
-    </p>
-    <pre><code class="language-bash">sdkmanager --licenses</code></pre>
-
-    <p>
-        <span class="data-en">Now install the necessary platforms, build tools, and NDK:</span>
-        <span class="data-ru">Теперь установите необходимые платформы, build-tools и NDK:</span>
-    </p>
-    <pre><code class="language-bash">sdkmanager "platform-tools" "build-tools;35.0.0" "platforms;android-35" "ndk;27.0.12077973"</code></pre>
-
-    <h3 class="category-header">
-        <span class="data-en">3. Environment Variables (PATH)</span>
-        <span class="data-ru">3. Переменные среды (PATH)</span>
-    </h3>
-    <p>
-        <span class="data-en">Add the following variables to your System Environment Variables:</span>
-        <span class="data-ru">Добавьте следующие переменные в системные переменные среды:</span>
-    </p>
-    <pre><code class="language-bash"># Variables
-ANDROID_HOME: C:\AndroidSDK
-ANDROID_NDK_HOME: C:\AndroidSDK\ndk\27.0.12077973;
-
-# Add to Path
-%ANDROID_HOME%\cmdline-tools\latest\bin
-%ANDROID_HOME%\platform-tools
-%ANDROID_HOME%\build-tools\35.0.0</code></pre>
-
-    <h3 class="category-header">
-        <span class="data-en">4. JDK and CMake</span>
-        <span class="data-ru">4. JDK и CMake</span>
-    </h3>
     <ul>
         <li>
-            <span class="data-en">Download and install <a href="https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html" target="_blank" rel="noopener noreferrer">JDK 17</a>.</span>
-            <span class="data-ru">Скачайте и установите <a href="https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html" target="_blank" rel="noopener noreferrer">JDK 17</a>.</span>
+            <div class="alert alert-warning">
+                <span class="data-en"><strong>Important:</strong> Before building SDL3_mixer, you must have SDL3 already compiled for WebAssembly. Follow this <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm" target="_blank">guide: Building SDL3 for Wasm</a>.</span>
+                <span class="data-ru"><strong>Важно:</strong> Перед сборкой SDL3_mixer у вас уже должна быть скомпилированная версия SDL3 для WebAssembly. Следуйте этому <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm" target="_blank">руководству: Сборка SDL3 для Wasm</a>.</span>
+            </div>
         </li>
         <li>
-            <span class="data-en">Download and install <a href="https://github.com/Kitware/CMake/releases" target="_blank" rel="noopener noreferrer">CMake</a> (look for <code>cmake-x.x.x-windows-x86_64.msi</code>).</span>
-            <span class="data-ru">Скачайте и установите <a href="https://github.com/Kitware/CMake/releases" target="_blank" rel="noopener noreferrer">CMake</a> (ищите <code>cmake-x.x.x-windows-x86_64.msi</code>).</span>
+            <span class="data-en">Download the <strong>SDL3_mixer 3.2.0 Source Code</strong> from the <a href="https://github.com/libsdl-org/SDL_mixer/releases/tag/release-3.2.0" target="_blank" rel="noopener noreferrer">official GitHub releases</a> (SDL3_mixer-3.2.0.zip).</span>
+            <span class="data-ru">Скачайте <strong>исходный код SDL3_mixer 3.2.0</strong> с <a href="https://github.com/libsdl-org/SDL_mixer/releases/tag/release-3.2.0" target="_blank" rel="noopener noreferrer">официальных релизов GitHub</a> (SDL3_mixer-3.2.0.zip).</span>
+        </li>
+        <li>
+            <span class="data-en">Extract it to a folder (e.g., <code>C:/libs</code>).</span>
+            <span class="data-ru">Распакуйте архив в папку (например, <code>C:/libs</code>).</span>
+        </li>
+        <li>
+            <span class="data-en">Open CMD inside the extracted <code>SDL3_mixer-3.2.0</code> folder.</span>
+            <span class="data-ru">Откройте CMD внутри папки <code>SDL3_mixer-3.2.0</code>.</span>
         </li>
     </ul>
+
+    <h3 class="category-header">
+        <span class="data-en">2. Configure (emcmake)</span>
+        <span class="data-ru">2. Конфигурация (emcmake)</span>
+    </h3>
+
+    <p>
+        <span class="data-en">Run this command to generate the build files. Note that we provide the path to our previously built SDL3 Wasm library via <code>-DSDL3_DIR</code>.</span>
+        <span class="data-ru">Запустите эту команду для генерации файлов сборки. Обратите внимание, что мы указываем путь к ранее собранной библиотеке SDL3 Wasm через <code>-DSDL3_DIR</code>.</span>
+    </p>
+
+    <pre><code class="language-bash">emcmake cmake -S . -B dist -DCMAKE_INSTALL_PREFIX="C:/libs/SDL3_mixer-devel-3.2.0-wasm" -DSDL3_DIR="C:/libs/SDL3-devel-3.4.8-wasm/lib/cmake/SDL3" -DCMAKE_BUILD_TYPE=MinSizeRel</code></pre>
+
+    <h3 class="category-header">
+        <span class="data-en">3. Build & Install</span>
+        <span class="data-ru">3. Сборка и установка</span>
+    </h3>
+
+    <p>
+        <span class="data-en">Compile the source code:</span>
+        <span class="data-ru">Скомпилируйте исходный код:</span>
+    </p>
+    <pre><code class="language-bash">cmake --build dist</code></pre>
+
+    <p>
+        <span class="data-en">Install the headers and libraries to the specified prefix:</span>
+        <span class="data-ru">Установите заголовочные файлы и библиотеки по указанному пути:</span>
+    </p>
+    <pre><code class="language-bash">cmake --install dist</code></pre>
+
+    <div class="alert alert-success mt-4">
+        <h5 class="fw-bold"><span class="data-en">Success!</span><span class="data-ru">Успех!</span></h5>
+        <span class="data-en">You now have a Wasm-compatible SDL3_mixer build in <code>C:/libs/SDL3_mixer-devel-3.2.0-wasm</code>. Add this to your project's CMake:</span>
+        <span class="data-ru">Теперь у вас есть сборка SDL3_mixer для Wasm в <code>C:/libs/SDL3_mixer-devel-3.2.0-wasm</code>. Добавьте это в CMake вашего проекта:</span>
+        <br><br>
+        <code>-DSDL3_mixer_DIR=C:/libs/SDL3_mixer-devel-3.2.0-wasm/lib/cmake/SDL3_mixer</code>
+    </div>
+
+    <!-- <h3 class="category-header mt-5">
+        <span class="data-en">Common Troubleshooting</span>
+        <span class="data-ru">Устранение неполадок</span>
+    </h3>
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>Problem</th>
+                    <th>Solution</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="data-en">Could not find SDL3</span><span class="data-ru">Не удалось найти SDL3</span></td>
+                    <td><span class="data-en">Check if the <code>-DSDL3_DIR</code> path points exactly to the <code>lib/cmake/SDL3</code> folder inside your SDL3 Wasm build directory.</span><span class="data-ru">Проверьте, указывает ли путь <code>-DSDL3_DIR</code> именно на папку <code>lib/cmake/SDL3</code> внутри вашей директории сборки SDL3 Wasm.</span></td>
+                </tr>
+                <tr>
+                    <td><span class="data-en">Missing audio codecs (OGG/MP3)</span><span class="data-ru">Отсутствуют аудиокодеки (OGG/MP3)</span></td>
+                    <td><span class="data-en">SDL3_mixer uses built-in decoders, but for WebAssembly, ensure your browser supports the audio format. You may need additional CMake flags like <code>-DSDL3MIXER_VORBIS=STB</code> for OGG support.</span><span class="data-ru">SDL3_mixer использует встроенные декодеры, но для WebAssembly убедитесь, что ваш браузер поддерживает формат аудио. Вам могут понадобиться дополнительные флаги CMake, такие как <code>-DSDL3MIXER_VORBIS=STB</code> для поддержки OGG.</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div> -->
 </div>
+
 
         
         

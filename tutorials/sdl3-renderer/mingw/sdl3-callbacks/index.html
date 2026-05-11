@@ -210,26 +210,44 @@
     <div class="row">
         <div class="col-lg-6 mb-4">
             <h6 class="fw-bold text-primary">CMakeLists.txt (C)</h6>
-            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
-project(sdl3-callback-c LANGUAGES C)
+            <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
 
-set(SDL3_DIR "C:/libs/SDL3-mingw/lib/cmake/SDL3")
+cmake_minimum_required(VERSION 3.21)
+project(rectangle-sdl3-c)
+
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.8-mingw/lib/cmake/SDL3")
 find_package(SDL3 REQUIRED)
 
-add_executable(app src/main.c)
+add_executable(app)
+
+target_sources(app
+PRIVATE
+    src/main.c
+)
+
 target_link_libraries(app PRIVATE SDL3::SDL3)
+
 target_link_options(app PRIVATE -mconsole)</code></pre>
         </div>
         <div class="col-lg-6 mb-4">
             <h6 class="fw-bold text-success">CMakeLists.txt (C++)</h6>
-            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
-project(sdl3-callback-cpp LANGUAGES CXX)
+            <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
 
-set(SDL3_DIR "C:/libs/SDL3-mingw/lib/cmake/SDL3")
+cmake_minimum_required(VERSION 3.21)
+project(rectangle-sdl3-cpp)
+
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.8-mingw/lib/cmake/SDL3")
 find_package(SDL3 REQUIRED)
 
-add_executable(app src/main.cpp)
+add_executable(app)
+
+target_sources(app
+PRIVATE
+    src/main.cpp
+)
+
 target_link_libraries(app PRIVATE SDL3::SDL3)
+
 target_link_options(app PRIVATE -mconsole)</code></pre>
         </div>
     </div>
@@ -240,83 +258,75 @@ target_link_options(app PRIVATE -mconsole)</code></pre>
     </h3>
 
     <div class="row">
-        <div class="col-lg-6 mb-4">
-            <h6 class="fw-bold text-primary">main.c</h6>
-            <pre><code class="language-c">#include &lt;SDL3/SDL.h&gt;
+        <div class="col-lg-10 mb-4">
+            <h6 class="fw-bold text-primary">main.c / main.cpp</h6>
+            <pre><code class="language-c">#define SDL_MAIN_USE_CALLBACKS 1 // Use callback functions instead of main()
+
+#include &lt;SDL3/SDL.h&gt;
 #include &lt;SDL3/SDL_main.h&gt;
 
-static SDL_Window* window = NULL;
-static SDL_Renderer* renderer = NULL;
+// We will use this renderer to draw into this window every frame
+static SDL_Window *window = NULL;
+static SDL_Renderer *renderer = NULL;
 
-SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
-    if (!SDL_Init(SDL_INIT_VIDEO)) return SDL_APP_FAILURE;
-    if (!SDL_CreateWindowAndRenderer("SDL3 Callback C", 400, 300, 0, &window, &renderer)) {
+// This function runs once at startup
+SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
+{
+    if (!SDL_Init(SDL_INIT_VIDEO))
+    {
+        SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
-    return SDL_APP_CONTINUE;
+
+    if (!SDL_CreateWindowAndRenderer("SDL3 Rectangles", 500, 500, SDL_WINDOW_RESIZABLE, &window, &renderer))
+    {
+        SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    SDL_SetRenderVSync(renderer, 1);
+
+    return SDL_APP_CONTINUE; // Continue program execution!
 }
 
-SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
-    if (event->type == SDL_EVENT_QUIT) return SDL_APP_SUCCESS;
-    return SDL_APP_CONTINUE;
+// This function runs whenever a new event occurs (mouse input, key presses, etc.)
+SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
+{
+    if (event->type == SDL_EVENT_QUIT)
+    {
+        return SDL_APP_SUCCESS; // Terminate the program, reporting success to the OS
+    }
+    return SDL_APP_CONTINUE; // Continue program execution!
 }
 
-SDL_AppResult SDL_AppIterate(void* appstate) {
-    SDL_SetRenderDrawColor(renderer, 20, 20, 40, 255);
+// This function runs once per frame and is the heart of the program
+SDL_AppResult SDL_AppIterate(void *appstate)
+{
+    SDL_SetRenderDrawColor(renderer, 38, 43, 51, 255);
+
+    // Clear the window with the draw color
     SDL_RenderClear(renderer);
+
+    SDL_FRect rect;
+    rect.x = 100;
+    rect.y = 50;
+    rect.w = 200;
+    rect.h = 60;
+    SDL_SetRenderDrawColor(renderer, 220, 80, 80, SDL_ALPHA_OPAQUE);
+    SDL_RenderFillRect(renderer, &rect);
+
+    // Present the freshly cleared result to the screen
     SDL_RenderPresent(renderer);
-    return SDL_APP_CONTINUE;
+
+    return SDL_APP_CONTINUE; // Continue program execution!
 }
 
-void SDL_AppQuit(void* appstate, SDL_AppResult result) {
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-}</code></pre>
-        </div>
-
-        <div class="col-lg-6 mb-4">
-            <h6 class="fw-bold text-success">main.cpp</h6>
-            <pre><code class="language-cpp">#include &lt;SDL3/SDL.h&gt;
-#include &lt;SDL3/SDL_main.h&gt;
-
-struct AppContext {
-    SDL_Window* window = nullptr;
-    SDL_Renderer* renderer = nullptr;
-};
-
-SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
-    if (!SDL_Init(SDL_INIT_VIDEO)) return SDL_APP_FAILURE;
-
-    auto* ctx = new AppContext();
-    *appstate = ctx;
-
-    if (!SDL_CreateWindowAndRenderer("SDL3 Callback CPP", 400, 300, 0, &ctx->window, &ctx->renderer)) {
-        return SDL_APP_FAILURE;
-    }
-    return SDL_APP_CONTINUE;
+// This function runs once upon shutdown
+void SDL_AppQuit(void *appstate, SDL_AppResult result)
+{
+    // SDL will clean up the window and renderer for us
 }
-
-SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
-    if (event->type == SDL_EVENT_QUIT) return SDL_APP_SUCCESS;
-    return SDL_APP_CONTINUE;
-}
-
-SDL_AppResult SDL_AppIterate(void* appstate) {
-    auto* ctx = static_cast&lt;AppContext*&gt;(appstate);
-    SDL_SetRenderDrawColor(ctx->renderer, 40, 20, 20, 255);
-    SDL_RenderClear(ctx->renderer);
-    SDL_RenderPresent(ctx->renderer);
-    return SDL_APP_CONTINUE;
-}
-
-void SDL_AppQuit(void* appstate, SDL_AppResult result) {
-    auto* ctx = static_cast&lt;AppContext*&gt;(appstate);
-    if (ctx) {
-        SDL_DestroyRenderer(ctx->renderer);
-        SDL_DestroyWindow(ctx->window);
-        delete ctx;
-    }
-}</code></pre>
+</code></pre>
         </div>
     </div>
 
@@ -329,14 +339,14 @@ void SDL_AppQuit(void* appstate, SDL_AppResult result) {
         <span class="data-ru">Функция <code>SDL_AppIterate</code> вызывается ОС всякий раз, когда она готова к отрисовке кадра. Это позволяет браузерам приостанавливать игру, когда вкладка неактивна, а мобильным телефонам — экономить заряд батареи.</span>
     </p>
 
-    <h3 class="category-header">
+    <!-- <h3 class="category-header">
         <span class="data-en">4. GitHub Template</span>
         <span class="data-ru">4. Шаблон на GitHub</span>
     </h3>
     <p>
         <span class="data-en">Complete code for this pattern: <a href="https://github.com/8Observer8/sdl3-callbacks-template" target="_blank">sdl3-callbacks-template</a></span>
         <span class="data-ru">Полный код для этого шаблона: <a href="https://github.com/8Observer8/sdl3-callbacks-template" target="_blank">sdl3-callbacks-template</a></span>
-    </p>
+    </p> -->
 </div>
 
         
@@ -558,9 +568,39 @@ function copyToClipboard(text, button) {
     }
 
     // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+    //     if (link) {
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // Logic for dynamic links (persisting language across pages)
     document.addEventListener("click", function(e) {
         const link = e.target.closest(".lang-link-dynamic");
+        
         if (link) {
+            // Check if the link is intended to open in a new tab
+            if (link.target === "_blank") {
+                // Allow the browser to handle the click naturally, 
+                // but we still want to append the language param.
+                const currentLang = document.documentElement.getAttribute("lang") || "en";
+                const targetUrl = new URL(link.href);
+                targetUrl.searchParams.set("lang", currentLang);
+                
+                // Update the href right before the browser follows it
+                link.href = targetUrl.toString();
+                return; // Exit the function so e.preventDefault() isn't called
+            }
+
+            // Existing logic for same-tab navigation
             e.preventDefault();
             const currentLang = document.documentElement.getAttribute("lang") || "en";
             const targetUrl = new URL(

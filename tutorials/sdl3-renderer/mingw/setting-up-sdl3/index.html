@@ -203,22 +203,37 @@
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">1. Obtain SDL 3.4.4</span>
-        <span class="data-ru">1. Получение SDL 3.4.4</span>
+        <span class="data-en">1. Obtain SDL 3.4.8</span>
+        <span class="data-ru">1. Получение SDL 3.4.8</span>
     </h3>
 
     <ul>
         <li>
-            <span class="data-en">Download the development files <b>SDL3-devel-3.4.4-mingw.zip</b> from the <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.4" target="_blank" rel="noopener noreferrer">Official SDL Releases</a> or from my site: <a href="/libs/mingw64_13.1/SDL3-devel-3.4.4-mingw.zip">SDL3-devel-3.4.4-mingw.zip</a> and extract to <code>C:/libs/SDL3-devel-3.4.4-mingw</code></span>
-            <span class="data-ru">Скачайте файлы для разработки <b>SDL3-devel-3.4.4-mingw.zip</b> с <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.4" target="_blank" rel="noopener noreferrer">официальной страницы релизов SDL</a> или с моего сайта: <a href="/libs/mingw64_13.1/SDL3-devel-3.4.4-mingw.zip">SDL3-devel-3.4.4-mingw.zip</a> и распакуйте в <code>C:/libs/SDL3-devel-3.4.4-mingw</code></span>
+            <span class="data-en">
+                Download the development files <b>SDL3-devel-3.4.8-mingw.zip</b>. You can use my 
+                <a href="/libs/mingw64_13.1/SDL3-devel-3.4.8-mingw.zip">pre-configured version</a> (recommended) 
+                or the <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">official release</a>. 
+                Extract to <code>C:/libs/SDL3-devel-3.4.8-mingw</code>.
+            </span>
+            <span class="data-ru">
+                Скачайте файлы для разработки <b>SDL3-devel-3.4.8-mingw.zip</b>. Вы можете использовать мою 
+                <a href="/libs/mingw64_13.1/SDL3-devel-3.4.8-mingw.zip">предварительно настроенную версию</a> (рекомендуется) 
+                или <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">официальный релиз</a>. 
+                Распакуйте в <code>C:/libs/SDL3-devel-3.4.8-mingw</code>.
+            </span>
+
+            <div class="alert alert-primary mt-2">
+                <span class="data-en">
+                    <strong>Note:</strong> If using the official release, ensure you move the headers and libraries so the structure is <code>SDL3-devel-3.4.8-mingw/include</code>, <code>SDL3-devel-3.4.8-mingw/lib</code>, etc.
+                </span>
+                <span class="data-ru">
+                    <strong>Примечание:</strong> При использовании официального релиза убедитесь, что вы переместили заголовочные файлы и библиотеки так, чтобы структура папок была <code>SDL3-devel-3.4.8-mingw/include</code>, <code>SDL3-devel-3.4.8-mingw/lib</code> и т. д.
+                </span>
+            </div>
         </li>
         <li>
-            <span class="data-en">Additionally, download <b>SDL3-3.4.4-win32-x64.zip</b> from the <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.4" target="_blank" rel="noopener noreferrer">Official SDL Releases</a> or from my site: <a href="/libs/mingw64_13.1/SDL3-3.4.4-win32-x64.zip">SDL3-3.4.4-win32-x64.zip</a></span>
-            <span class="data-ru">Кроме того, скачайте <b>SDL3-3.4.4-win32-x64.zip</b> с <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.4" target="_blank" rel="noopener noreferrer">официальной страницы релизов SDL</a> или с моего сайта: <a href="/libs/mingw64_13.1/SDL3-3.4.4-win32-x64.zip">SDL3-3.4.4-win32-x64.zip</a></span>
-        </li>
-        <li>
-            <span class="data-en">Extract the archive so the path is exactly <code>C:/libs/SDL3-3.4.4-win32-x64</code></span>
-            <span class="data-ru">Распакуйте архив так, чтобы путь был именно <code>C:/libs/SDL3-3.4.4-win32-x64</code></span>
+            <span class="data-en">Additionally, download the runtime <b>SDL3-3.4.8-win32-x64.zip</b> from the <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">Official SDL Releases</a>. Extract the archive so the path is exactly <code>C:/libs/SDL3-3.4.8-win32-x64</code></span>
+            <span class="data-ru">Кроме того, скачайте рантайм <b>SDL3-3.4.8-win32-x64.zip</b> с <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">официальной страницы релизов SDL</a>. Распакуйте архив так, чтобы путь был именно <code>C:/libs/SDL3-3.4.8-win32-x64</code></span>
         </li>
     </ul>
 
@@ -243,21 +258,54 @@
         <span class="data-ru">Чтобы приложения могли находить <code>SDL3.dll</code> файл при запуске, добавьте следующий путь в переменную <b>Path</b> в разделе <b>Переменные среды пользователя</b>:</span>
     </p>
     <div class="bg-light p-3 rounded border-start border-4 border-warning mb-4">
-        <code>C:\libs\SDL3-3.4.4-win32-x64</code>
+        <code>C:\libs\SDL3-3.4.8-win32-x64</code>
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">3. Project Configuration (CMakeLists.txt)</span>
-        <span class="data-ru">3. Конфигурация проекта (CMakeLists.txt)</span>
+        <span class="data-en">3. Project Structure</span>
+        <span class="data-ru">3. Структура проекта</span>
+    </h3>
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <p class="data-en">Create an empty folder named <code>rectangle-sdl3-c</code> and set up the following hierarchy:</p>
+            <p class="data-ru">Создайте пустую папку с именем <code>rectangle-sdl3-c</code> и подготовьте следующую иерархию:</p>
+            <pre><code>rectangle-sdl3-c/
+├── CMakeLists.txt
+└── src/
+    └── main.c</code></pre>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <p class="data-en">Create an empty folder named <code>rectangle-sdl3-cpp</code> and set up the following hierarchy:</p>
+            <p class="data-ru">Создайте пустую папку с именем <code>rectangle-sdl3-cpp</code> и подготовьте следующую иерархию:</p>
+            <pre><code>rectangle-sdl3-cpp/
+├── CMakeLists.txt
+└── src/
+    └── main.cpp</code></pre>
+        </div>
+    </div>
+
+    <p class="data-en">
+        Follow the steps below to create the <b>CMakeLists.txt</b> and the source files in the <b>src</b> directory with the provided content.
+    </p>
+    <p class="data-ru">
+        Следуйте шагам ниже, чтобы создать файл <b>CMakeLists.txt</b> и исходные файлы в директории <b>src</b> с указанным содержимым.
+    </p>
+
+    <h3 class="category-header">
+        <span class="data-en">4. Project Configuration (CMakeLists.txt)</span>
+        <span class="data-ru">4. Конфигурация проекта (CMakeLists.txt)</span>
     </h3>
 
     <div class="row">
         <div class="col-lg-6 mb-4">
             <h6 class="fw-bold text-primary">CMakeLists.txt (C version)</h6>
-            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
-project(rectangle-sdl3-c LANGUAGES C)
+            <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+cmake_minimum_required(VERSION 3.21)
+project(rectangle-sdl3-c)
 
-set(SDL3_DIR "C:/libs/SDL3-devel-3.4.4-mingw/lib/cmake/SDL3")
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.8-mingw/lib/cmake/SDL3")
 find_package(SDL3 REQUIRED)
 
 add_executable(app)
@@ -268,23 +316,16 @@ PRIVATE
 )
 
 target_link_libraries(app PRIVATE SDL3::SDL3)
-
-# Copy SDL3.dll to the output directory
-add_custom_command(TARGET app POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    $&lt;TARGET_RUNTIME_DLLS:app&gt; $&lt;TARGET_FILE_DIR:app&gt;
-    COMMAND_EXPAND_LISTS
-)
-
 target_link_options(app PRIVATE -mconsole)</code></pre>
         </div>
 
         <div class="col-lg-6 mb-4">
             <h6 class="fw-bold text-success">CMakeLists.txt (C++ version)</h6>
-            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
-project(rectangle-sdl3-cpp LANGUAGES CXX)
+            <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+cmake_minimum_required(VERSION 3.21)
+project(rectangle-sdl3-cpp)
 
-set(SDL3_DIR "C:/libs/SDL3-devel-3.4.4-mingw/lib/cmake/SDL3")
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.8-mingw/lib/cmake/SDL3")
 find_package(SDL3 REQUIRED)
 
 add_executable(app)
@@ -295,26 +336,18 @@ PRIVATE
 )
 
 target_link_libraries(app PRIVATE SDL3::SDL3)
-
-# Copy SDL3.dll to the output directory
-add_custom_command(TARGET app POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    $&lt;TARGET_RUNTIME_DLLS:app&gt; $&lt;TARGET_FILE_DIR:app&gt;
-    COMMAND_EXPAND_LISTS
-)
-
 target_link_options(app PRIVATE -mconsole)</code></pre>
         </div>
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">4. Source Code</span>
-        <span class="data-ru">4. Исходный код</span>
+        <span class="data-en">5. Source Code</span>
+        <span class="data-ru">5. Исходный код</span>
     </h3>
 
     <div class="row">
         <div class="col-lg-6 mb-4">
-            <h6 class="fw-bold text-primary">main.c (C17 / C23)</h6>
+            <h6 class="fw-bold text-primary">main.c</h6>
             <pre><code class="language-c">#include &lt;SDL3/SDL.h&gt;
 #include &lt;SDL3/SDL_main.h&gt;
 
@@ -327,13 +360,13 @@ int main(int argc, char* argv[])
     SDL_Window* window = SDL_CreateWindow("SDL3 C", 400, 300, 0);
     SDL_Renderer* renderer = SDL_CreateRenderer(window, NULL);
 
-    SDL_bool running = SDL_TRUE;
+    bool running = true;
     SDL_Event event;
 
     while (running) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_EVENT_QUIT) {
-                running = SDL_FALSE;
+                running = false;
             }
         }
 
@@ -355,7 +388,7 @@ int main(int argc, char* argv[])
         </div>
 
         <div class="col-lg-6 mb-4">
-            <h6 class="fw-bold text-success">main.cpp (C++17 / C++20)</h6>
+            <h6 class="fw-bold text-success">main.cpp</h6>
             <pre><code class="language-cpp">#include &lt;SDL3/SDL.h&gt;
 #include &lt;SDL3/SDL_main.h&gt;
 
@@ -397,19 +430,26 @@ int main(int argc, char* argv[])
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">5. Opening the Project in IDEs</span>
-        <span class="data-ru">5. Открытие проекта в IDE</span>
+        <span class="data-en">6. Opening the Project in IDEs</span>
+        <span class="data-ru">6. Открытие проекта в IDE</span>
     </h3>
     <p>
-        <span class="data-en">Open the project folder in <b>CLion</b>, <b>Qt Creator</b>, or <b>Sublime Text 4</b>. CMake will handle the rest.</span>
-        <span class="data-ru">Откройте папку проекта в <b>CLion</b>, <b>Qt Creator</b> или <b>Sublime Text 4</b>. CMake позаботится об остальном.</span>
+        <span class="data-en">Open the <b>CMakeLists.txt</b> file in <b>CLion</b> or <b>Qt Creator</b>. CMake will handle the rest.</span>
+        <span class="data-ru">Откройте файл <b>CMakeLists.txt</b> в <b>CLion</b> или <b>Qt Creator</b>. CMake позаботится об остальном.</span>
+    </p>
+    <h3 class="category-header">
+        <span class="data-en">7. Automation Scripts (.bat)</span>
+        <span class="data-ru">7. Скрипты автоматизации (.bat)</span>
+    </h3>
+
+    <p class="data-en">
+        You can open the project folder in <b>Sublime Text 4</b> (or <b>Notepad++</b>). Create the following <code>.bat</code> scripts in the project root directory to automate the configuration, building, and running of your application:
+    </p>
+    <p class="data-ru">
+        Вы можете открыть папку проекта в <b>Sublime Text 4</b> (или <b>Notepad++</b>). Создайте следующие <code>.bat</code> скрипты в корневой директории проекта для автоматизации конфигурации, сборки и запуска вашего приложения:
     </p>
 
-    <h3 class="category-header">
-        <span class="data-en">6. Automation Scripts (.bat)</span>
-        <span class="data-ru">6. Скрипты автоматизации (.bat)</span>
-    </h3>
-    <div class="row">
+    <!-- <div class="row">
         <div class="col-md-4">
             <h6>config-exe.bat</h6>
             <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist/win ^
@@ -425,16 +465,47 @@ cd ..\..</code></pre>
             <h6>run-exe.bat</h6>
             <pre><code class="language-bash">dist\win\app</code></pre>
         </div>
+    </div> -->
+
+    <div class="row">
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">1. config-exe.bat</h6>
+            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist/win ^
+-DCMAKE_BUILD_TYPE=Debug</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">2. build-exe.bat</h6>
+            <pre><code class="language-bash">cd dist\win
+cmake --build .
+cd ..\..</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">3. run-exe.bat</h6>
+            <pre><code class="language-bash">dist\win\app</code></pre>
+        </div>
     </div>
 
-    <h3 class="category-header">
-        <span class="data-en">7. GitHub Template</span>
-        <span class="data-ru">7. Шаблон на GitHub</span>
+    <p class="data-en">
+        To build and launch the application, run these scripts in the terminal in the following order:
+    </p>
+    <p class="data-ru">
+        Чтобы собрать и запустить приложение, выполните эти скрипты в терминале в следующем порядке:
+    </p>
+
+    <div class="bg-light p-3 border rounded">
+        <pre class="mb-0"><code class="language-bash">config-exe
+build-exe
+run-exe</code></pre>
+    </div>
+
+    <!-- <h3 class="category-header">
+        <span class="data-en">6. GitHub Template</span>
+        <span class="data-ru">6. Шаблон на GitHub</span>
     </h3>
     <p>
         <span class="data-en">Full source code available here: <a href="https://github.com/8Observer8/setting-up-sdl3-with-find-package" target="_blank" rel="noopener noreferrer">setting-up-sdl3-with-find-package</a></span>
         <span class="data-ru">Полный исходный код доступен здесь: <a href="https://github.com/8Observer8/setting-up-sdl3-with-find-package" target="_blank" rel="noopener noreferrer">setting-up-sdl3-with-find-package</a></span>
-    </p>
+    </p> -->
 
     <!-- <div class="alert alert-info mt-5">
         <h5 class="fw-bold"><i class="fas fa-rocket"></i> <span class="data-en">What's Next?</span><span class="data-ru">Что дальше?</span></h5>
@@ -455,7 +526,7 @@ cd ..\..</code></pre>
         </span>
     </p>
     <div class="mt-3">
-        <a href="/tutorials/sdl3-renderer/wasm/sdl3-callbacks/" class="btn btn-outline-info btn-sm">
+        <a href="/tutorials/sdl3-renderer/mingw/sdl3-callbacks/" class="btn btn-outline-info btn-sm">
             <span class="data-en">Go to the Callback Tutorial →</span>
             <span class="data-ru">Перейти к уроку по Callbacks →</span>
         </a>
@@ -682,9 +753,39 @@ function copyToClipboard(text, button) {
     }
 
     // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+    //     if (link) {
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // Logic for dynamic links (persisting language across pages)
     document.addEventListener("click", function(e) {
         const link = e.target.closest(".lang-link-dynamic");
+        
         if (link) {
+            // Check if the link is intended to open in a new tab
+            if (link.target === "_blank") {
+                // Allow the browser to handle the click naturally, 
+                // but we still want to append the language param.
+                const currentLang = document.documentElement.getAttribute("lang") || "en";
+                const targetUrl = new URL(link.href);
+                targetUrl.searchParams.set("lang", currentLang);
+                
+                // Update the href right before the browser follows it
+                link.href = targetUrl.toString();
+                return; // Exit the function so e.preventDefault() isn't called
+            }
+
+            // Existing logic for same-tab navigation
             e.preventDefault();
             const currentLang = document.documentElement.getAttribute("lang") || "en";
             const targetUrl = new URL(
