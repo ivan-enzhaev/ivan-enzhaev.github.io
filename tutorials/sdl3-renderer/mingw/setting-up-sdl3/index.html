@@ -210,6 +210,41 @@
     <ul>
         <li>
             <span class="data-en">
+                Download two archives from the <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">official release page</a>:
+            </span>
+            <span class="data-ru">
+                Скачайте два архива со страницы <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">официального релиза</a>:
+            </span>
+            <br>
+            <img src="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3/download-sdl3.png" alt="Download Link" class="img-fluid border rounded mt-3 shadow-sm">
+        </li>
+        <li>
+            <span class="data-en">
+                Extract the <b>SDL3-devel-3.4.8-mingw.zip</b> archive to the <code>C:/libs/SDL3-devel-3.4.8-mingw</code> folder.
+            </span>
+            <span class="data-ru">
+                Распакуйте архив <b>SDL3-devel-3.4.8-mingw.zip</b> в папку <code>C:/libs/SDL3-devel-3.4.8-mingw</code>.
+            </span>
+        </li>
+        <li>
+            <span class="data-en">
+                Move the headers and libraries so the structure is <code>SDL3-devel-3.4.8-mingw/include</code>, etc:
+            </span>
+            <span class="data-ru">
+                Переместите заголовочные файлы и библиотеки так, чтобы структура папок была <code>SDL3-devel-3.4.8-mingw/include</code> и т. д.:
+            </span>
+            <br>
+            <img src="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3/setting-up-sdl3-1.png" alt="Folder structure Link" class="img-fluid border rounded mt-3 shadow-sm">
+        </li>
+        <li>
+            <span class="data-en">Extract the <b>SDL3-3.4.8-win32-x64.zip</b> archive so the path is exactly <code>C:/libs/SDL3-3.4.8-win32-x64</code>:</span>
+            <span class="data-ru">Распакуйте архив <b>SDL3-3.4.8-win32-x64.zip</b> так, чтобы путь был именно <code>C:/libs/SDL3-3.4.8-win32-x64</code>:</span>
+            <br>
+            <img src="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3/setting-up-sdl3-2.png" alt="Folder structure Link" class="img-fluid border rounded mt-3 shadow-sm">
+        </li>
+
+        <!-- <li>
+            <span class="data-en">
                 Download the development files <b>SDL3-devel-3.4.8-mingw.zip</b>. You can use my 
                 <a href="/libs/mingw64_13.1/SDL3-devel-3.4.8-mingw.zip">pre-configured version</a> (recommended) 
                 or the <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">official release</a>. 
@@ -234,7 +269,7 @@
         <li>
             <span class="data-en">Additionally, download the runtime <b>SDL3-3.4.8-win32-x64.zip</b> from the <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">Official SDL Releases</a>. Extract the archive so the path is exactly <code>C:/libs/SDL3-3.4.8-win32-x64</code></span>
             <span class="data-ru">Кроме того, скачайте рантайм <b>SDL3-3.4.8-win32-x64.zip</b> с <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">официальной страницы релизов SDL</a>. Распакуйте архив так, чтобы путь был именно <code>C:/libs/SDL3-3.4.8-win32-x64</code></span>
-        </li>
+        </li> -->
     </ul>
 
     <!-- <h3 class="category-header">
@@ -268,8 +303,8 @@
 
     <div class="row">
         <div class="col-lg-6 mb-4">
-            <p class="data-en">Create an empty folder named <code>rectangle-sdl3-c</code> and set up the following hierarchy:</p>
-            <p class="data-ru">Создайте пустую папку с именем <code>rectangle-sdl3-c</code> и подготовьте следующую иерархию:</p>
+            <p class="data-en"><strong>C Project:</strong> Create an empty folder named <code>rectangle-sdl3-c</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.c</code> files:</p>
+            <p class="data-ru"><strong>Проект на C:</strong> Создайте пустую папку с именем <code>rectangle-sdl3-c</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.c</code>:</p>
             <pre><code>rectangle-sdl3-c/
 ├── CMakeLists.txt
 └── src/
@@ -277,8 +312,8 @@
         </div>
 
         <div class="col-lg-6 mb-4">
-            <p class="data-en">Create an empty folder named <code>rectangle-sdl3-cpp</code> and set up the following hierarchy:</p>
-            <p class="data-ru">Создайте пустую папку с именем <code>rectangle-sdl3-cpp</code> и подготовьте следующую иерархию:</p>
+            <p class="data-en"><strong>C++ Project:</strong> Create an empty folder named <code>rectangle-sdl3-cpp</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.cpp</code> files:</p>
+            <p class="data-ru"><strong>Проект на C++:</strong> Создайте пустую папку с именем <code>rectangle-sdl3-cpp</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.cpp</code>:</p>
             <pre><code>rectangle-sdl3-cpp/
 ├── CMakeLists.txt
 └── src/
@@ -300,6 +335,8 @@
 
     <div class="row">
         <div class="col-lg-6 mb-4">
+            <p class="data-en"><strong>C Project:</strong> Copy and paste the following code into the <code>CMakeLists.txt</code> file:</p>
+            <p class="data-ru"><strong>Проект на C:</strong> Скопируйте и вставьте следующее содержимое в файл <code>CMakeLists.txt</code>:</p>
             <h6 class="fw-bold text-primary">CMakeLists.txt (C version)</h6>
             <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
 cmake_minimum_required(VERSION 3.21)
@@ -320,6 +357,8 @@ target_link_options(app PRIVATE -mconsole)</code></pre>
         </div>
 
         <div class="col-lg-6 mb-4">
+            <p class="data-en"><strong>C++ Project:</strong> Copy and paste the following code into the <code>CMakeLists.txt</code> file:</p>
+            <p class="data-ru"><strong>Проект на C++:</strong> Скопируйте и вставьте следующее содержимое в файл <code>CMakeLists.txt</code>:</p>
             <h6 class="fw-bold text-success">CMakeLists.txt (C++ version)</h6>
             <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
 cmake_minimum_required(VERSION 3.21)
@@ -345,10 +384,12 @@ target_link_options(app PRIVATE -mconsole)</code></pre>
         <span class="data-ru">5. Исходный код</span>
     </h3>
 
-    <div class="row">
-        <div class="col-lg-6 mb-4">
-            <h6 class="fw-bold text-primary">main.c</h6>
-            <pre><code class="language-c">#include &lt;SDL3/SDL.h&gt;
+    <p class="data-en">Copy and paste the following code into the <code>src/main.c</code> (or <code>src/main.cpp</code>) file:</p>
+    <p class="data-ru">Скопируйте и вставьте следующее содержимое в файл <code>src/main.c</code> (или <code>src/main.cpp</code>):
+
+    <h6 class="fw-bold text-primary">main.c / main.cpp</h6>
+
+    <pre><code class="language-c">#include &lt;SDL3/SDL.h&gt;
 #include &lt;SDL3/SDL_main.h&gt;
 
 int main(int argc, char* argv[])
@@ -385,49 +426,6 @@ int main(int argc, char* argv[])
     SDL_Quit();
     return 0;
 }</code></pre>
-        </div>
-
-        <div class="col-lg-6 mb-4">
-            <h6 class="fw-bold text-success">main.cpp</h6>
-            <pre><code class="language-cpp">#include &lt;SDL3/SDL.h&gt;
-#include &lt;SDL3/SDL_main.h&gt;
-
-int main(int argc, char* argv[])
-{
-    if (!SDL_Init(SDL_INIT_VIDEO)) {
-        return -1;
-    }
-
-    SDL_Window* window = SDL_CreateWindow("SDL3 C++", 400, 300, 0);
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, nullptr);
-
-    bool running = true;
-    SDL_Event event;
-
-    while (running) {
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_EVENT_QUIT) {
-                running = false;
-            }
-        }
-
-        SDL_SetRenderDrawColor(renderer, 30, 30, 30, 255);
-        SDL_RenderClear(renderer);
-
-        SDL_FRect rect{ 125.0f, 125.0f, 150.0f, 50.0f };
-        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-        SDL_RenderFillRect(renderer, &rect);
-
-        SDL_RenderPresent(renderer);
-    }
-
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-    return 0;
-}</code></pre>
-        </div>
-    </div>
 
     <h3 class="category-header">
         <span class="data-en">6. Opening the Project in IDEs</span>
@@ -470,18 +468,17 @@ cd ..\..</code></pre>
     <div class="row">
         <div class="col-md-4">
             <h6 class="fw-bold text-secondary">1. config-exe.bat</h6>
-            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist/win ^
--DCMAKE_BUILD_TYPE=Debug</code></pre>
+            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist/exe</code></pre>
         </div>
         <div class="col-md-4">
             <h6 class="fw-bold text-secondary">2. build-exe.bat</h6>
-            <pre><code class="language-bash">cd dist\win
+            <pre><code class="language-bash">cd dist\exe
 cmake --build .
 cd ..\..</code></pre>
         </div>
         <div class="col-md-4">
             <h6 class="fw-bold text-secondary">3. run-exe.bat</h6>
-            <pre><code class="language-bash">dist\win\app</code></pre>
+            <pre><code class="language-bash">dist\exe\app</code></pre>
         </div>
     </div>
 
