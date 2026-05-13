@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C/C++ Development Environment Setup | Ivan Enzhaev</title>
+<title>OpenGL ES 3.0 with SDL3 and GLAD (MinGW 13.1) | Ivan Enzhaev</title>
 <link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
 
 
@@ -187,106 +187,280 @@
         
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
-        <h1 class="fw-bold text-dark">
-            <span class="data-en">C/C++ Development Environment Setup</span>
-            <span class="data-ru">Настройка среды разработки на C/C++</span>
+        <h1 class="fw-bold">
+            <span class="data-en">SDL3 & OpenGL ES 3.0: Drawing a Triangle (MinGW)</span>
+            <span class="data-ru">SDL3 и OpenGL ES 3.0: Отрисовка треугольника (MinGW)</span>
         </h1>
+        <p class="lead text-muted">
+            <span class="data-en">A guide to configuring SDL3 with OpenGL ES 3.0 and GLAD using CMake and MinGW.</span>
+            <span class="data-ru">Руководство по настройке SDL3 с OpenGL ES 3.0 и GLAD с использованием CMake и MinGW.</span>
+        </p>
     </header>
 
-    <!-- <div class="ratio ratio-16x9 mb-4 shadow-sm rounded">
-        <iframe src="https://www.youtube.com/embed/rHXl_gcJ8Zc" 
-                title="YouTube video player" 
-                allowfullscreen></iframe>
-    </div> -->
-
-    <div class="ratio ratio-16x9 mb-4 shadow-sm rounded border overflow-hidden">
-        <iframe 
-            src="https://www.youtube.com/embed/rHXl_gcJ8Zc?rel=0&vq=hd1080" 
-            title="C/C++ Development Environment Setup" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen>
-        </iframe>
-    </div>
-
-    <p class="text-muted mb-5">
-        <span class="data-en">
-            <strong>Prefer video?</strong> You can follow this setup process visually in the video above. 
-            It covers every step detailed in this written guide.
-        </span>
-        <span class="data-ru">
-            <strong>Предпочитаете видео?</strong> Вы можете посмотреть процесс настройки в видео выше. 
-            В нём показаны все шаги, описанные в данном руководстве.
-        </span>
-    </p>
-
-    <h3 class="category-header">
-        <span class="data-en">1. MinGW 13.1 (WinLibs)</span>
-        <span class="data-ru">1. MinGW 13.1 (WinLibs)</span>
-    </h3>
-
-    <p>
-        <span class="data-en">Go to <a href="https://winlibs.com/" target="_blank" rel="noopener noreferrer">winlibs.com</a>. Download the <strong>GCC 13.1.0</strong> release (Win64, POSIX threads, SEH exceptions):</span>
-        <span class="data-ru">Перейдите на <a href="https://winlibs.com/" target="_blank" rel="noopener noreferrer">winlibs.com</a>. Скачайте версию <strong>GCC 13.1.0</strong> (Win64, POSIX threads, SEH exceptions):</span>
-        <img src="/assets/img/tutorials/tools/mingw/setup-mingw/mingw-link.png" alt="WinLibs GCC 13.1.0 Download Link" class="img-fluid border rounded mt-3 shadow-sm">
-    </p>
-
-    <div class="alert alert-info">
-        <span class="data-en"><strong>Installation:</strong> Extract the folder to a simple path without spaces, for example: <code>C:\mingw64_13.1</code></span>
-        <span class="data-ru"><strong>Установка:</strong> Извлеките папку по простому пути без пробелов, например: <code>C:\mingw64_13.1</code>.</span>
+    <div class="alert alert-primary">
+        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed the <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">Environment Setup Guide</a> (MinGW 13.1 & CMake)</span>
+        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">руководства по настройке среды</a> (MinGW 13.1 и CMake)</span>
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">2. Path Configuration</span>
-        <span class="data-ru">2. Настройка переменных окружения</span>
+        <span class="data-en">1. Obtain SDL 3.4.8</span>
+        <span class="data-ru">1. Получение SDL 3.4.8</span>
     </h3>
-    <p>
-        <span class="data-en">Add the MinGW <code>bin</code> folder to your System Path to use <code>g++</code> and <code>make</code> in any terminal.</span>
-        <span class="data-ru">Добавьте папку <code>bin</code> вашего MinGW в системную переменную Path, чтобы использовать <code>g++</code> и <code>make</code> в любом терминале.</span>
-    </p>
-    <pre><code class="language-bash"># Add this to your System PATH:
-C:\mingw64_13.1\bin</code></pre>
 
-    <h3 class="category-header">
-        <span class="data-en">3. CMake Installation</span>
-        <span class="data-ru">3. Установка CMake</span>
-    </h3>
-    <p>
-        <span class="data-en">Download the Windows x64 Installer (<code>.msi</code>) from the <a href="https://cmake.org/download/" target="_blank" rel="noopener noreferrer">Official CMake Website</a>.</span>
-        <span class="data-ru">Скачайте установщик Windows x64 (<code>.msi</code>) с <a href="https://cmake.org/download/" target="_blank" rel="noopener noreferrer">официального сайта CMake</a>.</span>
-    </p>
-    <div class="alert alert-warning">
-        <span class="data-en">During installation, select: <strong>"Add CMake to the system PATH for all users"</strong>.</span>
-        <span class="data-ru">Во время установки выберите: <strong>"Add CMake to the system PATH for all users"</strong>.</span>
-    </div>
-
-    <h3 class="category-header">
-        <span class="data-en">4. IDE & Editor Setup (Sublime, Qt Creator, CLion)</span>
-        <span class="data-ru">4. Установка IDE и редакторов (Sublime, Qt Creator, CLion)</span>
-    </h3>
     <ul>
         <li>
-            <strong>Sublime Text 4:</strong> 
-            <span class="data-en">Download from the <a href="https://www.sublimetext.com/download" target="_blank" rel="noopener noreferrer">official website</a>. It is a sophisticated text editor for code, markup, and prose that works perfectly with MinGW via the build systems.</span>
-            <span class="data-ru">Скачайте с <a href="https://www.sublimetext.com/download" target="_blank" rel="noopener noreferrer">официального сайта</a>. Это продвинутый текстовый редактор для кода, разметки и прозы, который отлично работает с MinGW через системы сборки.</span>
+            <span class="data-en">
+                Download two archives from the <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">official release page</a>:
+            </span>
+            <span class="data-ru">
+                Скачайте два архива со страницы <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">официального релиза</a>:
+            </span>
+            <br>
+            <img src="/assets/img/tutorials/sdl3-opengles3/mingw/setting-up-sdl3-opengles3/download-sdl3.png" alt="Download Link" class="img-fluid border rounded mt-3 shadow-sm">
         </li>
         <li>
-            <strong>Qt Creator:</strong> 
-            <span class="data-en">Download the standalone Windows installer (<code>.msi</code>) from the <a href="https://github.com/qt-creator/qt-creator/releases" target="_blank" rel="noopener noreferrer">Official GitHub Releases</a>. This provides the IDE without requiring a full Qt Framework installation.</span>
-            <span class="data-ru">Скачайте автономный установщик Windows (<code>.msi</code>) с <a href="https://github.com/qt-creator/qt-creator/releases" target="_blank" rel="noopener noreferrer">официальных релизов GitHub</a>. Это позволит установить IDE без необходимости загрузки всего фреймворка Qt.</span>
+            <span class="data-en">
+                Extract the <b>SDL3-devel-3.4.8-mingw.zip</b> archive to the <code>C:/libs/SDL3-devel-3.4.8-mingw</code> folder.
+            </span>
+            <span class="data-ru">
+                Распакуйте архив <b>SDL3-devel-3.4.8-mingw.zip</b> в папку <code>C:/libs/SDL3-devel-3.4.8-mingw</code>.
+            </span>
         </li>
-<li>
-            <strong>CLion:</strong> 
-            <span class="data-en">Install via <a href="https://www.jetbrains.com/clion/download/" target="_blank" rel="noopener noreferrer">JetBrains</a>. CLion is now <strong>free for non-commercial use</strong> (learning, hobby development, and open-source)</span>
-            <span class="data-ru">Установите через <a href="https://www.jetbrains.com/clion/download/" target="_blank" rel="noopener noreferrer">JetBrains</a>. CLion теперь <strong>бесплатна для некоммерческого использования</strong> (обучение, хобби, open-source)</span>
+        <li>
+            <span class="data-en">
+                Move the headers and libraries so the structure is <code>SDL3-devel-3.4.8-mingw/include</code>, etc:
+            </span>
+            <span class="data-ru">
+                Переместите заголовочные файлы и библиотеки так, чтобы структура папок была <code>SDL3-devel-3.4.8-mingw/include</code> и т. д.:
+            </span>
+            <br>
+            <img src="/assets/img/tutorials/sdl3-opengles3/mingw/setting-up-sdl3-opengles3/setting-up-sdl3-1.png" alt="Folder structure Link" class="img-fluid border rounded mt-3 shadow-sm">
+        </li>
+        <li>
+            <span class="data-en">Extract the <b>SDL3-3.4.8-win32-x64.zip</b> archive so the path is exactly <code>C:/libs/SDL3-3.4.8-win32-x64</code>:</span>
+            <span class="data-ru">Распакуйте архив <b>SDL3-3.4.8-win32-x64.zip</b> так, чтобы путь был именно <code>C:/libs/SDL3-3.4.8-win32-x64</code>:</span>
+            <br>
+            <img src="/assets/img/tutorials/sdl3-opengles3/mingw/setting-up-sdl3-opengles3/setting-up-sdl3-2.png" alt="Folder structure Link" class="img-fluid border rounded mt-3 shadow-sm">
         </li>
     </ul>
 
-    <div class="alert alert-success">
-        <span class="data-en"><strong>Verification:</strong> Open CMD and type <code>g++ --version</code> and <code>cmake --version</code> to ensure everything is working!</span>
-        <span class="data-ru"><strong>Проверка:</strong> Откройте CMD и введите <code>g++ --version</code> и <code>cmake --version</code>, чтобы убедиться, что всё работает!</span>
+    <h3 class="category-header">
+        <span class="data-en">2. Add SDL3 to Environment Variables (Path)</span>
+        <span class="data-ru">2. Добавление SDL3 в переменные среды (Path)</span>
+    </h3>
+    <p class="mt-3">
+        <span class="data-en">To ensure your applications can find the <code>SDL3.dll</code> file at runtime, you should add the following path to the <b>Path</b> variable in your <b>User variables</b> section:</span>
+        <span class="data-ru">Чтобы приложения могли находить <code>SDL3.dll</code> файл при запуске, добавьте следующий путь в переменную <b>Path</b> в разделе <b>Переменные среды пользователя</b>:</span>
+    </p>
+    <div class="bg-light p-3 rounded border-start border-4 border-warning mb-4">
+        <code>C:\libs\SDL3-3.4.8-win32-x64</code>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">3. Obtain GLAD</span>
+        <span class="data-ru">3. Получение GLAD</span>
+    </h3>
+
+    <ul>
+        <!-- <li>
+            <span class="data-en">Download and extract SDL3 as described in previous tutorials to <code>C:/libs/SDL3-devel-3.4.8-mingw</code>.</span>
+            <span class="data-ru">Скачайте и распакуйте SDL3, как описано в предыдущих уроках, в <code>C:/libs/SDL3-devel-3.4.8-mingw</code>.</span>
+        </li>
+        <li>
+            <span class="data-en">Ensure you have <b>GLAD</b> (OpenGL ES 3.0) generated and placed in <code>C:/libs/glad-0.1.36/gles-3.0</code>.</span>
+            <span class="data-ru">Убедитесь, что у вас есть <b>GLAD</b> (OpenGL ES 3.0), сгенерированный и размещенный в <code>C:/libs/glad-0.1.36/gles-3.0</code>.</span>
+        </li> -->
+        <li>
+            <span class="data-en">Go to the <a href="https://glad.dav1d.de/" target="_blank" rel="noopener noreferrer">GLAD Web Generator</a> and use the following settings:</span>
+            <span class="data-ru">Перейдите в <a href="https://glad.dav1d.de/" target="_blank" rel="noopener noreferrer">веб-генератор GLAD</a> и используйте следующие настройки:</span>
+            <ul>
+                <li><strong>Language:</strong> C/C++</li>
+                <li><strong>Specification:</strong> OpenGL</li>
+                <li><strong>API gles2:</strong> Version 3.0</li>
+                <li><strong>Profile:</strong> Core</li>
+                <li><strong>Options:</strong> Generate a loader</li>
+            </ul>
+        </li>
+        <li>
+            <span class="data-en">Click <b>Generate</b>, download the <code>glad.zip</code> archive, and extract it to <code>C:/libs/glad-0.1.36/gles-3.0</code> (you can find the GLAD version at the bottom of the generator page).</span>
+            <span class="data-ru">Нажмите <b>Generate</b>, скачайте архив <code>glad.zip</code> и распакуйте его в <code>C:/libs/glad-0.1.36/gles-3.0</code> (версию GLAD можно найти в нижней части страницы генератора).</span>
+        </li>
+        <li>
+            <span class="data-en">Ensure the following path structure:</span>
+            <span class="data-ru">Убедитесь в следующей структуре пути:</span>
+            <pre class="mt-2"><code>C:/libs/glad-0.1.36/gles-3.0/
+├── include/
+│   ├── glad/glad.h
+│   └── KHR/khrplatform.h
+└── src/
+    └── glad.c</code></pre>
+        </li>
+    </ul>
+
+    <h3 class="category-header">
+        <span class="data-en">3. Project Structure</span>
+        <span class="data-ru">3. Структура проекта</span>
+    </h3>
+
+    <div class="row">
+        <div class="col-lg-12 mb-4">
+            <p class="data-en"><strong>C++ Project:</strong> Create an empty folder named <code>triangle-sdl3-opengles3-cpp</code>:</p>
+            <p class="data-ru"><strong>Проект на C++:</strong> Создайте пустую папку с именем <code>triangle-sdl3-opengles3-cpp</code>:</p>
+            <pre><code>triangle-sdl3-opengles3-cpp/
+├── CMakeLists.txt
+└── src/
+    └── main.cpp</code></pre>
+        </div>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">3. Project Configuration (CMakeLists.txt)</span>
+        <span class="data-ru">3. Конфигурация проекта (CMakeLists.txt)</span>
+    </h3>
+
+    <div class="mb-4">
+        <h6 class="fw-bold text-success">CMakeLists.txt</h6>
+        <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+cmake_minimum_required(VERSION 3.21)
+project(triangle-sdl3-opengles3-cpp)
+
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.8-mingw/lib/cmake/SDL3")
+find_package(SDL3 REQUIRED)
+
+add_executable(app)
+
+target_include_directories(app PRIVATE "C:/libs/glad-0.1.36/gles-3.0/include")
+
+target_sources(app
+PRIVATE
+    src/main.cpp
+    "C:/libs/glad-0.1.36/gles-3.0/src/glad.c"
+)
+
+target_link_libraries(app PRIVATE SDL3::SDL3)
+target_link_options(app PRIVATE -mconsole)</code></pre>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">4. Source Code</span>
+        <span class="data-ru">4. Исходный код</span>
+    </h3>
+
+    <h6 class="fw-bold text-primary">main.cpp</h6>
+    <pre><code class="language-cpp">#include &lt;glad/glad.h&gt;
+#include &lt;SDL3/SDL.h&gt;
+#include &lt;SDL3/SDL_main.h&gt;
+
+const char* vertexShaderSource = "#version 300 es\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "void main() { gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0); }";
+
+const char* fragmentShaderSource = "#version 300 es\n"
+    "precision mediump float;\n"
+    "out vec4 FragColor;\n"
+    "void main() { FragColor = vec4(0.0f, 1.0f, 0.0f, 1.0f); }";
+
+int main(int argc, char* argv[])
+{
+    if (!SDL_Init(SDL_INIT_VIDEO)) return -1;
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+
+    SDL_Window* window = SDL_CreateWindow("SDL3 GLES 3.0 Triangle", 800, 600, SDL_WINDOW_OPENGL);
+    SDL_GLContext glContext = SDL_GL_CreateContext(window);
+
+    if (!gladLoadGLES2Loader((GLADloadproc)SDL_GL_GetProcAddress)) return -1;
+
+    // Simple Shader Compilation
+    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+
+    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+
+    unsigned int shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    float vertices[] = {
+        -0.5f, -0.5f, 0.0f,
+         0.5f, -0.5f, 0.0f,
+         0.0f,  0.5f, 0.0f
+    };
+
+    unsigned int VBO, VAO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    bool running = true;
+    SDL_Event event;
+    while (running) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_EVENT_QUIT) running = false;
+        }
+
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        SDL_GL_SwapWindow(window);
+    }
+
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteProgram(shaderProgram);
+    SDL_GL_DeleteContext(glContext);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+    return 0;
+}</code></pre>
+
+    <h3 class="category-header">
+        <span class="data-en">5. Automation Scripts (.bat)</span>
+        <span class="data-ru">5. Скрипты автоматизации (.bat)</span>
+    </h3>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">1. config-exe.bat</h6>
+            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist/exe</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">2. build-exe.bat</h6>
+            <pre><code class="language-bash">cd dist\exe
+cmake --build .
+cd ..\..</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">3. run-exe.bat</h6>
+            <pre><code class="language-bash">dist\exe\app</code></pre>
+        </div>
+    </div>
+
+    <div class="alert alert-info mt-5">
+        <h5 class="fw-bold"><i class="fas fa-rocket"></i> <span class="data-en">What's Next?</span><span class="data-ru">Что дальше?</span></h5>
+        <p class="mb-0">
+            <span class="data-en">Now that you have a triangle, you can start exploring the <b>SDL3 Main Callback</b> system for better performance on Web and Mobile platforms.</span>
+            <span class="data-ru">Теперь, когда у вас есть треугольник, вы можете начать изучение системы <b>SDL3 Main Callback</b> для лучшей производительности на Web и мобильных платформах.</span>
+        </p>
     </div>
 </div>
+
 
         
         
@@ -422,6 +596,39 @@ function copyToClipboard(text, button) {
 <block>
     <script src="/libs/prism/1.30.0/prism.min.js"></script>
 
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+    </block>
     
     <block>
         
