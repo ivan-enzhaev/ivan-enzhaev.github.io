@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    Setting up SDL3 with find_package (MinGW)
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold">
+            <span class="data-en">SDL3 Desktop: Setup for C and C++ (MinGW 13.1)</span>
+            <span class="data-ru">SDL3 для Desktop: Настройка для C и C++ (MinGW 13.1)</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">A guide to configuring SDL3 with CMake and MinGW on Windows for both C and C++.</span>
+            <span class="data-ru">Руководство по настройке SDL3 с использованием CMake и MinGW на Windows для C и C++.</span>
+        </p>
+    </header>
+
+    <div class="alert alert-primary">
+        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed the <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">Environment Setup Guide</a> (MinGW 13.1 & CMake)</span>
+        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">руководства по настройке среды</a> (MinGW 13.1 и CMake)</span>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">1. Obtain SDL 3.4.8</span>
+        <span class="data-ru">1. Получение SDL 3.4.8</span>
+    </h3>
+
+    <ul>
+        <li>
+            <span class="data-en">
+                Download two archives from the <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">official release page</a>:
+            </span>
+            <span class="data-ru">
+                Скачайте два архива со страницы <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">официального релиза</a>:
+            </span>
+            <br>
+            <img src="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3/download-sdl3.png" alt="Download Link" class="img-fluid border rounded mt-3 shadow-sm">
+        </li>
+        <li>
+            <span class="data-en">
+                Extract the <b>SDL3-devel-3.4.8-mingw.zip</b> archive to the <code>C:/libs/SDL3-devel-3.4.8-mingw</code> folder.
+            </span>
+            <span class="data-ru">
+                Распакуйте архив <b>SDL3-devel-3.4.8-mingw.zip</b> в папку <code>C:/libs/SDL3-devel-3.4.8-mingw</code>.
+            </span>
+        </li>
+        <li>
+            <span class="data-en">
+                Move the headers and libraries so the structure is <code>SDL3-devel-3.4.8-mingw/include</code>, etc:
+            </span>
+            <span class="data-ru">
+                Переместите заголовочные файлы и библиотеки так, чтобы структура папок была <code>SDL3-devel-3.4.8-mingw/include</code> и т. д.:
+            </span>
+            <br>
+            <img src="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3/setting-up-sdl3-1.png" alt="Folder structure Link" class="img-fluid border rounded mt-3 shadow-sm">
+        </li>
+        <li>
+            <span class="data-en">Extract the <b>SDL3-3.4.8-win32-x64.zip</b> archive so the path is exactly <code>C:/libs/SDL3-3.4.8-win32-x64</code>:</span>
+            <span class="data-ru">Распакуйте архив <b>SDL3-3.4.8-win32-x64.zip</b> так, чтобы путь был именно <code>C:/libs/SDL3-3.4.8-win32-x64</code>:</span>
+            <br>
+            <img src="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3/setting-up-sdl3-2.png" alt="Folder structure Link" class="img-fluid border rounded mt-3 shadow-sm">
+        </li>
+
+        <!-- <li>
+            <span class="data-en">
+                Download the development files <b>SDL3-devel-3.4.8-mingw.zip</b>. You can use my 
+                <a href="/libs/mingw64_13.1/SDL3-devel-3.4.8-mingw.zip">pre-configured version</a> (recommended) 
+                or the <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">official release</a>. 
+                Extract to <code>C:/libs/SDL3-devel-3.4.8-mingw</code>.
+            </span>
+            <span class="data-ru">
+                Скачайте файлы для разработки <b>SDL3-devel-3.4.8-mingw.zip</b>. Вы можете использовать мою 
+                <a href="/libs/mingw64_13.1/SDL3-devel-3.4.8-mingw.zip">предварительно настроенную версию</a> (рекомендуется) 
+                или <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">официальный релиз</a>. 
+                Распакуйте в <code>C:/libs/SDL3-devel-3.4.8-mingw</code>.
+            </span>
+
+            <div class="alert alert-primary mt-2">
+                <span class="data-en">
+                    <strong>Note:</strong> If using the official release, ensure you move the headers and libraries so the structure is <code>SDL3-devel-3.4.8-mingw/include</code>, <code>SDL3-devel-3.4.8-mingw/lib</code>, etc.
+                </span>
+                <span class="data-ru">
+                    <strong>Примечание:</strong> При использовании официального релиза убедитесь, что вы переместили заголовочные файлы и библиотеки так, чтобы структура папок была <code>SDL3-devel-3.4.8-mingw/include</code>, <code>SDL3-devel-3.4.8-mingw/lib</code> и т. д.
+                </span>
+            </div>
+        </li>
+        <li>
+            <span class="data-en">Additionally, download the runtime <b>SDL3-3.4.8-win32-x64.zip</b> from the <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">Official SDL Releases</a>. Extract the archive so the path is exactly <code>C:/libs/SDL3-3.4.8-win32-x64</code></span>
+            <span class="data-ru">Кроме того, скачайте рантайм <b>SDL3-3.4.8-win32-x64.zip</b> с <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">официальной страницы релизов SDL</a>. Распакуйте архив так, чтобы путь был именно <code>C:/libs/SDL3-3.4.8-win32-x64</code></span>
+        </li> -->
+    </ul>
+
+    <!-- <h3 class="category-header">
+        <span class="data-en">2. Add SDL3 to System PATH</span>
+        <span class="data-ru">2. Добавление SDL3 в системный PATH</span>
+    </h3>
+    <p>
+        <span class="data-en">To allow the OS to find <code>SDL3.dll</code> at runtime, add the following folder to your Environment Variables:</span>
+        <span class="data-ru">Чтобы ОС могла найти <code>SDL3.dll</code> во время работы приложения, добавьте следующую папку в переменные среды:</span>
+    </p>
+    <div class="bg-light p-3 rounded border-start border-4 border-warning mb-4">
+        <code>C:\libs\SDL3-3.4.4-win32-x64</code>
+    </div> -->
+
+    <h3 class="category-header">
+        <span class="data-en">2. Add SDL3 to Environment Variables (Path)</span>
+        <span class="data-ru">2. Добавление SDL3 в переменные среды (Path)</span>
+    </h3>
+    <p class="mt-3">
+        <span class="data-en">To ensure your applications can find the <code>SDL3.dll</code> file at runtime, you should add the following path to the <b>Path</b> variable in your <b>User variables</b> section:</span>
+        <span class="data-ru">Чтобы приложения могли находить <code>SDL3.dll</code> файл при запуске, добавьте следующий путь в переменную <b>Path</b> в разделе <b>Переменные среды пользователя</b>:</span>
+    </p>
+    <div class="bg-light p-3 rounded border-start border-4 border-warning mb-4">
+        <code>C:\libs\SDL3-3.4.8-win32-x64</code>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">3. Project Structure</span>
+        <span class="data-ru">3. Структура проекта</span>
+    </h3>
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <p class="data-en"><strong>C Project:</strong> Create an empty folder named <code>rectangle-sdl3-c</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.c</code> files:</p>
+            <p class="data-ru"><strong>Проект на C:</strong> Создайте пустую папку с именем <code>rectangle-sdl3-c</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.c</code>:</p>
+            <pre><code>rectangle-sdl3-c/
+├── CMakeLists.txt
+└── src/
+    └── main.c</code></pre>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <p class="data-en"><strong>C++ Project:</strong> Create an empty folder named <code>rectangle-sdl3-cpp</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.cpp</code> files:</p>
+            <p class="data-ru"><strong>Проект на C++:</strong> Создайте пустую папку с именем <code>rectangle-sdl3-cpp</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.cpp</code>:</p>
+            <pre><code>rectangle-sdl3-cpp/
+├── CMakeLists.txt
+└── src/
+    └── main.cpp</code></pre>
+        </div>
+    </div>
+
+    <p class="data-en">
+        Follow the steps below to create the <b>CMakeLists.txt</b> and the source files in the <b>src</b> directory with the provided content.
+    </p>
+    <p class="data-ru">
+        Следуйте шагам ниже, чтобы создать файл <b>CMakeLists.txt</b> и исходные файлы в директории <b>src</b> с указанным содержимым.
+    </p>
+
+    <h3 class="category-header">
+        <span class="data-en">4. Project Configuration (CMakeLists.txt)</span>
+        <span class="data-ru">4. Конфигурация проекта (CMakeLists.txt)</span>
+    </h3>
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <p class="data-en"><strong>C Project:</strong> Copy and paste the following code into the <code>CMakeLists.txt</code> file:</p>
+            <p class="data-ru"><strong>Проект на C:</strong> Скопируйте и вставьте следующее содержимое в файл <code>CMakeLists.txt</code>:</p>
+            <h6 class="fw-bold text-primary">CMakeLists.txt (C version)</h6>
+            <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+cmake_minimum_required(VERSION 3.21)
+project(rectangle-sdl3-c)
+
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.8-mingw/lib/cmake/SDL3")
+find_package(SDL3 REQUIRED)
+
+add_executable(app)
+
+target_sources(app
+PRIVATE
+    src/main.c
+)
+
+target_link_libraries(app PRIVATE SDL3::SDL3)
+target_link_options(app PRIVATE -mconsole)</code></pre>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <p class="data-en"><strong>C++ Project:</strong> Copy and paste the following code into the <code>CMakeLists.txt</code> file:</p>
+            <p class="data-ru"><strong>Проект на C++:</strong> Скопируйте и вставьте следующее содержимое в файл <code>CMakeLists.txt</code>:</p>
+            <h6 class="fw-bold text-success">CMakeLists.txt (C++ version)</h6>
+            <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+cmake_minimum_required(VERSION 3.21)
+project(rectangle-sdl3-cpp)
+
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.8-mingw/lib/cmake/SDL3")
+find_package(SDL3 REQUIRED)
+
+add_executable(app)
+
+target_sources(app
+PRIVATE
+    src/main.cpp
+)
+
+target_link_libraries(app PRIVATE SDL3::SDL3)
+target_link_options(app PRIVATE -mconsole)</code></pre>
+        </div>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">5. Source Code</span>
+        <span class="data-ru">5. Исходный код</span>
+    </h3>
+
+    <p class="data-en">Copy and paste the following code into the <code>src/main.c</code> (or <code>src/main.cpp</code>) file:</p>
+    <p class="data-ru">Скопируйте и вставьте следующее содержимое в файл <code>src/main.c</code> (или <code>src/main.cpp</code>):
+
+    <h6 class="fw-bold text-primary">main.c / main.cpp</h6>
+
+    <pre><code class="language-c">#include &lt;SDL3/SDL.h&gt;
+#include &lt;SDL3/SDL_main.h&gt;
+
+int main(int argc, char* argv[])
+{
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        return -1;
+    }
+
+    SDL_Window* window = SDL_CreateWindow("SDL3 C", 400, 300, 0);
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, NULL);
+
+    bool running = true;
+    SDL_Event event;
+
+    while (running) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_EVENT_QUIT) {
+                running = false;
+            }
+        }
+
+        SDL_SetRenderDrawColor(renderer, 20, 20, 20, 255);
+        SDL_RenderClear(renderer);
+
+        SDL_FRect rect = { 125.0f, 125.0f, 150.0f, 50.0f };
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+        SDL_RenderFillRect(renderer, &rect);
+
+        SDL_RenderPresent(renderer);
+    }
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+    return 0;
+}</code></pre>
+
+    <h3 class="category-header">
+        <span class="data-en">6. Opening the Project in IDEs</span>
+        <span class="data-ru">6. Открытие проекта в IDE</span>
+    </h3>
+    <p>
+        <span class="data-en">Open the <b>CMakeLists.txt</b> file in <b>CLion</b> or <b>Qt Creator</b>. CMake will handle the rest.</span>
+        <span class="data-ru">Откройте файл <b>CMakeLists.txt</b> в <b>CLion</b> или <b>Qt Creator</b>. CMake позаботится об остальном.</span>
+    </p>
+    <h3 class="category-header">
+        <span class="data-en">7. Automation Scripts (.bat)</span>
+        <span class="data-ru">7. Скрипты автоматизации (.bat)</span>
+    </h3>
+
+    <p class="data-en">
+        You can open the project folder in <b>Sublime Text 4</b> (or <b>Notepad++</b>). Create the following <code>.bat</code> scripts in the project root directory to automate the configuration, building, and running of your application:
+    </p>
+    <p class="data-ru">
+        Вы можете открыть папку проекта в <b>Sublime Text 4</b> (или <b>Notepad++</b>). Создайте следующие <code>.bat</code> скрипты в корневой директории проекта для автоматизации конфигурации, сборки и запуска вашего приложения:
+    </p>
+
+    <!-- <div class="row">
+        <div class="col-md-4">
+            <h6>config-exe.bat</h6>
+            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist/win ^
+-DCMAKE_BUILD_TYPE=Debug</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6>build-exe.bat</h6>
+            <pre><code class="language-bash">cd dist\win
+cmake --build .
+cd ..\..</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6>run-exe.bat</h6>
+            <pre><code class="language-bash">dist\win\app</code></pre>
+        </div>
+    </div> -->
+
+    <div class="row">
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">1. config-exe.bat</h6>
+            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist/exe</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">2. build-exe.bat</h6>
+            <pre><code class="language-bash">cd dist\exe
+cmake --build .
+cd ..\..</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">3. run-exe.bat</h6>
+            <pre><code class="language-bash">dist\exe\app</code></pre>
+        </div>
+    </div>
+
+    <p class="data-en">
+        To build and launch the application, run these scripts in the terminal in the following order:
+    </p>
+    <p class="data-ru">
+        Чтобы собрать и запустить приложение, выполните эти скрипты в терминале в следующем порядке:
+    </p>
+
+    <div class="bg-light p-3 border rounded">
+        <pre class="mb-0"><code class="language-bash">config-exe
+build-exe
+run-exe</code></pre>
+    </div>
+
+    <!-- <h3 class="category-header">
+        <span class="data-en">6. GitHub Template</span>
+        <span class="data-ru">6. Шаблон на GitHub</span>
+    </h3>
+    <p>
+        <span class="data-en">Full source code available here: <a href="https://github.com/8Observer8/setting-up-sdl3-with-find-package" target="_blank" rel="noopener noreferrer">setting-up-sdl3-with-find-package</a></span>
+        <span class="data-ru">Полный исходный код доступен здесь: <a href="https://github.com/8Observer8/setting-up-sdl3-with-find-package" target="_blank" rel="noopener noreferrer">setting-up-sdl3-with-find-package</a></span>
+    </p> -->
+
+    <!-- <div class="alert alert-info mt-5">
+        <h5 class="fw-bold"><i class="fas fa-rocket"></i> <span class="data-en">What's Next?</span><span class="data-ru">Что дальше?</span></h5>
+        <p class="mb-0">
+            <span class="data-en">In this guide, we used a traditional <code>while</code> loop. In the next tutorial, we will explore the <b>SDL3 Main Callback</b> system, which is the recommended way to write high-performance, cross-platform applications for Mobile and Web (WebAssembly).</span>
+            <span class="data-ru">В этом руководстве мы использовали традиционный цикл <code>while</code>. В следующем уроке мы изучим систему <b>SDL3 Main Callback</b> — рекомендуемый способ написания высокопроизводительных кроссплатформенных приложений для мобильных устройств и Web (WebAssembly).</span>
+        </p>
+    </div> -->
+
+    <!-- <div class="alert alert-info mt-5">
+        <h5 class="fw-bold"><i class="fas fa-rocket"></i> <span class="data-en">What's Next?</span><span class="data-ru">Что дальше?</span></h5>
+        <p class="mb-0">
+            <span class="data-en">
+                In this guide, we used a traditional <code>while</code> loop. In the next tutorial, we will explore the <b>SDL3 Main Callback</b> system, which is the recommended way to write high-performance, cross-platform applications for Mobile and Web (WebAssembly).
+            </span>
+            <span class="data-ru">
+                В этом руководстве мы использовали традиционный цикл <code>while</code>. В следующем уроке мы изучим систему <b>SDL3 Main Callback</b> — рекомендуемый способ написания высокопроизводительных кроссплатформенных приложений для мобильных устройств и Web (WebAssembly).
+            </span>
+        </p>
+        <div class="mt-3">
+            <a href="/tutorials/sdl3-renderer/mingw/sdl3-callbacks/" class="btn btn-outline-info btn-sm lang-link-dynamic" target="_blank">
+                <span class="data-en">Go to the Callback Tutorial →</span>
+                <span class="data-ru">Перейти к уроку по Callbacks →</span>
+            </a>
+        </div>
+    </div> -->
+
+    <h3 class="category-header">
+        <span class="data-en">8. Alternative: SDL3 Callback System</span>
+        <span class="data-ru">8. Альтернатива: Система Callbacks в SDL3</span>
+    </h3>
+
+    <p class="data-en">
+        SDL3 introduces a modern callback-based approach. Instead of a <code>while</code> loop, you define specific functions that SDL calls when needed. This is the preferred method for Web (Emscripten) and Mobile platforms.
+    </p>
+    <p class="data-ru">
+        В SDL3 представлен современный подход на основе обратных вызовов (callbacks). Вместо цикла <code>while</code> вы определяете специальные функции, которые SDL вызывает по мере необходимости. Это рекомендуемый метод для Web (Emscripten) и мобильных платформ.
+    </p>
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>Function</th>
+                    <th>
+                        <span class="data-en">Description</span>
+                        <span class="data-ru">Описание</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>SDL_AppInit</code></td>
+                    <td>
+                        <span class="data-en">Called once at startup. Initialize SDL, create window, and load assets here.</span>
+                        <span class="data-ru">Вызывается один раз при запуске. Инициализация SDL, окна и загрузка ресурсов.</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td><code>SDL_AppEvent</code></td>
+                    <td>
+                        <span class="data-en">Called whenever a new event (keyboard, mouse, quit) occurs.</span>
+                        <span class="data-ru">Вызывается каждый раз, когда происходит событие (клавиатура, мышь, выход).</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td><code>SDL_AppIterate</code></td>
+                    <td>
+                        <span class="data-en">The "Heartbeat". Called every frame. Put your rendering and logic here.</span>
+                        <span class="data-ru">"Сердцебиение" программы. Вызывается каждый кадр. Здесь происходит рендеринг.</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td><code>SDL_AppQuit</code></td>
+                    <td>
+                        <span class="data-en">Called before exiting. Clean up and free memory here.</span>
+                        <span class="data-ru">Вызывается перед выходом. Очистка и освобождение памяти.</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h6 class="fw-bold text-primary mt-4">main.c / main.cpp (Callback Version)</h6>
+
+    <pre><code class="language-cpp">#define SDL_MAIN_USE_CALLBACKS 1 // Use callback functions instead of main()
+
+#include &lt;SDL3/SDL.h&gt;
+#include &lt;SDL3/SDL_main.h&gt;
+
+// We will use this renderer to draw into this window every frame
+static SDL_Window *window = NULL;
+static SDL_Renderer *renderer = NULL;
+
+// This function runs once at startup
+SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
+{
+    if (!SDL_Init(SDL_INIT_VIDEO))
+    {
+        SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    if (!SDL_CreateWindowAndRenderer("SDL3 Rectangles", 500, 500, SDL_WINDOW_RESIZABLE, &window, &renderer))
+    {
+        SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    SDL_SetRenderVSync(renderer, 1);
+
+    return SDL_APP_CONTINUE; // Continue program execution!
+}
+
+// This function runs whenever a new event occurs (mouse input, key presses, etc.)
+SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
+{
+    if (event->type == SDL_EVENT_QUIT)
+    {
+        return SDL_APP_SUCCESS; // Terminate the program, reporting success to the OS
+    }
+    return SDL_APP_CONTINUE; // Continue program execution!
+}
+
+// This function runs once per frame and is the heart of the program
+SDL_AppResult SDL_AppIterate(void *appstate)
+{
+    SDL_SetRenderDrawColor(renderer, 38, 43, 51, 255);
+
+    // Clear the window with the draw color
+    SDL_RenderClear(renderer);
+
+    SDL_FRect rect;
+    rect.x = 100;
+    rect.y = 50;
+    rect.w = 200;
+    rect.h = 60;
+    SDL_SetRenderDrawColor(renderer, 220, 80, 80, SDL_ALPHA_OPAQUE);
+    SDL_RenderFillRect(renderer, &rect);
+
+    // Present the freshly cleared result to the screen
+    SDL_RenderPresent(renderer);
+
+    return SDL_APP_CONTINUE; // Continue program execution!
+}
+
+// This function runs once upon shutdown
+void SDL_AppQuit(void *appstate, SDL_AppResult result)
+{
+    // SDL will clean up the window and renderer for us
+}</code></pre>
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">Sberbank</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number</span>
+                        <span class="data-ru">Перевод по номеру телефона</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">Bybit (USDT TRC20)</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="Bybit USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+    //     if (link) {
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // Logic for dynamic links (persisting language across pages)
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        
+        if (link) {
+            // Check if the link is intended to open in a new tab
+            if (link.target === "_blank") {
+                // Allow the browser to handle the click naturally, 
+                // but we still want to append the language param.
+                const currentLang = document.documentElement.getAttribute("lang") || "en";
+                const targetUrl = new URL(link.href);
+                targetUrl.searchParams.set("lang", currentLang);
+                
+                // Update the href right before the browser follows it
+                link.href = targetUrl.toString();
+                return; // Exit the function so e.preventDefault() isn't called
+            }
+
+            // Existing logic for same-tab navigation
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(
+                link.href,
+                window.location.origin + window.location.pathname,
+            );
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    document.querySelectorAll('pre').forEach((pre) => {
+        // Create container and header
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        // Wrap the pre tag
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        // Copy Logic
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+</script>
+</body>
+
+</html>

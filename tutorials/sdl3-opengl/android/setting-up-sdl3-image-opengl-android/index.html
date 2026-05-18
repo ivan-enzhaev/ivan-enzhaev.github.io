@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    Setting up SDL3_image with OpenGL ES 3.0 (MinGW)
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold">
+            <span class="data-en">SDL3 & GLES 3.0: Texture Loading with SDL3_image</span>
+            <span class="data-ru">SDL3 и GLES 3.0: Загрузка текстур с помощью SDL3_image</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">A guide to loading image files into GPU memory as modern OpenGL textures within the SDL3 callback system.</span>
+            <span class="data-ru">Руководство по загрузке файлов изображений в память GPU как текстур OpenGL в современной системе обратных вызовов SDL3.</span>
+        </p>
+    </header>
+
+    <!-- <div class="alert alert-primary">
+        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have SDL3, SDL3_image, and GLAD configured. See your local compiler directory references.</span>
+        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что у вас настроены SDL3, SDL3_image и GLAD. См. пути к вашим локальным компиляторам.</span>
+    </div> -->
+
+    <!-- <div class="alert alert-primary">
+        <span class="data-en">
+            <strong>Prerequisite:</strong> Ensure you have SDL3, SDL3_image, and GLAD configured. 
+            See <a href="/tutorials/sdl3-opengles3/mingw/setting-up-sdl3-opengles3-mingw/" class="alert-link">your local compiler directory references</a>.
+        </span>
+        <span class="data-ru">
+            <strong>Предварительное условие:</strong> Убедитесь, что у вас настроены SDL3, SDL3_image и GLAD. 
+            См. <a href="/tutorials/sdl3-opengles3/mingw/setting-up-sdl3-opengles3-mingw/" class="alert-link">пути к вашим локальным компиляторам</a>.
+        </span>
+    </div> -->
+
+    <!-- <ul class="mb-4">
+        <li>
+            <span class="data-en">
+                <strong>Prerequisite:</strong> Ensure you have SDL3, SDL3_image, and GLAD configured. 
+                See <a href="/tutorials/sdl3-opengles3/mingw/setting-up-sdl3-opengles3-mingw/">your local compiler directory references</a>.
+            </span>
+            <span class="data-ru">
+                <strong>Предварительное условие:</strong> Убедитесь, что у вас настроены SDL3, SDL3_image и GLAD. 
+                См. <a href="/tutorials/sdl3-opengles3/mingw/setting-up-sdl3-opengles3-mingw/">пути к вашим локальным компиляторам</a>.
+            </span>
+        </li>
+    </ul> -->
+
+    <!-- <ul class="list-unstyled mb-4">
+        <li class="mb-3">
+            <h3 class="category-header m-0">
+                <span class="data-en">1. Obtain SDL3 and GLAD</span>
+                <span class="data-ru">1. Получение SDL3 и GLAD</span>
+            </h3>
+            <span class="data-en text-muted d-block mt-1">
+                Follow the guide to install and configure SDL3 and GLAD using CMake: 
+                <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3-mingw/">Setting up SDL3 with find_package (MinGW)</a>.
+            </span>
+            <span class="data-ru text-muted d-block mt-1">
+                Следуйте руководству по установке и настройке SDL3 и GLAD с помощью CMake: 
+                <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3-mingw/">Настройка SDL3 с помощью find_package (MinGW)</a>.
+            </span>
+        </li>
+
+        <li class="mb-4">
+            <h3 class="category-header m-0">
+                <span class="data-en">2. Obtain SDL3_image</span>
+                <span class="data-ru">2. Получение SDL3_image</span>
+            </h3>
+            <span class="data-en text-muted d-block mt-1">
+                Follow the guide to set up SDL3_image for loading textures: 
+                <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3-image-mingw/">Setting up SDL3_image with find_package (MinGW)</a>.
+            </span>
+            <span class="data-ru text-muted d-block mt-1">
+                Следуйте руководству по настройке SDL3_image для загрузки текстур: 
+                <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3-image-mingw/">Настройка SDL3_image с помощью find_package (MinGW)</a>.
+            </span>
+        </li>
+    </ul> -->
+
+    <ul class="list-unstyled mb-4">
+        <li class="mb-3">
+            <h3 class="category-header m-0">
+                <span class="data-en">1. Obtain SDL3 and GLAD</span>
+                <span class="data-ru">1. Получение SDL3 и GLAD</span>
+            </h3>
+            <!-- Wrapped in a div to force a new line without breaking CSS language rules -->
+            <div class="text-muted mt-1">
+                <span class="data-en">
+                    Follow the guide to install and configure SDL3 and GLAD using CMake: 
+                    <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3-mingw/" target="_blank" rel="noopener noreferrer">Setting up SDL3 with find_package (MinGW)</a>.
+                </span>
+                <span class="data-ru">
+                    Следуйте руководству по установке и настройке SDL3 и GLAD с помощью CMake: 
+                    <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3-mingw/" target="_blank" rel="noopener noreferrer">Настройка SDL3 с помощью find_package (MinGW)</a>.
+                </span>
+            </div>
+        </li>
+
+        <li class="mb-4">
+            <h3 class="category-header m-0">
+                <span class="data-en">2. Obtain SDL3_image</span>
+                <span class="data-ru">2. Получение SDL3_image</span>
+            </h3>
+            <div class="text-muted mt-1">
+                <span class="data-en">
+                    Follow the guide to set up SDL3_image for loading textures: 
+                    <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3-image-mingw/" target="_blank" rel="noopener noreferrer">Setting up SDL3_image with find_package (MinGW)</a>.
+                </span>
+                <span class="data-ru">
+                    Следуйте руководству по настройке SDL3_image для загрузки текстур: 
+                    <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3-image-mingw/" target="_blank" rel="noopener noreferrer">Настройка SDL3_image с помощью find_package (MinGW)</a>.
+                </span>
+            </div>
+        </li>
+    </ul>
+
+    <!-- <h3 class="category-header">
+        <span class="data-en">1. Project Directory Structure</span>
+        <span class="data-ru">1. Структура директории проекта</span>
+    </h3>
+
+    <div class="mb-4">
+        <p class="data-en"><strong>C++ Project:</strong> Create an empty folder named <code>texture-gles3-sdl3-cpp</code> and organize it as follows:</p>
+        <p class="data-ru"><strong>Проект на C++:</strong> Создайте пустую папку с именем <code>texture-gles3-sdl3-cpp</code> и организуйте её следующим образом:</p>
+        <pre><code>texture-gles3-sdl3-cpp/
+├── CMakeLists.txt
+├── assets/images/
+│   └── right-arrow.png
+└── src/
+    └── main.cpp</code></pre>
+    </div> -->
+
+    <h3 class="category-header">
+        <span class="data-en">3. Project Structure and Assets</span>
+        <span class="data-ru">3. Структура проекта и ресурсы</span>
+    </h3>
+
+    <div class="mb-4">
+        <p>
+            <span class="data-en">Before creating the files, download the required asset:</span>
+            <span class="data-ru">Перед созданием файлов скачайте необходимый ресурс:</span>
+        </p>
+        <ul>
+            <li>
+                <span class="data-en">Download the PNG file with transparent background: <a href="/assets/img/tutorials/sdl3-opengl/mingw/setting-up-sdl3-image-opengl/right-arrow.zip">right-arrow.zip</a></span>
+                <span class="data-ru">Скачайте PNG-файл с прозрачным фоном: <a href="/assets/img/tutorials/sdl3-opengl/mingw/setting-up-sdl3-image-opengl/right-arrow.zip">right-arrow.zip</a></span>
+            </li>
+            <li>
+                <span class="data-en">Note: This is a free file taken from <a href="https://www.flaticon.com/free-icons/arrow" target="_blank" rel="noopener noreferrer">this link</a>.</span>
+                <span class="data-ru">Примечание. Это бесплатный файл, который был взят <a href="https://www.flaticon.com/free-icons/arrow" target="_blank" rel="noopener noreferrer">по ссылке</a>.</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- <div class="mb-4">
+        <h6 class="fw-bold text-success">CMakeLists.txt</h6>
+        <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+cmake_minimum_required(VERSION 3.21)
+project(texture-gles3-sdl3-cpp)
+
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.8-mingw/lib/cmake/SDL3")
+set(SDL3_image_DIR "C:/libs/SDL3_image-devel-3.4.4-mingw/lib/cmake/SDL3_image")
+
+find_package(SDL3 REQUIRED)
+find_package(SDL3_image REQUIRED)
+
+add_executable(app)
+
+target_include_directories(app PRIVATE "C:/libs/glad-0.1.36/gles-3.0/include")
+
+target_sources(app
+PRIVATE
+    src/main.cpp
+    "C:/libs/glad-0.1.36/gles-3.0/src/glad.c"
+)
+
+# Copy the assets folder to the dist folder
+if(EXISTS "${CMAKE_SOURCE_DIR}/assets")
+    add_custom_command(TARGET app POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${CMAKE_SOURCE_DIR}/assets"
+                "$&lt;TARGET_FILE_DIR:app&gt;/assets"
+        COMMENT "Copying assets directory"
+    )
+endif()
+
+target_link_libraries(app PRIVATE SDL3_image::SDL3_image SDL3::SDL3)
+target_link_options(app PRIVATE -mconsole)</code></pre>
+    </div> -->
+
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <p class="data-en"><strong>C Project:</strong> Create an empty folder named <code>texture-gles3-sdl3-c</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.c</code> files:</p>
+            <p class="data-ru"><strong>Проект на C:</strong> Создайте пустую папку с именем <code>texture-gles3-sdl3-c</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.c</code>:</p>
+            <pre><code>texture-gles3-sdl3-c/
+├── CMakeLists.txt
+├── assets/images/
+│   └── right-arrow.png
+└── src/
+    └── main.c</code></pre>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <p class="data-en"><strong>C++ Project:</strong> Create an empty folder named <code>texture-gles3-sdl3-cpp</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.cpp</code> files:</p>
+            <p class="data-ru"><strong>Проект на C++:</strong> Создайте пустую папку с именем <code>texture-gles3-sdl3-cpp</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.cpp</code>:</p>
+            <pre><code>texture-gles3-sdl3-cpp/
+├── CMakeLists.txt
+├── assets/images/
+│   └── right-arrow.png
+└── src/
+    └── main.cpp</code></pre>
+        </div>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">4. CMake Configuration</span>
+        <span class="data-ru">4. Конфигурация CMake</span>
+    </h3>
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <p class="data-en"><strong>C Project:</strong> Copy and paste the following code into the <code>CMakeLists.txt</code> file:</p>
+            <p class="data-ru"><strong>Проект на C:</strong> Скопируйте и вставьте следующее содержимое в файл <code>CMakeLists.txt</code>:</p>
+                <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+cmake_minimum_required(VERSION 3.21)
+project(image-sdl3-c)
+
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.8-mingw/lib/cmake/SDL3")
+set(SDL3_image_DIR "C:/libs/SDL3_image-devel-3.4.4-mingw/lib/cmake/SDL3_image")
+
+find_package(SDL3 REQUIRED)
+find_package(SDL3_image REQUIRED)
+
+add_executable(app)
+
+target_include_directories(app PRIVATE "C:/libs/glad-0.1.36/gles-3.0/include")
+
+target_sources(app
+PRIVATE
+    src/main.c
+    "C:/libs/glad-0.1.36/gles-3.0/src/glad.c"
+)
+
+# Copy the assets folder to the dist folder
+if(EXISTS "${CMAKE_SOURCE_DIR}/assets")
+    add_custom_command(TARGET app POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${CMAKE_SOURCE_DIR}/assets"
+                "$&lt;TARGET_FILE_DIR:app&gt;/assets"
+        COMMENT "Copying assets directory"
+    )
+endif()
+
+target_link_libraries(app PRIVATE SDL3_image::SDL3_image SDL3::SDL3)
+target_link_options(app PRIVATE -mconsole)</code></pre>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <p class="data-en"><strong>C++ Project:</strong> Copy and paste the following code into the <code>CMakeLists.txt</code> file:</p>
+            <p class="data-ru"><strong>Проект на C++:</strong> Скопируйте и вставьте следующее содержимое в файл <code>CMakeLists.txt</code>:</p>
+                <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+cmake_minimum_required(VERSION 3.21)
+project(image-sdl3-cpp)
+
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.8-mingw/lib/cmake/SDL3")
+set(SDL3_image_DIR "C:/libs/SDL3_image-devel-3.4.4-mingw/lib/cmake/SDL3_image")
+
+find_package(SDL3 REQUIRED)
+find_package(SDL3_image REQUIRED)
+
+add_executable(app)
+
+target_include_directories(app PRIVATE "C:/libs/glad-0.1.36/gles-3.0/include")
+
+target_sources(app
+PRIVATE
+    src/main.cpp
+    "C:/libs/glad-0.1.36/gles-3.0/src/glad.c"
+)
+
+# Copy the assets folder to the dist folder
+if(EXISTS "${CMAKE_SOURCE_DIR}/assets")
+    add_custom_command(TARGET app POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${CMAKE_SOURCE_DIR}/assets"
+                "$&lt;TARGET_FILE_DIR:app&gt;/assets"
+        COMMENT "Copying assets directory"
+    )
+endif()
+
+target_link_libraries(app PRIVATE SDL3_image::SDL3_image SDL3::SDL3)
+target_link_options(app PRIVATE -mconsole)</code></pre>
+        </div>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">5. Source Code (GLES 3.0 Texture Mapping)</span>
+        <span class="data-ru">5. Исходный код (Текстурирование в GLES 3.0)</span>
+    </h3>
+
+    <p class="data-en">Copy and paste the following code into the <code>src/main.c</code> (or <code>src/main.cpp</code>) file:</p>
+    <p class="data-ru">Скопируйте и вставьте следующее содержимое в файл <code>src/main.c</code> (или <code>src/main.cpp</code>):
+
+    <!-- <h6 class="fw-bold text-primary">main.c / main.cpp</h6> -->
+
+    <p><strong>src/main.c</strong> (or <strong>src/main.cpp</strong>)</p>
+
+    <pre><code class="language-cpp">#define SDL_MAIN_USE_CALLBACKS 1
+#include &lt;glad/glad.h&gt;
+#include &lt;SDL3/SDL.h&gt;
+#include &lt;SDL3/SDL_main.h&gt;
+#include &lt;SDL3_image/SDL_image.h&gt;
+
+static SDL_Window* window = NULL;
+static SDL_GLContext glContext = NULL;
+static GLuint shaderProgram;
+static GLuint VAO, VBO, EBO;
+static GLuint textureID;
+
+// Vertex Shader with Position and UV Texturing Inputs
+const char* vertexShaderSource = "#version 300 es\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "layout (location = 1) in vec2 aTexCoord;\n"
+    "out vec2 TexCoord;\n"
+    "void main() {\n"
+    "   gl_Position = vec4(aPos, 1.0);\n"
+    "   TexCoord = vec2(aTexCoord.x, 1.0 - aTexCoord.y); // Flip Y for OpenGL coordinate conventions\n"
+    "}";
+
+// Fragment Shader rendering sampled RGBA textures
+const char* fragmentShaderSource = "#version 300 es\n"
+    "precision mediump float;\n"
+    "out vec4 FragColor;\n"
+    "in vec2 TexCoord;\n"
+    "uniform sampler2D ourTexture;\n"
+    "void main() {\n"
+    "   FragColor = texture(ourTexture, TexCoord);\n"
+    "}";
+
+SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
+    if (!SDL_Init(SDL_INIT_VIDEO)) return SDL_APP_FAILURE;
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+
+    window = SDL_CreateWindow("SDL3 GLES3 Texture Callbacks", 400, 400, SDL_WINDOW_OPENGL);
+    if (!window) return SDL_APP_FAILURE;
+
+    glContext = SDL_GL_CreateContext(window);
+    if (!gladLoadGLES2Loader((GLADloadproc)SDL_GL_GetProcAddress)) return SDL_APP_FAILURE;
+
+    SDL_GL_SetSwapInterval(1);
+
+    // Build and Compile Shaders
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+
+    shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    // Setup Geometry: Vertex Data positions & texture mappings (Coordinates)
+    // Rendering a flat quad overlay out of two triangles
+    float vertices[] = {
+        // Positions          // Texture Coords
+         0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // Top Right
+         0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // Bottom Right
+        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // Bottom Left
+        -0.5f,  0.5f, 0.0f,   0.0f, 1.0f  // Top Left 
+    };
+    unsigned int indices[] = {
+        0, 1, 3, // Triangle 1
+        1, 2, 3  // Triangle 2
+    };
+
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    // Layout configuration for vec3 position data (location = 0)
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    
+    // Layout configuration for vec2 texture coordinates data (location = 1)
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // Load Image file via SDL3_image directly into memory surface
+    const char *texturePath = "assets/images/right-arrow.png";
+    SDL_Surface* surface = IMG_Load(texturePath);
+    if (!surface) {
+        SDL_Log("Image loading failed: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    // Convert pixels to an OpenGL Texture Object
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Set wrapping/filtering options
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Determine incoming channel format
+    GLenum format = GL_RGB;
+    if (SDL_ISPIXELFORMAT_ALPHA(surface->format)) {
+        format = GL_RGBA;
+    }
+
+    // Allocation to GPU hardware memory space
+    glTexImage2D(GL_TEXTURE_2D, 0, format, surface->w, surface->h, 0, format, GL_UNSIGNED_BYTE, surface->pixels);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    // Free local CPU RAM surface structural copy
+    SDL_DestroySurface(surface);
+
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
+    if (event->type == SDL_EVENT_QUIT) return SDL_APP_SUCCESS;
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppIterate(void* appstate) {
+    glClearColor(0.392f, 0.392f, 0.392f, 1.0f); // Match the original RGB (100, 100, 100) background
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glUseProgram(shaderProgram);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glBindVertexArray(VAO);
+    
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    SDL_GL_SwapWindow(window);
+    return SDL_APP_CONTINUE;
+}
+
+void SDL_AppQuit(void* appstate, SDL_AppResult result) {
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+    glDeleteTextures(1, &textureID);
+    glDeleteProgram(shaderProgram);
+    SDL_GL_DestroyContext(glContext);
+    SDL_DestroyWindow(window);
+}</code></pre>
+
+    <!-- <h3 class="category-header">
+        <span class="data-en">4. Key Technical Differences from SDL_Renderer</span>
+        <span class="data-ru">4. Ключевые технические различия с SDL_Renderer</span>
+    </h3>
+    <p>
+        <span class="data-en">Unlike <code>SDL_RenderTexture</code>, which masks state execution internally, OpenGL ES 3.0 requires manual conversion of an <code>SDL_Surface</code> structure allocation block to a textured object ID (<code>glBindTexture</code>). Hardware texture space is mapped onto polygons through attributes managed explicitly inside custom GLSL shaders.</span>
+        <span class="data-ru">В отличие от функции <code>SDL_RenderTexture</code>, которая скрывает выполнение конвейера внутри, OpenGL ES 3.0 требует ручной конвертации структуры <code>SDL_Surface</code> в ID объекта текстуры (<code>glBindTexture</code>). Пространство текстуры мапится на полигоны с помощью атрибутов в кастомных шейдерах GLSL.</span>
+    </p> -->
+
+    <h3 class="category-header">
+        <span class="data-en">6. Opening the Project in IDEs</span>
+        <span class="data-ru">6. Открытие проекта в IDE</span>
+    </h3>
+    <p>
+        <span class="data-en">Open the <b>CMakeLists.txt</b> file in <b>CLion</b> or <b>Qt Creator</b>. CMake will handle the rest.</span>
+        <span class="data-ru">Откройте файл <b>CMakeLists.txt</b> в <b>CLion</b> или <b>Qt Creator</b>. CMake позаботится об остальном.</span>
+    </p>
+    <h3 class="category-header">
+        <span class="data-en">7. Automation Scripts (.bat)</span>
+        <span class="data-ru">7. Скрипты автоматизации (.bat)</span>
+    </h3>
+
+    <p class="data-en">
+        You can open the project folder in <b>Sublime Text 4</b> (or <b>Notepad++</b>). Create the following <code>.bat</code> scripts in the project root directory to automate the configuration, building, and running of your application:
+    </p>
+    <p class="data-ru">
+        Вы можете открыть папку проекта в <b>Sublime Text 4</b> (или <b>Notepad++</b>). Создайте следующие <code>.bat</code> скрипты в корневой директории проекта для автоматизации конфигурации, сборки и запуска вашего приложения:
+    </p>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">1. config-exe.bat</h6>
+            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist/exe</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">2. build-exe.bat</h6>
+            <pre><code class="language-bash">cd dist\exe
+cmake --build .
+cd ..\..</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">3. run-exe.bat</h6>
+            <pre><code class="language-bash">dist\exe\app</code></pre>
+        </div>
+    </div>
+
+    <p class="data-en">
+        To build and launch the application, run these scripts in the terminal in the following order:
+    </p>
+    <p class="data-ru">
+        Чтобы собрать и запустить приложение, выполните эти скрипты в терминале в следующем порядке:
+    </p>
+
+    <div class="bg-light p-3 border rounded">
+        <pre class="mb-0"><code class="language-bash">config-exe
+build-exe
+run-exe</code></pre>
+    </div>
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">Sberbank</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number</span>
+                        <span class="data-ru">Перевод по номеру телефона</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">Bybit (USDT TRC20)</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="Bybit USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+    //     if (link) {
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // Logic for dynamic links (persisting language across pages)
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        
+        if (link) {
+            // Check if the link is intended to open in a new tab
+            if (link.target === "_blank") {
+                // Allow the browser to handle the click naturally, 
+                // but we still want to append the language param.
+                const currentLang = document.documentElement.getAttribute("lang") || "en";
+                const targetUrl = new URL(link.href);
+                targetUrl.searchParams.set("lang", currentLang);
+                
+                // Update the href right before the browser follows it
+                link.href = targetUrl.toString();
+                return; // Exit the function so e.preventDefault() isn't called
+            }
+
+            // Existing logic for same-tab navigation
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(
+                link.href,
+                window.location.origin + window.location.pathname,
+            );
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    document.querySelectorAll('pre').forEach((pre) => {
+        // Create container and header
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        // Wrap the pre tag
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        // Copy Logic
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+</script>
+</body>
+
+</html>
