@@ -347,8 +347,8 @@ add_executable(app)
 # Include Directories
 target_include_directories(app PRIVATE 
     "C:/libs/glad-0.1.36/opengl-3.3/include"
-    "C:/libs/IXWebSocket-12.0.0-mingw/include"
-    "C:/libs/mbedtls-3.6.2-mingw/include"
+    "C:/libs/IXWebSocket-12.0.0-mingw-master/include"
+    "C:/libs/mbedtls-4.1.0-mingw/include"
     "C:/libs/zlib-1.3.2-mingw/include"
 )
 
@@ -361,10 +361,10 @@ target_sources(app PRIVATE
 # Static Link Targets (Order Matters for MinGW Linker Validation!)
 target_link_libraries(app PRIVATE 
     SDL3::SDL3
-    "C:/libs/IXWebSocket-12.0.0-mingw/lib/libixwebsocket.a"
-    "C:/libs/mbedtls-3.6.2-mingw/lib/libmbedx509.a"
-    "C:/libs/mbedtls-3.6.2-mingw/lib/libmbedtls.a"
-    "C:/libs/mbedtls-3.6.2-mingw/lib/libmbedcrypto.a"
+    "C:/libs/IXWebSocket-12.0.0-mingw-master/lib/libixwebsocket.a"
+    "C:/libs/mbedtls-4.1.0-mingw/lib/libmbedx509.a"
+    "C:/libs/mbedtls-4.1.0-mingw/lib/libmbedtls.a"
+    "C:/libs/mbedtls-4.1.0-mingw/lib/libmbedcrypto.a"
     "C:/libs/zlib-1.3.2-mingw/lib/libzs.a"
     ws2_32
     wsock32
@@ -387,19 +387,27 @@ target_link_options(app PRIVATE -mconsole)</code></pre>
 #include &lt;glad/glad.h&gt;
 #include &lt;SDL3/SDL.h&gt;
 #include &lt;SDL3/SDL_main.h&gt;
+
+#include &lt;ixwebsocket/IXNetSystem.h&gt; // Required header for Network Init
 #include &lt;ixwebsocket/IXWebSocket.h&gt;
 #include &lt;iostream&gt;
 
-struct AppState {
+struct AppContext
+{
     SDL_Window *window;
     SDL_GLContext glContext;
     ix::WebSocket webSocket;
-} state;
+};
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
-    if (!SDL_Init(SDL_INIT_VIDEO)) {
-        std::cerr &lt;&lt; "Failed to init SDL Video" &lt;&lt; std::endl;
+    // Initialize the network subsystem for Windows (Winsock)
+    ix::initNetSystem();
+
+    if (!SDL_Init(SDL_INIT_VIDEO))
+    {
+        std::cerr << "Failed to init SDL Video" << std::endl;
+        ix::uninitNetSystem();
         return SDL_APP_FAILURE;
     }
 
@@ -407,45 +415,71 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
-    state.window = SDL_CreateWindow("SDL3 + IXWebSocket", 380, 380, SDL_WINDOW_OPENGL);
-    if (!state.window) return SDL_APP_FAILURE;
+    SDL_Window *window =SDL_CreateWindow("SDL3 + IXWebSocket", 380, 380, SDL_WINDOW_OPENGL);
+    if (!window)
+    {
+        ix::uninitNetSystem();
+        return SDL_APP_FAILURE;
+    }
 
-    state.glContext = SDL_GL_CreateContext(state.window);
-    if (!state.glContext) return SDL_APP_FAILURE;
+    SDL_GLContext glContext =SDL_GL_CreateContext(window);
+    if (!glContext)
+    {
+        ix::uninitNetSystem();
+        return SDL_APP_FAILURE;
+    }
 
-    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-        std::cerr &lt;&lt; "Failed to init GLAD" &lt;&lt; std::endl;
+    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
+    {
+        std::cerr << "Failed to init GLAD" << std::endl;
+        SDL_GL_DestroyContext(glContext);
+        SDL_DestroyWindow(window);
+        ix::uninitNetSystem();
         return SDL_APP_FAILURE;
     }
 
     SDL_GL_SetSwapInterval(1);
 
+    // Allocate the state onto the heap and pass it to SDL
+    AppContext *app = new AppContext();
+    app->window = window;
+    app->glContext = glContext;
+    *appstate = app;
+
     // IXWebSocket Network Initialization
     std::string url("ws://localhost:3000");
-    state.webSocket.setUrl(url);
+    app->webSocket.setUrl(url);
 
-    state.webSocket.setOnMessageCallback([](const ix::WebSocketMessagePtr& msg) {
-        if (msg-&gt;type == ix::WebSocketMessageType::Message) {
-            std::cout &lt;&lt; "Received: " &lt;&lt; msg-&gt;str &lt;&lt; std::endl;
-        } else if (msg-&gt;type == ix::WebSocketMessageType::Open) {
-            std::cout &lt;&lt; "Connected to WebSocket Server!" &lt;&lt; std::endl;
-            state.webSocket.send("Hello from SDL3 Client!");
-        } else if (msg-&gt;type == ix::WebSocketMessageType::Close) {
-            std::cout &lt;&lt; "Disconnected from Server" &lt;&lt; std::endl;
-        } else if (msg-&gt;type == ix::WebSocketMessageType::Error) {
-            std::cerr &lt;&lt; "Error: " &lt;&lt; msg-&gt;errorInfo.reason &lt;&lt; std::endl;
+    app->webSocket.setOnMessageCallback([app](const ix::WebSocketMessagePtr &msg) {
+        if (msg->type == ix::WebSocketMessageType::Message)
+        {
+            std::cout << "Received: " << msg->str << std::endl;
+        }
+        else if (msg->type == ix::WebSocketMessageType::Open)
+        {
+            std::cout << "Connected to WebSocket Server!" << std::endl;
+            app->webSocket.send("Hello from SDL3 Client!");
+        }
+        else if (msg->type == ix::WebSocketMessageType::Close)
+        {
+            std::cout << "Disconnected from Server" << std::endl;
+        }
+        else if (msg->type == ix::WebSocketMessageType::Error)
+        {
+            std::cerr << "Error: " << msg->errorInfo.reason << std::endl;
         }
     });
 
-    std::cout &lt;&lt; "Connecting to " &lt;&lt; url &lt;&lt; "..." &lt;&lt; std::endl;
-    state.webSocket.start(); // Non-blocking background worker thread
+    std::cout << "Connecting to " << url << "..." << std::endl;
+    app->webSocket.start(); // Non-blocking background worker thread
 
     return SDL_APP_CONTINUE;
 }
 
 SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 {
-    if (event-&gt;type == SDL_EVENT_QUIT) {
+    if (event->type == SDL_EVENT_QUIT)
+    {
         return SDL_APP_SUCCESS;
     }
     return SDL_APP_CONTINUE;
@@ -453,21 +487,32 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
+    AppContext *app = (AppContext *)appstate;
+
     // Render loop backdrop updates
     glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    SDL_GL_SwapWindow(state.window);
+    SDL_GL_SwapWindow(app->window);
     return SDL_APP_CONTINUE;
 }
 
 void SDL_AppQuit(void *appstate, SDL_AppResult result)
 {
-    state.webSocket.stop(); // Cleanly disconnect network loops
-    SDL_GL_DestroyContext(state.glContext);
-    SDL_DestroyWindow(state.window);
+    AppContext *app = (AppContext *)appstate;
+    if (app)
+    {
+        app->webSocket.stop(); // Cleanly stop background socket thread
+        SDL_GL_DestroyContext(app->glContext);
+        SDL_DestroyWindow(app->window);
+        delete app; // Free allocated memory
+    }
+
+    // Clean up Windows socket resources on exit
+    ix::uninitNetSystem();
+
     SDL_Quit();
-    std::cout &lt;&lt; "Application exited cleanly." &lt;&lt; std::endl;
+    std::cout << "Application exited cleanly." << std::endl;
 }</code></pre>
 
     <!-- <h3 class="category-header">
