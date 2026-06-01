@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    2D Spatial Audio in SDL3 with find_package (MinGW)
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold">
+            <span class="data-en">SDL3 Desktop: 2D Spatial Audio (MinGW 13.1)</span>
+            <span class="data-ru">SDL3 для Desktop: Пространственный 2D-звук (MinGW 13.1)</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">A guide to configuring and implementing 2D spatial audio using the SDL3_mixer extension library with CMake and MinGW.</span>
+            <span class="data-ru">Руководство по настройке и реализации пространственного 2D-звука с использованием библиотеки расширения SDL3_mixer, CMake и MinGW.</span>
+        </p>
+    </header>
+
+    <div class="alert alert-primary">
+        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have SDL3 and SDL3_mixer already configured. See the <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3-mixer-mingw/" target="_blank">SDL3_mixer Setup Guide</a>.</span>
+        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что SDL3 и SDL3_mixer уже настроены. См. <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3-mixer-mingw/" target="_blank">руководство по настройке SDL3_mixer</a>.</span>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">1. Project Structure and Assets</span>
+        <span class="data-ru">1. Структура проекта и ресурсы</span>
+    </h3>
+
+    <div class="mb-4">
+        <p>
+            <span class="data-en">Before creating the files, download the required asset:</span>
+            <span class="data-ru">Перед созданием файлов скачайте необходимый ресурс:</span>
+        </p>
+        <ul>
+            <li>
+                <span class="data-en">Download the WAV file: <a href="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3-mixer/Picked Coin Echo 2.zip">Picked Coin Echo 2.zip</a></span>
+                <span class="data-ru">Скачайте WAV-файл: <a href="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3-mixer/Picked Coin Echo 2.zip">Picked Coin Echo 2.zip</a></span>
+            </li>
+            <li>
+                <span class="data-en">Note: This is a free file taken from <a href="https://opengameart.org/content/picked-coin-echo-2" target="_blank" rel="noopener noreferrer">this link</a>.</span>
+                <span class="data-ru">Примечание. Это бесплатный файл, который был взят <a href="https://opengameart.org/content/picked-coin-echo-2" target="_blank" rel="noopener noreferrer">по ссылке</a>.</span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <p class="data-en"><strong>C Project:</strong> Create an empty folder named <code>spatial-2d-audio-sdl3-mixer-c</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.c</code> files:</p>
+            <p class="data-ru"><strong>Проект на C:</strong> Создайте пустую папку с именем <code>spatial-2d-audio-sdl3-mixer-c</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.c</code>:</p>
+            <pre><code>spatial-2d-audio-sdl3-mixer-c/
+├── CMakeLists.txt
+├── assets/audio/
+│   └── Picked Coin Echo 2.wav
+└── src/
+    └── main.c</code></pre>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <p class="data-en"><strong>C++ Project:</strong> Create an empty folder named <code>spatial-2d-audio-sdl3-mixer-cpp</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.cpp</code> files:</p>
+            <p class="data-ru"><strong>Проект на C++:</strong> Создайте пустую папку с именем <code>spatial-2d-audio-sdl3-mixer-cpp</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.cpp</code>:</p>
+            <pre><code>spatial-2d-audio-sdl3-mixer-cpp/
+├── CMakeLists.txt
+├── assets/audio/
+│   └── Picked Coin Echo 2.wav
+└── src/
+    └── main.cpp</code></pre>
+        </div>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">2. CMake Configuration</span>
+        <span class="data-ru">2. Конфигурация CMake</span>
+    </h3>
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <p class="data-en"><strong>C Project:</strong> Copy and paste the following code into the <code>CMakeLists.txt</code> file:</p>
+            <p class="data-ru"><strong>Проект на C:</strong> Скопируйте и вставьте следующее содержимое в файл <code>CMakeLists.txt</code>:</p>
+                <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+cmake_minimum_required(VERSION 3.21)
+project(mixer-sdl3-c)
+
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.8-mingw/lib/cmake/SDL3")
+set(SDL3_mixer_DIR "C:/libs/SDL3_mixer-devel-3.2.2-mingw/lib/cmake/SDL3_mixer")
+
+find_package(SDL3 REQUIRED)
+find_package(SDL3_mixer REQUIRED)
+
+add_executable(app)
+target_sources(app PRIVATE src/main.c)
+
+# Copy the assets folder to the dist folder
+if(EXISTS "${CMAKE_SOURCE_DIR}/assets")
+    add_custom_command(TARGET app POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${CMAKE_SOURCE_DIR}/assets"
+                "$&lt;TARGET_FILE_DIR:app&gt;/assets"
+        COMMENT "Copying assets directory"
+    )
+endif()
+
+target_link_libraries(app PRIVATE SDL3_mixer::SDL3_mixer SDL3::SDL3)
+target_link_options(app PRIVATE -mconsole)</code></pre>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <p class="data-en"><strong>C++ Project:</strong> Copy and paste the following code into the <code>CMakeLists.txt</code> file:</p>
+            <p class="data-ru"><strong>Проект на C++:</strong> Скопируйте и вставьте следующее содержимое в файл <code>CMakeLists.txt</code>:</p>
+                <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+cmake_minimum_required(VERSION 3.21)
+project(mixer-sdl3-cpp)
+
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.8-mingw/lib/cmake/SDL3")
+set(SDL3_mixer_DIR "C:/libs/SDL3_mixer-devel-3.2.2-mingw/lib/cmake/SDL3_mixer")
+
+find_package(SDL3 REQUIRED)
+find_package(SDL3_mixer REQUIRED)
+
+add_executable(app)
+target_sources(app PRIVATE src/main.cpp)
+
+# Copy the assets folder to the dist folder
+if(EXISTS "${CMAKE_SOURCE_DIR}/assets")
+    add_custom_command(TARGET app POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${CMAKE_SOURCE_DIR}/assets"
+                "$&lt;TARGET_FILE_DIR:app&gt;/assets"
+        COMMENT "Copying assets directory"
+    )
+endif()
+
+target_link_libraries(app PRIVATE SDL3_mixer::SDL3_mixer SDL3::SDL3)
+target_link_options(app PRIVATE -mconsole)</code></pre>
+        </div>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">3. Source Code</span>
+        <span class="data-ru">3. Исходный код</span>
+    </h3>
+
+    <p class="data-en">Copy and paste the following code into the <code>src/main.c</code> (or <code>src/main.cpp</code>) file:</p>
+    <p class="data-ru">Скопируйте и вставьте следующее содержимое в файл <code>src/main.c</code> (или <code>src/main.cpp</code>):
+
+    <span class="data-en"><pre><code class="language-cpp">#define SDL_MAIN_USE_CALLBACKS 1
+#include &lt;SDL3/SDL.h&gt;
+#include &lt;SDL3/SDL_main.h&gt;
+#include &lt;SDL3_mixer/SDL_mixer.h&gt;
+
+// Window dimensions
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
+
+// Structures for game objects
+typedef struct
+{
+    float x, y;
+    float size;
+    float speed;
+    float angle; // Player's facing direction (in radians)
+} Player;
+
+typedef struct
+{
+    float x, y;
+    float size;
+    float maxSoundDistance;
+} SoundSource;
+
+// Global variables (in a production project, it is better to wrap these into appstate)
+static SDL_Window *window = NULL;
+static SDL_Renderer *renderer = NULL;
+static MIX_Mixer *mixer = NULL;
+static MIX_Audio *audio = NULL;
+static MIX_Track *track = NULL;
+
+static Player player;
+static SoundSource coin;
+
+// Keyboard state tracking
+static bool keys[SDL_SCANCODE_COUNT] = { false };
+
+// Function to update audio parameters based on 2D coordinates
+void Update2DSound(MIX_Track *track, Player p, SoundSource src)
+{
+    // Calculate distance and distance-based volume attenuation
+    float dx = src.x - p.x;
+    float dy = src.y - p.y;
+    float distance = sqrtf(dx * dx + dy * dy);
+
+    float volume = 0.0f;
+    if (distance < src.maxSoundDistance)
+    {
+        volume = 1.0f - (distance / src.maxSoundDistance);
+    }
+
+    // Prevent the track from entering a hard stop/sleep state.
+    // If volume drops to 0, we set it to a tiny value instead.
+    // This keeps the track active and looping in the background.
+    if (volume <= 0.0f)
+    {
+        volume = 0.0001f;
+    }
+
+    // Apply global track volume (gain)
+    MIX_SetTrackGain(track, volume);
+
+    // Before returning, reset the stereo panning to the center
+    // so the mixer handles the silent loop properly.
+    // Check against the safety cutoff value.
+    if (volume <= 0.0001f || distance < 0.1f)
+    {
+        MIX_StereoGains flatGains = { 1.0f, 1.0f };
+        MIX_SetTrackStereo(track, &flatGains);
+        return;
+    }
+
+    // Calculate left and right channel balance
+    float viewX = cosf(p.angle);
+    float viewY = sinf(p.angle);
+    float soundX = dx / distance;
+    float soundY = dy / distance;
+
+    // Cross product: < 0 (left side), > 0 (right side)
+    float cross = (viewX * soundY) - (viewY * soundX);
+
+    // Structure to hold stereo channel gain coefficients
+    MIX_StereoGains gains;
+
+    // Minimum volume threshold for the opposite ear (20%)
+    // This ensures the opposite channel never drops into complete silence
+    float minStereoLeak = 0.2f; // Sound leakage
+    // Note: The minStereoLeak value can be adjusted between 
+    // 0.1f and 0.3f to find the most natural acoustic balance.
+
+    if (cross > 0.0f)
+    {
+        // Source is on the right: fade out the left ear but keep it above minStereoLeak,
+        // while the right ear stays at maximum volume (1.0)
+        // cross peaks at 1.0 when the object is strictly at a 90-degree angle to the right
+        gains.left = 1.0f - (cross * (1.0f - minStereoLeak));
+        gains.right = 1.0f;
+    }
+    else
+    {
+        // Source is on the left: fade out the right ear but keep it above minStereoLeak,
+        // while the left ear stays at maximum volume
+        // Since cross is negative, we add it to subtract the value correctly
+        gains.left = 1.0f;
+        gains.right = 1.0f + (cross * (1.0f - minStereoLeak));
+    }
+
+    // Clamp values to the [0.0, 1.0] range
+    if (gains.left < 0.0f)
+        gains.left = 0.0f;
+    if (gains.right < 0.0f)
+        gains.right = 0.0f;
+
+    // Pass the gains structure pointer to the SDL3 Mixer function
+    MIX_SetTrackStereo(track, &gains);
+}
+
+void DrawCircle(SDL_Renderer *r, float centerX, float centerY, float radius, int segments)
+{
+    float angleStep = (2.0f * (float)M_PI) / (float)segments;
+
+    // Set the initial starting point (at angle = 0)
+    float prevX = centerX + radius;
+    float prevY = centerY;
+
+    for (int i = 1; i <= segments; i++)
+    {
+        float angle = (float)i * angleStep;
+        float nextX = centerX + cosf(angle) * radius;
+        float nextY = centerY + sinf(angle) * radius;
+
+        // Draw a line segment from the previous point to the current one
+        SDL_RenderLine(r, prevX, prevY, nextX, nextY);
+
+        prevX = nextX;
+        prevY = nextY;
+    }
+}
+
+SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
+{
+    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
+    {
+        return SDL_APP_FAILURE;
+    }
+
+    if (!MIX_Init())
+    {
+        return SDL_APP_FAILURE;
+    }
+
+    // Create the window and renderer in a single call using SDL3
+    if (!SDL_CreateWindowAndRenderer("SDL3 2D Spatial Audio", SCREEN_WIDTH, SCREEN_HEIGHT, 0, &window, &renderer))
+    {
+        return SDL_APP_FAILURE;
+    }
+
+    mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL);
+    if (!mixer)
+    {
+        return SDL_APP_FAILURE;
+    }
+
+    // Load a looping sound effect (e.g., ambient hum from an object or ticking clock)
+    audio = MIX_LoadAudio(mixer, "assets/audio/Picked Coin Echo 2.wav", true);
+    if (!audio)
+    {
+        SDL_Log("Load failed: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    track = MIX_CreateTrack(mixer);
+    if (!track)
+        return SDL_APP_FAILURE;
+
+    MIX_SetTrackAudio(track, audio);
+    MIX_SetTrackLoops(track, -1); // -1 specifies infinite looping
+
+    // Initialize player state
+    player.x = 150.0f;
+    player.y = 250.0f;
+    player.size = 20.0f;
+    player.speed = 150.0f;  // Pixels per second
+    player.angle = -M_PI_2; // Facing straight up by default (-90 degrees)
+
+    // Initialize sound source state (located in the upper right section)
+    coin.x = 600.0f;
+    coin.y = 150.0f;
+    coin.size = 15.0f;
+    coin.maxSoundDistance = 400.0f; // Audio audibility radius
+
+    // Enforce an immediate spatial audio update matching initial positions
+    Update2DSound(track, player, coin);
+
+    // Start playing the audio track
+    MIX_PlayTrack(track, 0);
+
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
+{
+    if (event->type == SDL_EVENT_QUIT)
+    {
+        return SDL_APP_SUCCESS;
+    }
+
+    // Process keyboard inputs
+    if (event->type == SDL_EVENT_KEY_DOWN)
+    {
+        keys[event->key.scancode] = true;
+    }
+    if (event->type == SDL_EVENT_KEY_UP)
+    {
+        keys[event->key.scancode] = false;
+    }
+
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppIterate(void *appstate)
+{
+    // Retrieve delta_time directly in SDL3 to ensure smooth frame-rate independent updates
+    static Uint64 last_time = 0;
+    if (last_time == 0)
+        last_time = SDL_GetTicks();
+    Uint64 current_time = SDL_GetTicks();
+    float dt = (current_time - last_time) / 1000.0f;
+    last_time = current_time;
+
+    // --- 1. INPUT PROCESSING & MOVEMENT ---
+    // Movement translation (WASD and arrow keys)
+    if (keys[SDL_SCANCODE_W] || keys[SDL_SCANCODE_UP])
+        player.y -= player.speed * dt;
+    if (keys[SDL_SCANCODE_S] || keys[SDL_SCANCODE_DOWN])
+        player.y += player.speed * dt;
+    if (keys[SDL_SCANCODE_A] || keys[SDL_SCANCODE_LEFT])
+        player.x -= player.speed * dt;
+    if (keys[SDL_SCANCODE_D] || keys[SDL_SCANCODE_RIGHT])
+        player.x += player.speed * dt;
+
+    // Head rotation / view orientation (Q and E keys)
+    // Allows testing spatial audio panning adjustments on rotation
+    if (keys[SDL_SCANCODE_Q])
+        player.angle -= 3.0f * dt; // Rotate counter-clockwise
+    if (keys[SDL_SCANCODE_E])
+        player.angle += 3.0f * dt; // Rotate clockwise
+
+    // Check if the short sound effect sample has finished playing.
+    // If it has stopped, restart it manually to create a seamless loop effect.
+    if (!MIX_TrackPlaying(track))
+    {
+        MIX_PlayTrack(track, 0);
+    }
+
+    // --- 2. AUDIO UPDATE ---
+    Update2DSound(track, player, coin);
+
+    // --- 3. RENDER PASS ---
+    // Clear the screen buffer with a flat black color
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+
+    // Draw the sound audibility boundary (a gray circle built from 64 segments)
+    // This provides a visual representation of the maxSoundDistance range
+    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+    DrawCircle(renderer, coin.x, coin.y, coin.maxSoundDistance, 64);
+
+    // Draw the sound source (Green square)
+    SDL_FRect coinRect = { coin.x - coin.size / 2, coin.y - coin.size / 2, coin.size, coin.size };
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    SDL_RenderFillRect(renderer, &coinRect);
+
+    // Draw the Player (Blue square)
+    SDL_FRect playerRect = { player.x - player.size / 2, player.y - player.size / 2, player.size, player.size };
+    SDL_SetRenderDrawColor(renderer, 0, 100, 255, 255);
+    SDL_RenderFillRect(renderer, &playerRect);
+
+    // Draw the player's vector line of sight (Red line) to visualize facing direction
+    float lineLength = 25.0f;
+    float targetX = player.x + cosf(player.angle) * lineLength;
+    float targetY = player.y + sinf(player.angle) * lineLength;
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_RenderLine(renderer, player.x, player.y, targetX, targetY);
+
+    SDL_RenderPresent(renderer);
+
+    return SDL_APP_CONTINUE;
+}
+
+void SDL_AppQuit(void *appstate, SDL_AppResult result)
+{
+    MIX_Quit();
+}</code></pre></span>
+
+    <span class="data-ru"><pre><code class="language-cpp">#define SDL_MAIN_USE_CALLBACKS 1
+#include &lt;SDL3/SDL.h&gt;
+#include &lt;SDL3/SDL_main.h&gt;
+#include &lt;SDL3_mixer/SDL_mixer.h&gt;
+
+// Размеры окна
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
+
+// Структуры для игровых объектов
+typedef struct
+{
+    float x, y;
+    float size;
+    float speed;
+    float angle; // Куда смотрит игрок (в радианах)
+} Player;
+
+typedef struct
+{
+    float x, y;
+    float size;
+    float maxSoundDistance;
+} SoundSource;
+
+// Глобальные переменные (в реальном проекте лучше упаковать в appstate)
+static SDL_Window *window = NULL;
+static SDL_Renderer *renderer = NULL;
+static MIX_Mixer *mixer = NULL;
+static MIX_Audio *audio = NULL;
+static MIX_Track *track = NULL;
+
+static Player player;
+static SoundSource coin;
+
+// Состояние нажатых клавиш
+static bool keys[SDL_SCANCODE_COUNT] = { false };
+
+// Функция обновления звука на основе 2D координат
+void Update2DSound(MIX_Track *track, Player p, SoundSource src)
+{
+    // Расчет расстояния и громкости
+    float dx = src.x - p.x;
+    float dy = src.y - p.y;
+    float distance = sqrtf(dx * dx + dy * dy);
+
+    float volume = 0.0f;
+    if (distance < src.maxSoundDistance)
+    {
+        volume = 1.0f - (distance / src.maxSoundDistance);
+    }
+
+    // Защита от "засыпания" трека.
+    // Если volume равен 0, ставим ничтожно малое число.
+    // Трек продолжит крутиться в фоне.
+    if (volume <= 0.0f)
+    {
+        volume = 0.0001f;
+    }
+
+    // Общая громкость (усиление) трека
+    MIX_SetTrackGain(track, volume);
+
+    // Перед return сначала сбрасываем стерео-баланс в центр,
+    // чтобы микшер корректно обрабатывал «тишину» в цикле.
+    // Сравниваем со значением отсечки безопасности.
+    if (volume <= 0.0001f || distance < 0.1f)
+    {
+        MIX_StereoGains flatGains = { 1.0f, 1.0f };
+        MIX_SetTrackStereo(track, &flatGains);
+        return;
+    }
+
+    // Расчет баланса левого и правого каналов
+    float viewX = cosf(p.angle);
+    float viewY = sinf(p.angle);
+    float soundX = dx / distance;
+    float soundY = dy / distance;
+
+    // Косое произведение: < 0 (слева), > 0 (справа)
+    float cross = (viewX * soundY) - (viewY * soundX);
+
+    // Создаем структуру для хранения коэффициентов громкости каналов
+    MIX_StereoGains gains;
+
+    // Минимальный порог звука для противоположного уха (20%)
+    // Благодаря этому противоположное ухо никогда не замолкнет полностью
+    float minStereoLeak = 0.2f; // Утечка звука
+    // Замечание. Значение minStereoLeak можно крутить в пределах от
+    // 0.1f до 0.3f, подбирая наиболее приятный на слух баланс
+
+    if (cross > 0.0f)
+    {
+        // Источник справа: левое ухо затухает, но не ниже порога minStereoLeak,
+        // а правое горит на максимум (1.0)
+        // cross на максимуме равен 1.0 (когда объект строго справа под 90 градусов)
+        gains.left = 1.0f - (cross * (1.0f - minStereoLeak));
+        gains.right = 1.0f;
+    }
+    else
+    {
+        // Источник слева: правое ухо затухает, но не ниже порога minStereoLeak,
+        // а левое на максимум
+        // Поскольку cross отрицательный, используем fabsf() или + cross
+        gains.left = 1.0f;
+        gains.right = 1.0f + (cross * (1.0f - minStereoLeak));
+    }
+
+    // Защита от выхода за пределы [0.0, 1.0]
+    if (gains.left < 0.0f)
+        gains.left = 0.0f;
+    if (gains.right < 0.0f)
+        gains.right = 0.0f;
+
+    // Передаем указатель на структуру в функцию SDL3 Mixer
+    MIX_SetTrackStereo(track, &gains);
+}
+
+void DrawCircle(SDL_Renderer *r, float centerX, float centerY, float radius, int segments)
+{
+    float angleStep = (2.0f * (float)M_PI) / (float)segments;
+
+    // Задаем начальную точку (при угле = 0)
+    float prevX = centerX + radius;
+    float prevY = centerY;
+
+    for (int i = 1; i <= segments; i++)
+    {
+        float angle = (float)i * angleStep;
+        float nextX = centerX + cosf(angle) * radius;
+        float nextY = centerY + sinf(angle) * radius;
+
+        // Соединяем предыдущую точку с текущей
+        SDL_RenderLine(r, prevX, prevY, nextX, nextY);
+
+        prevX = nextX;
+        prevY = nextY;
+    }
+}
+
+SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
+{
+    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
+    {
+        return SDL_APP_FAILURE;
+    }
+
+    if (!MIX_Init())
+    {
+        return SDL_APP_FAILURE;
+    }
+
+    // Создаем окно и рендерер одной функцией в SDL3
+    if (!SDL_CreateWindowAndRenderer("SDL3 2D Spatial Audio", SCREEN_WIDTH, SCREEN_HEIGHT, 0, &window, &renderer))
+    {
+        return SDL_APP_FAILURE;
+    }
+
+    mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL);
+    if (!mixer)
+    {
+        return SDL_APP_FAILURE;
+    }
+
+    // Загружаем зацикленный звук (например, фоновый гул от объекта или тиканье)
+    audio = MIX_LoadAudio(mixer, "assets/audio/Picked Coin Echo 2.wav", true);
+    if (!audio)
+    {
+        SDL_Log("Load failed: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    track = MIX_CreateTrack(mixer);
+    if (!track)
+        return SDL_APP_FAILURE;
+
+    MIX_SetTrackAudio(track, audio);
+    MIX_SetTrackLoops(track, -1); // -1 означает бесконечный повтор звука
+
+    // Инициализация игрока
+    player.x = 150.0f;
+    player.y = 250.0f;
+    player.size = 20.0f;
+    player.speed = 150.0f;  // пикселей в секунду
+    player.angle = -M_PI_2; // смотрит вверх по умолчанию (-90 градусов)
+
+    // Инициализация источника звука (в правой верхней части)
+    coin.x = 600.0f;
+    coin.y = 150.0f;
+    coin.size = 15.0f;
+    coin.maxSoundDistance = 400.0f; // Радиус слышимости звука
+
+    // Принудительно обновляем 3D параметры звука под стартовые позиции
+    Update2DSound(track, player, coin);
+
+    // Запускаем трек
+    MIX_PlayTrack(track, 0);
+
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
+{
+    if (event->type == SDL_EVENT_QUIT)
+    {
+        return SDL_APP_SUCCESS;
+    }
+
+    // Считываем нажатия клавиш
+    if (event->type == SDL_EVENT_KEY_DOWN)
+    {
+        keys[event->key.scancode] = true;
+    }
+    if (event->type == SDL_EVENT_KEY_UP)
+    {
+        keys[event->key.scancode] = false;
+    }
+
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppIterate(void *appstate)
+{
+    // В SDL3 для плавной анимации мы получаем delta_time (время кадра) напрямую
+    static Uint64 last_time = 0;
+    if (last_time == 0)
+        last_time = SDL_GetTicks();
+    Uint64 current_time = SDL_GetTicks();
+    float dt = (current_time - last_time) / 1000.0f;
+    last_time = current_time;
+
+    // Обработка ввода и движение
+    // Движение (WASD и стрелки)
+    if (keys[SDL_SCANCODE_W] || keys[SDL_SCANCODE_UP])
+        player.y -= player.speed * dt;
+    if (keys[SDL_SCANCODE_S] || keys[SDL_SCANCODE_DOWN])
+        player.y += player.speed * dt;
+    if (keys[SDL_SCANCODE_A] || keys[SDL_SCANCODE_LEFT])
+        player.x -= player.speed * dt;
+    if (keys[SDL_SCANCODE_D] || keys[SDL_SCANCODE_RIGHT])
+        player.x += player.speed * dt;
+
+    // Вращение взгляда игрока (например, на клавиши Q и E)
+    // Чтобы вы могли проверить, как меняется панорама при повороте "головы"
+    if (keys[SDL_SCANCODE_Q])
+        player.angle -= 3.0f * dt; // поворот против часовой
+    if (keys[SDL_SCANCODE_E])
+        player.angle += 3.0f * dt; // поворот по часовой
+
+    // Проверяем, не закончился ли наш короткий сэмпл.
+    // Если он остановился — запускаем его заново, создавая эффект петли (loop)
+    if (!MIX_TrackPlaying(track))
+    {
+        MIX_PlayTrack(track, 0);
+    }
+
+    // Обновление звука
+    Update2DSound(track, player, coin);
+
+    // Рендеринг (отрисовка)
+    // Очищаем экран (черный цвет)
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+
+    // Рисуем радиус слышимости источника звука (серая окружность из 64 отрезков)
+    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+    DrawCircle(renderer, coin.x, coin.y, coin.maxSoundDistance, 64);
+
+    // Рисуем источник звука (Зеленый квадрат)
+    SDL_FRect coinRect = { coin.x - coin.size / 2, coin.y - coin.size / 2, coin.size, coin.size };
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    SDL_RenderFillRect(renderer, &coinRect);
+
+    // Рисуем Игрока (Синий квадрат)
+    SDL_FRect playerRect = { player.x - player.size / 2, player.y - player.size / 2, player.size, player.size };
+    SDL_SetRenderDrawColor(renderer, 0, 100, 255, 255);
+    SDL_RenderFillRect(renderer, &playerRect);
+
+    // Рисуем "линию взгляда" игрока (Красная линия), чтобы видеть куда он повернут
+    float lineLength = 25.0f;
+    float targetX = player.x + cosf(player.angle) * lineLength;
+    float targetY = player.y + sinf(player.angle) * lineLength;
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_RenderLine(renderer, player.x, player.y, targetX, targetY);
+
+    SDL_RenderPresent(renderer);
+
+    return SDL_APP_CONTINUE;
+}
+
+void SDL_AppQuit(void *appstate, SDL_AppResult result)
+{
+    MIX_Quit();
+}</code></pre></span>
+
+    <h3 class="category-header">
+        <span class="data-en">4. Opening the Project in IDEs</span>
+        <span class="data-ru">4. Открытие проекта в IDE</span>
+    </h3>
+    <p>
+        <span class="data-en">Open the <b>CMakeLists.txt</b> file in <b>CLion</b> or <b>Qt Creator</b>. CMake will handle the rest.</span>
+        <span class="data-ru">Откройте файл <b>CMakeLists.txt</b> в <b>CLion</b> или <b>Qt Creator</b>. CMake позаботится об остальном.</span>
+    </p>
+    <h3 class="category-header">
+        <span class="data-en">5. Automation Scripts (.bat)</span>
+        <span class="data-ru">5. Скрипты автоматизации (.bat)</span>
+    </h3>
+
+    <p class="data-en">
+        You can open the project folder in <b>Sublime Text 4</b> (or <b>Notepad++</b>). Create the following <code>.bat</code> scripts in the project root directory to automate the configuration, building, and running of your application:
+    </p>
+    <p class="data-ru">
+        Вы можете открыть папку проекта в <b>Sublime Text 4</b> (или <b>Notepad++</b>). Создайте следующие <code>.bat</code> скрипты в корневой директории проекта для автоматизации конфигурации, сборки и запуска вашего приложения:
+    </p>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">1. config-exe.bat</h6>
+            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist/exe</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">2. build-exe.bat</h6>
+            <pre><code class="language-bash">cd dist\exe
+cmake --build .
+cd ..\..</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">3. run-exe.bat</h6>
+            <pre><code class="language-bash">dist\exe\app</code></pre>
+        </div>
+    </div>
+
+    <p class="data-en">
+        To build and launch the application, run these scripts in the terminal in the following order:
+    </p>
+    <p class="data-ru">
+        Чтобы собрать и запустить приложение, выполните эти скрипты в терминале в следующем порядке:
+    </p>
+
+    <div class="bg-light p-3 border rounded">
+        <pre class="mb-0"><code class="language-bash">config-exe
+build-exe
+run-exe</code></pre>
+    </div>
+
+    <!-- Downloads Section -->
+    <!-- H:\projects\audio\sdl3_mixer\audio-3d-sdl3-mixer-c -->
+    <h3 class="category-header mt-5">
+        <span class="data-en">6. Source Code & Downloads</span>
+        <span class="data-ru">6. Исходный код и загрузки</span>
+    </h3>
+    <p class="mt-3">
+        <span class="data-en">You can download the complete configured project as a ZIP archive or explore the source code directly on GitHub:</span>
+        <span class="data-ru">Вы можете скачать готовую настроенную сборку проекта в виде ZIP-архива или изучить исходный код прямо на GitHub:</span>
+    </p>
+
+    <div class="d-flex flex-wrap gap-3 my-4">
+        <!-- GitHub Link -->
+        <a href="https://github.com/ivan-enzhaev/spatial-2d-audio-sdl3-mixer-c" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark d-inline-flex align-items-center">
+            <i class="fab fa-github me-2"></i>
+            <span class="data-en">View on GitHub</span>
+            <span class="data-ru">Открыть на GitHub</span>
+        </a>
+        
+        <!-- Direct Download Link -->
+        <a href="/assets/img/tutorials/sdl3-renderer/mingw/spatial-2d-audio-sdl3-mixer-c/spatial-2d-audio-sdl3-mixer-c.zip" download class="btn btn-primary d-inline-flex align-items-center">
+            <i class="fas fa-file-archive me-2"></i>
+            <span class="data-en">Download ZIP Archive</span>
+            <span class="data-ru">Скачать ZIP-архив</span>
+        </a>
+    </div>
+</div>
+
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">Sberbank</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number</span>
+                        <span class="data-ru">Перевод по номеру телефона</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">Bybit (USDT TRC20)</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="Bybit USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+    //     if (link) {
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // Logic for dynamic links (persisting language across pages)
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        
+        if (link) {
+            // Check if the link is intended to open in a new tab
+            if (link.target === "_blank") {
+                // Allow the browser to handle the click naturally, 
+                // but we still want to append the language param.
+                const currentLang = document.documentElement.getAttribute("lang") || "en";
+                const targetUrl = new URL(link.href);
+                targetUrl.searchParams.set("lang", currentLang);
+                
+                // Update the href right before the browser follows it
+                link.href = targetUrl.toString();
+                return; // Exit the function so e.preventDefault() isn't called
+            }
+
+            // Existing logic for same-tab navigation
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(
+                link.href,
+                window.location.origin + window.location.pathname,
+            );
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    document.querySelectorAll('pre').forEach((pre) => {
+        // Create container and header
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        // Wrap the pre tag
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        // Copy Logic
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    C/C++ Environment Setup with Qt Creator (No Qt Framework)
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold text-dark">
+            <span class="data-en">C/C++ Environment Setup with Qt Creator (No Qt Framework)</span>
+            <span class="data-ru">Настройка окружения C/C++ в Qt Creator (Без фреймворка Qt)</span>
+        </h1>
+    </header>
+
+    <!-- <p class="mb-3">
+        <span class="data-en">
+            <strong>Prefer video?</strong> You can follow the core setup process (MinGW and CMake) visually in the video below. 
+        </span>
+        <span class="data-ru">
+            <strong>Предпочитаете видео?</strong> Вы можете посмотреть основные этапы настройки (MinGW и CMake) в видео ниже.
+        </span>
+    </p> -->
+
+    <!-- <div class="ratio ratio-16x9 mb-4 shadow-sm rounded border overflow-hidden">
+        <iframe 
+            src="https://www.youtube.com/embed/rHXl_gcJ8Zc?rel=0&vq=hd1080&v=1" 
+            title="C/C++ Development Environment Setup" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen>
+        </iframe>
+    </div> -->
+
+    <h3 class="category-header">
+        <span class="data-en">1. MinGW 13.1 (WinLibs)</span>
+        <span class="data-ru">1. MinGW 13.1 (WinLibs)</span>
+    </h3>
+
+    <p>
+        <span class="data-en">Go to <a href="https://winlibs.com/" target="_blank" rel="noopener noreferrer">winlibs.com</a>. Download the <strong>GCC 13.1.0</strong> release (Win64, POSIX threads, SEH exceptions):</span>
+        <span class="data-ru">Перейдите на <a href="https://winlibs.com/" target="_blank" rel="noopener noreferrer">winlibs.com</a>. Скачайте версию <strong>GCC 13.1.0</strong> (Win64, POSIX threads, SEH exceptions):</span>
+        <img src="/assets/img/tutorials/tools/mingw/setup-mingw/mingw-link.png" alt="WinLibs GCC 13.1.0 Download Link" class="img-fluid border rounded mt-3 shadow-sm">
+    </p>
+
+    <div class="alert alert-info">
+        <span class="data-en"><strong>Installation:</strong> Extract the folder to a simple path without spaces, for example: <code>C:\mingw64_13.1</code></span>
+        <span class="data-ru"><strong>Установка:</strong> Извлеките папку по простому пути без пробелов, например: <code>C:\mingw64_13.1</code>.</span>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">2. Path Configuration</span>
+        <span class="data-ru">2. Настройка переменных окружения</span>
+    </h3>
+    <p>
+        <span class="data-en">Add the MinGW <code>bin</code> folder to your System Path to use <code>g++</code> and <code>make</code> in any terminal.</span>
+        <span class="data-ru">Добавьте папку <code>bin</code> вашего MinGW в системную переменную Path, чтобы использовать <code>g++</code> и <code>make</code> в любом терминале.</span>
+    </p>
+    <pre><code class="language-bash"># Add this to your System PATH:
+C:\mingw64_13.1\bin</code></pre>
+
+    <h3 class="category-header">
+        <span class="data-en">3. CMake Installation</span>
+        <span class="data-ru">3. Установка CMake</span>
+    </h3>
+    <p>
+        <span class="data-en">Download the Windows x64 Installer (<code>.msi</code>) from the <a href="https://cmake.org/download/" target="_blank" rel="noopener noreferrer">Official CMake Website</a>.</span>
+        <span class="data-ru">Скачайте установщик Windows x64 (<code>.msi</code>) с <a href="https://cmake.org/download/" target="_blank" rel="noopener noreferrer">официального сайта CMake</a>.</span>
+    </p>
+    <div class="alert alert-warning">
+        <span class="data-en">During installation, select: <strong>"Add CMake to the system PATH for all users"</strong>.</span>
+        <span class="data-ru">Во время установки выберите: <strong>"Add CMake to the system PATH for all users"</strong>.</span>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">4. Standalone Qt Creator Installation</span>
+        <span class="data-ru">4. Установка автономного Qt Creator</span>
+    </h3>
+    <p>
+        <span class="data-en">To get the IDE without installing the massive Qt Framework, search Google for <code>qt creator github</code> or go directly to the GitHub releases page. While you might notice the newer <code>v20.0.0-beta2</code> release available, we will use the stable <strong>v19.0.2</strong> release for this setup.</span>
+        <span class="data-ru">Чтобы получить IDE без установки массивного фреймворка Qt, введите в поиске Google <code>qt creator github</code> или перейдите на страницу релизов GitHub. Вы можете заметить доступную версию <code>v20.0.0-beta2</code>, но для этой настройки мы будем использовать стабильную версию <strong>v19.0.2</strong>.</span>
+    </p>
+    <p>
+        <span class="data-en">Download the Windows installer (e.g., <code>qtcreator-windows-x64-msvc-19.0.2.msi</code>) directly from the <a href="https://github.com/qt-creator/qt-creator/releases/tag/v19.0.2" target="_blank" rel="noopener noreferrer">Official GitHub Release Link</a> and run it to complete the installation.</span>
+        <span class="data-ru">Скачайте установщик для Windows (например, <code>qtcreator-windows-x64-msvc-19.0.2.msi</code>) напрямую по <a href="https://github.com/qt-creator/qt-creator/releases/tag/v19.0.2" target="_blank" rel="noopener noreferrer">официальной ссылке релиза GitHub</a> и запустите его для завершения установки.</span>
+        <img src="/assets/img/tutorials/tools/mingw/setup-qt-creator/download-link.png" alt="Qt Creator v19.0.2 Release on GitHub" class="img-fluid border rounded mt-3 shadow-sm">
+    </p>
+    <div class="alert alert-info">
+        <span class="data-en"><strong>Note:</strong> If Qt Creator does not appear in your Windows Start Menu after installation, navigate to <code>C:\Program Files\qtcreator-19.0.2\bin\</code>, right-click <code>qtcreator.exe</code>, and create a shortcut or pin it to your taskbar.</span>
+        <span class="data-ru"><strong>Примечание:</strong> Если Qt Creator не появился в меню "Пуск" после установки, перейдите в папку <code>C:\Program Files\qtcreator-19.0.2\bin\</code>, нажмите правой кнопкой мыши на <code>qtcreator.exe</code> и создайте ярлык или закрепите его на панели задач.</span>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">5. Manual Configuration in Qt Creator</span>
+        <span class="data-ru">5. Ручная настройка в Qt Creator</span>
+    </h3>
+    <p>
+        <span class="data-en">Since we didn't use the Qt Installer, we must manually tell Qt Creator where our MinGW compiler, debugger, and CMake tools are located. Open Qt Creator and navigate to <strong>Edit > Preferences</strong>.</span>
+        <span class="data-ru">Так как мы не использовали официальный онлайн-установщик Qt, нам нужно вручную указать Qt Creator, где находятся компилятор MinGW, отладчик и инструменты CMake. Откройте Qt Creator и перейдите в <strong>Edit > Preferences</strong>.</span>
+    </p>
+
+    <!-- <h4 class="mt-4 fw-bold text-secondary">
+        <span class="data-en">Step 5.1: Set CMake Path</span>
+        <span class="data-ru">Шаг 5.1: Настройка пути к CMake</span>
+    </h4>
+    <p>
+        <span class="data-en">In the Preferences menu, switch to the <strong>CMake</strong> tab. Click the <strong>Add</strong> button to register your standalone CMake installation:</span>
+        <span class="data-ru">В меню настроек перейдите на вкладку <strong>CMake</strong>. Нажмите кнопку <strong>Add</strong>, чтобы зарегистрировать установленный CMake:</span>
+    </p>
+    <ul>
+        <li><span class="data-en"><strong>Name:</strong> <code>System CMake</code></span><span class="data-ru"><strong>Name:</strong> <code>System CMake</code></span></li>
+        <li><span class="data-en"><strong>Path:</strong> <code>C:\Program Files\CMake\bin\cmake.exe</code> (or your specific installation path)</span><span class="data-ru"><strong>Path:</strong> <code>C:\Program Files\CMake\bin\cmake.exe</code> (или ваш путь установки)</span></li>
+    </ul>
+    <img src="/assets/img/tutorials/tools/mingw/setup-mingw/qt-creator-cmake-setup.png" alt="Configuring CMake Path in Qt Creator" class="img-fluid border rounded mt-2 mb-3 shadow-sm"> -->
+
+    <!-- Step 5.1: CMake Path -->
+    <h4 class="mt-4 fw-bold text-secondary">
+        <span class="data-en">Step 5.1: Verify CMake Path</span>
+        <span class="data-ru">Шаг 5.1: Проверка пути к CMake</span>
+    </h4>
+    <p>
+        <span class="data-en">In the Preferences menu, switch to the <strong>CMake</strong> tab. Because we added CMake to the system PATH during its installation, Qt Creator will automatically detect it. Look at the list to verify that an auto-detected entry pointing to your <code>cmake.exe</code> is visible:</span>
+        <span class="data-ru">В меню настроек перейдите на вкладку <strong>CMake</strong>. Так как мы добавили CMake в системный PATH во время его установки, Qt Creator определит его автоматически. Проверьте список, чтобы убедиться в наличии автоматически обнаруженной записи, указывающей на <code>cmake.exe</code>:</span>
+    </p>
+    <ul>
+        <li><span class="data-en"><strong>Name:</strong> Typically listed under <code>System CMake</code> or <code>Auto-detected</code></span><span class="data-ru"><strong>Name:</strong> Обычно отображается как <code>System CMake</code> или <code>Auto-detected</code></span></li>
+        <li><span class="data-en"><strong>Path:</strong> Should automatically point to <code>C:\Program Files\CMake\bin\cmake.exe</code></span><span class="data-ru"><strong>Path:</strong> Должен автоматически указывать на <code>C:\Program Files\CMake\bin\cmake.exe</code></span></li>
+    </ul>
+    <img src="/assets/img/tutorials/tools/mingw/setup-qt-creator/qt-creator-cmake-setup.png" alt="Verifying Auto-detected CMake Path in Qt Creator" class="img-fluid border rounded mt-2 mb-3 shadow-sm">
+
+    <!-- <h4 class="mt-4 fw-bold text-secondary">
+        <span class="data-en">Step 5.2: Configure the Debugger</span>
+        <span class="data-ru">Шаг 5.2: Настройка отладчика</span>
+    </h4>
+    <p>
+        <span class="data-en">Switch to the <strong>Debuggers</strong> tab. Click the <strong>Add</strong> button on the right side and specify the <code>gdb.exe</code> engine from your MinGW environment:</span>
+        <span class="data-ru">Перейдите на вкладку <strong>Debuggers</strong>. Нажмите кнопку <strong>Add</strong> с правой стороны и укажите отладчик <code>gdb.exe</code> из вашего окружения MinGW:</span>
+    </p>
+    <ul>
+        <li><span class="data-en"><strong>Name:</strong> <code>MinGW GDB</code></span><span class="data-ru"><strong>Name:</strong> <code>MinGW GDB</code></span></li>
+        <li><span class="data-en"><strong>Engine:</strong> GDB</span><span class="data-ru"><strong>Engine:</strong> GDB</span></li>
+        <li><span class="data-en"><strong>Path:</strong> <code>C:\mingw64_13.1\bin\gdb.exe</code></span><span class="data-ru"><strong>Path:</strong> <code>C:\mingw64_13.1\bin\gdb.exe</code></span></li>
+    </ul>
+    <img src="/assets/img/tutorials/tools/mingw/setup-mingw/qt-creator-debugger-setup.png" alt="Adding GDB Debugger in Preferences" class="img-fluid border rounded mt-2 mb-3 shadow-sm"> -->
+
+    <!-- Step 5.2: Debugger Setup -->
+    <h4 class="mt-4 fw-bold text-secondary">
+        <span class="data-en">Step 5.2: Verify the Debugger</span>
+        <span class="data-ru">Шаг 5.2: Проверка отладчика</span>
+    </h4>
+    <p>
+        <span class="data-en">Switch to the <strong>Kits > Debuggers</strong> tab. Because MinGW is in your system PATH, Qt Creator will automatically discover the GNU debugger. Verify that an auto-detected GDB entry is listed:</span>
+        <span class="data-ru">Перейдите на вкладку <strong>Kits > Debuggers</strong>. Поскольку MinGW находится в системном PATH, Qt Creator автоматически обнаружит отладчик GNU. Убедитесь, что автоматически обнаруженная запись GDB присутствует в списке:</span>
+    </p>
+    <ul>
+        <li><span class="data-en"><strong>Name:</strong> Typically listed under <code>Auto-detected</code> as <code>GDB</code></span><span class="data-ru"><strong>Name:</strong> Обычно отображается в разделе <code>Auto-detected</code> как <code>GDB</code></span></li>
+        <li><span class="data-en"><strong>Path:</strong> Should automatically point to <code>C:\mingw64_13.1\bin\gdb.exe</code></span><span class="data-ru"><strong>Path:</strong> Должен автоматически указывать на <code>C:\mingw64_13.1\bin\gdb.exe</code></span></li>
+    </ul>
+    <img src="/assets/img/tutorials/tools/mingw/setup-qt-creator/debuggers.png" alt="Verifying Auto-detected GDB Debugger" class="img-fluid border rounded mt-2 mb-3 shadow-sm">
+
+    <!-- <h4 class="mt-4 fw-bold text-secondary">
+        <span class="data-en">Step 5.3: Configure C and C++ Compilers</span>
+        <span class="data-ru">Шаг 5.3: Настройка компиляторов C и C++</span>
+    </h4>
+    <p>
+        <span class="data-en">Switch to the <strong>Compilers</strong> tab. We need to add both the C compiler (<code>gcc.exe</code>) and the C++ compiler (<code>g++.exe</code>). Click the <strong>Add</strong> button, select <strong>GCC > C</strong>, and then click <strong>Add > GCC > C++</strong>:</span>
+        <span class="data-ru">Перейдите на вкладку <strong>Compilers</strong>. Нам нужно добавить как компилятор C (<code>gcc.exe</code>), так и компилятор C++ (<code>g++.exe</code>). Нажмите кнопку <strong>Add</strong>, выберите <strong>GCC > C</strong>, а затем нажмите <strong>Add > GCC > C++</strong>:</span>
+    </p>
+    <ul>
+        <li>
+            <span class="data-en"><strong>For C (GCC):</strong> Set Name to <code>MinGW C</code> and Compiler path to <code>C:\mingw64_13.1\bin\gcc.exe</code></span>
+            <span class="data-ru"><strong>Для C (GCC):</strong> Установите Name в <code>MinGW C</code> и Compiler path в <code>C:\mingw64_13.1\bin\gcc.exe</code></span>
+        </li>
+        <li>
+            <span class="data-en"><strong>For C++ (G++):</strong> Set Name to <code>MinGW C++</code> and Compiler path to <code>C:\mingw64_13.1\bin\g++.exe</code></span>
+            <span class="data-ru"><strong>Для C++ (G++):</strong> Установите Name в <code>MinGW C++</code> и Compiler path в <code>C:\mingw64_13.1\bin\g++.exe</code></span>
+        </li>
+    </ul>
+    <img src="/assets/img/tutorials/tools/mingw/setup-mingw/qt-creator-compilers-setup.png" alt="Adding C and C++ Compilers" class="img-fluid border rounded mt-2 mb-3 shadow-sm"> -->
+
+    <!-- Step 5.3: Compilers Setup -->
+    <h4 class="mt-4 fw-bold text-secondary">
+        <span class="data-en">Step 5.3: Verify C and C++ Compilers</span>
+        <span class="data-ru">Шаг 5.3: Проверка компиляторов C и C++</span>
+    </h4>
+    <p>
+        <span class="data-en">Switch to the <strong>Kits > Compilers</strong> tab. Look under the <strong>Auto-detected</strong> section to verify that both the C and C++ MinGW compilers are recognized:</span>
+        <span class="data-ru">Перейдите на вкладку <strong>Kits > Compilers</strong>. Загляните в раздел <strong>Auto-detected</strong>, чтобы убедиться, что компиляторы MinGW для C и C++ успешно распознаны:</span>
+    </p>
+    <ul>
+        <li>
+            <span class="data-en"><strong>C Compiler:</strong> Automatically detected entry pointing to <code>C:\mingw64_13.1\bin\gcc.exe</code></span>
+            <span class="data-ru"><strong>Компилятор C:</strong> Автоматически обнаруженная запись, указывающая на <code>C:\mingw64_13.1\bin\gcc.exe</code></span>
+        </li>
+        <li>
+            <span class="data-en"><strong>C++ Compiler:</strong> Automatically detected entry pointing to <code>C:\mingw64_13.1\bin\g++.exe</code></span>
+            <span class="data-ru"><strong>Компилятор C++:</strong> Автоматически обнаруженная запись, указывающая на <code>C:\mingw64_13.1\bin\g++.exe</code></span>
+        </li>
+    </ul>
+    <img src="/assets/img/tutorials/tools/mingw/setup-qt-creator/compilers.png" alt="Verifying Auto-detected C and C++ Compilers" class="img-fluid border rounded mt-2 mb-3 shadow-sm">
+
+    <!-- <h4 class="mt-4 fw-bold text-secondary">
+        <span class="data-en">Step 5.4: Combine Everything Into a Custom Kit</span>
+        <span class="data-ru">Шаг 5.4: Объединение настроек в пользовательский Kit</span>
+    </h4>
+    <p>
+        <span class="data-en">Finally, switch to the <strong>Kits</strong> tab. Click the <strong>Add</strong> button to tie our manual components together into a target environment profile:</span>
+        <span class="data-ru">Наконец, перейдите на вкладку <strong>Kits</strong>. Нажмите кнопку <strong>Add</strong>, чтобы объединить наши добавленные компоненты в рабочий профиль окружения:</span>
+    </p>
+    <ul>
+        <li><span class="data-en"><strong>Name:</strong> <code>Desktop MinGW (Pure C/C++)</code></span><span class="data-ru"><strong>Name:</strong> <code>Desktop MinGW (Pure C/C++)</code></span></li>
+        <li><span class="data-en"><strong>Device type:</strong> Desktop</span><span class="data-ru"><strong>Device type:</strong> Desktop</span></li>
+        <li><span class="data-en"><strong>Compiler C:</strong> Select <code>MinGW C</code></span><span class="data-ru"><strong>Compiler C:</strong> Выберите <code>MinGW C</code></span></li>
+        <li><span class="data-en"><strong>Compiler C++:</strong> Select <code>MinGW C++</code></span><span class="data-ru"><strong>Compiler C++:</strong> Выберите <code>MinGW C++</code></span></li>
+        <li><span class="data-en"><strong>Debugger:</strong> Select <code>MinGW GDB</code></span><span class="data-ru"><strong>Debugger:</strong> Выберите <code>MinGW GDB</code></span></li>
+        <li><span class="data-en"><strong>CMake Tool:</strong> Select <code>System CMake</code></span><span class="data-ru"><strong>CMake Tool:</strong> Выберите <code>System CMake</code></span></li>
+        <li><span class="data-en"><strong>Qt Version:</strong> Select <code>None</code> (This ensures a lightweight footprint completely independent of the Qt framework)</span><span class="data-ru"><strong>Qt Version:</strong> Выберите <code>None</code> (Это гарантирует легковесную сборку, полностью независимую от фреймворка Qt)</span></li>
+    </ul>
+    <p>
+        <span class="data-en">Click <strong>Apply</strong> and then <strong>OK</strong>. Your environment is perfectly tailored for lightweight, pure C and C++ development with CMake!</span>
+        <span class="data-ru">Нажмите <strong>Apply</strong>, а затем <strong>OK</strong>. Ваше рабочее окружение полностью готово для легковесной, чистой разработки на C и C++ с использованием CMake!</span>
+    </p>
+    <img src="/assets/img/tutorials/tools/mingw/setup-mingw/qt-creator-kits-setup.png" alt="Assembling the final C/C++ Kit profile" class="img-fluid border rounded mt-2 mb-3 shadow-sm"> -->
+
+    <!-- Step 5.4: Kits Setup -->
+    <h4 class="mt-4 fw-bold text-secondary">
+        <span class="data-en">Step 5.4: Create a Custom Kit for Pure C/C++</span>
+        <span class="data-ru">Шаг 5.4: Создание пользовательского Kit для чистой разработки на C/C++</span>
+    </h4>
+    <p>
+        <span class="data-en">Now, switch to the <strong>Kits > Kits</strong> tab. While the components are auto-detected, we need to explicitly combine them into a profile that bypasses the Qt Framework. Click the <strong>Add</strong> button on the right and configure the following settings:</span>
+        <span class="data-ru">Теперь перейдите на вкладку <strong>Kits > Kits</strong>. Несмотря на то, что компоненты определились автоматически, нам нужно явно объединить их в профиль, который работает в обход фреймворка Qt. Нажмите кнопку <strong>Add</strong> справа и установите следующие настройки:</span>
+    </p>
+    <ul>
+        <li><span class="data-en"><strong>Name:</strong> <code>Desktop MinGW (Pure C/C++)</code></span><span class="data-ru"><strong>Name:</strong> <code>Desktop MinGW (Pure C/C++)</code></span></li>
+        <li><span class="data-en"><strong>Build device:</strong> Desktop</span><span class="data-ru"><strong>Device type:</strong> Desktop</span></li>
+        <li><span class="data-en"><strong>Run device:</strong> Desktop</span><span class="data-ru"><strong>Device type:</strong> Desktop</span></li>
+        <li><span class="data-en"><strong>Compiler C/C++:</strong> Select the auto-detected <code>MinGW</code></span><span class="data-ru"><strong>Compiler C:</strong> Выберите автоматически обнаруженный <code>MinGW</code></span></li>
+        <li><span class="data-en"><strong>Debugger:</strong> Select the auto-detected <code>System GDB</code> entry</span><span class="data-ru"><strong>Debugger:</strong> Выберите автоматически обнаруженный <code>System GDB</code></span></li>
+        <li><span class="data-en"><strong>CMake Tool:</strong> Select the auto-detected <code>System CMake</code> entry</span><span class="data-ru"><strong>CMake Tool:</strong> Выберите автоматически обнаруженный <code>System CMake</code></span></li>
+        <li><span class="data-en"><strong>Qt Version:</strong> Select <code>None</code> (Crucial for a lightweight workspace entirely independent of the Qt framework)</span><span class="data-ru"><strong>Qt Version:</strong> Выберите <code>None</code> (Это принципиально важно для легковесного окружения, полностью независимого от фреймворка Qt)</span></li>
+    </ul>
+    <p>
+        <span class="data-en">Click <strong>Apply</strong> and then <strong>Make Default</strong>. Your environment is perfectly tailored for lightweight, pure C and C++ development with CMake!</span>
+        <span class="data-ru">Нажмите <strong>Apply</strong>, а затем <strong>Make Default</strong>. Ваше рабочее окружение полностью готово для легковесной, чистой разработки на C и C++ с использованием CMake!</span>
+    </p>
+    <img src="/assets/img/tutorials/tools/mingw/setup-qt-creator/kits.png" alt="Assembling the final C/C++ Kit profile" class="img-fluid border rounded mt-2 mb-3 shadow-sm">
+
+    <!-- <div class="alert alert-success">
+        <span class="data-en"><strong>Verification:</strong> Open CMD and type <code>g++ --version</code> and <code>cmake --version</code> to ensure everything is working!</span>
+        <span class="data-ru"><strong>Проверка:</strong> Откройте CMD и введите <code>g++ --version</code> и <code>cmake --version</code>, чтобы убедиться, что всё работает!</span>
+    </div> -->
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">Sberbank</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number</span>
+                        <span class="data-ru">Перевод по номеру телефона</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">Bybit (USDT TRC20)</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="Bybit USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+    //     if (link) {
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // Logic for dynamic links (persisting language across pages)
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        
+        if (link) {
+            // Check if the link is intended to open in a new tab
+            if (link.target === "_blank") {
+                // Allow the browser to handle the click naturally, 
+                // but we still want to append the language param.
+                const currentLang = document.documentElement.getAttribute("lang") || "en";
+                const targetUrl = new URL(link.href);
+                targetUrl.searchParams.set("lang", currentLang);
+                
+                // Update the href right before the browser follows it
+                link.href = targetUrl.toString();
+                return; // Exit the function so e.preventDefault() isn't called
+            }
+
+            // Existing logic for same-tab navigation
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(
+                link.href,
+                window.location.origin + window.location.pathname,
+            );
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    document.querySelectorAll('pre').forEach((pre) => {
+        // Create container and header
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        // Wrap the pre tag
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        // Copy Logic
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+</script>
+</body>
+
+</html>

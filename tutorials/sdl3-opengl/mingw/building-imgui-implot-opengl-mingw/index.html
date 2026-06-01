@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    Setting up SDL3 with OpenGL, ImGui and ImPlot (MinGW)
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold">
+            <span class="data-en">Setting up SDL3 with OpenGL, ImGui and ImPlot (MinGW)</span>
+            <span class="data-ru">Настройка SDL3 с OpenGL, ImGui и ImPlot (MinGW)</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">Building and running an SDL3 application with OpenGL, Dear ImGui, and ImPlot on Windows using MinGW 13.1 and CMake.</span>
+            <span class="data-ru">Сборка и запуск приложения SDL3 с использованием OpenGL, Dear ImGui и ImPlot на Windows с помощью MinGW 13.1 и CMake.</span>
+        </p>
+    </header>
+
+    <div class="alert alert-primary">
+        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed the <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">Environment Setup Guide</a> (MinGW 13.1 & CMake)</span>
+        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">руководства по настройке среды</a> (MinGW 13.1 и CMake)</span>
+    </div>
+
+    <ul>
+
+    <!-- Downloading Source Code -->
+    <li>
+        <span class="data-en">Download the source code archives:</span>
+        <span class="data-ru">Скачайте архивы с исходным кодом:</span>
+        <ul>
+            <li>
+                <span class="data-en">Go to the <a href="https://github.com/ocornut/imgui/releases/tag/v1.92.8" target="_blank" rel="noopener noreferrer">Dear ImGui Releases (v1.92.8)</a> page, scroll down to the bottom, and download <code>Source code (zip)</code>.</span>
+                <span class="data-ru">Перейдите на страницу <a href="https://github.com/ocornut/imgui/releases/tag/v1.92.8" target="_blank" rel="noopener noreferrer">Dear ImGui Releases (v1.92.8)</a>, прокрутите страницу вниз и скачайте <code>Source code (zip)</code>.</span>
+            </li>
+
+            <li>
+                <span class="data-en">Go to the <a href="https://github.com/epezent/implot/releases/tag/v1.0" target="_blank" rel="noopener noreferrer">ImPlot Releases (v1.0)</a> page, scroll down to the bottom, and download <code>Source code (zip)</code>.</span>
+                <span class="data-ru">Перейдите на страницу <a href="https://github.com/epezent/implot/releases/tag/v1.0" target="_blank" rel="noopener noreferrer">ImPlot Releases (v1.0)</a>, прокрутите страницу вниз и скачайте <code>Source code (zip)</code>.</span>
+            </li>
+            <li>
+                <span class="data-en">Extract both archives into your temporary working directory or directly into <code>C:\libs</code>.</span>
+                <span class="data-ru">Распакуйте оба архива в вашу временную рабочую директорию или напрямую в <code>C:\libs</code>.</span>
+            </li>
+        </ul>
+    </li>
+
+    <!-- Directory Creation -->
+    <!-- C:\libs\imgui-1.91.8-sdl3-opengl3-mingw -->
+    <li>
+        <span class="data-en">Create two empty root folders for the libraries, for example: <code>C:\libs\imgui-1.92.8-mingw</code> and <code>C:\libs\implot-1.0-mingw</code>. Inside each of these two folders, create four empty subfolders:</span>
+        <span class="data-ru">Создайте две пустые корневые папки для библиотек, например: <code>C:\libs\imgui-1.92.8-mingw</code> и <code>C:\libs\implot-1.0-mingw</code>. Внутри каждой из этих двух папок создайте по четыре пустые подпапки:</span>
+        <ul>
+            <li><code>dist</code></li>
+            <li><code>include</code></li>
+            <li><code>lib</code></li>
+            <li><code>src</code></li>
+        </ul>
+    </li>
+
+    <!-- Preparing ImGui Files -->
+    <li>
+        <span class="data-en">Prepare the <strong>Dear ImGui</strong> folder structure:</span>
+        <span class="data-ru">Подготовьте структуру папок для <strong>Dear ImGui</strong>:</span>
+        <ul>
+            <li>
+                <span class="data-en">Open the extracted <code>imgui-1.92.8</code> folder and copy the following <code>.cpp</code> files from the root: <code>imgui.cpp</code>, <code>imgui_draw.cpp</code>, <code>imgui_tables.cpp</code>, <code>imgui_widgets.cpp</code>. Paste them into <code>С:\libs\imgui-1.92.8-mingw\src</code>.</span>
+                <span class="data-ru">Откройте распакованную папку <code>imgui-1.92.8</code> и скопируйте следующие файлы <code>.cpp</code> из корня: <code>imgui.cpp</code>, <code>imgui_draw.cpp</code>, <code>imgui_tables.cpp</code>, <code>imgui_widgets.cpp</code>. Вставьте их в <code>С:\libs\imgui-1.92.8-mingw\src</code>.</span>
+            </li>
+            <li>
+                <span class="data-en">Copy all <code>.h</code> files from the root of <code>imgui-1.92.8</code> (<code>imconfig.h</code>, <code>imgui.h</code>, <code>imgui_internal.h</code>, etc.) and paste them into <code>E:\libs\imgui-1.92.8-mingw\include</code>.</span>
+                <span class="data-ru">Скопируйте все файлы <code>.h</code> из корня <code>imgui-1.92.8</code> (<code>imconfig.h</code>, <code>imgui.h</code>, <code>imgui_internal.h</code> и т.д.) и вставьте их в <code>E:\libs\imgui-1.92.8-mingw\include</code>.</span>
+            </li>
+            <li>
+                <span class="data-en">Open <code>imgui-1.92.8\backends</code>. Copy the following headers: <code>imgui_impl_sdl3.h</code>, <code>imgui_impl_opengl3.h</code>, <code>imgui_impl_opengl3_loader.h</code>) into the <code>include</code> folder, and copy the source files (<code>imgui_impl_sdl3.cpp</code>, <code>imgui_impl_opengl3.cpp</code>) into the <code>src</code> folder of your MinGW target directory.</span>
+                <span class="data-ru">Откройте <code>imgui-1.92.8\backends</code>. Скопируйте следующие заголовочные файлы (<code>imgui_impl_sdl3.h</code>, <code>imgui_impl_opengl3.h</code>, <code>imgui_impl_opengl3_loader.h</code>) в папку <code>include</code>, а исходники (<code>imgui_impl_sdl3.cpp</code>, <code>imgui_impl_opengl3.cpp</code>) — в папку <code>src</code> вашей целевой директории под MinGW.</span>
+            </li>
+        </ul>
+    </li>
+
+    <!-- Preparing ImPlot Files -->
+    <li>
+        <span class="data-en">Prepare the <strong>ImPlot</strong> folder structure:</span>
+        <span class="data-ru">Подготовьте структуру папок для <strong>ImPlot</strong>:</span>
+        <ul>
+            <li>
+                <span class="data-en">Open the extracted ImPlot folder. Copy all <code>.h</code> files (<code>implot.h</code>, <code>implot_internal.h</code>) into <code>E:\libs\implot-1.0-mingw\include</code>.</span>
+                <span class="data-ru">Откройте распакованную папку ImPlot. Скопируйте все файлы <code>.h</code> (<code>implot.h</code>, <code>implot_internal.h</code>) в <code>E:\libs\implot-1.0-mingw\include</code>.</span>
+            </li>
+            <li>
+                <span class="data-en">Copy all <code>.cpp</code> files (<code>implot.cpp</code>, <code>implot_items.cpp</code>, <code>implot_demo.cpp</code>) into <code>E:\libs\implot-1.0-mingw\src</code>.</span>
+                <span class="data-ru">Скопируйте все файлы <code>.cpp</code> (<code>implot.cpp</code>, <code>implot_items.cpp</code>, <code>implot_demo.cpp</code>) в <code>E:\libs\implot-1.0-mingw\src</code>.</span>
+            </li>
+        </ul>
+    </li>
+
+    <!-- CMake for ImGui -->
+    <li>
+        <span class="data-en">Create a <code>CMakeLists.txt</code> file inside <code>E:\libs\imgui-1.91.8-sdl3-opengl3-mingw\build</code>:</span>
+        <span class="data-ru">Создайте файл <code>CMakeLists.txt</code> внутри папки <code>E:\libs\imgui-1.91.8-sdl3-opengl3-mingw\build</code>:</span>
+        <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.20)
+project(imgui_static)
+
+set(IMGUI_PATH_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/../include")
+set(IMGUI_PATH_SRC "${CMAKE_CURRENT_SOURCE_DIR}/../src")
+
+file(GLOB IMGUI_SOURCES "${IMGUI_PATH_SRC}/*.cpp")
+
+add_library("ImGui" STATIC ${IMGUI_SOURCES})
+target_include_directories("ImGui" PUBLIC ${IMGUI_PATH_INCLUDE})
+# Link SDL3 header paths here if required by backends
+target_include_directories("ImGui" PRIVATE "C:/libs/SDL3-devel-3.4.8-mingw/include")
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../lib")</code></pre>
+    </li>
+
+    <!-- Step 6: CMake for ImPlot -->
+    <li>
+        <span class="data-en">Create a <code>CMakeLists.txt</code> file inside <code>E:\libs\implot-1.0-mingw\build</code>:</span>
+        <span class="data-ru">Создайте файл <code>CMakeLists.txt</code> внутри папки <code>E:\libs\implot-1.0-mingw\build</code>:</span>
+        <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.20)
+project(implot_static)
+
+set(IMPLOT_PATH_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/../include")
+set(IMPLOT_PATH_SRC "${CMAKE_CURRENT_SOURCE_DIR}/../src")
+
+file(GLOB IMPLOT_SOURCES "${IMPLOT_PATH_SRC}/*.cpp")
+
+add_library("ImPlot" STATIC ${IMPLOT_SOURCES})
+target_include_directories("ImPlot" PUBLIC ${IMPLOT_PATH_INCLUDE})
+# ImPlot requires ImGui headers to compile
+target_include_directories("ImPlot" PRIVATE "E:/libs/imgui-1.91.8-sdl3-opengl3-mingw/include")
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../lib")</code></pre>
+    </li>
+
+    <!-- Compiling ImGui -->
+    <li>
+        <span class="data-en">Compile <strong>Dear ImGui</strong> using MinGW via Command Prompt (CMD):</span>
+        <span class="data-ru">Скомпилируйте <strong>Dear ImGui</strong> с помощью MinGW через командную строку (CMD):</span>
+        <ul>
+            <li>
+                <span class="data-en">Open CMD and navigate to the ImGui build folder:</span>
+                <span class="data-ru">Откройте CMD и перейдите в папку сборки ImGui:</span>
+                <pre><code class="language-bash">cd /d E:\libs\imgui-1.91.8-sdl3-opengl3-mingw\build</code></pre>
+            </li>
+            <li>
+                <span class="data-en">Generate MinGW Makefiles:</span>
+                <span class="data-ru">Сгенерируйте MinGW Makefiles:</span>
+                <pre><code class="language-bash">cmake -G "MinGW Makefiles" .</code></pre>
+            </li>
+            <li>
+                <span class="data-en">Build the static library (<code>libImGui.a</code> will be generated in the <code>lib</code> folder):</span>
+                <span class="data-ru">Соберите статическую библиотеку (<code>libImGui.a</code> будет создана в папке <code>lib</code>):</span>
+                <pre><code class="language-bash">mingw32-make</code></pre>
+            </li>
+        </ul>
+    </li>
+
+    <!-- Compiling ImPlot -->
+    <li>
+        <span class="data-en">Compile <strong>ImPlot</strong> using MinGW via Command Prompt (CMD):</span>
+        <span class="data-ru">Скомпилируйте <strong>ImPlot</strong> с помощью MinGW через командную строку (CMD):</span>
+        <ul>
+            <li>
+                <span class="data-en">Open CMD and navigate to the ImPlot build folder:</span>
+                <span class="data-ru">Откройте CMD и перейдите в папку сборки ImPlot:</span>
+                <pre><code class="language-bash">cd /d E:\libs\implot-1.0-mingw\build</code></pre>
+            </li>
+            <li>
+                <span class="data-en">Generate MinGW Makefiles:</span>
+                <span class="data-ru">Сгенерируйте MinGW Makefiles:</span>
+                <pre><code class="language-bash">cmake -G "MinGW Makefiles" .</code></pre>
+            </li>
+            <li>
+                <span class="data-en">Build the static library (<code>libImPlot.a</code> will be generated in the <code>lib</code> folder):</span>
+                <span class="data-ru">Соберите статическую библиотеку (<code>libImPlot.a</code> будет создана в папке <code>lib</code>):</span>
+                <pre><code class="language-bash">mingw32-make</code></pre>
+            </li>
+        </ul>
+    </li>
+</ul>
+
+    <!-- Pre-requisites & Library Layout -->
+    <h3 class="category-header">
+        <span class="data-en">1. Library Folder Structure</span>
+        <span class="data-ru">1. Структура папок библиотек</span>
+    </h3>
+    <p class="mt-3">
+        <span class="data-en">To manage the plotting and UI ecosystem, ensure your <code>C:/libs</code> directory has the following layout for ImGui and ImPlot:</span>
+        <span class="data-ru">Для работы с экосистемой графиков и интерфейса убедитесь, что в вашей директории <code>C:/libs</code> подготовлена следующая структура для ImGui и ImPlot:</span>
+    </p>
+
+    <pre><code>C:/libs/
+├── imgui-1.92.6-mingw/
+│   ├── include/ (imgui.h, imconfig.h, etc.)
+│   ├── lib/ (libImGui.a)
+│   └── src/
+│       ├── imgui_impl_opengl3.cpp
+│       └── imgui_impl_sdl3.cpp
+└── implot-1.0-mingw/
+    ├── include/ (implot.h, implot_internal.h)
+    ├── lib/ (libImPlot.a)
+    └── src/
+        ├── implot.cpp
+        ├── implot_items.cpp
+        └── implot_demo.cpp</code></pre>
+
+    <!-- Section 2: Project Structure -->
+    <h3 class="category-header">
+        <span class="data-en">2. Project Structure</span>
+        <span class="data-ru">2. Структура проекта</span>
+    </h3>
+    <p class="mt-3">
+        <span class="data-en">Create an empty folder named <code>sdl3-opengl-implot-cpp</code> and create the following hierarchy:</span>
+        <span class="data-ru">Создайте пустую папку с именем <code>sdl3-opengl-implot-cpp</code> и подготовьте следующую иерархию файлов:</span>
+    </p>
+    <pre><code>sdl3-opengl-implot-cpp/
+├── CMakeLists.txt
+├── assets/
+│   └── fonts/
+│       └── LiberationSans-Regular.ttf
+└── src/
+    └── main.cpp</code></pre>
+
+    <!-- Section 3: CMake Configuration -->
+    <h3 class="category-header">
+        <span class="data-en">3. Project Configuration (CMakeLists.txt)</span>
+        <span class="data-ru">3. Конфигурация проекта (CMakeLists.txt)</span>
+    </h3>
+    <p class="mt-3">
+        <span class="data-en">Copy and paste the following code into your <code>CMakeLists.txt</code> file. This configuration links SDL3, SDL3_ttf, Glad, ImGui, and your new ImPlot setup via MinGW static linking:</span>
+        <span class="data-ru">Скопируйте и вставьте следующее содержимое в файл <code>CMakeLists.txt</code>. Эта конфигурация связывает SDL3, SDL3_ttf, Glad, ImGui и ImPlot с помощью статической линковки в MinGW:</span>
+    </p>
+
+    <h6 class="fw-bold text-success">CMakeLists.txt</h6>
+    <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+project(sdl3-opengl-implot-cpp)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_BUILD_TYPE "Debug")
+
+# Main Executable
+add_executable(app)
+
+# Project and Library Sources
+target_sources(app PRIVATE
+    src/main.cpp
+    "C:/libs/glad-0.1.36/opengl-3.3/src/glad.c"
+    "C:/libs/imgui-1.92.6-mingw/src/imgui_impl_opengl3.cpp"
+    "C:/libs/imgui-1.92.6-mingw/src/imgui_impl_sdl3.cpp"
+    "C:/libs/implot-1.0-mingw/src/implot.cpp"
+    "C:/libs/implot-1.0-mingw/src/implot_items.cpp"
+    "C:/libs/implot-1.0-mingw/src/implot_demo.cpp"
+)
+
+# Include Directories
+target_include_directories(app PRIVATE 
+    "C:/libs/glad-0.1.36/opengl-3.3/include"
+    "C:/libs/imgui-1.92.6-mingw/include"
+    "C:/libs/implot-1.0-mingw/include"
+    "C:/libs/cglm-0.9.6/include"
+)
+
+# Environmental Paths for MinGW Dependencies
+if (WIN32)
+    set(SDL3_DIR "C:/libs/SDL3-devel-3.4.8-mingw/lib/cmake/SDL3")
+    set(SDL3_ttf_DIR "C:/libs/SDL3_ttf-devel-3.2.2-mingw/lib/cmake/SDL3_ttf")
+
+    # Link directories for built static libs (if applicable)
+    target_link_directories(app PRIVATE 
+        "C:/libs/imgui-1.92.6-mingw/lib"
+        "C:/libs/implot-1.0-mingw/lib"
+    )
+
+    # Static link options to prevent runtime DLL dependency issues
+    target_link_options(app PRIVATE -static -mconsole)
+
+    # Copy assets folder to output directory post-build
+    add_custom_command(TARGET app POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/assets $&lt;TARGET_FILE_DIR:app&gt;/assets
+        COMMAND_EXPAND_LISTS
+    )
+endif()
+
+# Find and Bind Dependencies
+find_package(SDL3 REQUIRED)
+find_package(SDL3_ttf REQUIRED)
+
+target_link_libraries(app PRIVATE 
+    SDL3_ttf::SDL3_ttf 
+    SDL3::SDL3 
+    ImGui
+    ImPlot
+)</code></pre>
+
+    <!-- Source Code -->
+    <h3 class="category-header">
+        <span class="data-en">4. Source Code</span>
+        <span class="data-ru">4. Исходный код</span>
+    </h3>
+    <p class="mt-3">
+        <span class="data-en">Paste this code into <code>src/main.cpp</code> to initialize SDL3, OpenGL, ImGui, ImPlot and render a basic line graph:</span>
+        <span class="data-ru">Вставьте этот код в <code>src/main.cpp</code> для инициализации SDL3, OpenGL, ImGui, ImPlot и вывода базового графика:</span>
+    </p>
+
+    <h6 class="fw-bold text-primary">main.cpp</h6>
+    <pre><code class="language-cpp">#include &lt;glad/glad.h&gt;
+#include &lt;SDL3/SDL.h&gt;
+#include &lt;imgui.h&gt;
+#include &lt;imgui_impl_sdl3.h&gt;
+#include &lt;imgui_impl_opengl3.h&gt;
+#include &lt;implot.h&gt;
+#include &lt;cmath&gt;
+
+int main(int argc, char* argv[])
+{
+    if (!SDL_Init(SDL_INIT_VIDEO))
+        return -1;
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+
+    SDL_Window* window = SDL_CreateWindow("SDL3 + ImPlot Sandbox", 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    SDL_GLContext glContext = SDL_GL_CreateContext(window);
+
+    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
+        return -1;
+
+    SDL_GL_SetSwapInterval(1);
+
+    // Setup Dear ImGui Context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImPlot::CreateContext(); // Crucial: Initialize ImPlot context!
+
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark();
+
+    ImGui_implSDL3_InitForOpenGL(window, glContext);
+    ImGui_ImplOpenGL3_Init("#version 330 core");
+
+    // Sample data generation for ImPlot
+    float x_data[100], y_data[100];
+    for (int i = 0; i &lt; 100; ++i) {
+        x_data[i] = i * 0.1f;
+        y_data[i] = std::sin(x_data[i]);
+    }
+
+    bool running = true;
+    SDL_Event event;
+    while (running)
+    {
+        while (SDL_PollEvent(&event))
+        {
+            ImGui_implSDL3_ProcessEvent(&event);
+            if (event.type == SDL_EVENT_QUIT)
+                running = false;
+        }
+
+        // Start ImGui Frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_implSDL3_NewFrame();
+        ImGui::NewFrame();
+
+        // Render ImPlot Window
+        ImGui::Begin("Plot Analytics");
+        if (ImPlot::BeginPlot("Sine Wave Functional View")) {
+            ImPlot::PlotLine("f(x) = sin(x)", x_data, y_data, 100);
+            ImPlot::EndPlot();
+        }
+        ImGui::End();
+
+        // Rendering Pipeline
+        ImGui::Render();
+        glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+        glClearColor(0.15f, 0.16f, 0.21f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        SDL_GL_SwapWindow(window);
+    }
+
+    // Cleanup Contexts
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_implSDL3_Shutdown();
+    ImPlot::DestroyContext();
+    ImGui::DestroyContext();
+
+    SDL_GL_DestroyContext(glContext);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+    return 0;
+}</code></pre>
+
+    <!-- Automation Scripts -->
+    <h3 class="category-header">
+        <span class="data-en">5. Quick-Build Scripts (.bat)</span>
+        <span class="data-ru">5. Скрипты быстрой сборки (.bat)</span>
+    </h3>
+    <p class="mt-3">
+        <span class="data-en">Create these three batch files in your project's root folder to maintain your "one-click" workflow inside Sublime Text 4 or any terminal:</span>
+        <span class="data-ru">Создайте эти три batch-файла в корне вашего проекта для сохранения привычного «one-click» воркфлоу в Sublime Text 4:</span>
+    </p>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">1. config-exe.bat</h6>
+            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist/exe</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">2. build-exe.bat</h6>
+            <pre><code class="language-bash">cd dist\exe
+cmake --build .
+cd ..\..</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">3. run-exe.bat</h6>
+            <pre><code class="language-bash">dist\exe\app</code></pre>
+        </div>
+    </div>
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">Sberbank</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number</span>
+                        <span class="data-ru">Перевод по номеру телефона</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">Bybit (USDT TRC20)</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="Bybit USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+    //     if (link) {
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // Logic for dynamic links (persisting language across pages)
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        
+        if (link) {
+            // Check if the link is intended to open in a new tab
+            if (link.target === "_blank") {
+                // Allow the browser to handle the click naturally, 
+                // but we still want to append the language param.
+                const currentLang = document.documentElement.getAttribute("lang") || "en";
+                const targetUrl = new URL(link.href);
+                targetUrl.searchParams.set("lang", currentLang);
+                
+                // Update the href right before the browser follows it
+                link.href = targetUrl.toString();
+                return; // Exit the function so e.preventDefault() isn't called
+            }
+
+            // Existing logic for same-tab navigation
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(
+                link.href,
+                window.location.origin + window.location.pathname,
+            );
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    document.querySelectorAll('pre').forEach((pre) => {
+        // Create container and header
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        // Wrap the pre tag
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        // Copy Logic
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+</script>
+</body>
+
+</html>
