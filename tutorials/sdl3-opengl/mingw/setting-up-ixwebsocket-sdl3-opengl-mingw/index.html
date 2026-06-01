@@ -227,8 +227,8 @@
     <ul class="list-unstyled mb-4">
         <li class="mb-3">
             <h3 class="category-header m-0">
-                <span class="data-en">1. Obtain IXWebSocket</span>
-                <span class="data-ru">1. Получение IXWebSocket</span>
+                <span class="data-en">2. Obtain IXWebSocket</span>
+                <span class="data-ru">2. Получение IXWebSocket</span>
             </h3>
             <!-- Wrapped in a div to force a new line without breaking CSS language rules -->
             <div class="text-muted mt-1">
@@ -317,8 +317,8 @@ cmake --build dist -j8
 cmake --install dist</code></pre> -->
 
     <h3 class="category-header">
-        <span class="data-en">2. Project Structure</span>
-        <span class="data-ru">2. Структура проекта</span>
+        <span class="data-en">3. Project Structure</span>
+        <span class="data-ru">3. Структура проекта</span>
     </h3>
     <p class="data-en">Create an empty folder named <code>ixwebsocket-opengl-sdl3-cpp</code> and set up the following files:</p>
     <p class="data-ru">Создайте пустую папку с именем <code>ixwebsocket-opengl-sdl3-cpp</code> и подготовьте следующие файлы:</p>
@@ -328,8 +328,8 @@ cmake --install dist</code></pre> -->
     └── main.cpp</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">3. Project Configuration (CMakeLists.txt)</span>
-        <span class="data-ru">3. Конфигурация проекта (CMakeLists.txt)</span>
+        <span class="data-en">4. Project Configuration (CMakeLists.txt)</span>
+        <span class="data-ru">4. Конфигурация проекта (CMakeLists.txt)</span>
     </h3>
     <p class="data-en">Copy and paste the layout rules below to resolve static headers and add internal Win32 socket subsystems (<code>ws2_32</code>, <code>crypt32</code>, <code>bcrypt</code>):</p>
     <p class="data-ru">Скопируйте и вставьте правила конфигурации ниже, чтобы подключить статические заголовки и системные библиотеки сокетов Win32 (<code>ws2_32</code>, <code>crypt32</code>, <code>bcrypt</code>):</p>
@@ -375,8 +375,8 @@ target_link_libraries(app PRIVATE
 target_link_options(app PRIVATE -mconsole)</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">4. Source Code</span>
-        <span class="data-ru">4. Исходный код</span>
+        <span class="data-en">5. Source Code</span>
+        <span class="data-ru">5. Исходный код</span>
     </h3>
     <p class="data-en">This application initializes an OpenGL 3.3 context via the modern SDL3 callback structure while managing a non-blocking WebSocket connection running on a background thread:</p>
     <p class="data-ru">Это приложение инициализирует контекст OpenGL 3.3 с помощью современной структуры колбэков SDL3, параллельно управляя неблокирующим WebSocket-подключением, работающим в фоновом потоке:</p>
@@ -494,8 +494,8 @@ wss.on('connection', (ws) => {
 console.log('WebSocket server is listening on ws://localhost:3000');</code></pre> -->
 
     <h3 class="category-header">
-        <span class="data-en">5. Test Node.js WebSocket Server</span>
-        <span class="data-ru">5. Тестовый сервер WebSocket на Node.js</span>
+        <span class="data-en">6. Test Node.js WebSocket Server</span>
+        <span class="data-ru">6. Тестовый сервер WebSocket на Node.js</span>
     </h3>
     <p class="data-en">To verify your application communication layer locally, follow these steps to set up a small WebSocket server:</p>
     <p class="data-ru">Чтобы проверить работоспособность коммуникационного слоя локально, выполните следующие шаги для настройки небольшого WebSocket-сервера:</p>
@@ -598,8 +598,8 @@ cd ..\..</code></pre>
     </div> -->
 
     <h3 class="category-header">
-        <span class="data-en">6. Automation Scripts (.bat)</span>
-        <span class="data-ru">6. Скрипты автоматизации (.bat)</span>
+        <span class="data-en">7. Automation Scripts (.bat)</span>
+        <span class="data-ru">7. Скрипты автоматизации (.bat)</span>
     </h3>
     <p class="data-en">Create these three quick launch scripts in the root directory of your project to automate desktop builds:</p>
     <p class="data-ru">Создайте три файла автоматизации в корневой папке вашего проекта для быстрой сборки десктопной версии:</p>
