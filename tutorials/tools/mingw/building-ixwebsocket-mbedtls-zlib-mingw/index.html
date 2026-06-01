@@ -232,16 +232,23 @@
         <li>
             <span class="data-en">Extract the <b>zlib132.zip</b> archive to the <code>C:/libs</code> folder. Open your terminal, navigate to your zlib source directory:</span>
             <span class="data-ru">Распакуйте архив <b>zlib132.zip</b> в папку <code>C:/libs</code>. Откройте терминал, перейдите в папку с исходным кодом zlib:</span>
-            <br>
+            <pre><code class="language-bash">cd C:\libs\zlib-1.3.2</code></pre>
             <img src="/assets/img/tutorials/tools/mingw/building-ixwebsocket-mbedtls-zlib-mingw/zlib-terminal.png" alt="Terminal" class="img-fluid border rounded mt-3 shadow-sm">
         </li>
         <li>
-            <span class="data-en">Run the following commands to generate and install the static library binaries:</span>
-            <span class="data-ru">Выполните следующие команды для генерации и установки статических бинарников библиотеки:</span>
-            <pre><code class="language-bash">cd C:\libs\zlib-1.3.2
-cmake -G "MinGW Makefiles" -S . -B dist -DCMAKE_INSTALL_PREFIX=C:/libs/zlib-1.3.2-mingw -DCMAKE_BUILD_TYPE=MinSizeRel
-cmake --build dist -j8
-cmake --install dist</code></pre>
+            <span class="data-en">Configure the build directory and options using CMake. Copy and paste the following command to generate the MinGW Makefiles:</span>
+            <span class="data-ru">Настройте директорию сборки и параметры конфигурации с помощью CMake. Скопируйте и вставьте следующую команду для генерации файлов сборки MinGW:</span>
+            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist -DCMAKE_INSTALL_PREFIX=C:/libs/zlib-1.3.2-mingw -DCMAKE_BUILD_TYPE=MinSizeRel</code></pre>
+        </li>
+        <li>
+            <span class="data-en">Compile the library using 8 parallel compilation threads to speed up the process:</span>
+            <span class="data-ru">Скомпилируйте библиотеку, используя 8 параллельных потоков сборки для ускорения процесса:</span>
+            <pre><code class="language-bash">cmake --build dist -j8</code></pre>
+        </li>
+        <li>
+            <span class="data-en">Install the compiled headers and binaries to the designated directory (<code>C:/libs/mbedtls-4.1.0-mingw</code>):</span>
+            <span class="data-ru">Установите скомпилированные заголовочные файлы и библиотеки в указанную директорию (<code>C:/libs/mbedtls-4.1.0-mingw</code>):</span>
+            <pre><code class="language-bash">cmake --install dist</code></pre>
         </li>
     </ul>
 
@@ -261,20 +268,23 @@ cmake --install dist</code></pre>
             <img src="/assets/img/tutorials/tools/mingw/building-ixwebsocket-mbedtls-zlib-mingw/mbedtls-download-link.png" alt="Download Link" class="img-fluid border rounded mt-3 shadow-sm">
         </li>
         <li>
-            <span class="data-en">Extract the <b>mbedtls-4.1.0.tar.bz2</b> archive to the <code>C:/libs</code> folder. Open your terminal, navigate to your zlib source directory:</span>
-            <span class="data-ru">Распакуйте архив <b>mbedtls-4.1.0.tar.bz2</b> в папку <code>C:/libs</code>. Откройте терминал, перейдите в папку с исходным кодом zlib:</span>
-            <br>
+            <span class="data-en">Extract the <b>mbedtls-4.1.0.tar.bz2</b> archive to the <code>C:/libs</code> folder. Open your terminal, navigate to your <code>mbedtls-4.1.0</code> source directory:</span>
+            <span class="data-ru">Распакуйте архив <b>mbedtls-4.1.0.tar.bz2</b> в папку <code>C:/libs</code>. Откройте терминал, перейдите в папку с исходным кодом <code>mbedtls-4.1.0</code>:</span>
+            <pre><code class="language-bash">cd C:\libs\mbedtls-4.1.0</code></pre>
             <img src="/assets/img/tutorials/tools/mingw/building-ixwebsocket-mbedtls-zlib-mingw/mbedtls-terminal.png" alt="Terminal" class="img-fluid border rounded mt-3 shadow-sm">
+        </li>
+        <li>
+            <span class="data-en">Run the following commands to generate and install the static library binaries:</span>
+            <span class="data-ru">Выполните следующие команды для генерации и установки статических бинарников библиотеки:</span>
+            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist -DCMAKE_INSTALL_PREFIX=C:/libs/mbedtls-4.1.0-mingw -DENABLE_TESTING=OFF -DCMAKE_BUILD_TYPE=MinSizeRel
+cmake --build dist -j8
+cmake --install dist</code></pre>
         </li>
     </ul>
     <!-- <p>
         <span class="data-en">Switch to your Mbed TLS source folder. We explicitly disable internal target testing flags (<code>-DENABLE_TESTING=OFF</code>) to drastically accelerate compilation times:</span>
         <span class="data-ru">Перейдите в папку с исходным кодом Mbed TLS. Мы явно отключаем внутренние флаги тестирования (<code>-DENABLE_TESTING=OFF</code>), чтобы значительно ускорить время компиляции:</span>
     </p> -->
-    <pre><code class="language-bash">cd C:\libs\mbedtls-4.1.0
-cmake -G "MinGW Makefiles" -S . -B dist -DCMAKE_INSTALL_PREFIX=C:/libs/mbedtls-4.1.0-mingw -DENABLE_TESTING=OFF -DCMAKE_BUILD_TYPE=MinSizeRel
-cmake --build dist -j8
-cmake --install dist</code></pre>
 
     <h3 class="category-header mt-5">
         <span class="data-en">3. Compile IXWebSocket (v12.0.0, master branch)</span>

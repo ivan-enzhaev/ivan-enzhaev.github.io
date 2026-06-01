@@ -224,23 +224,43 @@
         </li>
     </ul>
 
+    <ul class="list-unstyled mb-4">
+        <li class="mb-3">
+            <h3 class="category-header m-0">
+                <span class="data-en">1. Obtain IXWebSocket</span>
+                <span class="data-ru">1. Получение IXWebSocket</span>
+            </h3>
+            <!-- Wrapped in a div to force a new line without breaking CSS language rules -->
+            <div class="text-muted mt-1">
+                <span class="data-en">
+                    Follow the guide to install and configure IXWebSocket using CMake: 
+                    <a href="/tutorials/tools/mingw/building-ixwebsocket-mbedtls-zlib-mingw/" target="_blank" rel="noopener noreferrer">Building IXWebSocket, MbedTLS, and zlib from Source (MinGW)</a>.
+                </span>
+                <span class="data-ru">
+                    Следуйте руководству по установке и настройке IXWebSocket с помощью CMake: 
+                    <a href="/tutorials/tools/mingw/building-ixwebsocket-mbedtls-zlib-mingw/" target="_blank" rel="noopener noreferrer">Сборка IXWebSocket, MbedTLS и zlib из исходного кода (MinGW)</a>.
+                </span>
+            </div>
+        </li>
+    </ul>
+
     <!-- <div class="alert alert-primary">
         <span class="data-en"><strong>Prerequisite:</strong> Ensure you have your compiler set up and libraries downloaded to your <code>C:/libs</code> folder.</span>
         <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что у вас настроен компилятор и скачаны библиотеки в папку <code>C:/libs</code>.</span>
     </div> -->
 
-    <pre><code class="language-bash">git clone --depth 1 --branch v3.6.6 https://github.com/Mbed-TLS/mbedtls.git
+    <!-- <pre><code class="language-bash">git clone --depth 1 --branch v3.6.6 https://github.com/Mbed-TLS/mbedtls.git
 cd mbedtls
 git submodule update --init --recursive
 cmake -G "MinGW Makefiles" -S . -B dist -DCMAKE_INSTALL_PREFIX=C:/libs/mbedtls-3.6.6-mingw
 cmake --build dist -j8
-cmake --install dist</code></pre>
+cmake --install dist</code></pre> -->
 
     <!-- <pre><code>cmake -G "MinGW Makefiles" --fresh -S . -B dist -DCMAKE_INSTALL_PREFIX=C:/libs/mbedtls-3.6.6-mingw</code></pre> -->
 
-    <pre><code class="language-bash">cmake -G "MinGW Makefiles" --fresh -S . -B dist -DCMAKE_INSTALL_PREFIX=C:/libs/IXWebSocket-12.0.0-mingw -DZLIB_INCLUDE_DIR=C:/libs/zlib-1.3.2-mingw/include -DZLIB_LIBRARY=C:/libs/zlib-1.3.2-mingw/lib/libzs.a -DMBEDTLS_LIBRARY=C:/libs/mbedtls-3.6.6-mingw/lib/libmbedtls.a -DMBEDTLS_INCLUDE_DIRS=C:/libs/mbedtls-3.6.6-mingw/include -DMBEDX509_LIBRARY=C:/libs/mbedtls-3.6.6-mingw/lib/libmbedx509.a -DMBEDCRYPTO_LIBRARY=C:/libs/mbedtls-3.6.6-mingw/lib/libmbedcrypto.a -DUSE_TLS=ON -DUSE_WS=ON -DUSE_ZLIB=ON -DCMAKE_CXX_STANDARD_LIBRARIES="-lbcrypt -lcrypt32 -lws2_32" -DCMAKE_CXX_FLAGS="-DIXWEBSOCKET_USE_MBED_TLS_MIN_VERSION_3"
+    <!-- <pre><code class="language-bash">cmake -G "MinGW Makefiles" --fresh -S . -B dist -DCMAKE_INSTALL_PREFIX=C:/libs/IXWebSocket-12.0.0-mingw -DZLIB_INCLUDE_DIR=C:/libs/zlib-1.3.2-mingw/include -DZLIB_LIBRARY=C:/libs/zlib-1.3.2-mingw/lib/libzs.a -DMBEDTLS_LIBRARY=C:/libs/mbedtls-3.6.6-mingw/lib/libmbedtls.a -DMBEDTLS_INCLUDE_DIRS=C:/libs/mbedtls-3.6.6-mingw/include -DMBEDX509_LIBRARY=C:/libs/mbedtls-3.6.6-mingw/lib/libmbedx509.a -DMBEDCRYPTO_LIBRARY=C:/libs/mbedtls-3.6.6-mingw/lib/libmbedcrypto.a -DUSE_TLS=ON -DUSE_WS=ON -DUSE_ZLIB=ON -DCMAKE_CXX_STANDARD_LIBRARIES="-lbcrypt -lcrypt32 -lws2_32" -DCMAKE_CXX_FLAGS="-DIXWEBSOCKET_USE_MBED_TLS_MIN_VERSION_3"
 cmake --build dist -j8
-cmake --install dist</code></pre>
+cmake --install dist</code></pre> -->
 
     <!-- <pre><code class="language-bash">[ 82%] Building CXX object CMakeFiles/ixwebsocket.dir/ixwebsocket/IXWebSocketProxyServer.cpp.obj
 [ 84%] Building CXX object CMakeFiles/ixwebsocket.dir/ixwebsocket/IXWebSocketServer.cpp.obj
@@ -265,28 +285,28 @@ mingw32-make[2]: *** Waiting for unfinished jobs....
 mingw32-make[1]: *** [CMakeFiles\Makefile2:131: CMakeFiles/ixwebsocket.dir/all] Error 2
 mingw32-make: *** [Makefile:135: all] Error 2</code></pre> -->
 
-    <h3 class="category-header">
+    <!-- <h3 class="category-header">
         <span class="data-en">1. Compile WebSocket Dependencies</span>
         <span class="data-ru">1. Компиляция зависимостей WebSocket</span>
     </h3>
     <p>
         <span class="data-en">To build IXWebSocket statically with TLS support on Windows via MinGW, compile the stack in the following order using your terminal:</span>
         <span class="data-ru">Чтобы собрать IXWebSocket статически с поддержкой TLS на Windows через MinGW, скомпилируйте стек в следующем порядке через терминал:</span>
-    </p>
+    </p> -->
 
-    <h6 class="fw-bold text-secondary">Zlib (v1.3.2)</h6>
+    <!-- <h6 class="fw-bold text-secondary">Zlib (v1.3.2)</h6>
     <pre><code class="language-bash">cd C:\libs\zlib-1.3.2
 cmake -G "MinGW Makefiles" -S . -B dist -DCMAKE_INSTALL_PREFIX=C:/libs/zlib-1.3.2-mingw
 cmake --build dist -j8
-cmake --install dist</code></pre>
+cmake --install dist</code></pre> -->
 
-    <h6 class="fw-bold text-secondary">Mbed TLS (v3.6.2)</h6>
+    <!-- <h6 class="fw-bold text-secondary">Mbed TLS (v3.6.2)</h6>
     <pre><code class="language-bash">cd C:\libs\mbedtls-3.6.2
 cmake -G "MinGW Makefiles" -S . -B dist -DCMAKE_INSTALL_PREFIX=C:/libs/mbedtls-3.6.2-mingw -DENABLE_TESTING=OFF
 cmake --build dist -j8
-cmake --install dist</code></pre>
+cmake --install dist</code></pre> -->
 
-    <h6 class="fw-bold text-secondary">IXWebSocket (v12.0.0)</h6>
+    <!-- <h6 class="fw-bold text-secondary">IXWebSocket (v12.0.0)</h6>
     <div class="alert alert-warning py-2">
         <span class="data-en"><strong>Notice:</strong> We pass <code>-DCMAKE_CXX_STANDARD_LIBRARIES="-lbcrypt -lcrypt32 -lws2_32"</code> to guarantee system cryptography routines link correctly at the absolute end of the command line chain.</span>
         <span class="data-ru"><strong>Примечание:</strong> Мы передаем флаг <code>-DCMAKE_CXX_STANDARD_LIBRARIES="-lbcrypt -lcrypt32 -lws2_32"</code>, чтобы гарантировать корректную линковку системных библиотек шифрования в самом конце цепочки аргументов.</span>
@@ -294,15 +314,15 @@ cmake --install dist</code></pre>
     <pre><code class="language-bash">cd C:\libs\IXWebSocket-12.0.0
 cmake -G "MinGW Makefiles" --fresh -S . -B dist -DCMAKE_INSTALL_PREFIX=C:/libs/IXWebSocket-12.0.0-mingw -DZLIB_INCLUDE_DIR=C:/libs/zlib-1.3.2-mingw/include -DZLIB_LIBRARY=C:/libs/zlib-1.3.2-mingw/lib/libzs.a -DMBEDTLS_LIBRARY=C:/libs/mbedtls-3.6.2-mingw/lib/libmbedtls.a -DMBEDTLS_INCLUDE_DIRS=C:/libs/mbedtls-3.6.2-mingw/include -DMBEDX509_LIBRARY=C:/libs/mbedtls-3.6.2-mingw/lib/libmbedx509.a -DMBEDCRYPTO_LIBRARY=C:/libs/mbedtls-3.6.2-mingw/lib/libmbedcrypto.a -DUSE_TLS=ON -DUSE_WS=ON -DUSE_ZLIB=ON -DCMAKE_CXX_STANDARD_LIBRARIES="-lbcrypt -lcrypt32 -lws2_32"
 cmake --build dist -j8
-cmake --install dist</code></pre>
+cmake --install dist</code></pre> -->
 
     <h3 class="category-header">
         <span class="data-en">2. Project Structure</span>
         <span class="data-ru">2. Структура проекта</span>
     </h3>
-    <p class="data-en">Create an empty folder named <code>sdl3-ixwebsocket-app</code> and set up the following files:</p>
-    <p class="data-ru">Создайте пустую папку с именем <code>sdl3-ixwebsocket-app</code> и подготовьте следующие файлы:</p>
-    <pre><code>sdl3-ixwebsocket-app/
+    <p class="data-en">Create an empty folder named <code>ixwebsocket-opengl-sdl3-cpp</code> and set up the following files:</p>
+    <p class="data-ru">Создайте пустую папку с именем <code>ixwebsocket-opengl-sdl3-cpp</code> и подготовьте следующие файлы:</p>
+    <pre><code>ixwebsocket-opengl-sdl3-cpp/
 ├── CMakeLists.txt
 └── src/
     └── main.cpp</code></pre>
@@ -314,7 +334,7 @@ cmake --install dist</code></pre>
     <p class="data-en">Copy and paste the layout rules below to resolve static headers and add internal Win32 socket subsystems (<code>ws2_32</code>, <code>crypt32</code>, <code>bcrypt</code>):</p>
     <p class="data-ru">Скопируйте и вставьте правила конфигурации ниже, чтобы подключить статические заголовки и системные библиотеки сокетов Win32 (<code>ws2_32</code>, <code>crypt32</code>, <code>bcrypt</code>):</p>
 
-    <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Release")
+    <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
 cmake_minimum_required(VERSION 3.21)
 project(sdl3-ixwebsocket-app)
 
@@ -401,7 +421,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_GL_SetSwapInterval(1);
 
     // IXWebSocket Network Initialization
-    std::string url("ws://localhost:8080");
+    std::string url("ws://localhost:3000");
     state.webSocket.setUrl(url);
 
     state.webSocket.setOnMessageCallback([](const ix::WebSocketMessagePtr& msg) {
@@ -450,7 +470,7 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
     std::cout &lt;&lt; "Application exited cleanly." &lt;&lt; std::endl;
 }</code></pre>
 
-    <h3 class="category-header">
+    <!-- <h3 class="category-header">
         <span class="data-en">5. Test Node.js WebSocket Server</span>
         <span class="data-ru">5. Тестовый сервер WebSocket на Node.js</span>
     </h3>
@@ -458,7 +478,7 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
     <p class="data-ru">Чтобы проверить работоспособность коммуникационного слоя локально, настройте небольшой скрипт <code>server.js</code>:</p>
 
     <pre><code class="language-javascript">const WebSocket = require('ws');
-const wss = new WebSocket.Server({ port: 8080 });
+const wss = new WebSocket.Server({ port: 3000 });
 
 wss.on('connection', (ws) => {
     console.log('Client connected');
@@ -471,7 +491,111 @@ wss.on('connection', (ws) => {
         console.log('Client disconnected');
     });
 });
-console.log('WebSocket server is listening on ws://localhost:8080');</code></pre>
+console.log('WebSocket server is listening on ws://localhost:3000');</code></pre> -->
+
+    <h3 class="category-header">
+        <span class="data-en">5. Test Node.js WebSocket Server</span>
+        <span class="data-ru">5. Тестовый сервер WebSocket на Node.js</span>
+    </h3>
+    <p class="data-en">To verify your application communication layer locally, follow these steps to set up a small WebSocket server:</p>
+    <p class="data-ru">Чтобы проверить работоспособность коммуникационного слоя локально, выполните следующие шаги для настройки небольшого WebSocket-сервера:</p>
+
+    <h6 class="fw-bold text-secondary mt-3">
+        <span class="data-en">A. Prerequisites & Installation</span>
+        <span class="data-ru">A. Предварительные требования и установка</span>
+    </h6>
+    <ol class="ps-3">
+        <li>
+            <span class="data-en">Download and install <a href="https://nodejs.org/" target="_blank">Node.js</a> if you haven't already.</span>
+            <span class="data-ru">Скачайте и установите <a href="https://nodejs.org/" target="_blank">Node.js</a>, если он еще не установлен.</span>
+        </li>
+        <li>
+            <span class="data-en">Open your terminal/command prompt and install <code>nodemon</code> globally for automatic server restarts:</span>
+            <span class="data-ru">Откройте терминал/командную строку и установите <code>nodemon</code> глобально для автоматического перезапуска сервера:</span>
+            <pre class="mt-1"><code class="language-bash">npm i nodemon -g</code></pre>
+        </li>
+    </ol>
+
+    <h6 class="fw-bold text-secondary mt-3">
+        <span class="data-en">B. Create the Server Folder and Script</span>
+        <span class="data-ru">B. Создание папки сервера и скрипта</span>
+    </h6>
+    <ol class="ps-3">
+        <li>
+            <span class="data-en">Create a new folder named <code>server</code> in your project directory.</span>
+            <span class="data-ru">Создайте новую папку с именем <code>server</code> в директории вашего проекта.</span>
+        </li>
+        <li>
+            <span class="data-en">Inside the <code>server</code> folder, create a file named <code>server.js</code> and paste the following code:</span>
+            <span class="data-ru">Внутри папки <code>server</code> создайте файл с именем <code>server.js</code> и вставьте следующий код:</span>
+        </li>
+    </ol>
+
+    <pre><code class="language-javascript">const WebSocket = require('ws');
+const wss = new WebSocket.Server({ port: 3000 });
+
+wss.on('connection', (ws) => {
+    console.log('Client connected');
+
+    ws.on('message', (message) => {
+        console.log('Received message:', message.toString());
+    });
+
+    ws.on('close', () => {
+        console.log('Client disconnected');
+    });
+});
+console.log('WebSocket server is listening on ws://localhost:3000');</code></pre>
+
+    <h6 class="fw-bold text-secondary mt-3">
+        <span class="data-en">C. Run the Server</span>
+        <span class="data-ru">C. Запуск сервера</span>
+    </h6>
+    <ol class="ps-3">
+        <li>
+            <span class="data-en">Open Command Prompt (CMD) or terminal inside the <code>server</code> folder.</span>
+            <span class="data-ru">Откройте командную строку (CMD) или терминал внутри папки <code>server</code>.</span>
+        </li>
+        <li>
+            <span class="data-en">Install the required <code>ws</code> dependency locally:</span>
+            <span class="data-ru">Установите необходимую зависимость <code>ws</code> локально:</span>
+            <pre class="mt-1"><code class="language-bash">npm install ws</code></pre>
+        </li>
+        <li>
+            <span class="data-en">Start the server using <code>nodemon</code>:</span>
+            <span class="data-ru">Запустите сервер с помощью <code>nodemon</code>:</span>
+            <pre class="mt-1"><code class="language-bash">nodemon server.js</code></pre>
+        </li>
+    </ol>
+
+    <p class="data-en class=mt-3">Once the server is running and listening on port 3000, proceed to build and run the client application using the automation scripts below.</p>
+    <p class="data-ru class=mt-3">Как только сервер запустится и начнет прослушивать порт 3000, переходите к сборке и запуску клиентского приложения с помощью скриптов автоматизации ниже.</p>
+
+    <hr class="my-4">
+
+    <!-- <h3 class="category-header">
+        <span class="data-en">6. Automation Scripts (.bat)</span>
+        <span class="data-ru">6. Скрипты автоматизации (.bat)</span>
+    </h3>
+    <p class="data-en">Create these three quick launch scripts in the root directory of your project to automate desktop builds:</p>
+    <p class="data-ru">Создайте три файла автоматизации в корневой папке вашего проекта для быстрой сборки десктопной версии:</p>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">1. config-exe.bat</h6>
+            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist/exe</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">2. build-exe.bat</h6>
+            <pre><code class="language-bash">cd dist\exe
+cmake --build .
+cd ..\..</code></pre>
+        </div>
+        <div class="col-md-4">
+            <h6 class="fw-bold text-secondary">3. run-exe.bat</h6>
+            <pre><code class="language-bash">dist\exe\app</code></pre>
+        </div>
+    </div> -->
 
     <h3 class="category-header">
         <span class="data-en">6. Automation Scripts (.bat)</span>
