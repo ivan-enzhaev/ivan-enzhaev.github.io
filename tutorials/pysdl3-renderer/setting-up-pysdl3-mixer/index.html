@@ -7,7 +7,7 @@
 
 <title>
   
-    Building IXWebSocket, MbedTLS, and zlib from Source (MinGW)
+    Setting up PySDL3_mixer (Python)
   
   | Ivan Enzhaev
 </title>
@@ -195,143 +195,135 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Building IXWebSocket, MbedTLS, and zlib from Source (MinGW)</span>
-            <span class="data-ru">Сборка IXWebSocket, MbedTLS и zlib из исходного кода (MinGW)</span>
+            <span class="data-en">PySDL3 Desktop: SDL3_mixer Setup</span>
+            <span class="data-ru">PySDL3 для Desktop: Настройка SDL3_mixer</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A comprehensive guide to compiling the WebSocket network stack statically on Windows using MinGW 13.1 and CMake.</span>
-            <span class="data-ru">Полное руководство по статической компиляции сетевого стека WebSocket на Windows с помощью MinGW 13.1 и CMake.</span>
+            <span class="data-en">A guide to playing audio in your PySDL3 applications.</span>
+            <span class="data-ru">Руководство по воспроизведению аудио в ваших приложениях PySDL3.</span>
         </p>
     </header>
 
-    <div class="alert alert-primary">
-        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed the <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">Environment Setup Guide</a> (MinGW 13.1 & CMake)</span>
-        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank" rel="noopener noreferrer">руководства по настройке среды</a> (MinGW 13.1 и CMake)</span>
+    <h3 class="category-header">
+        <span class="data-en">1. Installation</span>
+        <span class="data-ru">1. Установка</span>
+    </h3>
+    <p class="data-en">PySDL3 includes the mixer library by default. Ensure your environment is ready:</p>
+    <p class="data-ru">PySDL3 по умолчанию включает в себя библиотеку mixer. Убедитесь, что ваша среда готова:</p>
+    <div class="bg-light p-3 rounded border mb-4">
+        <code>pip install pysdl3</code>
     </div>
 
-    <!-- <div class="alert alert-primary mb-4">
-        <span class="data-en"><strong>Prerequisite:</strong> Ensure your MinGW compiler path is added to your system environment variables and that your local source folders match the versions below inside your <code>C:/libs</code> directory.</span>
-        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что путь к компилятору MinGW добавлен в системные переменные окружения, а папки с исходным кодом в каталоге <code>C:/libs</code> соответствуют указанным ниже версиям.</span>
-    </div> -->
-
-    <h3 class="category-header mt-4">
-        <span class="data-en">1. Compile zlib (v1.3.2)</span>
-        <span class="data-ru">1. Компиляция zlib (v1.3.2)</span>
+    <h3 class="category-header">
+        <span class="data-en">2. Assets</span>
+        <span class="data-ru">2. Ресурсы</span>
     </h3>
-    <ul>
-        <li>
-            <span class="data-en">
-                Download the <b>Source code (zip)</b> archive from the <a href="https://github.com/madler/zlib/releases/tag/v1.3.2" target="_blank" rel="noopener noreferrer">official release page</a>:
-            </span>
-            <span class="data-ru">
-                Скачайте архив <b>Source code (zip)</b> со страницы <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">официального релиза</a>:
-            </span>
-            <br>
-            <img src="/assets/img/tutorials/tools/mingw/building-ixwebsocket-mbedtls-zlib-mingw/zlib-download-link.png" alt="Download Link" class="img-fluid border rounded mt-3 shadow-sm">
-        </li>
-        <li>
-            <span class="data-en">Extract the <b>zlib132.zip</b> archive to the <code>C:/libs</code> folder. Open your terminal, navigate to your zlib source directory:</span>
-            <span class="data-ru">Распакуйте архив <b>zlib132.zip</b> в папку <code>C:/libs</code>. Откройте терминал, перейдите в папку с исходным кодом zlib:</span>
-            <pre><code class="language-bash">cd C:\libs\zlib-1.3.2</code></pre>
-            <img src="/assets/img/tutorials/tools/mingw/building-ixwebsocket-mbedtls-zlib-mingw/zlib-terminal.png" alt="Terminal" class="img-fluid border rounded mt-3 shadow-sm">
-        </li>
-        <li>
-            <span class="data-en">Configure the build directory and options using CMake. Copy and paste the following command to generate the MinGW Makefiles:</span>
-            <span class="data-ru">Настройте директорию сборки и параметры конфигурации с помощью CMake. Скопируйте и вставьте следующую команду для генерации файлов сборки MinGW:</span>
-            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist -DCMAKE_INSTALL_PREFIX=C:/libs/zlib-1.3.2-mingw -DCMAKE_BUILD_TYPE=MinSizeRel</code></pre>
-        </li>
-        <li>
-            <span class="data-en">Compile the library using 8 parallel compilation threads to speed up the process:</span>
-            <span class="data-ru">Скомпилируйте библиотеку, используя 8 параллельных потоков сборки для ускорения процесса:</span>
-            <pre><code class="language-bash">cmake --build dist -j8</code></pre>
-        </li>
-        <li>
-            <span class="data-en">Install the compiled headers and binaries to the designated directory (<code>C:/libs/mbedtls-4.1.0-mingw</code>):</span>
-            <span class="data-ru">Установите скомпилированные заголовочные файлы и библиотеки в указанную директорию (<code>C:/libs/mbedtls-4.1.0-mingw</code>):</span>
-            <pre><code class="language-bash">cmake --install dist</code></pre>
-        </li>
-    </ul>
 
-    <h3 class="category-header mt-5">
-        <span class="data-en">2. Compile Mbed TLS (v4.1.0)</span>
-        <span class="data-ru">2. Компиляция Mbed TLS (v4.1.0)</span>
-    </h3>
-    <ul>
-        <li>
-            <span class="data-en">
-                Download the <b>mbedtls-4.1.0.tar.bz2</b> archive from the <a href="https://github.com/Mbed-TLS/mbedtls/releases/tag/mbedtls-4.1.0" target="_blank" rel="noopener noreferrer">official release page</a>:
-            </span>
-            <span class="data-ru">
-                Скачайте архив <b>mbedtls-4.1.0.tar.bz2</b> со страницы <a href="https://github.com/Mbed-TLS/mbedtls/releases/tag/mbedtls-4.1.0" target="_blank" rel="noopener noreferrer">официального релиза</a>:
-            </span>
-            <br>
-            <img src="/assets/img/tutorials/tools/mingw/building-ixwebsocket-mbedtls-zlib-mingw/mbedtls-download-link.png" alt="Download Link" class="img-fluid border rounded mt-3 shadow-sm">
-        </li>
-        <li>
-            <span class="data-en">Extract the <b>mbedtls-4.1.0.tar.bz2</b> archive to the <code>C:/libs</code> folder. Open your terminal, navigate to your <code>mbedtls-4.1.0</code> source directory:</span>
-            <span class="data-ru">Распакуйте архив <b>mbedtls-4.1.0.tar.bz2</b> в папку <code>C:/libs</code>. Откройте терминал, перейдите в папку с исходным кодом <code>mbedtls-4.1.0</code>:</span>
-            <pre><code class="language-bash">cd C:\libs\mbedtls-4.1.0</code></pre>
-            <img src="/assets/img/tutorials/tools/mingw/building-ixwebsocket-mbedtls-zlib-mingw/mbedtls-terminal.png" alt="Terminal" class="img-fluid border rounded mt-3 shadow-sm">
-        </li>
-        <li>
-            <span class="data-en">Run the following commands to generate and install the static library binaries:</span>
-            <span class="data-ru">Выполните следующие команды для генерации и установки статических бинарников библиотеки:</span>
-            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist -DCMAKE_INSTALL_PREFIX=C:/libs/mbedtls-4.1.0-mingw -DENABLE_TESTING=OFF -DCMAKE_BUILD_TYPE=MinSizeRel
-cmake --build dist -j8
-cmake --install dist</code></pre>
-        </li>
-    </ul>
-    <!-- <p>
-        <span class="data-en">Switch to your Mbed TLS source folder. We explicitly disable internal target testing flags (<code>-DENABLE_TESTING=OFF</code>) to drastically accelerate compilation times:</span>
-        <span class="data-ru">Перейдите в папку с исходным кодом Mbed TLS. Мы явно отключаем внутренние флаги тестирования (<code>-DENABLE_TESTING=OFF</code>), чтобы значительно ускорить время компиляции:</span>
-    </p> -->
-
-    <h3 class="category-header mt-5">
-        <span class="data-en">3. Compile IXWebSocket (v12.0.0, master branch)</span>
-        <span class="data-ru">3. Компиляция IXWebSocket (v12.0.0, ветка master)</span>
-    </h3>
-    <div class="alert alert-warning py-2 mb-3">
-        <span class="data-en"><strong>Notice:</strong> We pass <code>-DCMAKE_CXX_STANDARD_LIBRARIES="-lbcrypt -lcrypt32 -lws2_32"</code> to guarantee system cryptography and network socket routines link cleanly at the absolute end of the command line chain.</span>
-        <span class="data-ru"><strong>Примечание:</strong> Мы передаем флаг <code>-DCMAKE_CXX_STANDARD_LIBRARIES="-lbcrypt -lcrypt32 -lws2_32"</code>, чтобы гарантировать корректную линковку системных библиотек шифрования и сокетов в самом конце цепочки аргументов.</span>
+    <div class="mb-4">
+        <p>
+            <span class="data-en">Before creating the files, download the required asset:</span>
+            <span class="data-ru">Перед созданием файлов скачайте необходимый ресурс:</span>
+        </p>
+        <ul>
+            <li>
+                <span class="data-en">Download the WAV file: <a href="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3-mixer/Picked Coin Echo 2.zip">Picked Coin Echo 2.zip</a></span>
+                <span class="data-ru">Скачайте WAV-файл: <a href="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3-mixer/Picked Coin Echo 2.zip">Picked Coin Echo 2.zip</a></span>
+            </li>
+            <li>
+                <span class="data-en">Note: This is a free file taken from <a href="https://opengameart.org/content/picked-coin-echo-2" target="_blank" rel="noopener noreferrer">this link</a>.</span>
+                <span class="data-ru">Примечание. Это бесплатный файл, который был взят <a href="https://opengameart.org/content/picked-coin-echo-2" target="_blank" rel="noopener noreferrer">по ссылке</a>.</span>
+            </li>
+        </ul>
     </div>
-    <p>
-        <span class="data-en">Provide the explicit paths to your newly built zlib and Mbed TLS library targets so IXWebSocket can reference them during static compilation:</span>
-        <span class="data-ru">Укажите явные пути к только что собранным библиотекам zlib и Mbed TLS, чтобы IXWebSocket мог ссылаться на них во время статической компиляции:</span>
-    </p>
-    <pre><code class="language-bash">cd C:\libs\IXWebSocket-12.0.0-master
-cmake -G "MinGW Makefiles" -S . -B dist -DCMAKE_INSTALL_PREFIX=C:/libs/IXWebSocket-12.0.0-master-mingw -DZLIB_INCLUDE_DIR=C:/libs/zlib-1.3.2-mingw/include -DZLIB_LIBRARY=C:/libs/zlib-1.3.2-mingw/lib/libzs.a -DMBEDTLS_LIBRARY=C:/libs/mbedtls-4.1.0-mingw/lib/libmbedtls.a -DMBEDTLS_INCLUDE_DIRS=C:/libs/mbedtls-4.1.0-mingw/include -DMBEDX509_LIBRARY=C:/libs/mbedtls-4.1.0-mingw/lib/libmbedx509.a -DMBEDCRYPTO_LIBRARY=C:/libs/mbedtls-4.1.0-mingw/lib/libmbedcrypto.a -DUSE_TLS=ON -DUSE_WS=ON -DUSE_ZLIB=ON -DCMAKE_CXX_STANDARD_LIBRARIES="-lbcrypt -lcrypt32 -lws2_32" -DCMAKE_BUILD_TYPE=MinSizeRel
-cmake --build dist -j8
-cmake --install dist</code></pre>
 
-    <h3 class="category-header mt-5">
-        <span class="data-en">4. Expected Output Structure</span>
-        <span class="data-ru">4. Ожидаемая структура вывода</span>
+    <h3 class="category-header">
+        <span class="data-en">3. Project Structure</span>
+        <span class="data-ru">3. Структура проекта</span>
     </h3>
-    <p>
-        <span class="data-en">Once all installation processes complete, your <code>C:/libs</code> folder will contain the prepared standalone directories ready for project targeting:</span>
-        <span class="data-ru">После завершения всех процессов установки ваша папка <code>C:/libs</code> будет содержать готовые отдельные директории, готовые для подключения к проектам:</span>
-    </p>
-    <pre><code>C:/libs/
-├── zlib-1.3.2-mingw/
-│   ├── include/
-│   └── lib/libzs.a
-├── mbedtls-4.1.0-mingw/
-│   ├── include/
-│   └── lib/ [libmbedtls.a, libmbedx509.a, libmbedcrypto.a]
-└── IXWebSocket-12.0.0-master-mingw/
-    ├── include/
-    └── lib/libixwebsocket.a</code></pre>
+    <pre><code>pysdl3-mixer-app/
+├── assets/audio/
+│   └── Picked Coin Echo 2.wav
+└── main.py</code></pre>
 
-    <h3 class="category-header mt-5">
-        <span class="data-en">5. Next Steps</span>
-        <span class="data-ru">5. Следующие шаги</span>
+    <h3 class="category-header">
+        <span class="data-en">4. Source Code (Audio Playback)</span>
+        <span class="data-ru">4. Исходный код (Воспроизведение аудио)</span>
     </h3>
-    <div class="alert alert-success mt-3">
-        <span class="data-en"><strong>Success!</strong> Your network library stack is successfully built. Ready to implement it into an application? Proceed to the next step: <a href="/tutorials/sdl3-opengl/mingw/setting-up-ixwebsocket-sdl3-opengl-mingw" class="fw-bold">Setting up IXWebSocket with SDL3 and OpenGL</a>.</span>
-        <span class="data-ru"><strong>Успех!</strong> Ваш сетевой стек библиотек успешно собран. Готовы интегрировать его в приложение? Переходите к следующему шагу: <a href="/tutorials/sdl3-opengl/mingw/setting-up-ixwebsocket-sdl3-opengl-mingw" class="fw-bold">Настройка IXWebSocket с SDL3 и OpenGL</a>.</span>
+    <pre><code class="language-python">import ctypes
+import os
+
+# Required for the SDL3 Callback-based App framework
+os.environ["SDL_MAIN_USE_CALLBACKS"] = "1"
+os.environ["SDL_RENDER_DRIVER"] = "opengl"
+
+import sdl3
+
+window = ctypes.POINTER(sdl3.SDL_Window)()
+mixer = ctypes.POINTER(sdl3.MIX_Mixer)()
+audio = ctypes.POINTER(sdl3.MIX_Audio)()
+track = ctypes.POINTER(sdl3.MIX_Track)()
+
+@sdl3.SDL_AppInit_func
+def SDL_AppInit(appstate, argc, argv):
+    global mixer, audio, track, window
+    
+    if not sdl3.SDL_Init(sdl3.SDL_INIT_VIDEO | sdl3.SDL_INIT_AUDIO):
+        return sdl3.SDL_APP_FAILURE
+
+    if not sdl3.MIX_Init():
+        return sdl3.SDL_APP_FAILURE
+
+    mixer = sdl3.MIX_CreateMixerDevice(sdl3.SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, None)
+    if not mixer:
+        sdl3.SDL_Log(b"Failed to create mixer")
+        return sdl3.SDL_APP_FAILURE
+
+    window = sdl3.SDL_CreateWindow(b"PySDL3 Mixer", 400, 300, 0)
+
+    audio_path = b"assets/audio/Picked Coin Echo 2.wav"
+    audio = sdl3.MIX_LoadAudio(mixer, audio_path, True)
+    if not audio:
+        sdl3.SDL_Log(b"Failed to load audio")
+        return sdl3.SDL_APP_FAILURE
+
+    track = sdl3.MIX_CreateTrack(mixer)
+    if not track:
+        return sdl3.SDL_APP_FAILURE
+
+    sdl3.MIX_SetTrackAudio(track, audio)
+    sdl3.MIX_PlayTrack(track, 0)
+
+    return sdl3.SDL_APP_CONTINUE
+
+@sdl3.SDL_AppEvent_func
+def SDL_AppEvent(appstate, event):
+    if sdl3.SDL_DEREFERENCE(event).type == sdl3.SDL_EVENT_QUIT:
+        return sdl3.SDL_APP_SUCCESS
+    return sdl3.SDL_APP_CONTINUE
+
+@sdl3.SDL_AppIterate_func
+def SDL_AppIterate(appstate):
+    return sdl3.SDL_APP_CONTINUE
+
+@sdl3.SDL_AppQuit_func
+def SDL_AppQuit(appstate, result):
+    # Cleanup in correct order
+    if track: sdl3.MIX_DestroyTrack(track)
+    if audio: sdl3.MIX_DestroyAudio(audio)
+    if mixer: sdl3.MIX_DestroyMixer(mixer)
+    sdl3.MIX_Quit()
+    sdl3.SDL_Quit()</code></pre>
+
+    <h3 class="category-header">
+        <span class="data-en">5. Running the Application</span>
+        <span class="data-ru">5. Запуск приложения</span>
+    </h3>
+    <div class="bg-light p-3 rounded border">
+        <code>py main.py</code>
     </div>
+
+    <!-- H:\projects\opengl\pysdl3\pysdl3-mixer-app -->
 </div>
-
 
         
         
@@ -476,31 +468,13 @@ function copyToClipboard(text, button) {
         
 
         
-        <block>
-            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
-        </block>
-        
-
-        
-
-        
-    </block>
-    
-    <block>
-        
 
         
 
         
         <block>
-            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-python.min.js"></script>
         </block>
-        
-
-        
-
-        
-
         
     </block>
     
