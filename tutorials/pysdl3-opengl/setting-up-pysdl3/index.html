@@ -7,7 +7,7 @@
 
 <title>
   
-    Setting up SDL3_ttf with PySDL3 (Python)
+    Setting up PySDL3 (Python)
   
   | Ivan Enzhaev
 </title>
@@ -195,66 +195,45 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">SDL3 Desktop: PySDL3_ttf Setup</span>
-            <span class="data-ru">SDL3 для Desktop: Настройка PySDL3_ttf</span>
+            <span class="data-en">PySDL3 Desktop: Setup for Python</span>
+            <span class="data-ru">PySDL3 для Desktop: Настройка для Python</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to using the SDL3_ttf font extension library with Python and PySDL3.</span>
-            <span class="data-ru">Руководство по использованию библиотеки расширения шрифтов SDL3_ttf с Python и PySDL3.</span>
+            <span class="data-en">A guide to configuring and running SDL3 applications with Python.</span>
+            <span class="data-ru">Руководство по настройке и запуску приложений SDL3 на языке Python.</span>
         </p>
     </header>
 
-    <div class="alert alert-primary">
-        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have PySDL3 installed (e.g., <code>pip install PySDL3==0.9.11b1</code>).</span>
-        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что PySDL3 установлен (например, <code>pip install PySDL3==0.9.11b1</code>).</span>
-    </div>
-
     <h3 class="category-header">
-        <span class="data-en">1. Assets</span>
-        <span class="data-ru">1. Ресурсы</span>
+        <span class="data-en">1. Installation</span>
+        <span class="data-ru">1. Установка</span>
     </h3>
-
-    <div class="mb-4">
-        <p>
-            <span class="data-en">Before creating the files, download the required asset:</span>
-            <span class="data-ru">Перед созданием файлов скачайте необходимый ресурс:</span>
-        </p>
-        <ul>
-            <li>
-                <span class="data-en">Download the TTF file: <a href="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3-ttf/LiberationSans-Regular.zip">LiberationSans-Regular.zip</a></span>
-                <span class="data-ru">Скачайте TTF-файл: <a href="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3-ttf/LiberationSans-Regular.zip">LiberationSans-Regular.zip</a></span>
-            </li>
-            <li>
-                <span class="data-en">Note: This is a free file taken from <a href="https://github.com/liberationfonts/liberation-fonts/releases/tag/2.1.5" target="_blank" rel="noopener noreferrer">this link</a>.</span>
-                <span class="data-ru">Примечание. Это бесплатный файл, который был взят <a href="https://github.com/liberationfonts/liberation-fonts/releases/tag/2.1.5" target="_blank" rel="noopener noreferrer">по ссылке</a>.</span>
-            </li>
-        </ul>
+    <p class="data-en">Ensure you have Python installed. Install the PySDL3 library using pip:</p>
+    <p class="data-ru">Убедитесь, что у вас установлен Python. Установите библиотеку PySDL3 через pip:</p>
+    <div class="bg-light p-3 rounded border mb-4">
+        <code>pip install pysdl3</code>
     </div>
 
     <h3 class="category-header">
         <span class="data-en">2. Project Structure</span>
         <span class="data-ru">2. Структура проекта</span>
     </h3>
-
-    <p class="data-en">Create a project folder named <code>ttf-pysdl3</code>. You can keep your assets in an <code>assets/fonts</code> directory.</p>
-    <p class="data-ru">Создайте папку проекта с именем <code>ttf-pysdl3</code>. Вы можете хранить свои ресурсы в директории <code>assets/fonts</code>.</p>
-
-    <pre><code>ttf-pysdl3/
-├── assets/fonts/
-│   └── LiberationSans-Regular.ttf
+    <p class="data-en">Create a folder named <code>pysdl3-app</code> with the following hierarchy:</p>
+    <p class="data-ru">Создайте папку с именем <code>pysdl3-app</code> со следующей иерархией:</p>
+    <pre><code>pysdl3-app/
 └── main.py</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">3. Python Implementation</span>
-        <span class="data-ru">3. Реализация на Python</span>
+        <span class="data-en">3. Source Code (Callback System)</span>
+        <span class="data-ru">3. Исходный код (Система Callbacks)</span>
     </h3>
-
-    <p class="data-en">PySDL3 relies on <code>ctypes</code> to interface with the underlying SDL3 C libraries. Use the following code in your <code>main.py</code>:</p>
-    <p class="data-ru">PySDL3 использует <code>ctypes</code> для взаимодействия с базовыми библиотеками SDL3 C. Используйте следующий код в вашем <code>main.py</code>:</p>
+    <p class="data-en">PySDL3 relies on the SDL3 callback-based architecture. Copy this code into <code>main.py</code>:</p>
+    <p class="data-ru">PySDL3 опирается на архитектуру обратных вызовов (callbacks) SDL3. Скопируйте этот код в файл <code>main.py</code>:</p>
 
     <pre><code class="language-python">import ctypes
 import os
 
+# Required for the SDL3 Callback-based App framework
 os.environ["SDL_MAIN_USE_CALLBACKS"] = "1"
 os.environ["SDL_RENDER_DRIVER"] = "opengl"
 
@@ -262,32 +241,15 @@ import sdl3
 
 renderer = ctypes.POINTER(sdl3.SDL_Renderer)()
 window = ctypes.POINTER(sdl3.SDL_Window)()
-textTexture = None
 
 @sdl3.SDL_AppInit_func
 def SDL_AppInit(appstate, argc, argv):
-    global textTexture
-
     if not sdl3.SDL_Init(sdl3.SDL_INIT_VIDEO):
         sdl3.SDL_Log("Couldn't initialize SDL: %s".encode() % sdl3.SDL_GetError())
         return sdl3.SDL_APP_FAILURE
 
-    if not sdl3.TTF_Init():
-        sdl3.SDL_Log("Couldn't initialize TTF: %s".encode() % sdl3.SDL_GetError())
+    if not sdl3.SDL_CreateWindowAndRenderer("PySDL3 App".encode(), 500, 500, 0, window, renderer):
         return sdl3.SDL_APP_FAILURE
-
-    if not sdl3.SDL_CreateWindowAndRenderer("PySDL3 TTF".encode(), 400, 200, 0, window, renderer):
-        return sdl3.SDL_APP_FAILURE
-
-    # Load font (Ensure the path is correct for your system)
-    font = sdl3.TTF_OpenFont("assets/fonts/LiberationSans-Regular.ttf".encode(), 48)
-    if not font:
-        return sdl3.SDL_APP_FAILURE
-
-    textColor = sdl3.SDL_Color(255, 255, 255, 255)
-    surface = sdl3.TTF_RenderText_Blended(font, "Hello PySDL3!".encode(), 0, textColor)
-    textTexture = sdl3.SDL_CreateTextureFromSurface(renderer, surface)
-    sdl3.SDL_DestroySurface(surface)
 
     return sdl3.SDL_APP_CONTINUE
 
@@ -299,34 +261,41 @@ def SDL_AppEvent(appstate, event):
 
 @sdl3.SDL_AppIterate_func
 def SDL_AppIterate(appstate):
-    sdl3.SDL_SetRenderDrawColor(renderer, 20, 20, 20, 255)
+    sdl3.SDL_SetRenderDrawColor(renderer, 38, 43, 51, 255)
     sdl3.SDL_RenderClear(renderer)
 
-    width, height = ctypes.c_float(), ctypes.c_float()
-    sdl3.SDL_GetTextureSize(textTexture, ctypes.byref(width), ctypes.byref(height))
-    destRect = sdl3.SDL_FRect(50.0, 75.0, width.value, height.value)
-    
-    sdl3.SDL_RenderTexture(renderer, textTexture, None, destRect)
+    rect = sdl3.SDL_FRect(100.0, 50.0, 200.0, 60.0)
+    sdl3.SDL_SetRenderDrawColor(renderer, 220, 80, 80, sdl3.SDL_ALPHA_OPAQUE)
+    sdl3.SDL_RenderFillRect(renderer, rect)
+
     sdl3.SDL_RenderPresent(renderer)
     return sdl3.SDL_APP_CONTINUE
 
 @sdl3.SDL_AppQuit_func
 def SDL_AppQuit(appstate, result):
-    global textTexture
-    sdl3.SDL_DestroyTexture(textTexture)
-    sdl3.TTF_Quit()</code></pre>
+    sdl3.SDL_DestroyRenderer(renderer)
+    sdl3.SDL_DestroyWindow(window)
+    sdl3.SDL_Quit()</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">4. Running the Script</span>
-        <span class="data-ru">4. Запуск скрипта</span>
+        <span class="data-en">4. Running the Application</span>
+        <span class="data-ru">4. Запуск приложения</span>
     </h3>
+    <p class="data-en">Simply run the script using your terminal:</p>
+    <p class="data-ru">Просто запустите скрипт через терминал:</p>
 
-    <p class="data-en">Run the script via your terminal:</p>
-    <p class="data-ru">Запустите скрипт через терминал:</p>
+    <div class="bg-light p-3 border rounded">
+        <pre class="mb-0"><code class="language-bash">python main.py</code></pre>
+    </div>
 
-    <pre><code class="language-bash">python main.py</code></pre>
+    <p class="data-en">or:</p>
+    <p class="data-ru">или:</p>
 
-    <!-- H:\projects\opengl\pysdl3\ttf-pysdl3 -->
+    <div class="bg-light p-3 border rounded">
+        <pre class="mb-0"><code class="language-bash">py main.py</code></pre>
+    </div>
+
+    <!-- H:\projects\opengl\pysdl3\pysdl3-app -->
 </div>
 
         
@@ -479,6 +448,24 @@ function copyToClipboard(text, button) {
         <block>
             <script src="/libs/prism/1.30.0/components/prism-python.min.js"></script>
         </block>
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
         
     </block>
     

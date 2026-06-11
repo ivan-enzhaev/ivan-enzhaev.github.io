@@ -7,7 +7,7 @@
 
 <title>
   
-    OpenGL ES 3.0 with SDL3 Callbacks (MinGW)
+    Setting up SDL3_image with PySDL3 and OpenGL
   
   | Ivan Enzhaev
 </title>
@@ -191,7 +191,275 @@
 </nav>
 
     <main class="flex-grow-1">
-        <!-- H:\projects\opengl\textures\pysdl3-opengl\texture-pysdl3-image-opengl-python -->
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold">
+            <span class="data-en">PySDL3 & OpenGL: Texture Loading with SDL3_image</span>
+            <span class="data-ru">PySDL3 и OpenGL: Загрузка текстур с помощью SDL3_image</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">A guide to loading image files into GPU memory as modern OpenGL textures using PySDL3.</span>
+            <span class="data-ru">Руководство по загрузке файлов изображений в память GPU как текстур OpenGL с использованием PySDL3.</span>
+        </p>
+    </header>
+
+    <!-- <div class="alert alert-primary">
+        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have the required packages installed: <code>pip install PySDL3 PySDL3-image PyOpenGL</code>.</span>
+        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что установлены необходимые пакеты: <code>pip install PySDL3 PySDL3-image PyOpenGL</code>.</span>
+    </div> -->
+
+    <h3 class="category-header">
+        <span class="data-en">1. Installation</span>
+        <span class="data-ru">1. Установка</span>
+    </h3>
+    <p class="data-en">Ensure you have Python installed. Install PySDL3 and PyOpenGL using pip:</p>
+    <p class="data-ru">Убедитесь, что у вас установлен Python. Установите PySDL3 и PyOpenGL через pip:</p>
+    <pre><code class="language-bash">pip PySDL3 numpy PyOpenGL PyGLM</code></pre>
+
+    <h3 class="category-header">
+        <span class="data-en">2. Assets</span>
+        <span class="data-ru">2. Ресурсы</span>
+    </h3>
+
+    <div class="mb-4">
+        <p>
+            <span class="data-en">Before creating the files, download the required asset:</span>
+            <span class="data-ru">Перед созданием файлов скачайте необходимый ресурс:</span>
+        </p>
+        <ul>
+            <li>
+                <span class="data-en">Download the PNG file with transparent background: <a href="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3-image/right-arrow.zip">right-arrow.zip</a></span>
+                <span class="data-ru">Скачайте PNG-файл с прозрачным фоном: <a href="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3-image/right-arrow.zip">right-arrow.zip</a></span>
+            </li>
+            <li>
+                <span class="data-en">Note: This is a free file taken from <a href="https://www.flaticon.com/free-icons/arrow" target="_blank" rel="noopener noreferrer">this link</a>.</span>
+                <span class="data-ru">Примечание. Это бесплатный файл, который был взят <a href="https://www.flaticon.com/free-icons/arrow" target="_blank" rel="noopener noreferrer">по ссылке</a>.</span>
+            </li>
+        </ul>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">3. Project Structure</span>
+        <span class="data-ru">3. Структура проекта</span>
+    </h3>
+    <pre><code>pysdl3-image-opengl-app/
+├── assets/images/
+│   └── right-arrow.png
+└── main.py</code></pre>
+
+    <h3 class="category-header">
+        <span class="data-en">4. Source Code</span>
+        <span class="data-ru">4. Исходный код</span>
+    </h3>
+    <p class="data-en">Create <code>main.py</code> and paste the following implementation:</p>
+    <p class="data-ru">Создайте файл <code>main.py</code> и вставьте следующую реализацию:</p>
+
+    <pre><code class="language-python">import ctypes
+import os
+import numpy as np
+from OpenGL.GL import *
+from OpenGL.GL.shaders import *
+
+# Set runtime callback and window driver flags
+os.environ["SDL_MAIN_USE_CALLBACKS"] = "1"
+os.environ["SDL_RENDER_DRIVER"] = "opengl"
+
+import sdl3
+
+# Global References
+window = None
+glContext = None
+shaderProgram = None
+VAO = None
+VBO = None
+EBO = None
+textureID = None
+
+vertexShaderSource = """
+#version 330 core
+layout (location = 0) in vec3 aPosition;
+layout (location = 1) in vec2 aTexCoord;
+out vec2 vTexCoord;
+void main()
+{
+    gl_Position = vec4(aPosition, 1.0);
+    vTexCoord = vec2(aTexCoord.x, 1.0 - aTexCoord.y);
+}
+"""
+
+fragmentShaderSource = """
+#version 330 core
+precision mediump float;
+out vec4 FragColor;
+in vec2 vTexCoord;
+uniform sampler2D ourTexture;
+void main()
+{
+    FragColor = texture(ourTexture, vTexCoord);
+}
+"""
+
+@sdl3.SDL_AppInit_func
+def SDL_AppInit(appstate, argc, argv):
+    global window, glContext, shaderProgram, VAO, VBO, EBO, textureID
+
+    if not sdl3.SDL_Init(sdl3.SDL_INIT_VIDEO):
+        return sdl3.SDL_APP_FAILURE
+
+    # Match Desktop Core Profile 3.3 attributes
+    sdl3.SDL_GL_SetAttribute(sdl3.SDL_GL_CONTEXT_PROFILE_MASK, sdl3.SDL_GL_CONTEXT_PROFILE_CORE)
+    sdl3.SDL_GL_SetAttribute(sdl3.SDL_GL_CONTEXT_MAJOR_VERSION, 3)
+    sdl3.SDL_GL_SetAttribute(sdl3.SDL_GL_CONTEXT_MINOR_VERSION, 3)
+
+    window = sdl3.SDL_CreateWindow("SDL3_image OpenGL".encode(), 380, 380, sdl3.SDL_WINDOW_OPENGL)
+    if not window:
+        return sdl3.SDL_APP_FAILURE
+
+    glContext = sdl3.SDL_GL_CreateContext(window)
+    if not glContext:
+        return sdl3.SDL_APP_FAILURE
+
+    sdl3.SDL_GL_SetSwapInterval(1)
+
+    glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+    # Setup Geometry
+    vertices = np.array([
+         0.5,  0.5, 0.0, 1.0, 1.0,
+         0.5, -0.5, 0.0, 1.0, 0.0,
+        -0.5, -0.5, 0.0, 0.0, 0.0,
+        -0.5,  0.5, 0.0, 0.0, 1.0
+    ], dtype=np.float32)
+
+    indices = np.array([0, 1, 3, 1, 2, 3], dtype=np.uint32)
+
+    VAO = glGenVertexArrays(1)
+    VBO = glGenBuffers(1)
+    EBO = glGenBuffers(1)
+
+    glBindVertexArray(VAO)
+    
+    glBindBuffer(GL_ARRAY_BUFFER, VBO)
+    glBufferData(GL_ARRAY_BUFFER, vertices.nbytes, vertices, GL_STATIC_DRAW)
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO)
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.nbytes, indices, GL_STATIC_DRAW)
+
+    float_size = 4
+    stride = 5 * float_size
+
+    # Position Attribute (Location 0)
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, ctypes.c_void_p(0))
+    glEnableVertexAttribArray(0)
+    
+    # TexCoord Attribute (Location 1)
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, ctypes.c_void_p(3 * float_size))
+    glEnableVertexAttribArray(1)
+    
+    glBindVertexArray(0)
+
+    # Shader Compilation via PyOpenGL helper
+    shaderProgram = compileProgram(
+        compileShader(vertexShaderSource, GL_VERTEX_SHADER),
+        compileShader(fragmentShaderSource, GL_FRAGMENT_SHADER)
+    )
+
+    # Load Image file via integrated SDL3_image function
+    texturePath = "assets/images/right-arrow.png".encode()
+    surface = sdl3.IMG_Load(texturePath)
+    if not surface:
+        sdl3.SDL_Log("Image loading failed: %s".encode() % sdl3.SDL_GetError())
+        return sdl3.SDL_APP_FAILURE
+
+    # Convert surface to standard ABGR8888 to feed straight to GL_RGBA
+    optimizedSurface = sdl3.SDL_ConvertSurface(surface, sdl3.SDL_PIXELFORMAT_ABGR8888)
+    sdl3.SDL_DestroySurface(surface)
+
+    if not optimizedSurface:
+        sdl3.SDL_Log("Surface conversion failed: %s".encode() % sdl3.SDL_GetError())
+        return sdl3.SDL_APP_FAILURE
+
+    # Safely unpack the contents field depending on wrapper's pointer configuration
+    surf_contents = optimizedSurface.contents if hasattr(optimizedSurface, 'contents') else optimizedSurface
+
+    # Convert pixels to an OpenGL Texture Object
+    textureID = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, textureID)
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+
+    # Casting the pixels attribute directly to a ctypes void pointer allows 
+    # PyOpenGL to read the surface buffer successfully.
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        GL_RGBA,
+        surf_contents.w,
+        surf_contents.h,
+        0,
+        GL_RGBA,
+        GL_UNSIGNED_BYTE,
+        ctypes.c_void_p(surf_contents.pixels)
+    )
+    glGenerateMipmap(GL_TEXTURE_2D)
+
+    # Clean up memory handle
+    sdl3.SDL_DestroySurface(optimizedSurface)
+
+    return sdl3.SDL_APP_CONTINUE
+
+@sdl3.SDL_AppEvent_func
+def SDL_AppEvent(appstate, event):
+    if sdl3.SDL_DEREFERENCE(event).type == sdl3.SDL_EVENT_QUIT:
+        return sdl3.SDL_APP_SUCCESS
+    return sdl3.SDL_APP_CONTINUE
+
+@sdl3.SDL_AppIterate_func
+def SDL_AppIterate(appstate):
+    glClearColor(0.3, 0.3, 0.3, 1.0)
+    glClear(GL_COLOR_BUFFER_BIT)
+
+    glUseProgram(shaderProgram)
+    glBindTexture(GL_TEXTURE_2D, textureID)
+    glBindVertexArray(VAO)
+    
+    # Render indices via glDrawElements
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, ctypes.c_void_p(0))
+    glBindVertexArray(0)
+
+    sdl3.SDL_GL_SwapWindow(window)
+    return sdl3.SDL_APP_CONTINUE
+
+@sdl3.SDL_AppQuit_func
+def SDL_AppQuit(appstate, result):
+    global VAO, VBO, EBO, shaderProgram, glContext, window
+    if VAO is not None: glDeleteVertexArrays(1, [VAO])
+    if VBO is not None: glDeleteBuffers(1, [VBO])
+    if EBO is not None: glDeleteBuffers(1, [EBO])
+    if shaderProgram is not None: glDeleteProgram(shaderProgram)
+    
+    if glContext:
+        sdl3.SDL_GL_DestroyContext(glContext)
+    if window:
+        sdl3.SDL_DestroyWindow(window)</code></pre>
+
+    <h3 class="category-header">
+        <span class="data-en">5. Running the Application</span>
+        <span class="data-ru">5. Запуск приложения</span>
+    </h3>
+
+    <p class="data-en">Run the script via your terminal:</p>
+    <p class="data-ru">Запустите скрипт через терминал:</p>
+
+    <pre><code class="language-bash">python main.py</code></pre>
+
+    <!-- H:\projects\opengl\pysdl3\pysdl3-image-opengl-app -->
+</div>
 
         
         
@@ -332,22 +600,7 @@ function copyToClipboard(text, button) {
         
 
         
-        <block>
-            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
-            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
-        </block>
-        
 
-        
-
-        
-
-        
-
-        
-    </block>
-    
-    <block>
         
 
         
@@ -356,30 +609,8 @@ function copyToClipboard(text, button) {
 
         
         <block>
-            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-python.min.js"></script>
         </block>
-        
-
-        
-
-        
-    </block>
-    
-    <block>
-        
-
-        
-
-        
-        <block>
-            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
-        </block>
-        
-
-        
-
-        
-
         
     </block>
     

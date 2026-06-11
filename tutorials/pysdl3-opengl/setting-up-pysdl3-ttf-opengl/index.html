@@ -7,7 +7,7 @@
 
 <title>
   
-    Setting up SDL3_ttf with PySDL3 (Python)
+    Setting up SDL3_ttf with OpenGL (Python)
   
   | Ivan Enzhaev
 </title>
@@ -195,23 +195,26 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">SDL3 Desktop: PySDL3_ttf Setup</span>
-            <span class="data-ru">SDL3 для Desktop: Настройка PySDL3_ttf</span>
+            <span class="data-en">SDL3 & OpenGL: Text Rendering with SDL3_ttf</span>
+            <span class="data-ru">SDL3 и OpenGL: Рендеринг текста с помощью SDL3_ttf</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to using the SDL3_ttf font extension library with Python and PySDL3.</span>
-            <span class="data-ru">Руководство по использованию библиотеки расширения шрифтов SDL3_ttf с Python и PySDL3.</span>
+            <span class="data-en">A guide to rendering TrueType fonts into GPU memory using Python, PySDL3, and PyOpenGL.</span>
+            <span class="data-ru">Руководство по рендерингу шрифтов TrueType в память GPU с использованием Python, PySDL3 и PyOpenGL.</span>
         </p>
     </header>
 
-    <div class="alert alert-primary">
-        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have PySDL3 installed (e.g., <code>pip install PySDL3==0.9.11b1</code>).</span>
-        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что PySDL3 установлен (например, <code>pip install PySDL3==0.9.11b1</code>).</span>
-    </div>
+    <h3 class="category-header">
+        <span class="data-en">1. Installation</span>
+        <span class="data-ru">1. Установка</span>
+    </h3>
+    <p class="data-en">Ensure you have Python installed. Install PySDL3 and PyOpenGL using pip:</p>
+    <p class="data-ru">Убедитесь, что у вас установлен Python. Установите PySDL3 и PyOpenGL через pip:</p>
+    <pre><code class="language-bash">pip PySDL3 numpy PyOpenGL PyGLM</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">1. Assets</span>
-        <span class="data-ru">1. Ресурсы</span>
+        <span class="data-en">2. Assets</span>
+        <span class="data-ru">2. Ресурсы</span>
     </h3>
 
     <div class="mb-4">
@@ -232,63 +235,126 @@
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">2. Project Structure</span>
-        <span class="data-ru">2. Структура проекта</span>
+        <span class="data-en">3. Project Structure</span>
+        <span class="data-ru">3. Структура проекта</span>
     </h3>
-
-    <p class="data-en">Create a project folder named <code>ttf-pysdl3</code>. You can keep your assets in an <code>assets/fonts</code> directory.</p>
-    <p class="data-ru">Создайте папку проекта с именем <code>ttf-pysdl3</code>. Вы можете хранить свои ресурсы в директории <code>assets/fonts</code>.</p>
-
-    <pre><code>ttf-pysdl3/
+    <pre><code>pysdl3-ttf-opengl-app/
 ├── assets/fonts/
 │   └── LiberationSans-Regular.ttf
 └── main.py</code></pre>
 
+    <!-- <h3 class="category-header">3. Python Implementation</h3>
+    <p class="data-en">This script initializes an OpenGL context, creates a texture from an SDL_ttf surface, and renders it using OpenGL commands.</p>
+    <p class="data-ru">Этот скрипт инициализирует контекст OpenGL, создает текстуру из поверхности SDL_ttf и отрисовывает её с помощью команд OpenGL.</p> -->
+
     <h3 class="category-header">
-        <span class="data-en">3. Python Implementation</span>
-        <span class="data-ru">3. Реализация на Python</span>
+        <span class="data-en">4. Source Code</span>
+        <span class="data-ru">4. Исходный код</span>
     </h3>
+    <p class="data-en">Create <code>main.py</code> and paste the following implementation:</p>
+    <p class="data-ru">Создайте файл <code>main.py</code> и вставьте следующую реализацию:</p>
 
-    <p class="data-en">PySDL3 relies on <code>ctypes</code> to interface with the underlying SDL3 C libraries. Use the following code in your <code>main.py</code>:</p>
-    <p class="data-ru">PySDL3 использует <code>ctypes</code> для взаимодействия с базовыми библиотеками SDL3 C. Используйте следующий код в вашем <code>main.py</code>:</p>
-
-    <pre><code class="language-python">import ctypes
-import os
+    <pre><code class="language-python">import os
+import ctypes
+import numpy as np
+import glm
+from OpenGL.GL import *
+from OpenGL.GL.shaders import *
 
 os.environ["SDL_MAIN_USE_CALLBACKS"] = "1"
 os.environ["SDL_RENDER_DRIVER"] = "opengl"
 
 import sdl3
 
-renderer = ctypes.POINTER(sdl3.SDL_Renderer)()
-window = ctypes.POINTER(sdl3.SDL_Window)()
-textTexture = None
+# Global state
+window, glContext, font, textTexture = None, None, None, 0
+textW, textH = 0, 0
+shaderProgram, vao, vbo = 0, 0, 0
+projLoc, modelLoc = 0, 0
+canvasWidth, canvasHeight = 430, 430
 
 @sdl3.SDL_AppInit_func
 def SDL_AppInit(appstate, argc, argv):
-    global textTexture
+    global window, glContext, font, textTexture, textW, textH, shaderProgram, vao, vbo, projLoc, modelLoc
 
-    if not sdl3.SDL_Init(sdl3.SDL_INIT_VIDEO):
-        sdl3.SDL_Log("Couldn't initialize SDL: %s".encode() % sdl3.SDL_GetError())
-        return sdl3.SDL_APP_FAILURE
+    if not sdl3.SDL_Init(sdl3.SDL_INIT_VIDEO): return sdl3.SDL_APP_FAILURE
+    if not sdl3.TTF_Init(): return sdl3.SDL_APP_FAILURE
 
-    if not sdl3.TTF_Init():
-        sdl3.SDL_Log("Couldn't initialize TTF: %s".encode() % sdl3.SDL_GetError())
-        return sdl3.SDL_APP_FAILURE
+    sdl3.SDL_GL_SetAttribute(sdl3.SDL_GL_CONTEXT_PROFILE_MASK, sdl3.SDL_GL_CONTEXT_PROFILE_CORE)
+    sdl3.SDL_GL_SetAttribute(sdl3.SDL_GL_CONTEXT_MAJOR_VERSION, 3)
+    sdl3.SDL_GL_SetAttribute(sdl3.SDL_GL_CONTEXT_MINOR_VERSION, 3)
 
-    if not sdl3.SDL_CreateWindowAndRenderer("PySDL3 TTF".encode(), 400, 200, 0, window, renderer):
-        return sdl3.SDL_APP_FAILURE
+    window = sdl3.SDL_CreateWindow(b"SDL3_ttf OpenGL", canvasWidth, canvasHeight, sdl3.SDL_WINDOW_OPENGL)
+    glContext = sdl3.SDL_GL_CreateContext(window)
+    sdl3.SDL_GL_SetSwapInterval(1)
 
-    # Load font (Ensure the path is correct for your system)
-    font = sdl3.TTF_OpenFont("assets/fonts/LiberationSans-Regular.ttf".encode(), 48)
-    if not font:
-        return sdl3.SDL_APP_FAILURE
+    # Shaders
+    vs = compileShader(b"""#version 330 core
+        layout (location = 0) in vec4 aVertex;
+        uniform mat4 projection;
+        uniform mat4 model;
+        out vec2 vTexCoord;
+        void main() {
+            gl_Position = projection * model * vec4(aVertex.xy, 0.0, 1.0);
+            vTexCoord = aVertex.zw;
+        }""", GL_VERTEX_SHADER)
+    
+    fs = compileShader(b"""#version 330 core
+        precision mediump float;
+        in vec2 vTexCoord;
+        out vec4 fragColor;
+        uniform sampler2D textSampler;
+        void main() { fragColor = texture(textSampler, vTexCoord); }""", GL_FRAGMENT_SHADER)
+    
+    shaderProgram = compileProgram(vs, fs)
+    
+    # Enable Blending (CRITICAL for text)
+    glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-    textColor = sdl3.SDL_Color(255, 255, 255, 255)
-    surface = sdl3.TTF_RenderText_Blended(font, "Hello PySDL3!".encode(), 0, textColor)
-    textTexture = sdl3.SDL_CreateTextureFromSurface(renderer, surface)
-    sdl3.SDL_DestroySurface(surface)
+    # Text rendering
+    font = sdl3.TTF_OpenFont(b"assets/fonts/LiberationSans-Regular.ttf", 36)
+    color = sdl3.SDL_Color(170, 255, 195, 255)
+    text = "Hello, OpenGL!\n\nПривет, OpenGL!"
+    surf = sdl3.TTF_RenderText_Blended_Wrapped(font, text.encode('utf-8'), 0, color, 0)
+    
+    conv = sdl3.SDL_ConvertSurface(surf, sdl3.SDL_PIXELFORMAT_RGBA32)
+    textW, textH = conv.contents.w, conv.contents.h
+    
+    textTexture = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, textTexture)
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+    
+    data_size = textW * textH * 4
+    pixel_pointer = ctypes.cast(conv.contents.pixels, ctypes.POINTER(ctypes.c_ubyte * data_size))
 
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textW, textH, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixel_pointer.contents)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+    
+    sdl3.SDL_DestroySurface(surf)
+    sdl3.SDL_DestroySurface(conv)
+
+    # Unit Quad Setup
+    verts = np.array([
+        0.0, 1.0, 0.0, 1.0,
+        1.0, 0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0, 1.0,
+        1.0, 1.0, 1.0, 1.0,
+        1.0, 0.0, 1.0, 0.0
+    ], dtype=np.float32)
+
+    vao = glGenVertexArrays(1)
+    vbo = glGenBuffers(1)
+    glBindVertexArray(vao)
+    glBindBuffer(GL_ARRAY_BUFFER, vbo)
+    glBufferData(GL_ARRAY_BUFFER, verts.nbytes, verts, GL_STATIC_DRAW)
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 16, None)
+    glEnableVertexAttribArray(0)
+
+    projLoc = glGetUniformLocation(shaderProgram, "projection")
+    modelLoc = glGetUniformLocation(shaderProgram, "model")
     return sdl3.SDL_APP_CONTINUE
 
 @sdl3.SDL_AppEvent_func
@@ -299,22 +365,34 @@ def SDL_AppEvent(appstate, event):
 
 @sdl3.SDL_AppIterate_func
 def SDL_AppIterate(appstate):
-    sdl3.SDL_SetRenderDrawColor(renderer, 20, 20, 20, 255)
-    sdl3.SDL_RenderClear(renderer)
+    glClearColor(0.2, 0.2, 0.2, 1.0)
+    glClear(GL_COLOR_BUFFER_BIT)
 
-    width, height = ctypes.c_float(), ctypes.c_float()
-    sdl3.SDL_GetTextureSize(textTexture, ctypes.byref(width), ctypes.byref(height))
-    destRect = sdl3.SDL_FRect(50.0, 75.0, width.value, height.value)
-    
-    sdl3.SDL_RenderTexture(renderer, textTexture, None, destRect)
-    sdl3.SDL_RenderPresent(renderer)
+    glUseProgram(shaderProgram)
+    proj = glm.ortho(0.0, float(canvasWidth), float(canvasHeight), 0.0, -1.0, 1.0)
+    model = glm.translate(glm.mat4(1.0), glm.vec3(20.0, 100.0, 0.0))
+    model = glm.scale(model, glm.vec3(float(textW), float(textH), 1.0))
+
+    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm.value_ptr(proj))
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm.value_ptr(model))
+
+    glBindTexture(GL_TEXTURE_2D, textTexture)
+    glBindVertexArray(vao)
+    glDrawArrays(GL_TRIANGLES, 0, 6)
+
+    sdl3.SDL_GL_SwapWindow(window)
     return sdl3.SDL_APP_CONTINUE
 
 @sdl3.SDL_AppQuit_func
 def SDL_AppQuit(appstate, result):
-    global textTexture
-    sdl3.SDL_DestroyTexture(textTexture)
-    sdl3.TTF_Quit()</code></pre>
+    # Free GPU memory for the texture
+    if textTexture != 0:
+        glDeleteTextures(1, np.array([textTexture], dtype=np.uint32))
+
+    # Free other resources
+    sdl3.TTF_CloseFont(font)
+    sdl3.TTF_Quit()
+    sdl3.SDL_DestroyWindow(window)</code></pre>
 
     <h3 class="category-header">
         <span class="data-en">4. Running the Script</span>
@@ -326,7 +404,181 @@ def SDL_AppQuit(appstate, result):
 
     <pre><code class="language-bash">python main.py</code></pre>
 
-    <!-- H:\projects\opengl\pysdl3\ttf-pysdl3 -->
+    <h3 class="category-header">
+        <span class="data-en">5. Dynamic Rendering (The Game Loop)</span>
+        <span class="data-ru">5. Динамический рендеринг (Игровой цикл)</span>
+    </h3>
+
+    <p class="data-en">In real-world applications, you often need to update UI elements like score counters. Since OpenGL textures are static once uploaded to the GPU, you must regenerate the texture whenever the text content changes.</p>
+    <p class="data-ru">В реальных приложениях часто требуется обновлять элементы интерфейса, такие как счетчики очков. Поскольку текстуры OpenGL статичны после загрузки в GPU, необходимо пересоздавать текстуру каждый раз, когда меняется содержимое текста.</p>
+
+    <p class="data-en"><strong>Important:</strong> Always call <code>glDeleteTextures</code> before generating a new texture to prevent GPU memory leaks.</p>
+    <p class="data-ru"><strong>Важно:</strong> Всегда вызывайте <code>glDeleteTextures</code> перед созданием новой текстуры, чтобы избежать утечек памяти GPU.</p>
+
+    <p class="data-en">You can implement a timer within <code>SDL_AppIterate</code> to update your UI dynamically:</p>
+    <p class="data-ru">Вы можете реализовать таймер внутри <code>SDL_AppIterate</code> для динамического обновления интерфейса:</p>
+
+    <pre><code class="language-python">import ctypes
+import os
+import time
+
+import glm
+import numpy as np
+from OpenGL.GL import *
+from OpenGL.GL.shaders import *
+
+os.environ["SDL_MAIN_USE_CALLBACKS"] = "1"
+os.environ["SDL_RENDER_DRIVER"] = "opengl"
+import sdl3
+
+# Global state
+window, glContext, font, textTexture = None, None, None, 0
+textW, textH = 0, 0
+shaderProgram, vao, vbo = 0, 0, 0
+projLoc, modelLoc = 0, 0
+canvasWidth, canvasHeight = 430, 430
+
+# Counter state
+coins = 0
+last_time = 0
+
+def update_text_texture(text_string):
+    global textTexture, textW, textH
+    color = sdl3.SDL_Color(170, 255, 195, 255)
+    surf = sdl3.TTF_RenderText_Blended_Wrapped(font, text_string.encode('utf-8'), 0, color, 0)
+    conv = sdl3.SDL_ConvertSurface(surf, sdl3.SDL_PIXELFORMAT_RGBA32)
+    
+    # Delete old texture before creating new one
+    if textTexture != 0:
+        glDeleteTextures(1, np.array([textTexture], dtype=np.uint32))
+        
+    textW, textH = conv.contents.w, conv.contents.h
+    textTexture = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D, textTexture)
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+    
+    data_size = textW * textH * 4
+    pixel_pointer = ctypes.cast(conv.contents.pixels, ctypes.POINTER(ctypes.c_ubyte * data_size))
+    
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textW, textH, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixel_pointer.contents)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+    
+    sdl3.SDL_DestroySurface(surf)
+    sdl3.SDL_DestroySurface(conv)
+
+@sdl3.SDL_AppInit_func
+def SDL_AppInit(appstate, argc, argv):
+    global window, glContext, font, shaderProgram, vao, vbo, projLoc, modelLoc, last_time
+
+    if not sdl3.SDL_Init(sdl3.SDL_INIT_VIDEO): return sdl3.SDL_APP_FAILURE
+    if not sdl3.TTF_Init(): return sdl3.SDL_APP_FAILURE
+    
+    sdl3.SDL_GL_SetAttribute(sdl3.SDL_GL_CONTEXT_PROFILE_MASK, sdl3.SDL_GL_CONTEXT_PROFILE_CORE)
+    sdl3.SDL_GL_SetAttribute(sdl3.SDL_GL_CONTEXT_MAJOR_VERSION, 3)
+    sdl3.SDL_GL_SetAttribute(sdl3.SDL_GL_CONTEXT_MINOR_VERSION, 3)
+
+    window = sdl3.SDL_CreateWindow(b"SDL3_ttf OpenGL", canvasWidth, canvasHeight, sdl3.SDL_WINDOW_OPENGL)
+    glContext = sdl3.SDL_GL_CreateContext(window)
+    sdl3.SDL_GL_SetSwapInterval(1)
+
+    # Shaders
+    vs = compileShader(b"""#version 330 core
+        layout (location = 0) in vec4 aVertex;
+        uniform mat4 projection;
+        uniform mat4 model;
+        out vec2 vTexCoord;
+        void main() {
+            gl_Position = projection * model * vec4(aVertex.xy, 0.0, 1.0);
+            vTexCoord = aVertex.zw;
+        }""", GL_VERTEX_SHADER)
+    
+    fs = compileShader(b"""#version 330 core
+        precision mediump float;
+        in vec2 vTexCoord;
+        out vec4 fragColor;
+        uniform sampler2D textSampler;
+        void main() { fragColor = texture(textSampler, vTexCoord); }""", GL_FRAGMENT_SHADER)
+    
+    shaderProgram = compileProgram(vs, fs)
+    
+    # Enable Blending (CRITICAL for text)
+    glEnable(GL_BLEND)
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+    font = sdl3.TTF_OpenFont(b"assets/fonts/LiberationSans-Regular.ttf", 36)
+    last_time = time.time()
+    update_text_texture("Coins: 0\nМонеты: 0")
+    
+    # Unit Quad Setup
+    verts = np.array([
+        0.0, 1.0, 0.0, 1.0,
+        1.0, 0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0, 1.0,
+        1.0, 1.0, 1.0, 1.0,
+        1.0, 0.0, 1.0, 0.0
+    ], dtype=np.float32)
+
+    vao = glGenVertexArrays(1)
+    vbo = glGenBuffers(1)
+    glBindVertexArray(vao)
+    glBindBuffer(GL_ARRAY_BUFFER, vbo)
+    glBufferData(GL_ARRAY_BUFFER, verts.nbytes, verts, GL_STATIC_DRAW)
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 16, None)
+    glEnableVertexAttribArray(0)
+
+    projLoc = glGetUniformLocation(shaderProgram, "projection")
+    modelLoc = glGetUniformLocation(shaderProgram, "model")
+    
+    return sdl3.SDL_APP_CONTINUE
+
+@sdl3.SDL_AppEvent_func
+def SDL_AppEvent(appstate, event):
+    if sdl3.SDL_DEREFERENCE(event).type == sdl3.SDL_EVENT_QUIT:
+        return sdl3.SDL_APP_SUCCESS
+    return sdl3.SDL_APP_CONTINUE
+
+@sdl3.SDL_AppIterate_func
+def SDL_AppIterate(appstate):
+    global coins, last_time
+
+    current_time = time.time()
+    if current_time - last_time >= 1.0:
+        coins += 1
+        last_time = current_time
+        update_text_texture(f"Coins: {coins}\nМонеты: {coins}")
+
+    glClearColor(0.2, 0.2, 0.2, 1.0)
+    glClear(GL_COLOR_BUFFER_BIT)
+
+    glUseProgram(shaderProgram)
+    proj = glm.ortho(0.0, float(canvasWidth), float(canvasHeight), 0.0, -1.0, 1.0)
+    model = glm.translate(glm.mat4(1.0), glm.vec3(20.0, 100.0, 0.0))
+    model = glm.scale(model, glm.vec3(float(textW), float(textH), 1.0))
+
+    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm.value_ptr(proj))
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm.value_ptr(model))
+
+    glBindTexture(GL_TEXTURE_2D, textTexture)
+    glBindVertexArray(vao)
+    glDrawArrays(GL_TRIANGLES, 0, 6)
+
+    sdl3.SDL_GL_SwapWindow(window)
+
+    return sdl3.SDL_APP_CONTINUE
+
+@sdl3.SDL_AppQuit_func
+def SDL_AppQuit(appstate, result):
+    # Free resources
+    sdl3.TTF_CloseFont(font)
+    sdl3.TTF_Quit()
+    sdl3.SDL_DestroyWindow(window)</code></pre>
+
+    <p class="data-en">Run the script via your terminal:</p>
+    <p class="data-ru">Запустите скрипт через терминал:</p>
+
+    <pre><code class="language-bash">python main.py</code></pre>
 </div>
 
         
@@ -479,6 +731,24 @@ function copyToClipboard(text, button) {
         <block>
             <script src="/libs/prism/1.30.0/components/prism-python.min.js"></script>
         </block>
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
         
     </block>
     
