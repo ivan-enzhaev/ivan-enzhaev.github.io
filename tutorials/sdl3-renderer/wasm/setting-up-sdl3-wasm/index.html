@@ -214,13 +214,17 @@
             <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed the <a href="/tutorials/tools/wasm/wasm-env/" target="_blank" rel="noopener noreferrer">Emscripten Setup Guide</a>.</span>
             <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/wasm/wasm-env/" target="_blank" rel="noopener noreferrer">руководства по настройке Emscripten</a>.</span>
         </li>
-        <li>
+        <!-- <li>
             <span class="data-en">Download my pre-built SDL 3.4.4 lib for <b>emsdk 4.0.15</b>: <a href="/libs/wasm/sdl3/SDL3-devel-3.4.4-wasm.zip">SDL3-devel-3.4.4-wasm.zip</a>. Extract the archive to <code>C:/libs/SDL3-devel-3.4.4-wasm</code></span>
             <span class="data-ru">Скачайте мою готовую сборку SDL 3.4.4 для <b>emsdk 4.0.15</b>: <a href="/libs/wasm/sdl3/SDL3-devel-3.4.4-wasm.zip">SDL3-devel-3.4.4-wasm.zip</a>. Распакуйте архив в <code>C:/libs/SDL3-devel-3.4.4-wasm</code></span>
-        </li>
-        <li>
+        </li> -->
+        <!-- <li>
             <span class="data-en">Alternatively, you can build it yourself following my guide: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/">Building SDL3 for WebAssembly</a>.</span>
             <span class="data-ru">Или же вы можете собрать её самостоятельно по моей инструкции: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/">Building SDL3 for WebAssembly</a>.</span>
+        </li> -->
+        <li>
+            <span class="data-en">Build SDL3 yourself following my guide: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/" target="_blank" rel="noopener noreferrer">Building SDL3 for WebAssembly</a>.</span>
+            <span class="data-ru">Соберите SDL3 самостоятельно по моей инструкции: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/" target="_blank" rel="noopener noreferrer">Building SDL3 for WebAssembly</a>.</span>
         </li>
     </ul>
 
@@ -243,7 +247,9 @@
     <div class="row">
         <div class="col-lg-6 mb-4">
             <h6 class="fw-bold text-primary">CMakeLists.txt (C version)</h6>
-            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+            <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+
+cmake_minimum_required(VERSION 3.21)
 project(rectangles-sdl3)
 
 # Set the C standard
@@ -252,7 +258,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 # Specify the exact location of the library configuration files
 # The variable name must strictly match: LibraryName_DIR
-set(SDL3_DIR "C:/libs/SDL3-devel-3.4.4-wasm/lib/cmake/SDL3")
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.10-wasm/lib/cmake/SDL3")
 
 # Check for the presence of the library in the system
 # If it is not found, CMake will abort the configuration with an error
@@ -276,7 +282,9 @@ target_link_libraries(app PRIVATE SDL3::SDL3)
 
         <div class="col-lg-6 mb-4">
             <h6 class="fw-bold text-success">CMakeLists.txt (C++ version)</h6>
-            <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+            <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+
+cmake_minimum_required(VERSION 3.21)
 project(rectangles-sdl3)
 
 # Set the C++ standard
@@ -285,7 +293,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Specify the exact location of the library configuration files
 # The variable name must strictly match: LibraryName_DIR
-set(SDL3_DIR "C:/libs/SDL3-devel-3.4.4-wasm/lib/cmake/SDL3")
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.10-wasm/lib/cmake/SDL3")
 
 # Check for the presence of the library in the system
 # If it is not found, CMake will abort the configuration with an error
@@ -412,11 +420,21 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
         <span class="data-en">4. Automation Scripts (.bat)</span>
         <span class="data-ru">4. Скрипты автоматизации (.bat)</span>
     </h3>
+
+    <!-- <p>
+        <span class="data-en"><em>Batch files automate repetitive tasks. Run these from your terminal to configure and package your project.</em></span>
+        <span class="data-ru"><em>Файлы .bat автоматизируют повторяющиеся задачи. Запускайте их из терминала для настройки и упаковки проекта.</em></span>
+    </p> -->
+
+    <p>
+        <span class="data-en">Batch files automate repetitive tasks. Run these from your terminal to configure and package your project.</span>
+        <span class="data-ru">Файлы .bat автоматизируют повторяющиеся задачи. Запускайте их из терминала для настройки и упаковки проекта.</span>
+    </p>
+
     <div class="row">
         <div class="col-md-6">
             <h6>config-wasm.bat</h6>
-            <pre><code class="language-bash">emcmake cmake -S . -B dist/web ^
--DCMAKE_BUILD_TYPE=Debug
+            <pre><code class="language-bash">emcmake cmake -S . -B dist/web
 </code></pre>
         </div>
         <div class="col-md-6">
@@ -428,8 +446,7 @@ cd ..\..
 mkdir public\js
 set current_dir=%~dp0
 copy "%current_dir%dist\web\app.wasm" "%current_dir%public\js"
-copy "%current_dir%dist\web\app.js" "%current_dir%public\js"
-</code></pre>
+copy "%current_dir%dist\web\app.js" "%current_dir%public\js"</code></pre>
         </div>
     </div>
 
@@ -447,10 +464,28 @@ config-wasm
 # Build
 build-wasm</code></pre>
 
-    <pre><code class="language-bash">http-server -c-1</code></pre>
+    <!-- <pre><code class="language-bash">http-server -c-1</code></pre>
     <div class="alert alert-info">
-        <span class="data-en">Open <strong>localhost:8080</strong> and check the browser console (F12) to see the output.</span>
-        <span class="data-ru">Откройте <strong>localhost:8080</strong> и проверьте консоль браузера (F12), чтобы увидеть результат.</span>
+        <span class="data-en">Open <strong>localhost:8080</strong></span> -->
+        <!-- and check the browser console (F12) to see the output. -->
+        <!-- <span class="data-ru">Откройте <strong>localhost:8080</strong></span> -->
+        <!--  и проверьте консоль браузера (F12), чтобы увидеть результат. -->
+    <!-- </div> -->
+
+    <p>
+        <span class="data-en">Now, start your local server:</span>
+        <span class="data-ru">Теперь запустите локальный сервер:</span>
+    </p>
+
+    <pre><code class="language-bash"># Option 1: Using Node.js (http-server)
+http-server -c-1
+
+# Option 2: Using Python
+python -m http.server 8080</code></pre>
+
+    <div class="alert alert-info">
+        <span class="data-en">Open <strong>localhost:8080</strong> in your browser and check the console (F12 or Ctrl+Shift+J) to see the output.</span>
+        <span class="data-ru">Откройте <strong>localhost:8080</strong> в браузере и проверьте консоль (F12 или Ctrl+Shift+J), чтобы увидеть результат.</span>
     </div>
 
     <!-- <div class="alert alert-info mt-5">
@@ -466,6 +501,31 @@ build-wasm</code></pre>
             </a>
         </div>
     </div> -->
+
+    <h3 class="category-header mt-5">
+        <span class="data-en">6. Source Code & Downloads</span>
+        <span class="data-ru">6. Исходный код и загрузки</span>
+    </h3>
+    <p class="mt-3">
+        <span class="data-en">You can download the complete configured project as a ZIP archive or explore the source code directly on GitHub:</span>
+        <span class="data-ru">Вы можете скачать готовую настроенную сборку проекта в виде ZIP-архива или изучить исходный код прямо на GitHub:</span>
+    </p>
+
+    <div class="d-flex flex-wrap gap-3 my-4">
+        <!-- GitHub Link -->
+        <!-- <a href="https://github.com/ivan-enzhaev/triangle-sdl3-opengl-mingw-c" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark d-inline-flex align-items-center">
+            <i class="fab fa-github me-2"></i>
+            <span class="data-en">View on GitHub</span>
+            <span class="data-ru">Открыть на GitHub</span>
+        </a> -->
+        
+        <!-- Direct Download Link -->
+        <a href="/assets/img/tutorials/sdl3-renderer/wasm/setting-up-sdl3-wasm/rectangles-sdl3.zip" download class="btn btn-primary d-inline-flex align-items-center">
+            <i class="fas fa-file-archive me-2"></i>
+            <span class="data-en">Download ZIP Archive</span>
+            <span class="data-ru">Скачать ZIP-архив</span>
+        </a>
+    </div>
 </div>
 
         
@@ -491,15 +551,18 @@ build-wasm</code></pre>
                     <div class="mb-3 text-success">
                         <i class="bi bi-bank" style="font-size: 2rem;"></i>
                     </div>
-                    <h4 class="fw-bold">Sberbank</h4>
+                    <h4 class="fw-bold">
+                        <span class="data-en">Sberbank (Russia only)</span>
+                        <span class="data-ru">Сбербанк (только для РФ)</span>
+                    </h4>
 
                     <div class="mb-3">
                         <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
                     </div>
 
                     <p class="text-muted small">
-                        <span class="data-en">Direct transfer via phone number</span>
-                        <span class="data-ru">Перевод по номеру телефона</span>
+                        <span class="data-en">Direct transfer via phone number (Russia only)</span>
+                        <span class="data-ru">Перевод по номеру телефона (только для РФ)</span>
                     </p>
                     <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
                         +7 (917) 212-29-59
@@ -518,10 +581,10 @@ build-wasm</code></pre>
                     <div class="mb-3 text-warning">
                         <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
                     </div>
-                    <h4 class="fw-bold">Bybit (USDT TRC20)</h4>
+                    <h4 class="fw-bold">USDT TRC20</h4>
 
                     <div class="mb-3">
-                        <img src="/assets/img/bybit-qr.png" alt="Bybit USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                        <img src="/assets/img/bybit-qr.png" alt="USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
                     </div>
 
                     <p class="text-muted small">
@@ -619,6 +682,8 @@ function copyToClipboard(text, button) {
         
 
         
+
+        
     </block>
     
     <block>
@@ -629,6 +694,8 @@ function copyToClipboard(text, button) {
             <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
             <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
         </block>
+        
+
         
 
         
@@ -656,6 +723,8 @@ function copyToClipboard(text, button) {
         
 
         
+
+        
     </block>
     
     <block>
@@ -667,6 +736,8 @@ function copyToClipboard(text, button) {
         <block>
             <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
         </block>
+        
+
         
 
         

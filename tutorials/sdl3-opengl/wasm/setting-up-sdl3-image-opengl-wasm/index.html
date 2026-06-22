@@ -7,7 +7,7 @@
 
 <title>
   
-    Setting up SDL3_image with OpenGL ES 3.0 (MinGW)
+    Setting up SDL3_image with OpenGL ES 3.0 (Wasm)
   
   | Ivan Enzhaev
 </title>
@@ -195,132 +195,53 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">SDL3 & GLES 3.0: Texture Loading with SDL3_image</span>
-            <span class="data-ru">SDL3 и GLES 3.0: Загрузка текстур с помощью SDL3_image</span>
+            <span class="data-en">SDL3 & GLES 3.0: WebAssembly Texture Loading with SDL3_image</span>
+            <span class="data-ru">SDL3 и GLES 3.0: Загрузка текстур в WebAssembly с помощью SDL3_image</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to loading image files into GPU memory as modern OpenGL textures within the SDL3 callback system.</span>
-            <span class="data-ru">Руководство по загрузке файлов изображений в память GPU как текстур OpenGL в современной системе обратных вызовов SDL3.</span>
+            <span class="data-en">A guide to loading image files into GPU memory using SDL3_image and OpenGL ES 3.0 for browser deployment.</span>
+            <span class="data-ru">Руководство по загрузке файлов изображений в память GPU с помощью SDL3_image и OpenGL ES 3.0 для запуска в браузере.</span>
         </p>
     </header>
 
-    <!-- <div class="alert alert-primary">
-        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have SDL3, SDL3_image, and GLAD configured. See your local compiler directory references.</span>
-        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что у вас настроены SDL3, SDL3_image и GLAD. См. пути к вашим локальным компиляторам.</span>
-    </div> -->
+    <div class="alert alert-primary">
+        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed the <a href="/tutorials/tools/wasm/wasm-env/" target="_blank" rel="noopener noreferrer">Emscripten Setup Guide</a></span>
+        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/wasm/wasm-env/" target="_blank" rel="noopener noreferrer">руководства по настройке Emscripten</a></span>
+    </div>
 
-    <!-- <div class="alert alert-primary">
-        <span class="data-en">
-            <strong>Prerequisite:</strong> Ensure you have SDL3, SDL3_image, and GLAD configured. 
-            See <a href="/tutorials/sdl3-opengles3/mingw/setting-up-sdl3-opengles3-mingw/" class="alert-link">your local compiler directory references</a>.
-        </span>
-        <span class="data-ru">
-            <strong>Предварительное условие:</strong> Убедитесь, что у вас настроены SDL3, SDL3_image и GLAD. 
-            См. <a href="/tutorials/sdl3-opengles3/mingw/setting-up-sdl3-opengles3-mingw/" class="alert-link">пути к вашим локальным компиляторам</a>.
-        </span>
-    </div> -->
-
-    <!-- <ul class="mb-4">
+    <h3 class="category-header">
+        <span class="data-en">1. Obtain SDL3 and SDL3_image for Wasm</span>
+        <span class="data-ru">1. Получение SDL3 и SDL3_image для Wasm</span>
+    </h3>
+    <ul>
         <li>
-            <span class="data-en">
-                <strong>Prerequisite:</strong> Ensure you have SDL3, SDL3_image, and GLAD configured. 
-                See <a href="/tutorials/sdl3-opengles3/mingw/setting-up-sdl3-opengles3-mingw/">your local compiler directory references</a>.
-            </span>
-            <span class="data-ru">
-                <strong>Предварительное условие:</strong> Убедитесь, что у вас настроены SDL3, SDL3_image и GLAD. 
-                См. <a href="/tutorials/sdl3-opengles3/mingw/setting-up-sdl3-opengles3-mingw/">пути к вашим локальным компиляторам</a>.
-            </span>
+            <span class="data-en">First, build SDL3 for your Wasm environment: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/" target="_blank" rel="noopener noreferrer">Building SDL3 for WebAssembly</a>.</span>
+            <span class="data-ru">Сначала соберите SDL3 для вашей Wasm-среды: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/" target="_blank" rel="noopener noreferrer">Сборка SDL3 для WebAssembly</a>.</span>
         </li>
-    </ul> -->
-
-    <!-- <ul class="list-unstyled mb-4">
-        <li class="mb-3">
-            <h3 class="category-header m-0">
-                <span class="data-en">1. Obtain SDL3 and GLAD</span>
-                <span class="data-ru">1. Получение SDL3 и GLAD</span>
-            </h3>
-            <span class="data-en text-muted d-block mt-1">
-                Follow the guide to install and configure SDL3 and GLAD using CMake: 
-                <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3-mingw/">Setting up SDL3 with find_package (MinGW)</a>.
-            </span>
-            <span class="data-ru text-muted d-block mt-1">
-                Следуйте руководству по установке и настройке SDL3 и GLAD с помощью CMake: 
-                <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3-mingw/">Настройка SDL3 с помощью find_package (MinGW)</a>.
-            </span>
-        </li>
-
-        <li class="mb-4">
-            <h3 class="category-header m-0">
-                <span class="data-en">2. Obtain SDL3_image</span>
-                <span class="data-ru">2. Получение SDL3_image</span>
-            </h3>
-            <span class="data-en text-muted d-block mt-1">
-                Follow the guide to set up SDL3_image for loading textures: 
-                <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3-image-mingw/">Setting up SDL3_image with find_package (MinGW)</a>.
-            </span>
-            <span class="data-ru text-muted d-block mt-1">
-                Следуйте руководству по настройке SDL3_image для загрузки текстур: 
-                <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3-image-mingw/">Настройка SDL3_image с помощью find_package (MinGW)</a>.
-            </span>
-        </li>
-    </ul> -->
-
-    <ul class="list-unstyled mb-4">
-        <li class="mb-3">
-            <h3 class="category-header m-0">
-                <span class="data-en">1. Obtain SDL3 and GLAD</span>
-                <span class="data-ru">1. Получение SDL3 и GLAD</span>
-            </h3>
-            <!-- Wrapped in a div to force a new line without breaking CSS language rules -->
-            <div class="text-muted mt-1">
-                <span class="data-en">
-                    Follow the guide to install and configure SDL3 and GLAD using CMake: 
-                    <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3-mingw/" target="_blank" rel="noopener noreferrer">Setting up SDL3 with find_package (MinGW)</a>.
-                </span>
-                <span class="data-ru">
-                    Следуйте руководству по установке и настройке SDL3 и GLAD с помощью CMake: 
-                    <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3-mingw/" target="_blank" rel="noopener noreferrer">Настройка SDL3 с помощью find_package (MinGW)</a>.
-                </span>
-            </div>
-        </li>
-
-        <li class="mb-4">
-            <h3 class="category-header m-0">
-                <span class="data-en">2. Obtain SDL3_image</span>
-                <span class="data-ru">2. Получение SDL3_image</span>
-            </h3>
-            <div class="text-muted mt-1">
-                <span class="data-en">
-                    Follow the guide to set up SDL3_image for loading textures: 
-                    <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3-image-mingw/" target="_blank" rel="noopener noreferrer">Setting up SDL3_image with find_package (MinGW)</a>.
-                </span>
-                <span class="data-ru">
-                    Следуйте руководству по настройке SDL3_image для загрузки текстур: 
-                    <a href="/tutorials/sdl3-renderer/mingw/setting-up-sdl3-image-mingw/" target="_blank" rel="noopener noreferrer">Настройка SDL3_image с помощью find_package (MinGW)</a>.
-                </span>
-            </div>
+        <li>
+            <span class="data-en">Next, build SDL3_image using the library you just created: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-image-wasm/" target="_blank" rel="noopener noreferrer">Building SDL3_image for WebAssembly</a>.</span>
+            <span class="data-ru">Затем соберите SDL3_image, используя библиотеку, которую вы только что создали: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-image-wasm/" target="_blank" rel="noopener noreferrer">Сборка SDL3_image для WebAssembly</a>.</span>
         </li>
     </ul>
 
-    <!-- <h3 class="category-header">
-        <span class="data-en">1. Project Directory Structure</span>
-        <span class="data-ru">1. Структура директории проекта</span>
+    <h3 class="category-header">
+        <span class="data-en">2. Obtain zlib and libpng for Wasm</span>
+        <span class="data-ru">2. Получение zlib и libpng для Wasm</span>
     </h3>
-
-    <div class="mb-4">
-        <p class="data-en"><strong>C++ Project:</strong> Create an empty folder named <code>texture-gles3-sdl3-cpp</code> and organize it as follows:</p>
-        <p class="data-ru"><strong>Проект на C++:</strong> Создайте пустую папку с именем <code>texture-gles3-sdl3-cpp</code> и организуйте её следующим образом:</p>
-        <pre><code>texture-gles3-sdl3-cpp/
-├── CMakeLists.txt
-├── assets/images/
-│   └── right-arrow.png
-└── src/
-    └── main.cpp</code></pre>
-    </div> -->
+    <ul>
+        <li>
+            <span class="data-en">Build zlib from source: <a href="/tutorials/tools/wasm/building-zlib-wasm/" target="_blank" rel="noopener noreferrer">Building zlib for WebAssembly</a>.</span>
+            <span class="data-ru">Соберите zlib из исходников: <a href="/tutorials/tools/wasm/building-zlib-wasm/" target="_blank" rel="noopener noreferrer">Сборка zlib для WebAssembly</a>.</span>
+        </li>
+        <li>
+            <span class="data-en">Build libpng from source: <a href="/tutorials/tools/wasm/building-libpng-wasm/" target="_blank" rel="noopener noreferrer">Building libpng for WebAssembly</a>.</span>
+            <span class="data-ru">Соберите libpng из исходников: <a href="/tutorials/tools/wasm/building-libpng-wasm/" target="_blank" rel="noopener noreferrer">Сборка libpng для WebAssembly</a>.</span>
+        </li>
+    </ul>
 
     <h3 class="category-header">
-        <span class="data-en">3. Project Structure and Assets</span>
-        <span class="data-ru">3. Структура проекта и ресурсы</span>
+        <span class="data-en">3. Assets</span>
+        <span class="data-ru">3. Ресурсы</span>
     </h3>
 
     <div class="mb-4">
@@ -340,61 +261,28 @@
         </ul>
     </div>
 
-    <!-- <div class="mb-4">
-        <h6 class="fw-bold text-success">CMakeLists.txt</h6>
-        <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
-cmake_minimum_required(VERSION 3.21)
-project(texture-gles3-sdl3-cpp)
-
-set(SDL3_DIR "C:/libs/SDL3-devel-3.4.8-mingw/lib/cmake/SDL3")
-set(SDL3_image_DIR "C:/libs/SDL3_image-devel-3.4.4-mingw/lib/cmake/SDL3_image")
-
-find_package(SDL3 REQUIRED)
-find_package(SDL3_image REQUIRED)
-
-add_executable(app)
-
-target_include_directories(app PRIVATE "C:/libs/glad-0.1.36/gles-3.0/include")
-
-target_sources(app
-PRIVATE
-    src/main.cpp
-    "C:/libs/glad-0.1.36/gles-3.0/src/glad.c"
-)
-
-# Copy the assets folder to the dist folder
-if(EXISTS "${CMAKE_SOURCE_DIR}/assets")
-    add_custom_command(TARGET app POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-                "${CMAKE_SOURCE_DIR}/assets"
-                "$&lt;TARGET_FILE_DIR:app&gt;/assets"
-        COMMENT "Copying assets directory"
-    )
-endif()
-
-target_link_libraries(app PRIVATE SDL3_image::SDL3_image SDL3::SDL3)
-target_link_options(app PRIVATE -mconsole)</code></pre>
-    </div> -->
-
-
     <div class="row">
         <div class="col-lg-6 mb-4">
-            <p class="data-en"><strong>C Project:</strong> Create an empty folder named <code>texture-gles3-sdl3-c</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.c</code> files:</p>
-            <p class="data-ru"><strong>Проект на C:</strong> Создайте пустую папку с именем <code>texture-gles3-sdl3-c</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.c</code>:</p>
-            <pre><code>texture-gles3-sdl3-c/
+            <p class="data-en"><strong>C Project:</strong> Create an empty folder named <code>sdl3-image-opengl-wasm-c</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.c</code> files:</p>
+            <p class="data-ru"><strong>Проект на C:</strong> Создайте пустую папку с именем <code>sdl3-image-opengl-wasm-c</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.c</code>:</p>
+            <pre><code>sdl3-image-opengl-wasm-c/
 ├── CMakeLists.txt
 ├── assets/images/
 │   └── right-arrow.png
+│── public/
+│   └── index.html
 └── src/
     └── main.c</code></pre>
         </div>
         <div class="col-lg-6 mb-4">
-            <p class="data-en"><strong>C++ Project:</strong> Create an empty folder named <code>texture-gles3-sdl3-cpp</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.cpp</code> files:</p>
-            <p class="data-ru"><strong>Проект на C++:</strong> Создайте пустую папку с именем <code>texture-gles3-sdl3-cpp</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.cpp</code>:</p>
-            <pre><code>texture-gles3-sdl3-cpp/
+            <p class="data-en"><strong>C++ Project:</strong> Create an empty folder named <code>sdl3-image-opengl-wasm-c</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.cpp</code> files:</p>
+            <p class="data-ru"><strong>Проект на C++:</strong> Создайте пустую папку с именем <code>sdl3-image-opengl-wasm-c</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.cpp</code>:</p>
+            <pre><code>sdl3-image-opengl-wasm-c/
 ├── CMakeLists.txt
 ├── assets/images/
 │   └── right-arrow.png
+│── public/
+│   └── index.html
 └── src/
     └── main.cpp</code></pre>
         </div>
@@ -410,136 +298,220 @@ target_link_options(app PRIVATE -mconsole)</code></pre>
             <p class="data-en"><strong>C Project:</strong> Copy and paste the following code into the <code>CMakeLists.txt</code> file:</p>
             <p class="data-ru"><strong>Проект на C:</strong> Скопируйте и вставьте следующее содержимое в файл <code>CMakeLists.txt</code>:</p>
                 <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+
 cmake_minimum_required(VERSION 3.21)
-project(image-sdl3-c)
+project(sdl3-image-opengl-wasm-c)
 
-set(SDL3_DIR "C:/libs/SDL3-devel-3.4.8-mingw/lib/cmake/SDL3")
-set(SDL3_image_DIR "C:/libs/SDL3_image-devel-3.4.4-mingw/lib/cmake/SDL3_image")
+# Set the C standard
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.10-wasm/lib/cmake/SDL3")
+set(SDL3_image_DIR "C:/libs/SDL3_image-devel-3.4.4-wasm/lib/cmake/SDL3_image")
+
+set(ZLIB_INCLUDE_DIR "C:/libs/zlib-1.3.2-wasm/include")
+set(ZLIB_LIBRARY "C:/libs/zlib-1.3.2-wasm/lib/libzs.a")
+
+set(PNG_PNG_INCLUDE_DIR "C:/libs/libpng-1.6.58-wasm/include")
+set(PNG_LIBRARY "C:/libs/libpng-1.6.58-wasm/lib/libpng.a")
+
+find_package(ZLIB REQUIRED)
+find_package(PNG REQUIRED)
 find_package(SDL3 REQUIRED)
 find_package(SDL3_image REQUIRED)
 
 add_executable(app)
 
-target_include_directories(app PRIVATE "C:/libs/glad-0.1.36/gles-3.0/include")
-
+# Add source code to the project
 target_sources(app
-PRIVATE
+    PRIVATE
     src/main.c
-    "C:/libs/glad-0.1.36/gles-3.0/src/glad.c"
 )
 
-# Copy the assets folder to the dist folder
-if(EXISTS "${CMAKE_SOURCE_DIR}/assets")
-    add_custom_command(TARGET app POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-                "${CMAKE_SOURCE_DIR}/assets"
-                "$&lt;TARGET_FILE_DIR:app&gt;/assets"
-        COMMENT "Copying assets directory"
-    )
-endif()
+# Emscripten Linker Options for WebGL 2.0 / OpenGL ES 3.0
+target_link_options(app PRIVATE 
+    "-sUSE_SDL=0"
+    "-sMAX_WEBGL_VERSION=2"
+    "-sMIN_WEBGL_VERSION=2"
+    "-sFULL_ES3=1"
+    "SHELL:--embed-file ${CMAKE_CURRENT_SOURCE_DIR}/assets/images/right-arrow.png@/assets/images/right-arrow.png"
+)
 
-target_link_libraries(app PRIVATE SDL3_image::SDL3_image SDL3::SDL3)
-target_link_options(app PRIVATE -mconsole)</code></pre>
+target_link_libraries(app PRIVATE
+    SDL3_image::SDL3_image
+    SDL3::SDL3
+)</code></pre>
         </div>
         <div class="col-lg-6 mb-4">
             <p class="data-en"><strong>C++ Project:</strong> Copy and paste the following code into the <code>CMakeLists.txt</code> file:</p>
             <p class="data-ru"><strong>Проект на C++:</strong> Скопируйте и вставьте следующее содержимое в файл <code>CMakeLists.txt</code>:</p>
                 <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+
 cmake_minimum_required(VERSION 3.21)
-project(image-sdl3-cpp)
+project(sdl3-image-opengl-wasm-cpp)
 
-set(SDL3_DIR "C:/libs/SDL3-devel-3.4.8-mingw/lib/cmake/SDL3")
-set(SDL3_image_DIR "C:/libs/SDL3_image-devel-3.4.4-mingw/lib/cmake/SDL3_image")
+# Set the C++ standard
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(SDL3_DIR "C:/libs/SDL3-devel-3.4.10-wasm/lib/cmake/SDL3")
+set(SDL3_image_DIR "C:/libs/SDL3_image-devel-3.4.4-wasm/lib/cmake/SDL3_image")
+
+set(ZLIB_INCLUDE_DIR "C:/libs/zlib-1.3.2-wasm/include")
+set(ZLIB_LIBRARY "C:/libs/zlib-1.3.2-wasm/lib/libzs.a")
+
+set(PNG_PNG_INCLUDE_DIR "C:/libs/libpng-1.6.58-wasm/include")
+set(PNG_LIBRARY "C:/libs/libpng-1.6.58-wasm/lib/libpng.a")
+
+find_package(ZLIB REQUIRED)
+find_package(PNG REQUIRED)
 find_package(SDL3 REQUIRED)
 find_package(SDL3_image REQUIRED)
 
 add_executable(app)
 
-target_include_directories(app PRIVATE "C:/libs/glad-0.1.36/gles-3.0/include")
-
+# Add source code to the project
 target_sources(app
-PRIVATE
+    PRIVATE
     src/main.cpp
-    "C:/libs/glad-0.1.36/gles-3.0/src/glad.c"
 )
 
-# Copy the assets folder to the dist folder
-if(EXISTS "${CMAKE_SOURCE_DIR}/assets")
-    add_custom_command(TARGET app POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-                "${CMAKE_SOURCE_DIR}/assets"
-                "$&lt;TARGET_FILE_DIR:app&gt;/assets"
-        COMMENT "Copying assets directory"
-    )
-endif()
+# Emscripten Linker Options for WebGL 2.0 / OpenGL ES 3.0
+target_link_options(app PRIVATE 
+    "-sUSE_SDL=0"
+    "-sMAX_WEBGL_VERSION=2"
+    "-sMIN_WEBGL_VERSION=2"
+    "-sFULL_ES3=1"
+    "SHELL:--embed-file ${CMAKE_CURRENT_SOURCE_DIR}/assets/images/right-arrow.png@/assets/images/right-arrow.png"
+)
 
-target_link_libraries(app PRIVATE SDL3_image::SDL3_image SDL3::SDL3)
-target_link_options(app PRIVATE -mconsole)</code></pre>
+target_link_libraries(app PRIVATE
+    SDL3_image::SDL3_image
+    SDL3::SDL3
+)</code></pre>
         </div>
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">5. Source Code (GLES 3.0 Texture Mapping)</span>
-        <span class="data-ru">5. Исходный код (Текстурирование в GLES 3.0)</span>
+        <span class="data-en">5. Source Code</span>
+        <span class="data-ru">5. Исходный код</span>
     </h3>
 
-    <p class="data-en">Copy and paste the following code into the <code>src/main.c</code> (or <code>src/main.cpp</code>) file:</p>
-    <p class="data-ru">Скопируйте и вставьте следующее содержимое в файл <code>src/main.c</code> (или <code>src/main.cpp</code>):
+    <h6 class="fw-bold text-primary"><code>src/main.c</code> (or <code>src/main.cpp</code>):</h6>
 
-    <!-- <h6 class="fw-bold text-primary">main.c / main.cpp</h6> -->
+    <pre><code class="language-c">#define SDL_MAIN_USE_CALLBACKS 1 // Use callback functions instead of main()
 
-    <p><strong>src/main.c</strong> (or <strong>src/main.cpp</strong>)</p>
-
-    <pre><code class="language-cpp">#define SDL_MAIN_USE_CALLBACKS 1
-#include &lt;glad/glad.h&gt;
+#include &lt;GLES3/gl3.h&gt;
 #include &lt;SDL3/SDL.h&gt;
 #include &lt;SDL3/SDL_main.h&gt;
 #include &lt;SDL3_image/SDL_image.h&gt;
 
-static SDL_Window* window = NULL;
-static SDL_GLContext glContext = NULL;
-static GLuint shaderProgram;
-static GLuint VAO, VBO, EBO;
-static GLuint textureID;
+typedef struct
+{
+    SDL_Window *window;
+    SDL_GLContext glContext;
+    GLuint shaderProgram;
+    GLuint VAO, VBO, EBO;
+    GLuint textureID; // Added for the image
+} App;
 
-// Vertex Shader with Position and UV Texturing Inputs
-const char* vertexShaderSource = "#version 300 es\n"
-    "layout (location = 0) in vec3 aPos;\n"
+const char *vertexShaderSource =
+    "#version 300 es\n"
+    "layout (location = 0) in vec3 aPosition;\n"
     "layout (location = 1) in vec2 aTexCoord;\n"
-    "out vec2 TexCoord;\n"
-    "void main() {\n"
-    "   gl_Position = vec4(aPos, 1.0);\n"
-    "   TexCoord = vec2(aTexCoord.x, 1.0 - aTexCoord.y); // Flip Y for OpenGL coordinate conventions\n"
-    "}";
+    "out vec2 vTexCoord;\n"
+    "void main()\n"
+    "{\n"
+    "    gl_Position = vec4(aPosition, 1.0);\n"
+    "    vTexCoord = aTexCoord;\n"
+    "}\n";
 
-// Fragment Shader rendering sampled RGBA textures
-const char* fragmentShaderSource = "#version 300 es\n"
+const char *fragmentShaderSource =
+    "#version 300 es\n"
     "precision mediump float;\n"
-    "out vec4 FragColor;\n"
-    "in vec2 TexCoord;\n"
+    "in vec2 vTexCoord;\n"
     "uniform sampler2D ourTexture;\n"
-    "void main() {\n"
-    "   FragColor = texture(ourTexture, TexCoord);\n"
-    "}";
+    "out vec4 fragColor;\n"
+    "void main()\n"
+    "{\n"
+    "    fragColor = texture(ourTexture, vTexCoord);\n"
+    "}\n";
 
-SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
-    if (!SDL_Init(SDL_INIT_VIDEO)) return SDL_APP_FAILURE;
+GLuint createTexture(const char *path)
+{
+    // Load Image file via SDL3_image directly into memory surface
+    SDL_Surface *surface = IMG_Load(path);
+    if (!surface)
+    {
+        SDL_Log("Image loading failed: %s", SDL_GetError());
+        return 0;
+    }
 
+    // Convert to standardized ABGR8888 (Matches GL_RGBA memory layout perfectly)
+    SDL_Surface *optimizedSurface = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_ABGR8888);
+    SDL_DestroySurface(surface); // Free the unoptimized source copy immediately
+
+    if (!optimizedSurface)
+    {
+        SDL_Log("Surface conversion failed: %s", SDL_GetError());
+        return 0;
+    }
+
+    // Convert pixels to an OpenGL Texture Object
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Set wrapping/filtering options
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    // For pixel graphics: GL_NEAREST
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    // Upload using strict GL_RGBA formatting (Since it is safely converted)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, optimizedSurface->w, optimizedSurface->h,
+        0, GL_RGBA, GL_UNSIGNED_BYTE, optimizedSurface->pixels);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    // Free optimized surface copy from CPU RAM
+    SDL_DestroySurface(optimizedSurface);
+
+    return textureID;
+}
+
+SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
+{
+    App *myApp = (App *)SDL_malloc(sizeof(App));
+    *appstate = myApp; // This makes the pointer available to all other callbacks
+
+    if (!SDL_Init(SDL_INIT_VIDEO))
+        return SDL_APP_FAILURE;
+
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1); // Enable MULTISAMPLE
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2); // can be 2, 4, 8 or 16
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 0);
+
+    // WebGL 2 requires GLES 3.0 context
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
-    window = SDL_CreateWindow("SDL3 GLES3 Texture Callbacks", 400, 400, SDL_WINDOW_OPENGL);
-    if (!window) return SDL_APP_FAILURE;
+    myApp->window = SDL_CreateWindow("SDL3_image OpenGL", 380, 380, SDL_WINDOW_OPENGL);
+    if (!myApp->window)
+        return SDL_APP_FAILURE;
 
-    glContext = SDL_GL_CreateContext(window);
-    if (!gladLoadGLES2Loader((GLADloadproc)SDL_GL_GetProcAddress)) return SDL_APP_FAILURE;
+    myApp->glContext = SDL_GL_CreateContext(myApp->window);
+    if (!myApp->glContext)
+        return SDL_APP_FAILURE;
 
     SDL_GL_SetSwapInterval(1);
 
-    // Build and Compile Shaders
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
     glCompileShader(vertexShader);
@@ -548,167 +520,201 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
     glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
     glCompileShader(fragmentShader);
 
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
+    myApp->shaderProgram = glCreateProgram();
+    glAttachShader(myApp->shaderProgram, vertexShader);
+    glAttachShader(myApp->shaderProgram, fragmentShader);
+    glLinkProgram(myApp->shaderProgram);
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    // Setup Geometry: Vertex Data positions & texture mappings (Coordinates)
-    // Rendering a flat quad overlay out of two triangles
+    glUseProgram(myApp->shaderProgram);
+
+    GLint textureLocation = glGetUniformLocation(myApp->shaderProgram, "ourTexture");
+    glUniform1i(textureLocation, 0); // Explicitly set "ourTexture" to use GL_TEXTURE0
+
+    // Setup Geometry
     float vertices[] = {
-        // Positions          // Texture Coords
-         0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // Top Right
-         0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // Bottom Right
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // Bottom Left
-        -0.5f,  0.5f, 0.0f,   0.0f, 1.0f  // Top Left 
+        0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
+        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+        -0.5f, 0.5f, 0.0f, 0.0f, 1.0f
     };
-    unsigned int indices[] = {
-        0, 1, 3, // Triangle 1
-        1, 2, 3  // Triangle 2
-    };
+    unsigned int indices[] = { 0, 1, 3, 1, 2, 3 };
 
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
+    glGenVertexArrays(1, &myApp->VAO);
+    glGenBuffers(1, &myApp->VBO);
+    glGenBuffers(1, &myApp->EBO);
 
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindVertexArray(myApp->VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, myApp->VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, myApp->EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    // Layout configuration for vec3 position data (location = 0)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
-    
-    // Layout configuration for vec2 texture coordinates data (location = 1)
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+    glBindVertexArray(0);
 
-    // Load Image file via SDL3_image directly into memory surface
-    const char *texturePath = "assets/images/right-arrow.png";
-    SDL_Surface* surface = IMG_Load(texturePath);
-    if (!surface) {
-        SDL_Log("Image loading failed: %s", SDL_GetError());
-        return SDL_APP_FAILURE;
-    }
+    const char *texturePath = "/assets/images/right-arrow.png";
+    myApp->textureID = createTexture(texturePath);
 
-    // Convert pixels to an OpenGL Texture Object
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-
-    // Set wrapping/filtering options
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);    
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    // Determine incoming channel format
-    GLenum format = GL_RGB;
-    if (SDL_ISPIXELFORMAT_ALPHA(surface->format)) {
-        format = GL_RGBA;
-    }
-
-    // Allocation to GPU hardware memory space
-    glTexImage2D(GL_TEXTURE_2D, 0, format, surface->w, surface->h, 0, format, GL_UNSIGNED_BYTE, surface->pixels);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    // Free local CPU RAM surface structural copy
-    SDL_DestroySurface(surface);
+    glClearColor(0.392f, 0.392f, 0.392f, 1.0f);
 
     return SDL_APP_CONTINUE;
 }
 
-SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
-    if (event->type == SDL_EVENT_QUIT) return SDL_APP_SUCCESS;
+SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
+{
+    if (event->type == SDL_EVENT_QUIT)
+    {
+        return SDL_APP_SUCCESS;
+    }
     return SDL_APP_CONTINUE;
 }
 
-SDL_AppResult SDL_AppIterate(void* appstate) {
-    glClearColor(0.392f, 0.392f, 0.392f, 1.0f); // Match the original RGB (100, 100, 100) background
+SDL_AppResult SDL_AppIterate(void *appstate)
+{
+    App *myApp = (App *)appstate;
+
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glUseProgram(shaderProgram);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    glBindVertexArray(VAO);
-    
+    glUseProgram(myApp->shaderProgram);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, myApp->textureID);
+    glBindVertexArray(myApp->VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 
-    SDL_GL_SwapWindow(window);
+    SDL_GL_SwapWindow(myApp->window);
     return SDL_APP_CONTINUE;
 }
 
-void SDL_AppQuit(void* appstate, SDL_AppResult result) {
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
-    glDeleteTextures(1, &textureID);
-    glDeleteProgram(shaderProgram);
-    SDL_GL_DestroyContext(glContext);
-    SDL_DestroyWindow(window);
+void SDL_AppQuit(void *appstate, SDL_AppResult result)
+{
+    // Cast the pointer back to your struct type
+    App *myApp = (App *)appstate;
+
+    // Only clean up if we actually successfully allocated the state
+    if (myApp)
+    {
+        // Destroy SDL objects
+        if (myApp->glContext)
+        {
+            // Delete OpenGL objects
+            glDeleteVertexArrays(1, &myApp->VAO);
+            glDeleteBuffers(1, &myApp->VBO);
+            glDeleteBuffers(1, &myApp->EBO);
+            glDeleteProgram(myApp->shaderProgram);
+            glDeleteTextures(1, &myApp->textureID);
+
+            SDL_GL_DestroyContext(myApp->glContext);
+        }
+        if (myApp->window)
+            SDL_DestroyWindow(myApp->window);
+
+        // Free the memory we allocated in SDL_AppInit
+        SDL_free(myApp);
+    }
+
+    // Final shutdown for the SDL subsystem
+    SDL_Quit();
 }</code></pre>
 
-    <!-- <h3 class="category-header">
-        <span class="data-en">4. Key Technical Differences from SDL_Renderer</span>
-        <span class="data-ru">4. Ключевые технические различия с SDL_Renderer</span>
-    </h3>
-    <p>
-        <span class="data-en">Unlike <code>SDL_RenderTexture</code>, which masks state execution internally, OpenGL ES 3.0 requires manual conversion of an <code>SDL_Surface</code> structure allocation block to a textured object ID (<code>glBindTexture</code>). Hardware texture space is mapped onto polygons through attributes managed explicitly inside custom GLSL shaders.</span>
-        <span class="data-ru">В отличие от функции <code>SDL_RenderTexture</code>, которая скрывает выполнение конвейера внутри, OpenGL ES 3.0 требует ручной конвертации структуры <code>SDL_Surface</code> в ID объекта текстуры (<code>glBindTexture</code>). Пространство текстуры мапится на полигоны с помощью атрибутов в кастомных шейдерах GLSL.</span>
-    </p> -->
+    <h6 class="fw-bold text-primary">public/index.html:</h6>
+
+    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+    &lt;canvas id="canvas"&gt;&lt;/canvas&gt;
+    &lt;script async src="./js/app.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+
+&lt;/html&gt;</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">6. Opening the Project in IDEs</span>
-        <span class="data-ru">6. Открытие проекта в IDE</span>
+        <span class="data-en">6. Automation Scripts (.bat)</span>
+        <span class="data-ru">6. Скрипты автоматизации (.bat)</span>
     </h3>
-    <p>
-        <span class="data-en">Open the <b>CMakeLists.txt</b> file in <b>CLion</b> or <b>Qt Creator</b>. CMake will handle the rest.</span>
-        <span class="data-ru">Откройте файл <b>CMakeLists.txt</b> в <b>CLion</b> или <b>Qt Creator</b>. CMake позаботится об остальном.</span>
-    </p>
-    <h3 class="category-header">
-        <span class="data-en">7. Automation Scripts (.bat)</span>
-        <span class="data-ru">7. Скрипты автоматизации (.bat)</span>
-    </h3>
-
-    <p class="data-en">
-        You can open the project folder in <b>Sublime Text 4</b> (or <b>Notepad++</b>). Create the following <code>.bat</code> scripts in the project root directory to automate the configuration, building, and running of your application:
-    </p>
-    <p class="data-ru">
-        Вы можете открыть папку проекта в <b>Sublime Text 4</b> (или <b>Notepad++</b>). Создайте следующие <code>.bat</code> скрипты в корневой директории проекта для автоматизации конфигурации, сборки и запуска вашего приложения:
-    </p>
-
     <div class="row">
-        <div class="col-md-4">
-            <h6 class="fw-bold text-secondary">1. config-exe.bat</h6>
-            <pre><code class="language-bash">cmake -G "MinGW Makefiles" -S . -B dist/exe</code></pre>
+        <div class="col-md-6">
+            <h6>config-wasm.bat</h6>
+            <pre><code class="language-bash">emcmake cmake -S . -B dist/web
+</code></pre>
         </div>
-        <div class="col-md-4">
-            <h6 class="fw-bold text-secondary">2. build-exe.bat</h6>
-            <pre><code class="language-bash">cd dist\exe
+        <div class="col-md-6">
+            <h6>build-wasm.bat</h6>
+            <pre><code class="language-bash">cd dist\web
 cmake --build .
-cd ..\..</code></pre>
-        </div>
-        <div class="col-md-4">
-            <h6 class="fw-bold text-secondary">3. run-exe.bat</h6>
-            <pre><code class="language-bash">dist\exe\app</code></pre>
+
+cd ..\..
+mkdir public\js
+set current_dir=%~dp0
+copy "%current_dir%dist\web\app.wasm" "%current_dir%public\js"
+copy "%current_dir%dist\web\app.js" "%current_dir%public\js"</code></pre>
         </div>
     </div>
 
-    <p class="data-en">
-        To build and launch the application, run these scripts in the terminal in the following order:
+    <h3 class="category-header">
+        <span class="data-en">7. Build and Run</span>
+        <span class="data-ru">7. Сборка и запуск</span>
+    </h3>
+    <p>
+        <span class="data-en">Configure and build the project:</span>
+        <span class="data-ru">Сконфигурируйте и соберите проект:</span>
     </p>
-    <p class="data-ru">
-        Чтобы собрать и запустить приложение, выполните эти скрипты в терминале в следующем порядке:
+    <pre><code class="language-bash"># Configure
+config-wasm
+
+# Build
+build-wasm</code></pre>
+
+    <p>
+        <span class="data-en">Now, start your local server:</span>
+        <span class="data-ru">Теперь запустите локальный сервер:</span>
     </p>
 
-    <div class="bg-light p-3 border rounded">
-        <pre class="mb-0"><code class="language-bash">config-exe
-build-exe
-run-exe</code></pre>
+    <pre><code class="language-bash"># Option 1: Using Node.js (http-server)
+http-server -c-1
+
+# Option 2: Using Python
+python -m http.server 8080</code></pre>
+
+    <div class="alert alert-info">
+        <span class="data-en">Open <strong>localhost:8080</strong> in your browser and check the console (F12 or Ctrl+Shift+J) to see the output.</span>
+        <span class="data-ru">Откройте <strong>localhost:8080</strong> в браузере и проверьте консоль (F12 или Ctrl+Shift+J), чтобы увидеть результат.</span>
+    </div>
+
+    <h3 class="category-header mt-5">
+        <span class="data-en">8. Source Code & Downloads</span>
+        <span class="data-ru">8. Исходный код и загрузки</span>
+    </h3>
+    <p class="mt-3">
+        <span class="data-en">You can download the complete configured project as a ZIP archive or explore the source code directly on GitHub:</span>
+        <span class="data-ru">Вы можете скачать готовую настроенную сборку проекта в виде ZIP-архива или изучить исходный код прямо на GitHub:</span>
+    </p>
+
+    <div class="d-flex flex-wrap gap-3 my-4">
+        <!-- GitHub Link -->
+        <!-- <a href="https://github.com/ivan-enzhaev/triangle-sdl3-opengl-mingw-c" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark d-inline-flex align-items-center">
+            <i class="fab fa-github me-2"></i>
+            <span class="data-en">View on GitHub</span>
+            <span class="data-ru">Открыть на GitHub</span>
+        </a> -->
+
+        <!-- Direct Download Link -->
+        <a href="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-sdl3-image-opengl-wasm/sdl3-image-opengl-wasm-c.zip" download class="btn btn-primary d-inline-flex align-items-center">
+            <i class="fas fa-file-archive me-2"></i>
+            <span class="data-en">Download ZIP Archive</span>
+            <span class="data-ru">Скачать ZIP-архив</span>
+        </a>
     </div>
 </div>
 
@@ -735,15 +741,18 @@ run-exe</code></pre>
                     <div class="mb-3 text-success">
                         <i class="bi bi-bank" style="font-size: 2rem;"></i>
                     </div>
-                    <h4 class="fw-bold">Sberbank</h4>
+                    <h4 class="fw-bold">
+                        <span class="data-en">Sberbank (Russia only)</span>
+                        <span class="data-ru">Сбербанк (только для РФ)</span>
+                    </h4>
 
                     <div class="mb-3">
                         <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
                     </div>
 
                     <p class="text-muted small">
-                        <span class="data-en">Direct transfer via phone number</span>
-                        <span class="data-ru">Перевод по номеру телефона</span>
+                        <span class="data-en">Direct transfer via phone number (Russia only)</span>
+                        <span class="data-ru">Перевод по номеру телефона (только для РФ)</span>
                     </p>
                     <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
                         +7 (917) 212-29-59
@@ -762,10 +771,10 @@ run-exe</code></pre>
                     <div class="mb-3 text-warning">
                         <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
                     </div>
-                    <h4 class="fw-bold">Bybit (USDT TRC20)</h4>
+                    <h4 class="fw-bold">USDT TRC20</h4>
 
                     <div class="mb-3">
-                        <img src="/assets/img/bybit-qr.png" alt="Bybit USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                        <img src="/assets/img/bybit-qr.png" alt="USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
                     </div>
 
                     <p class="text-muted small">
@@ -864,6 +873,8 @@ function copyToClipboard(text, button) {
         
 
         
+
+        
     </block>
     
     <block>
@@ -882,6 +893,8 @@ function copyToClipboard(text, button) {
         
 
         
+
+        
     </block>
     
     <block>
@@ -893,6 +906,8 @@ function copyToClipboard(text, button) {
         <block>
             <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
         </block>
+        
+
         
 
         
