@@ -216,8 +216,10 @@
 
     <ul>
         <li>
-            <span class="data-en">Download <strong>FreeType 2.14.3</strong> from <a href="https://github.com/freetype/freetype/releases/tag/VER-2-14-3" target="_blank" rel="noopener noreferrer">GitHub</a>.</span>
-            <span class="data-ru">Скачайте <strong>FreeType 2.14.3</strong> с <a href="https://github.com/freetype/freetype/releases/tag/VER-2-14-3" target="_blank" rel="noopener noreferrer">GitHub</a>.</span>
+            <span class="data-en">Download <strong>FreeType 2.14.3</strong> from <a href="https://github.com/freetype/freetype/releases/tag/VER-2-14-3" target="_blank" rel="noopener noreferrer">the official repository</a>.</span>
+            <span class="data-ru">Скачайте <strong>FreeType 2.14.3</strong> с <a href="https://github.com/freetype/freetype/releases/tag/VER-2-14-3" target="_blank" rel="noopener noreferrer">официального репозитория</a>.</span>
+            <br>
+            <img src="/assets/img/tutorials/sdl3-renderer/wasm/building-sdl3-ttf-wasm/freetype-source.png" alt="Official Source Download Link" class="img-fluid border rounded mt-3 shadow-sm">
         </li>
         <li>
             <span class="data-en">Unzip it to <code>C:/libs</code>.</span>
@@ -226,14 +228,28 @@
         <li>
             <span class="data-en">Open <strong>CMD as Administrator</strong> and navigate to the folder:</span>
             <span class="data-ru">Откройте <strong>CMD от имени администратора</strong> и перейдите в папку:</span>
-            <pre><code class="language-bash">cd C:\libs\freetype-VER-2-14-3</code></pre>
+            <!-- <pre><code class="language-bash">cd C:\libs\freetype-VER-2-14-3</code></pre> -->
+            <br>
+            <img src="/assets/img/tutorials/sdl3-renderer/wasm/building-sdl3-ttf-wasm/freetype-terminal.png" alt="Official Source Download Link" class="img-fluid border rounded mt-3 shadow-sm">
+        </li>
+        <li>
+            <span class="data-en">Run this command to generate the build files:</span>
+            <span class="data-ru">Запустите эту команду для генерации файлов сборки:</span>
+            <pre><code class="language-bash">emcmake cmake -S . -B dist -DCMAKE_INSTALL_PREFIX="C:/libs/freetype-2.14.3-wasm" -DCMAKE_BUILD_TYPE=Release</code></pre>
+            <span class="data-en">Note: <code>CMAKE_INSTALL_PREFIX</code> defines the directory where the compiled libraries and headers will be placed after installation.</span>
+            <span class="data-ru">Примечание: <code>CMAKE_INSTALL_PREFIX</code> определяет каталог, в который будут помещены скомпилированные библиотеки и заголовочные файлы после установки.</span>
+        </li>
+        <li>
+            <span class="data-en">Compile the source code:</span>
+            <span class="data-ru">Скомпилируйте исходный код:</span>
+            <pre><code class="language-bash">cmake --build dist -j8</code></pre>
+        </li>
+        <li>
+            <span class="data-en">Install the headers and libraries to the specified prefix:</span>
+            <span class="data-ru">Установите заголовочные файлы и библиотеки по указанному пути:</span>
+            <pre><code class="language-bash">cmake --install dist</code></pre>
         </li>
     </ul>
-
-    <p><span class="data-en">Run these commands to configure, build, and install:</span><span class="data-ru">Выполните эти команды для настройки, сборки и установки:</span></p>
-    <pre><code class="language-bash">emcmake cmake -S . -B dist -DCMAKE_INSTALL_PREFIX="C:/libs/freetype-2.14.3-wasm" -DCMAKE_BUILD_TYPE=MinSizeRel
-cmake --build dist
-cmake --install dist</code></pre>
 
     <hr class="my-5">
 
@@ -244,37 +260,51 @@ cmake --install dist</code></pre>
 
     <ul>
         <li>
-            <span class="data-en">Download <strong>SDL3_ttf 3.2.2</strong> source from <a href="https://github.com/libsdl-org/SDL_ttf/releases/tag/release-3.2.2" target="_blank" rel="noopener noreferrer">GitHub</a>.</span>
-            <span class="data-ru">Скачайте исходники <strong>SDL3_ttf 3.2.2</strong> с <a href="https://github.com/libsdl-org/SDL_ttf/releases/tag/release-3.2.2" target="_blank" rel="noopener noreferrer">GitHub</a>.</span>
+            <span class="data-en">Download <strong>SDL3_ttf 3.2.2</strong> source from <a href="https://github.com/libsdl-org/SDL_ttf/releases/tag/release-3.2.2" target="_blank" rel="noopener noreferrer">the official repository</a>.</span>
+            <span class="data-ru">Скачайте исходники <strong>SDL3_ttf 3.2.2</strong> с <a href="https://github.com/libsdl-org/SDL_ttf/releases/tag/release-3.2.2" target="_blank" rel="noopener noreferrer">the official repository</a>.</span>
+            <br>
+            <img src="/assets/img/tutorials/sdl3-renderer/wasm/building-sdl3-ttf-wasm/sdl3-ttf-source.png" alt="Official Source Download Link" class="img-fluid border rounded mt-3 shadow-sm">
         </li>
         <li>
-            <span class="data-en">Unzip it to <code>C:/libs</code> and enter the directory:</span>
-            <span class="data-ru">Распакуйте в <code>C:/libs</code> и перейдите в директорию:</span>
-            <pre><code class="language-bash">cd C:\libs\SDL3_ttf-3.2.2</code></pre>
+            <span class="data-en">Unzip it to <code>C:/libs</code>.</span>
+            <span class="data-ru">Распакуйте в <code>C:/libs</code>.</span>
+            <!-- <pre><code class="language-bash">cd C:\libs\SDL3_ttf-3.2.2</code></pre> -->
         </li>
         <li>
             <span class="data-en">Create a file named <code>config-wasm.bat</code> inside this folder with the following content:</span>
             <span class="data-ru">Создайте файл <code>config-wasm.bat</code> внутри этой папки со следующим содержимым:</span>
-        </li>
-    </ul>
-
-    <pre><code class="language-bash">emcmake cmake -S . -B dist ^
+            <pre><code class="language-bash">emcmake cmake -S . -B dist ^
   -DCMAKE_INSTALL_PREFIX=C:/libs/SDL3_ttf-devel-3.2.2-wasm ^
-  -DSDL3_DIR="C:/libs/SDL3-devel-3.4.8-wasm/lib/cmake/SDL3" ^
+  -DSDL3_DIR=C:/libs/SDL3-devel-3.4.10-wasm/lib/cmake/SDL3 ^
   -DFREETYPE_INCLUDE_DIR_freetype2=C:/libs/freetype-2.14.3-wasm/include ^
   -DFREETYPE_INCLUDE_DIR_ft2build=C:/libs/freetype-2.14.3-wasm/include/freetype2 ^
   -DFREETYPE_LIBRARY_DEBUG=C:/libs/freetype-2.14.3-wasm/lib/libfreetype.a ^
   -DFREETYPE_LIBRARY_RELEASE=C:/libs/freetype-2.14.3-wasm/lib/libfreetype.a ^
-  -DCMAKE_BUILD_TYPE=MinSizeRel ^
+  -DCMAKE_BUILD_TYPE=Release ^
   -DSDLTTF_SAMPLES=OFF</code></pre>
-
-    <p>
-        <span class="data-en">Run the script and build:</span>
-        <span class="data-ru">Запустите скрипт и соберите проект:</span>
-    </p>
-    <pre><code class="language-bash">config-wasm
-cmake --build dist
-cmake --install dist</code></pre>
+        </li>
+        <li>
+            <span class="data-en">Open <strong>CMD as Administrator</strong> and navigate to the folder:</span>
+            <span class="data-ru">Откройте <strong>CMD от имени администратора</strong> и перейдите в папку:</span>
+            <br>
+            <img src="/assets/img/tutorials/sdl3-renderer/wasm/building-sdl3-ttf-wasm/sdl3-ttf-terminal.png" alt="Official Source Download Link" class="img-fluid border rounded mt-3 shadow-sm">
+        </li>
+        <li>
+            <span class="data-en">Run the <code>config-wasm.bat</code> script to generate the build files:</span>
+            <span class="data-ru">Запустите скрипт <code>config-wasm.bat</code> для генерации файлов сборки:</span>
+            <pre><code class="language-bash">config-wasm</code></pre>
+        </li>
+        <li>
+            <span class="data-en">Compile the source code:</span>
+            <span class="data-ru">Скомпилируйте исходный код:</span>
+            <pre><code class="language-bash">cmake --build dist -j8</code></pre>
+        </li>
+        <li>
+            <span class="data-en">Install the headers and libraries to the specified prefix:</span>
+            <span class="data-ru">Установите заголовочные файлы и библиотеки по указанному пути:</span>
+            <pre><code class="language-bash">cmake --install dist</code></pre>
+        </li>
+    </ul>
 
     <!-- <div class="alert alert-success mt-4">
         <h5 class="fw-bold"><span class="data-en">Success!</span><span class="data-ru">Успех!</span></h5>
@@ -282,7 +312,7 @@ cmake --install dist</code></pre>
         <span class="data-ru">Ваш SDL3_ttf для Wasm готов в <code>C:/libs/SDL3_ttf-devel-3.2.2-wasm</code>.</span>
     </div> -->
 
-    <div class="alert alert-success mt-4">
+    <!-- <div class="alert alert-success mt-4">
         <h5 class="fw-bold"><span class="data-en">Success!</span><span class="data-ru">Успех!</span></h5>
         <span class="data-en">Your Wasm-compatible SDL3_ttf is ready at <code>C:/libs/SDL3_ttf-devel-3.2.2-wasm</code>. Add these paths to your project's <code>CMakeLists.txt</code> to use it:</span>
         <span class="data-ru">Ваш SDL3_ttf для Wasm готов в <code>C:/libs/SDL3_ttf-devel-3.2.2-wasm</code>. Добавьте эти пути в <code>CMakeLists.txt</code> вашего проекта для использования:</span>
@@ -291,7 +321,49 @@ cmake --install dist</code></pre>
 set(SDL3_ttf_DIR "C:/libs/SDL3_ttf-devel-3.2.2-wasm/lib/cmake/SDL3_ttf")
 set(FREETYPE_INCLUDE_DIRS "C:/libs/freetype-2.14.3-wasm/include")
 set(FREETYPE_LIBRARY "C:/libs/freetype-2.14.3-wasm/lib/libfreetype.a")</code></pre>
+    </div> -->
+
+    <h3 class="category-header mt-5">
+        <span class="data-en">3. Pre-compiled Build</span>
+        <span class="data-ru">3. Готовая сборка</span>
+    </h3>
+
+    <p>
+        <span class="data-en">If you prefer to skip the compilation process, you can download the <code>SDL3_ttf-devel-3.2.2-wasm</code> package directly:</span>
+        <span class="data-ru">Если вы предпочитаете пропустить процесс компиляции, вы можете скачать пакет <code>SDL3_ttf-devel-3.2.2-wasm</code> напрямую:</span>
+    </p>
+
+    <a href="https://www.dropbox.com/scl/fi/hxu86sjl5y5tfihjy1wzu/SDL3_ttf-devel-3.2.2-wasm.zip?rlkey=amhwwemk6u3ogjp0yh47b8w2m&raw=1" class="btn btn-outline-dark" target="_blank" rel="noopener noreferrer">
+        <i class="bi bi-download"></i> 
+        <span class="data-en">Download SDL3_image-devel-3.2.2-wasm</span>
+        <span class="data-ru">Скачать SDL3_image-devel-3.2.2-wasm</span>
+    </a>
+    <br>
+    <br>
+    <div class="alert alert-warning">
+        <span class="data-en"><strong>Important:</strong> To ensure binary compatibility, you <strong>must</strong> use <strong>Emscripten SDK 4.0.15</strong> when using this pre-compiled build. Using a different version may lead to linker errors or runtime issues.</span>
+        <span class="data-ru"><strong>Важно:</strong> Для обеспечения бинарной совместимости вы <strong>обязаны</strong> использовать <strong>Emscripten SDK 4.0.15</strong> при использовании этой предварительно скомпилированной сборки. Использование другой версии может привести к ошибкам компоновки или проблемам во время выполнения.</span>
     </div>
+
+    <h3 class="category-header mt-5">
+        <span class="data-en">4. Next Steps</span>
+        <span class="data-ru">4. Следующие шаги</span>
+    </h3>
+
+    <p>
+        <span class="data-en">Now that you have built SDL3_ttf for WebAssembly, proceed to the project setup guide to learn how to integrate and run your first application.</span>
+        <span class="data-ru">Теперь, когда вы собрали SDL3_ttf для WebAssembly, переходите к руководству по настройке проекта, чтобы узнать, как интегрировать и запустить ваше первое приложение.</span>
+    </p>
+
+    <!-- <a href="/tutorials/sdl3-renderer/wasm/setting-up-sdl3-wasm/" class="btn btn-primary mt-2">
+        <span class="data-en">Setting up your SDL3_image Wasm Project &rarr;</span>
+        <span class="data-ru">Настройка проекта SDL3_image Wasm &rarr;</span>
+    </a> -->
+
+    <a href="/tutorials/sdl3-opengl/wasm/setting-up-sdl3-ttf-opengl-wasm/" class="btn btn-primary mt-2" target="_blank" rel="noopener noreferrer">
+        <span class="data-en">Setting up SDL3_ttf with OpenGL ES 3.0 (Wasm) &rarr;</span>
+        <span class="data-ru">Настройка SDL3_ttf с OpenGL ES 3.0 (Wasm) &rarr;</span>
+    </a>
 </div>
 
         

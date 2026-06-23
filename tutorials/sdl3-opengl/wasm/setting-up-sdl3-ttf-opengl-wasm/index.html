@@ -195,12 +195,12 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">SDL3 & GLES 3.0: WebAssembly Texture Loading with SDL3_image</span>
-            <span class="data-ru">SDL3 и GLES 3.0: Загрузка текстур в WebAssembly с помощью SDL3_image</span>
+            <span class="data-en">SDL3 & GLES 3.0: WebAssembly Font Rendering with SDL3_ttf</span>
+            <span class="data-ru">SDL3 и GLES 3.0: Рендеринг шрифтов в WebAssembly с помощью SDL3_ttf</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to loading image files into GPU memory using SDL3_image and OpenGL ES 3.0 for browser deployment.</span>
-            <span class="data-ru">Руководство по загрузке файлов изображений в память GPU с помощью SDL3_image и OpenGL ES 3.0 для запуска в браузере.</span>
+            <span class="data-en">A guide to loading font files and rendering text using SDL3_ttf and OpenGL ES 3.0 for browser deployment.</span>
+            <span class="data-ru">Руководство по загрузке файлов шрифтов и рендерингу текста с помощью SDL3_ttf и OpenGL ES 3.0 для запуска в браузере.</span>
         </p>
     </header>
 
@@ -210,32 +210,37 @@
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">1. Obtain SDL3 and SDL3_image for Wasm</span>
-        <span class="data-ru">1. Получение SDL3 и SDL3_image для Wasm</span>
+        <span class="data-en">1. Obtain SDL3 and SDL3_ttf for Wasm</span>
+        <span class="data-ru">1. Получение SDL3 и SDL3_ttf для Wasm</span>
     </h3>
     <ul>
         <li>
-            <span class="data-en">First, build SDL3 for your Wasm environment: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/" target="_blank" rel="noopener noreferrer">Building SDL3 for WebAssembly</a>.</span>
-            <span class="data-ru">Сначала соберите SDL3 для вашей Wasm-среды: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/" target="_blank" rel="noopener noreferrer">Сборка SDL3 для WebAssembly</a>.</span>
+            <span class="data-en">Build SDL3 for your Wasm environment: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/" target="_blank" rel="noopener noreferrer">Building SDL3 for WebAssembly</a>.</span>
+            <span class="data-ru">Соберите SDL3 для вашей Wasm-среды: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/" target="_blank" rel="noopener noreferrer">Сборка SDL3 для WebAssembly</a>.</span>
         </li>
         <li>
-            <span class="data-en">Next, build SDL3_image using the library you just created: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-image-wasm/" target="_blank" rel="noopener noreferrer">Building SDL3_image for WebAssembly</a>.</span>
-            <span class="data-ru">Затем соберите SDL3_image, используя библиотеку, которую вы только что создали: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-image-wasm/" target="_blank" rel="noopener noreferrer">Сборка SDL3_image для WebAssembly</a>.</span>
+            <span class="data-en">Build SDL3_ttf using the library you just created: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-ttf-wasm/" target="_blank" rel="noopener noreferrer">Building SDL3_ttf for WebAssembly</a>.</span>
+            <span class="data-ru">Соберите SDL3_ttf, используя библиотеку, которую вы только что создали: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-ttf-wasm/" target="_blank" rel="noopener noreferrer">Сборка SDL3_ttf для WebAssembly</a>.</span>
         </li>
     </ul>
 
     <h3 class="category-header">
-        <span class="data-en">2. Obtain zlib and libpng for Wasm</span>
-        <span class="data-ru">2. Получение zlib и libpng для Wasm</span>
+        <span class="data-en">2. Obtain cglm</span>
+        <span class="data-ru">2. Получение cgl</span>
     </h3>
+
     <ul>
         <li>
-            <span class="data-en">Build zlib from source: <a href="/tutorials/tools/wasm/building-zlib-wasm/" target="_blank" rel="noopener noreferrer">Building zlib for WebAssembly</a>.</span>
-            <span class="data-ru">Соберите zlib из исходников: <a href="/tutorials/tools/wasm/building-zlib-wasm/" target="_blank" rel="noopener noreferrer">Сборка zlib для WebAssembly</a>.</span>
+            <span class="data-en">Download the <strong>Source code (zip)</strong> (cglm) from the <a href="https://github.com/recp/cglm/releases/tag/v0.9.6" target="_blank">official GitHub releases</a>:</span>
+            <span class="data-ru">Скачайте <strong>Source code (zip)</strong> (cglm) с <a href="https://github.com/recp/cglm/releases/tag/v0.9.6" target="_blank" rel="noopener noreferrer">официальных релизов GitHub</a>:</span>
+            <br>
+            <img src="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-sdl3-ttf-opengl-wasm/cglm-download-link.png" alt="Official Source Download Link" class="img-fluid border rounded mt-3 shadow-sm">
         </li>
         <li>
-            <span class="data-en">Build libpng from source: <a href="/tutorials/tools/wasm/building-libpng-wasm/" target="_blank" rel="noopener noreferrer">Building libpng for WebAssembly</a>.</span>
-            <span class="data-ru">Соберите libpng из исходников: <a href="/tutorials/tools/wasm/building-libpng-wasm/" target="_blank" rel="noopener noreferrer">Сборка libpng для WebAssembly</a>.</span>
+            <span class="data-en">Extract it to a folder (e.g., <code>C:/libs</code>).</span>
+            <span class="data-ru">Распакуйте архив в папку (например, <code>C:/libs</code>).</span>
+            <br>
+            <img src="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-sdl3-ttf-opengl-wasm/extracted-cglm.png" alt="Extracted library" class="img-fluid border rounded mt-3 shadow-sm">
         </li>
     </ul>
 
@@ -251,36 +256,48 @@
         </p>
         <ul>
             <li>
-                <span class="data-en">Download the PNG file with transparent background: <a href="/assets/img/tutorials/sdl3-opengl/mingw/setting-up-sdl3-image-opengl/right-arrow.zip">right-arrow.zip</a></span>
-                <span class="data-ru">Скачайте PNG-файл с прозрачным фоном: <a href="/assets/img/tutorials/sdl3-opengl/mingw/setting-up-sdl3-image-opengl/right-arrow.zip">right-arrow.zip</a></span>
+                <span class="data-en">Download the TTF file: <a href="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3-ttf/LiberationSans-Regular.zip">LiberationSans-Regular.zip</a></span>
+                <span class="data-ru">Скачайте TTF-файл: <a href="/assets/img/tutorials/sdl3-renderer/mingw/setting-up-sdl3-ttf/LiberationSans-Regular.zip">LiberationSans-Regular.zip</a></span>
             </li>
             <li>
-                <span class="data-en">Note: This is a free file taken from <a href="https://www.flaticon.com/free-icons/arrow" target="_blank" rel="noopener noreferrer">this link</a>.</span>
-                <span class="data-ru">Примечание. Это бесплатный файл, который был взят <a href="https://www.flaticon.com/free-icons/arrow" target="_blank" rel="noopener noreferrer">по ссылке</a>.</span>
+                <span class="data-en">Note: This is a free file taken from <a href="https://github.com/liberationfonts/liberation-fonts/releases/tag/2.1.5" target="_blank" rel="noopener noreferrer">this link</a>.</span>
+                <span class="data-ru">Примечание. Это бесплатный файл, который был взят <a href="https://github.com/liberationfonts/liberation-fonts/releases/tag/2.1.5" target="_blank" rel="noopener noreferrer">по ссылке</a>.</span>
             </li>
         </ul>
     </div>
 
+    <h3 class="category-header">
+        <span class="data-en">3. Project Configuration</span>
+        <span class="data-ru">3. Конфигурация проекта</span>
+    </h3>
+
+    <p>
+        <span class="data-en">Let's create a project that draws a text using SDL3_ttf and OpenGL.</span>
+        <span class="data-ru">Давайте создадим проект, который рисует текст с помомощью SDL3_ttf and OpenGL.</span>
+        <br>
+        <img src="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-sdl3-ttf-opengl-wasm/text-sdl3-ttf.png" alt="Screenshot" class="img-fluid border rounded mt-3 shadow-sm">
+    </p>
+
     <div class="row">
         <div class="col-lg-6 mb-4">
-            <p class="data-en"><strong>C Project:</strong> Create an empty folder named <code>sdl3-image-opengl-wasm-c</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.c</code> files:</p>
-            <p class="data-ru"><strong>Проект на C:</strong> Создайте пустую папку с именем <code>sdl3-image-opengl-wasm-c</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.c</code>:</p>
-            <pre><code>sdl3-image-opengl-wasm-c/
+            <p class="data-en"><strong>C Project:</strong> Create an empty folder named <code>sdl3-ttf-opengl-wasm-c</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.c</code> files:</p>
+            <p class="data-ru"><strong>Проект на C:</strong> Создайте пустую папку с именем <code>sdl3-ttf-opengl-wasm-c</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.c</code>:</p>
+            <pre><code>sdl3-ttf-opengl-wasm-c/
 ├── CMakeLists.txt
-├── assets/images/
-│   └── right-arrow.png
+├── assets/fonts/
+│   └── LiberationSans-Regular.ttf
 ├── public/
 │   └── index.html
 └── src/
     └── main.c</code></pre>
         </div>
         <div class="col-lg-6 mb-4">
-            <p class="data-en"><strong>C++ Project:</strong> Create an empty folder named <code>sdl3-image-opengl-wasm-cpp</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.cpp</code> files:</p>
-            <p class="data-ru"><strong>Проект на C++:</strong> Создайте пустую папку с именем <code>sdl3-image-opengl-wasm-cpp</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.cpp</code>:</p>
-            <pre><code>sdl3-image-opengl-wasm-cpp/
+            <p class="data-en"><strong>C++ Project:</strong> Create an empty folder named <code>sdl3-ttf-opengl-wasm-cpp</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.cpp</code> files:</p>
+            <p class="data-ru"><strong>Проект на C++:</strong> Создайте пустую папку с именем <code>sdl3-ttf-opengl-wasm-cpp</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.cpp</code>:</p>
+            <pre><code>sdl3-ttf-opengl-wasm-cpp/
 ├── CMakeLists.txt
-├── assets/images/
-│   └── right-arrow.png
+├── assets/fonts/
+│   └── LiberationSans-Regular.ttf
 ├── public/
 │   └── index.html
 └── src/
@@ -300,27 +317,24 @@
                 <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
 
 cmake_minimum_required(VERSION 3.21)
-project(sdl3-image-opengl-wasm-c)
+project(sdl3-ttf-opengl-wasm-c)
 
 # Set the C standard
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 set(SDL3_DIR "C:/libs/SDL3-devel-3.4.10-wasm/lib/cmake/SDL3")
-set(SDL3_image_DIR "C:/libs/SDL3_image-devel-3.4.4-wasm/lib/cmake/SDL3_image")
+set(SDL3_ttf_DIR "C:/libs/SDL3_ttf-devel-3.2.2-wasm/lib/cmake/SDL3_ttf")
 
-set(ZLIB_INCLUDE_DIR "C:/libs/zlib-1.3.2-wasm/include")
-set(ZLIB_LIBRARY "C:/libs/zlib-1.3.2-wasm/lib/libzs.a")
+set(FREETYPE_INCLUDE_DIRS "C:/libs/freetype-2.13.3-wasm/include")
+set(FREETYPE_LIBRARY "C:/libs/freetype-2.14.3-wasm/lib/libfreetype.a")
 
-set(PNG_PNG_INCLUDE_DIR "C:/libs/libpng-1.6.58-wasm/include")
-set(PNG_LIBRARY "C:/libs/libpng-1.6.58-wasm/lib/libpng.a")
-
-find_package(ZLIB REQUIRED)
-find_package(PNG REQUIRED)
 find_package(SDL3 REQUIRED)
-find_package(SDL3_image REQUIRED)
+find_package(SDL3_ttf REQUIRED)
 
 add_executable(app)
+
+target_include_directories(app PRIVATE C:/libs/cglm-0.9.6/include)
 
 # Add source code to the project
 target_sources(app
@@ -334,13 +348,10 @@ target_link_options(app PRIVATE
     "-sMAX_WEBGL_VERSION=2"
     "-sMIN_WEBGL_VERSION=2"
     "-sFULL_ES3=1"
-    "SHELL:--embed-file ${CMAKE_CURRENT_SOURCE_DIR}/assets/images/right-arrow.png@/assets/images/right-arrow.png"
+    "SHELL:--embed-file ${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts/LiberationSans-Regular.ttf@/assets/fonts/LiberationSans-Regular.ttf"
 )
 
-target_link_libraries(app PRIVATE
-    SDL3_image::SDL3_image
-    SDL3::SDL3
-)</code></pre>
+target_link_libraries(app PRIVATE SDL3_ttf::SDL3_ttf SDL3::SDL3)</code></pre>
         </div>
         <div class="col-lg-6 mb-4">
             <p class="data-en"><strong>C++ Project:</strong> Copy and paste the following code into the <code>CMakeLists.txt</code> file:</p>
@@ -348,27 +359,24 @@ target_link_libraries(app PRIVATE
                 <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
 
 cmake_minimum_required(VERSION 3.21)
-project(sdl3-image-opengl-wasm-cpp)
+project(sdl3-ttf-opengl-wasm-cpp)
 
 # Set the C++ standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SDL3_DIR "C:/libs/SDL3-devel-3.4.10-wasm/lib/cmake/SDL3")
-set(SDL3_image_DIR "C:/libs/SDL3_image-devel-3.4.4-wasm/lib/cmake/SDL3_image")
+set(SDL3_ttf_DIR "C:/libs/SDL3_ttf-devel-3.2.2-wasm/lib/cmake/SDL3_ttf")
 
-set(ZLIB_INCLUDE_DIR "C:/libs/zlib-1.3.2-wasm/include")
-set(ZLIB_LIBRARY "C:/libs/zlib-1.3.2-wasm/lib/libzs.a")
+set(FREETYPE_INCLUDE_DIRS "C:/libs/freetype-2.14.3-wasm/include")
+set(FREETYPE_LIBRARY "C:/libs/freetype-2.14.3-wasm/lib/libfreetype.a")
 
-set(PNG_PNG_INCLUDE_DIR "C:/libs/libpng-1.6.58-wasm/include")
-set(PNG_LIBRARY "C:/libs/libpng-1.6.58-wasm/lib/libpng.a")
-
-find_package(ZLIB REQUIRED)
-find_package(PNG REQUIRED)
 find_package(SDL3 REQUIRED)
-find_package(SDL3_image REQUIRED)
+find_package(SDL3_ttf REQUIRED)
 
 add_executable(app)
+
+target_include_directories(app PRIVATE C:/libs/cglm-0.9.6/include)
 
 # Add source code to the project
 target_sources(app
@@ -382,13 +390,10 @@ target_link_options(app PRIVATE
     "-sMAX_WEBGL_VERSION=2"
     "-sMIN_WEBGL_VERSION=2"
     "-sFULL_ES3=1"
-    "SHELL:--embed-file ${CMAKE_CURRENT_SOURCE_DIR}/assets/images/right-arrow.png@/assets/images/right-arrow.png"
+    "SHELL:--embed-file ${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts/LiberationSans-Regular.ttf@/assets/fonts/LiberationSans-Regular.ttf"
 )
 
-target_link_libraries(app PRIVATE
-    SDL3_image::SDL3_image
-    SDL3::SDL3
-)</code></pre>
+target_link_libraries(app PRIVATE SDL3_ttf::SDL3_ttf SDL3::SDL3)</code></pre>
         </div>
     </div>
 
@@ -404,15 +409,21 @@ target_link_libraries(app PRIVATE
 #include &lt;GLES3/gl3.h&gt;
 #include &lt;SDL3/SDL.h&gt;
 #include &lt;SDL3/SDL_main.h&gt;
-#include &lt;SDL3_image/SDL_image.h&gt;
+#include &lt;SDL3_ttf/SDL_ttf.h&gt;
+#include &lt;cglm/cglm.h&gt;
 
 typedef struct
 {
     SDL_Window *window;
     SDL_GLContext glContext;
     GLuint shaderProgram;
-    GLuint VAO, VBO, EBO;
-    GLuint textureID; // Added for the image
+    GLuint VAO, VBO;
+    GLuint textTextureID;
+    TTF_Font *font;
+    int textW;
+    int textH;
+    mat4 mvpMatrix;
+    GLint uMvpMatrixLocation;
 } App;
 
 const char *vertexShaderSource =
@@ -420,9 +431,10 @@ const char *vertexShaderSource =
     "layout (location = 0) in vec3 aPosition;\n"
     "layout (location = 1) in vec2 aTexCoord;\n"
     "out vec2 vTexCoord;\n"
+    "uniform mat4 uMvpMatrix;\n"
     "void main()\n"
     "{\n"
-    "    gl_Position = vec4(aPosition, 1.0);\n"
+    "    gl_Position = uMvpMatrix * vec4(aPosition, 1.0);\n"
     "    vTexCoord = aTexCoord;\n"
     "}\n";
 
@@ -437,49 +449,19 @@ const char *fragmentShaderSource =
     "    fragColor = texture(ourTexture, vTexCoord);\n"
     "}\n";
 
-GLuint createTexture(const char *path)
+static GLuint createTextureFromSurface(SDL_Surface *surface)
 {
-    // Load Image file via SDL3_image directly into memory surface
-    SDL_Surface *surface = IMG_Load(path);
-    if (!surface)
-    {
-        SDL_Log("Image loading failed: %s", SDL_GetError());
-        return 0;
-    }
-
-    // Convert to standardized ABGR8888 (Matches GL_RGBA memory layout perfectly)
-    SDL_Surface *optimizedSurface = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_ABGR8888);
-    SDL_DestroySurface(surface); // Free the unoptimized source copy immediately
-
-    if (!optimizedSurface)
-    {
-        SDL_Log("Surface conversion failed: %s", SDL_GetError());
-        return 0;
-    }
-
-    // Convert pixels to an OpenGL Texture Object
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_2D, textureID);
-
-    // Set wrapping/filtering options
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    // For pixel graphics: GL_NEAREST
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    // Upload using strict GL_RGBA formatting (Since it is safely converted)
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, optimizedSurface->w, optimizedSurface->h,
-        0, GL_RGBA, GL_UNSIGNED_BYTE, optimizedSurface->pixels);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    // Free optimized surface copy from CPU RAM
-    SDL_DestroySurface(optimizedSurface);
-
-    return textureID;
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h,
+        0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    return texture;
 }
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
@@ -488,6 +470,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     *appstate = myApp; // This makes the pointer available to all other callbacks
 
     if (!SDL_Init(SDL_INIT_VIDEO))
+        return SDL_APP_FAILURE;
+
+    if (!TTF_Init())
         return SDL_APP_FAILURE;
 
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1); // Enable MULTISAMPLE
@@ -499,7 +484,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
-    myApp->window = SDL_CreateWindow("SDL3_image OpenGL", 380, 380, SDL_WINDOW_OPENGL);
+    myApp->window = SDL_CreateWindow("SDL3_ttf OpenGL", 380, 380, SDL_WINDOW_OPENGL);
     if (!myApp->window)
         return SDL_APP_FAILURE;
 
@@ -529,38 +514,95 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     glUseProgram(myApp->shaderProgram);
 
+    myApp->uMvpMatrixLocation = glGetUniformLocation(myApp->shaderProgram, "uMvpMatrix");
+
     GLint textureLocation = glGetUniformLocation(myApp->shaderProgram, "ourTexture");
     glUniform1i(textureLocation, 0); // Explicitly set "ourTexture" to use GL_TEXTURE0
 
-    // Setup Geometry
+    // VAO/VBO Setup (Unit Quad 0.0 to 1.0)
     float vertices[] = {
-        0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
-        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-        -0.5f, 0.5f, 0.0f, 0.0f, 1.0f
-    };
-    unsigned int indices[] = { 0, 1, 3, 1, 2, 3 };
+        // x, y, u, v (flipped)
+        -0.5f, 0.5f, 0.0f, 0.0f,
+        0.5f, -0.5f, 1.0f, 1.0f,
+        -0.5f, -0.5f, 0.0f, 1.0f,
 
+        -0.5f, 0.5f, 0.0f, 0.0f,
+        0.5f, 0.5f, 1.0f, 0.0f,
+        0.5f, -0.5f, 1.0f, 1.0f
+    };
     glGenVertexArrays(1, &myApp->VAO);
     glGenBuffers(1, &myApp->VBO);
-    glGenBuffers(1, &myApp->EBO);
-
     glBindVertexArray(myApp->VAO);
     glBindBuffer(GL_ARRAY_BUFFER, myApp->VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, myApp->EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
+    // Stride is 4 floats (x, y, u, v) = 16 bytes
+    GLsizei stride = 4 * sizeof(float);
+
+    // Position (Location 0, 2 components: x, y)
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, stride, (void *)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
+
+    // Texture Coordinates (Location 1, 2 components: u, v)
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void *)(2 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
     glBindVertexArray(0);
 
-    const char *texturePath = "/assets/images/right-arrow.png";
-    myApp->textureID = createTexture(texturePath);
+    // Load Font
+    myApp->font = TTF_OpenFont("/assets/fonts/LiberationSans-Regular.ttf", 36.0f);
+    if (!myApp->font)
+    {
+        SDL_Log("Font error: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
 
-    glClearColor(0.392f, 0.392f, 0.392f, 1.0f);
+    // Render text to surface, then to GL texture
+    SDL_Color color = { 170, 255, 195, 255 };
+    SDL_Surface *s = TTF_RenderText_Blended_Wrapped(myApp->font,
+        "Hello, SDL3 and OpenGL ES 3.0!\n\nПривет, SDL3 и OpenGL ES 3.0!", 0, color, 0);
+    if (s)
+    {
+        // Convert surface to a guaranteed RGBA format
+        SDL_Surface *converted = SDL_ConvertSurface(s, SDL_PIXELFORMAT_RGBA32);
+        SDL_DestroySurface(s); // Free the original
+
+        if (converted)
+        {
+            myApp->textW = converted->w;
+            myApp->textH = converted->h;
+            myApp->textTextureID = createTextureFromSurface(converted);
+            SDL_DestroySurface(converted);
+        }
+    }
+
+    // Set coordinate system range: [-100, 100] on both axes
+    mat4 projMatrix;
+    float viewSize = 300.0f;
+    glm_ortho(-viewSize, viewSize, -viewSize, viewSize, -1.0f, 1.0f, projMatrix);
+
+    // View matrix (camera looking at origin)
+    mat4 viewMatrix;
+    vec3 eye = { 0.0f, 0.0f, 1.0f };
+    vec3 center = { 0.0f, 0.0f, 0.0f };
+    vec3 up = { 0.0f, 1.0f, 0.0f };
+    glm_lookat(eye, center, up, viewMatrix);
+
+    // Model matrix
+    mat4 modelMatrix;
+    glm_mat4_identity(modelMatrix);
+    vec3 translatePos = { 0.0f, 0.0f, 0.0f };
+    glm_translate(modelMatrix, translatePos);
+    // glm_rotate_z(modelMatrix, glm_rad(30.0f), modelMatrix);
+    vec3 scaleFactors = { (float)myApp->textW, (float)myApp->textH, 1.0f };
+    glm_scale(modelMatrix, scaleFactors);
+
+    // Set MVP-matrix (Model View Project)
+    mat4 projViewMatrix;
+    glm_mat4_mul(projMatrix, viewMatrix, projViewMatrix);
+    glm_mat4_mul(projViewMatrix, modelMatrix, myApp->mvpMatrix);
+
+    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
     return SDL_APP_CONTINUE;
 }
@@ -582,9 +624,11 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     glUseProgram(myApp->shaderProgram);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, myApp->textureID);
+    glBindTexture(GL_TEXTURE_2D, myApp->textTextureID);
     glBindVertexArray(myApp->VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glUniformMatrix4fv(myApp->uMvpMatrixLocation, 1, GL_FALSE,
+        (const GLfloat *)myApp->mvpMatrix);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
 
     SDL_GL_SwapWindow(myApp->window);
@@ -605,21 +649,19 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
             // Delete OpenGL objects
             glDeleteVertexArrays(1, &myApp->VAO);
             glDeleteBuffers(1, &myApp->VBO);
-            glDeleteBuffers(1, &myApp->EBO);
             glDeleteProgram(myApp->shaderProgram);
-            glDeleteTextures(1, &myApp->textureID);
-
+            glDeleteTextures(1, &myApp->textTextureID);
             SDL_GL_DestroyContext(myApp->glContext);
         }
         if (myApp->window)
             SDL_DestroyWindow(myApp->window);
 
-        // Free the memory we allocated in SDL_AppInit
+        TTF_CloseFont(myApp->font);
         SDL_free(myApp);
     }
 
-    // Final shutdown for the SDL subsystem
     SDL_Quit();
+    TTF_Quit();
 }</code></pre>
 
     <h6 class="fw-bold text-primary">public/index.html:</h6>
@@ -693,8 +735,8 @@ python -m http.server 8080</code></pre>
     </div>
 
     <h3 class="category-header mt-5">
-        <span class="data-en">8. Source Code & Downloads</span>
-        <span class="data-ru">8. Исходный код и загрузки</span>
+        <span class="data-en">8. Downloads</span>
+        <span class="data-ru">8. Загрузки</span>
     </h3>
     <p class="mt-3">
         <span class="data-en">You can download the complete configured project as a ZIP archive or explore the source code directly on GitHub:</span>
@@ -710,10 +752,15 @@ python -m http.server 8080</code></pre>
         </a> -->
 
         <!-- Direct Download Link -->
-        <a href="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-sdl3-image-opengl-wasm/sdl3-image-opengl-wasm-c.zip" download class="btn btn-primary d-inline-flex align-items-center">
+        <a href="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-sdl3-ttf-opengl-wasm/sdl3-ttf-opengl-wasm-c.zip" download class="btn btn-primary d-inline-flex align-items-center">
             <i class="fas fa-file-archive me-2"></i>
-            <span class="data-en">Download ZIP Archive</span>
-            <span class="data-ru">Скачать ZIP-архив</span>
+            <span class="data-en">Download C Project (ZIP)</span>
+            <span class="data-ru">Скачать проект на C (ZIP)</span>
+        </a>
+        <a href="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-sdl3-ttf-opengl-wasm/sdl3-ttf-opengl-wasm-cpp.zip" download class="btn btn-primary d-inline-flex align-items-center">
+            <i class="fas fa-file-archive me-2"></i>
+            <span class="data-en">Download C++ Project (ZIP)</span>
+            <span class="data-ru">Скачать проект на C++ (ZIP)</span>
         </a>
     </div>
 </div>
