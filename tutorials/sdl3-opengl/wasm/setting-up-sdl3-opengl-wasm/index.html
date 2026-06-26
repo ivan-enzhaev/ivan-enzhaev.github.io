@@ -413,9 +413,9 @@ target_compile_definitions(app PRIVATE SDL_MAIN_USE_CALLBACKS)</code></pre> -->
 
     <pre><code class="language-c">#define SDL_MAIN_USE_CALLBACKS 1 // Use callback functions instead of main()
 
+#include &lt;GLES3/gl3.h&gt; // Use GLES3 headers for WebGL 2.0
 #include &lt;SDL3/SDL.h&gt;
 #include &lt;SDL3/SDL_main.h&gt;
-#include &lt;GLES3/gl3.h&gt; // Use GLES3 headers for WebGL 2.0
 
 const char *vertexShaderSource =
     "#version 300 es\n"
@@ -526,14 +526,17 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
 
     // Only clean up if we actually successfully allocated the state
     if (myApp) {
-        // Delete OpenGL objects
-        glDeleteVertexArrays(1, &myApp->VAO);
-        glDeleteBuffers(1, &myApp->VBO);
-        glDeleteProgram(myApp->shaderProgram);
-
         // Destroy SDL objects
-        if (myApp->glContext) SDL_GL_DestroyContext(myApp->glContext);
-        if (myApp->window) SDL_DestroyWindow(myApp->window);
+        if (myApp->glContext)
+        {
+            // Delete OpenGL objects
+            glDeleteVertexArrays(1, &myApp->VAO);
+            glDeleteBuffers(1, &myApp->VBO);
+            glDeleteProgram(myApp->shaderProgram);
+            SDL_GL_DestroyContext(myApp->glContext);
+        }
+        if (myApp->window)
+            SDL_DestroyWindow(myApp->window);
 
         // Free the memory we allocated in SDL_AppInit
         SDL_free(myApp);
@@ -657,10 +660,15 @@ python -m http.server 8080</code></pre>
         </a> -->
 
         <!-- Direct Download Link -->
-        <a href="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-sdl3-opengl-wasm/sdl3-opengl-wasm-app.zip" download class="btn btn-primary d-inline-flex align-items-center">
+        <a href="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-sdl3-opengl-wasm/sdl3-opengl-wasm-c.zip" download class="btn btn-primary d-inline-flex align-items-center">
             <i class="fas fa-file-archive me-2"></i>
-            <span class="data-en">Download ZIP Archive</span>
-            <span class="data-ru">Скачать ZIP-архив</span>
+            <span class="data-en">Download C Project (ZIP)</span>
+            <span class="data-ru">Скачать проект на C (ZIP)</span>
+        </a>
+        <a href="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-sdl3-opengl-wasm/sdl3-opengl-wasm-cpp.zip" download class="btn btn-primary d-inline-flex align-items-center">
+            <i class="fas fa-file-archive me-2"></i>
+            <span class="data-en">Download C++ Project (ZIP)</span>
+            <span class="data-ru">Скачать проект на C++ (ZIP)</span>
         </a>
     </div>
 </div>
