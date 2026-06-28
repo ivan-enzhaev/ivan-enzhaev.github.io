@@ -7,7 +7,7 @@
 
 <title>
   
-    Setting up SDL3_mixer with OpenGL ES 3.0 (Wasm)
+    Setting up OpenAL with OpenGL ES 3.0 (Wasm)
   
   | Ivan Enzhaev
 </title>
@@ -195,12 +195,12 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">SDL3 & Web Audio: Playing Sound with SDL3_mixer</span>
-            <span class="data-ru">SDL3 и Web Audio: Воспроизведение звука с помощью SDL3_mixer</span>
+            <span class="data-en">SDL3 & OpenAL: 2D Audio for WebAssembly</span>
+            <span class="data-ru">SDL3 и OpenAL: 2D звук для WebAssembly</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to loading audio samples using SDL3_mixer and playing them through the system audio for browser deployment.</span>
-            <span class="data-ru">Руководство по загрузке аудиосемплов с помощью SDL3_mixer и их воспроизведение через системный звук для запуска в браузере.</span>
+            <span class="data-en">A guide to integrating OpenAL for reliable 2D audio in your Wasm projects, using SDL3 exclusively for windowing and OpenGL graphics.</span>
+            <span class="data-ru">Руководство по интеграции OpenAL для надежного 2D звука в ваших Wasm проектах, используя SDL3 исключительно для оконного интерфейса и OpenGL графики.</span>
         </p>
     </header>
 
@@ -481,14 +481,14 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     glEnableVertexAttribArray(0);
 
     // Load Audio Objects (using 'true' to cache data in memory)
-    myApp->backgroundMusic = MIX_LoadAudio(myApp->mixer, "assets/audio/Winds Of Stories.ogg", true);
+    myApp->backgroundMusic = MIX_LoadAudio(myApp->mixer, "/assets/audio/Winds Of Stories.ogg", true);
     if (!myApp->backgroundMusic)
     {
         SDL_Log("Failed to load music: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
 
-    myApp->soundEffect = MIX_LoadAudio(myApp->mixer, "assets/audio/Picked Coin Echo 2.wav", true);
+    myApp->soundEffect = MIX_LoadAudio(myApp->mixer, "/assets/audio/Picked Coin Echo 2.wav", true);
     if (!myApp->soundEffect)
     {
         SDL_Log("Failed to load sound effect: %s", SDL_GetError());
@@ -521,19 +521,14 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 
     if (!myApp->musicStarted && isInput)
     {
-        // Create an options configuration packet
-        SDL_PropertiesID props = SDL_CreateProperties();
-        
-        // Pack the "infinite loop" instruction (-1) into the container
-        SDL_SetNumberProperty(props, MIX_PROP_PLAY_LOOPS_NUMBER, -1);
-        
-        // Hand the configuration properties over to SDL3_mixer
-        MIX_PlayTrack(myApp->musicTrack, props);
-        
-        // Clean up the handle container (SDL copies properties internally)
-        SDL_DestroyProperties(props);
-        
+        MIX_PlayTrack(myApp->musicTrack, 0);
         myApp->musicStarted = true;
+    }
+
+    if (myApp->musicStarted && !MIX_TrackPlaying(myApp->musicTrack))
+    {
+        // If it stopped, restart it manually
+        MIX_PlayTrack(myApp->musicTrack, 0);
     }
 
     switch (event->type)
