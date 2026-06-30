@@ -159,6 +159,14 @@
     pre::-webkit-scrollbar-thumb:hover {
         background: #6c757d;
     }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
 </style>
 </head>
 
@@ -1276,6 +1284,29 @@
                     <!-- Tech Badge (Optional) -->
                     <!-- 
                     <span class="badge bg-info badge-tech mb-2">
+                        SDL3, C++, OpenGL ES 3.0, WebAssembly, Emscripten
+                    </span>
+                     -->
+
+                    <h5 class="card-title">
+                        <span class="data-en">Setting up cglm with SDL3 and OpenGL ES 3.0 for WebAssembly</span>
+                        <span class="data-ru">Настройка SDL3 с SDL3 и OpenGL ES 3.0 для WebAssembly</span>
+                    </h5>
+                    <p class="card-text text-muted small">
+                        <span class="data-en">Building and running an OpenGL ES 3.0 application with cglm and SDL3 for the web using Emscripten and CMake.</span>
+                        <span class="data-ru">Сборка и запуск приложения с cglm, OpenGL ES 3.0 и SDL3 для веба с использованием Emscripten и CMake.</span>
+                    </p>
+                    <a href="/tutorials/sdl3-opengl/wasm/setting-up-cglm-sdl3-opengl-wasm/" target="_blank" class="btn btn-outline-dark btn-sm lang-link-dynamic">View</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <!-- Tech Badge (Optional) -->
+                    <!-- 
+                    <span class="badge bg-info badge-tech mb-2">
                         SDL3, SDL3_image, OpenGL ES 3.0, WebAssembly, Emscripten
                     </span>
                      -->
@@ -1322,29 +1353,6 @@
                     <!-- Tech Badge (Optional) -->
                     <!-- 
                     <span class="badge bg-info badge-tech mb-2">
-                        SDL3, C++, OpenGL ES 3.0, WebAssembly, Emscripten
-                    </span>
-                     -->
-
-                    <h5 class="card-title">
-                        <span class="data-en">Setting up cglm with SDL3 and OpenGL ES 3.0 for WebAssembly</span>
-                        <span class="data-ru">Настройка SDL3 с SDL3 и OpenGL ES 3.0 для WebAssembly</span>
-                    </h5>
-                    <p class="card-text text-muted small">
-                        <span class="data-en">Building and running an OpenGL ES 3.0 application with cglm and SDL3 for the web using Emscripten and CMake.</span>
-                        <span class="data-ru">Сборка и запуск приложения с cglm, OpenGL ES 3.0 и SDL3 для веба с использованием Emscripten и CMake.</span>
-                    </p>
-                    <a href="/tutorials/sdl3-opengl/wasm/setting-up-cglm-sdl3-opengl-wasm/" target="_blank" class="btn btn-outline-dark btn-sm lang-link-dynamic">View</a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <!-- Tech Badge (Optional) -->
-                    <!-- 
-                    <span class="badge bg-info badge-tech mb-2">
                         SDL3, SDL3_ttf, OpenGL ES 3.0, WebAssembly, Emscripten
                     </span>
                      -->
@@ -1381,6 +1389,29 @@
                         <span class="data-ru">Загрузка аудиосемплов с помощью SDL3_mixer и их воспроизведение через системный звук для веба с использованием Emscripten.</span>
                     </p>
                     <a href="/tutorials/sdl3-opengl/wasm/setting-up-sdl3-mixer-opengl-wasm/" target="_blank" class="btn btn-outline-dark btn-sm lang-link-dynamic">View</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <!-- Tech Badge (Optional) -->
+                    <!-- 
+                    <span class="badge bg-info badge-tech mb-2">
+                        SDL3, OpenAL, OpenGL ES 3.0, WebAssembly, Emscripten
+                    </span>
+                     -->
+
+                    <h5 class="card-title">
+                        <span class="data-en">Setting up OpenAL with OpenGL ES 3.0 (Wasm)</span>
+                        <span class="data-ru">Настройка OpenAL с OpenGL ES 3.0 (Wasm)</span>
+                    </h5>
+                    <p class="card-text text-muted small">
+                        <span class="data-en">Implementing 3D spatial audio using OpenAL in a WebAssembly application, with SDL3 handling the windowing and OpenGL context.</span>
+                        <span class="data-ru">Реализация 3D пространственного звука с помощью OpenAL в приложении WebAssembly, используя SDL3 для управления окном и контекстом OpenGL.</span>
+                    </p>
+                    <a href="/tutorials/sdl3-opengl/wasm/setting-up-openal-sdl3-opengl-wasm/" target="_blank" class="btn btn-outline-dark btn-sm lang-link-dynamic">View</a>
                 </div>
             </div>
         </div>
@@ -1630,6 +1661,32 @@ function copyToClipboard(text, button) {
                     button.classList.remove('copied');
                 }, 2000);
             });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                
+                // Set the content
+                block.textContent = code;
+                
+                // Re-run Prism highlight if available
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
         });
     });
 </script>

@@ -161,6 +161,14 @@
     pre::-webkit-scrollbar-thumb:hover {
         background: #6c757d;
     }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
 </style>
 </head>
 
@@ -210,23 +218,38 @@
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">1. Obtain SDL3 and stb_image for Wasm</span>
-        <span class="data-ru">1. Получение SDL3 и stb_image для Wasm</span>
+        <span class="data-en">1. Obtain SDL3</span>
+        <span class="data-ru">1. Получение SDL3</span>
     </h3>
     <ul>
         <li>
-            <span class="data-en">First, build SDL3 for your Wasm environment: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/" target="_blank" rel="noopener noreferrer">Building SDL3 for WebAssembly</a>.</span>
-            <span class="data-ru">Сначала соберите SDL3 для вашей Wasm-среды: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/" target="_blank" rel="noopener noreferrer">Building SDL3 for WebAssembly</a>.</span>
-        </li>
-        <li>
-            <span class="data-en">Next, build SDL3_image using the library you just created: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-image-wasm/" target="_blank" rel="noopener noreferrer">Building SDL3_image for WebAssembly</a>.</span>
-            <span class="data-ru">Затем соберите SDL3_image, используя библиотеку, которую вы только что создали: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-image-wasm/" target="_blank" rel="noopener noreferrer">Building SDL3_image for WebAssembly</a>.</span>
+            <span class="data-en">Build SDL3: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/" target="_blank" rel="noopener noreferrer">Building SDL3 for WebAssembly</a>.</span>
+            <span class="data-ru">Cоберите SDL3: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/" target="_blank" rel="noopener noreferrer">Building SDL3 for WebAssembly</a>.</span>
         </li>
     </ul>
 
     <h3 class="category-header">
-        <span class="data-en">2. Assets</span>
-        <span class="data-ru">2. Ресурсы</span>
+        <span class="data-en">2. Obtain stb_image</span>
+        <span class="data-ru">2. Получение stb_image</span>
+    </h3>
+    <ul>
+        <li>
+            <span class="data-en">Copy the <a href="https://github.com/nothings/stb/blob/master/stb_image.h" target="_blank" rel="noopener noreferrer">stb_image.h</a> file content and remember the version number:</span>
+            <span class="data-ru">Скопируйте содержимое файла <a href="https://github.com/nothings/stb/blob/master/stb_image.h" target="_blank" rel="noopener noreferrer">stb_image.h</a> и запомните номер версии:</span>
+            <br>
+            <img src="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-stb-image-opengl-wasm/stb-image-version-number.png" alt="Screenshot" class="img-fluid border rounded mt-3 shadow-sm">
+        </li>
+        <li>
+            <span class="data-en">Create the <code>stb_image-x.y/include</code> folder and copy the <code>stb_image.h</code> file content inside it like this:</span>
+            <span class="data-ru">Создайте папку с именем <code>stb_image-x.y/include</code> и скопируйте содержимое файла <code>stb_image.h</code> в этом папку таким образом:</span>
+            <br>
+            <img src="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-stb-image-opengl-wasm/stb-image-file.png" alt="Screenshot" class="img-fluid border rounded mt-3 shadow-sm">
+        </li>
+    </ul>
+
+    <h3 class="category-header">
+        <span class="data-en">3. Assets</span>
+        <span class="data-ru">3. Ресурсы</span>
     </h3>
 
     <div class="mb-4">
@@ -246,11 +269,25 @@
         </ul>
     </div>
 
+    <h3 class="category-header">
+        <span class="data-en">4. Project Architecture</span>
+        <span class="data-ru">4. Архитектура проекта</span>
+    </h3>
+
+    <p>
+        <span class="data-en">Let's create a project that renders a texture with OpenGL.</span>
+        <span class="data-ru">Давайте создадим проект, который рендерит текстуру с помощью OpenGL.</span>
+        <br>
+        <img src="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-stb-image-opengl-wasm/texture-stb-image.png" alt="Screenshot" class="img-fluid border rounded mt-3 shadow-sm">
+    </p>
+
     <div class="row">
         <div class="col-lg-6 mb-4">
-            <p class="data-en"><strong>C Project:</strong> Create an empty folder named <code>stb-image-opengl-wasm-c</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.c</code> files:</p>
-            <p class="data-ru"><strong>Проект на C:</strong> Создайте пустую папку с именем <code>stb-image-opengl-wasm-c</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.c</code>:</p>
-            <pre><code>stb-image-opengl-wasm-c/
+            <p class="data-en"><strong>C Project:</strong> Create an empty folder named <code>simple-texture-stb-image-opengl-sdl3-wasm-c</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.c</code> files:</p>
+            <p class="data-ru"><strong>Проект на C:</strong> Создайте пустую папку с именем <code>simple-texture-stb-image-opengl-sdl3-wasm-c</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.c</code>:</p>
+            <pre><code>simple-texture-stb-image-opengl-sdl3-wasm-c/
+├── config-wasm.bat
+├── build-wasm.bat
 ├── CMakeLists.txt
 ├── assets/images/
 │   └── right-arrow.png
@@ -260,9 +297,11 @@
     └── main.c</code></pre>
         </div>
         <div class="col-lg-6 mb-4">
-            <p class="data-en"><strong>C++ Project:</strong> Create an empty folder named <code>stb-image-opengl-wasm-c</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.cpp</code> files:</p>
-            <p class="data-ru"><strong>Проект на C++:</strong> Создайте пустую папку с именем <code>stb-image-opengl-wasm-c</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.cpp</code>:</p>
-            <pre><code>stb-image-opengl-wasm-c/
+            <p class="data-en"><strong>C++ Project:</strong> Create an empty folder named <code>simple-texture-stb-image-opengl-sdl3-wasm-cpp</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.cpp</code> files:</p>
+            <p class="data-ru"><strong>Проект на C++:</strong> Создайте пустую папку с именем <code>simple-texture-stb-image-opengl-sdl3-wasm-cpp</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.cpp</code>:</p>
+            <pre><code>simple-texture-stb-image-opengl-sdl3-wasm-cpp/
+├── config-wasm.bat
+├── build-wasm.bat
 ├── CMakeLists.txt
 ├── assets/images/
 │   └── right-arrow.png
@@ -274,322 +313,39 @@
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">3. CMake Configuration</span>
-        <span class="data-ru">3. Конфигурация CMake</span>
+        <span class="data-en">5. CMake Configuration</span>
+        <span class="data-ru">5. Конфигурация CMake</span>
     </h3>
 
     <div class="row">
         <div class="col-lg-6 mb-4">
             <p class="data-en"><strong>C Project:</strong> Copy and paste the following code into the <code>CMakeLists.txt</code> file:</p>
             <p class="data-ru"><strong>Проект на C:</strong> Скопируйте и вставьте следующее содержимое в файл <code>CMakeLists.txt</code>:</p>
-                <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
-
-cmake_minimum_required(VERSION 3.21)
-project(stb-image-opengl-wasm-c)
-
-# Set the C standard
-set(CMAKE_C_STANDARD 17)
-set(CMAKE_C_STANDARD_REQUIRED ON)
-
-set(SDL3_DIR "C:/libs/SDL3-devel-3.4.10-wasm/lib/cmake/SDL3")
-
-find_package(SDL3 REQUIRED)
-
-add_executable(app)
-
-target_include_directories(app PRIVATE C:/libs/stb_image-2.30/include)
-
-# Add source code to the project
-target_sources(app
-    PRIVATE
-    src/main.c
-)
-
-# Emscripten Linker Options for WebGL 2.0 / OpenGL ES 3.0
-target_link_options(app PRIVATE 
-    "-sUSE_SDL=0"
-    "-sMAX_WEBGL_VERSION=2"
-    "-sMIN_WEBGL_VERSION=2"
-    "-sFULL_ES3=1"
-    "SHELL:--embed-file ${CMAKE_CURRENT_SOURCE_DIR}/assets/images/right-arrow.png@/assets/images/right-arrow.png"
-)
-
-target_link_libraries(app PRIVATE SDL3::SDL3)</code></pre>
+            <pre><code class="language-cmake" data-url="https://raw.githubusercontent.com/ivan-enzhaev/simple-texture-stb-image-opengl-sdl3-wasm-c/main/CMakeLists.txt"></code></pre>
         </div>
         <div class="col-lg-6 mb-4">
             <p class="data-en"><strong>C++ Project:</strong> Copy and paste the following code into the <code>CMakeLists.txt</code> file:</p>
             <p class="data-ru"><strong>Проект на C++:</strong> Скопируйте и вставьте следующее содержимое в файл <code>CMakeLists.txt</code>:</p>
-                <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
-
-cmake_minimum_required(VERSION 3.21)
-project(stb-image-opengl-wasm-cpp)
-
-# Set the C++ standard
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-set(SDL3_DIR "C:/libs/SDL3-devel-3.4.10-wasm/lib/cmake/SDL3")
-
-find_package(SDL3 REQUIRED)
-
-add_executable(app)
-
-target_include_directories(app PRIVATE C:/libs/stb_image-2.30/include)
-
-# Add source code to the project
-target_sources(app
-    PRIVATE
-    src/main.cpp
-)
-
-# Emscripten Linker Options for WebGL 2.0 / OpenGL ES 3.0
-target_link_options(app PRIVATE 
-    "-sUSE_SDL=0"
-    "-sMAX_WEBGL_VERSION=2"
-    "-sMIN_WEBGL_VERSION=2"
-    "-sFULL_ES3=1"
-    "SHELL:--embed-file ${CMAKE_CURRENT_SOURCE_DIR}/assets/images/right-arrow.png@/assets/images/right-arrow.png"
-)
-
-target_link_libraries(app PRIVATE SDL3::SDL3)</code></pre>
+            <pre><code class="language-cmake" data-url="https://raw.githubusercontent.com/ivan-enzhaev/simple-texture-stb-image-opengl-sdl3-wasm-cpp/main/CMakeLists.txt"></code></pre>
         </div>
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">4. Source Code</span>
-        <span class="data-ru">4. Исходный код</span>
+        <span class="data-en">6. Source Code</span>
+        <span class="data-ru">6. Исходный код</span>
     </h3>
 
     <h6 class="fw-bold text-primary"><code>src/main.c</code> (or <code>src/main.cpp</code>):</h6>
 
-    <pre><code class="language-c">#define SDL_MAIN_USE_CALLBACKS 1 // Use callback functions instead of main()
-
-#include &lt;GLES3/gl3.h&gt;
-#include &lt;SDL3/SDL.h&gt;
-#include &lt;SDL3/SDL_main.h&gt;
-
-#define STB_IMAGE_IMPLEMENTATION
-#include &lt;stb_image.h&gt;
-
-typedef struct
-{
-    SDL_Window *window;
-    SDL_GLContext glContext;
-    GLuint shaderProgram;
-    GLuint VAO, VBO, EBO;
-    GLuint textureID; // Added for the image
-} App;
-
-const char *vertexShaderSource =
-    "#version 300 es\n"
-    "layout (location = 0) in vec3 aPosition;\n"
-    "layout (location = 1) in vec2 aTexCoord;\n"
-    "out vec2 vTexCoord;\n"
-    "void main()\n"
-    "{\n"
-    "    gl_Position = vec4(aPosition, 1.0);\n"
-    "    vTexCoord = aTexCoord;\n"
-    "}\n";
-
-const char *fragmentShaderSource =
-    "#version 300 es\n"
-    "precision mediump float;\n"
-    "in vec2 vTexCoord;\n"
-    "uniform sampler2D ourTexture;\n"
-    "out vec4 fragColor;\n"
-    "void main()\n"
-    "{\n"
-    "    fragColor = texture(ourTexture, vTexCoord);\n"
-    "}\n";
-
-GLuint createTexture(const char *path)
-{
-    int h_image, w_image, cnt;
-    unsigned char *data = stbi_load(path, &w_image, &h_image, &cnt, 0);
-    if (data == NULL)
-    {
-        SDL_Log("Failed to load the image: %s", path);
-        return 0;
-    }
-
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        // For pixel graphics: GL_NEAREST
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w_image, h_image, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-    }
-
-    stbi_image_free(data);
-
-    return texture;
-}
-
-SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
-{
-    App *myApp = (App *)SDL_malloc(sizeof(App));
-    *appstate = myApp; // This makes the pointer available to all other callbacks
-
-    if (!SDL_Init(SDL_INIT_VIDEO))
-        return SDL_APP_FAILURE;
-
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1); // Enable MULTISAMPLE
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2); // can be 2, 4, 8 or 16
-    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 0);
-
-    // WebGL 2 requires GLES 3.0 context
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-
-    myApp->window = SDL_CreateWindow("SDL3_image OpenGL", 380, 380, SDL_WINDOW_OPENGL);
-    if (!myApp->window)
-        return SDL_APP_FAILURE;
-
-    myApp->glContext = SDL_GL_CreateContext(myApp->window);
-    if (!myApp->glContext)
-        return SDL_APP_FAILURE;
-
-    SDL_GL_SetSwapInterval(1);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-
-    myApp->shaderProgram = glCreateProgram();
-    glAttachShader(myApp->shaderProgram, vertexShader);
-    glAttachShader(myApp->shaderProgram, fragmentShader);
-    glLinkProgram(myApp->shaderProgram);
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    glUseProgram(myApp->shaderProgram);
-
-    GLint textureLocation = glGetUniformLocation(myApp->shaderProgram, "ourTexture");
-    glUniform1i(textureLocation, 0); // Explicitly set "ourTexture" to use GL_TEXTURE0
-
-    // Setup Geometry
-    float vertices[] = {
-        0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
-        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-        -0.5f, 0.5f, 0.0f, 0.0f, 1.0f
-    };
-    unsigned int indices[] = { 0, 1, 3, 1, 2, 3 };
-
-    glGenVertexArrays(1, &myApp->VAO);
-    glGenBuffers(1, &myApp->VBO);
-    glGenBuffers(1, &myApp->EBO);
-
-    glBindVertexArray(myApp->VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, myApp->VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, myApp->EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-    glBindVertexArray(0);
-
-    const char *texturePath = "/assets/images/right-arrow.png";
-    myApp->textureID = createTexture(texturePath);
-
-    // glClearColor(0.188f, 0.22f, 0.255f, 1.f);
-    glClearColor(0.392f, 0.392f, 0.392f, 1.0f);
-
-    return SDL_APP_CONTINUE;
-}
-
-SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
-{
-    if (event->type == SDL_EVENT_QUIT)
-    {
-        return SDL_APP_SUCCESS;
-    }
-    return SDL_APP_CONTINUE;
-}
-
-SDL_AppResult SDL_AppIterate(void *appstate)
-{
-    App *myApp = (App *)appstate;
-
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    glUseProgram(myApp->shaderProgram);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, myApp->textureID);
-    glBindVertexArray(myApp->VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
-
-    SDL_GL_SwapWindow(myApp->window);
-    return SDL_APP_CONTINUE;
-}
-
-void SDL_AppQuit(void *appstate, SDL_AppResult result)
-{
-    // Cast the pointer back to your struct type
-    App *myApp = (App *)appstate;
-
-    // Only clean up if we actually successfully allocated the state
-    if (myApp)
-    {
-        // Destroy SDL objects
-        if (myApp->glContext)
-        {
-            // Delete OpenGL objects
-            glDeleteVertexArrays(1, &myApp->VAO);
-            glDeleteBuffers(1, &myApp->VBO);
-            glDeleteBuffers(1, &myApp->EBO);
-            glDeleteProgram(myApp->shaderProgram);
-            glDeleteTextures(1, &myApp->textureID);
-
-            SDL_GL_DestroyContext(myApp->glContext);
-        }
-        if (myApp->window)
-            SDL_DestroyWindow(myApp->window);
-
-        // Free the memory we allocated in SDL_AppInit
-        SDL_free(myApp);
-    }
-
-    // Final shutdown for the SDL subsystem
-    SDL_Quit();
-}</code></pre>
+    <pre><code class="language-c" data-url="https://raw.githubusercontent.com/ivan-enzhaev/simple-texture-stb-image-opengl-sdl3-wasm-c/main/src/main.c"></code></pre>
 
     <h6 class="fw-bold text-primary">public/index.html:</h6>
 
-    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-
-&lt;head&gt;
-    &lt;meta charset="utf-8"&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-&lt;/head&gt;
-
-&lt;body&gt;
-    &lt;canvas id="canvas"&gt;&lt;/canvas&gt;
-    &lt;script async src="./js/app.js"&gt;&lt;/script&gt;
-&lt;/body&gt;
-
-&lt;/html&gt;</code></pre>
+    <pre><code class="language-html" data-url="https://raw.githubusercontent.com/ivan-enzhaev/simple-texture-stb-image-opengl-sdl3-wasm-c/main/public/index.html"></code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">5. Automation Scripts (.bat)</span>
-        <span class="data-ru">5. Скрипты автоматизации (.bat)</span>
+        <span class="data-en">7. Automation Scripts (.bat)</span>
+        <span class="data-ru">7. Скрипты автоматизации (.bat)</span>
     </h3>
     <div class="row">
         <div class="col-md-6">
@@ -611,8 +367,8 @@ copy "%current_dir%dist\web\app.js" "%current_dir%public\js"</code></pre>
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">6. Build and Run</span>
-        <span class="data-ru">6. Сборка и запуск</span>
+        <span class="data-en">8. Build and Run</span>
+        <span class="data-ru">8. Сборка и запуск</span>
     </h3>
     <p>
         <span class="data-en">Configure and build the project:</span>
@@ -641,25 +397,33 @@ python -m http.server 8080</code></pre>
     </div>
 
     <h3 class="category-header mt-5">
-        <span class="data-en">7. Downloads</span>
-        <span class="data-ru">7. Загрузки</span>
+        <span class="data-en">9. Source Code</span>
+        <span class="data-ru">9. Исходный код</span>
     </h3>
+
     <p class="mt-3">
-        <span class="data-en">You can download the complete configured project as a ZIP archive:</span>
-        <span class="data-ru">Вы можете скачать готовую настроенную сборку проекта в виде ZIP-архива:</span>
+        <span class="data-en">You can explore the source code and download the complete project directly from the GitHub repository:</span>
+        <span class="data-ru">Вы можете изучить исходный код и скачать готовый проект напрямую из репозитория на GitHub:</span>
     </p>
 
     <div class="d-flex flex-wrap gap-3 my-4">
-        <a href="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-stb-image-opengl-wasm/stb-image-opengl-sdl3-wasm-c.zip" download class="btn btn-primary d-inline-flex align-items-center">
-            <i class="fas fa-file-archive me-2"></i>
-            <span class="data-en">Download C Project (ZIP)</span>
-            <span class="data-ru">Скачать проект на C (ZIP)</span>
-        </a>
-        <a href="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-stb-image-opengl-wasm/stb-image-opengl-sdl3-wasm-cpp.zip" download class="btn btn-primary d-inline-flex align-items-center">
-            <i class="fas fa-file-archive me-2"></i>
-            <span class="data-en">Download C++ Project (ZIP)</span>
-            <span class="data-ru">Скачать проект на C++ (ZIP)</span>
-        </a>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="fw-bold me-2">C Version:</span>
+            <a href="https://github.com/ivan-enzhaev/simple-texture-stb-image-opengl-sdl3-wasm-c" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
+                <i class="fab fa-github me-2"></i>
+                <span class="data-en">View C Repo</span>
+                <span class="data-ru">Репозиторий (C)</span>
+            </a>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="fw-bold me-2">C++ Version:</span>
+            <a href="https://github.com/ivan-enzhaev/simple-texture-stb-image-opengl-sdl3-wasm-cpp" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
+                <i class="fab fa-github me-2"></i>
+                <span class="data-en">View C++ Repo</span>
+                <span class="data-ru">Репозиторий (C++)</span>
+            </a>
+        </div>
     </div>
 </div>
 
@@ -971,6 +735,32 @@ function copyToClipboard(text, button) {
                     button.classList.remove('copied');
                 }, 2000);
             });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                
+                // Set the content
+                block.textContent = code;
+                
+                // Re-run Prism highlight if available
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
         });
     });
 </script>

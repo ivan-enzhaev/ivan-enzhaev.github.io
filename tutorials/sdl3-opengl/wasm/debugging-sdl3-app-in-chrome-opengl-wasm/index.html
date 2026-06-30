@@ -161,6 +161,14 @@
     pre::-webkit-scrollbar-thumb:hover {
         background: #6c757d;
     }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
 </style>
 </head>
 
@@ -211,12 +219,12 @@
 
     <ul>
         <li>
-            <span class="data-en">Ensure you have <b>emsdk</b> installed. If not, follow my <a href="/tutorials/tools/wasm/wasm-env/" target="_blank">Emscripten Setup Guide</a>.</span>
-            <span class="data-ru">Убедитесь, что у вас установлен <b>emsdk</b>. Если нет, воспользуйтесь моим <a href="/tutorials/tools/wasm/wasm-env/" target="_blank">руководством по настройке Emscripten</a>.</span>
+            <span class="data-en">Ensure you have <b>emsdk</b> installed. If not, follow my <a href="/tutorials/tools/wasm/wasm-env/" target="_blank" rel="noopener noreferrer">Emscripten Setup Guide</a>.</span>
+            <span class="data-ru">Убедитесь, что у вас установлен <b>emsdk</b>. Если нет, воспользуйтесь моим <a href="/tutorials/tools/wasm/wasm-env/" target="_blank" rel="noopener noreferrer">руководством по настройке Emscripten</a>.</span>
         </li>
         <li>
-            <span class="data-en">Install the <b>C/C++ DevTools Support (DWARF)</b> extension: <a href="https://chromewebstore.google.com/detail/cc++-devtools-support-dwa/pdcpmagijalfljmkmjngeonclgbbannb" target="_blank">Chrome Web Store</a>. This allows Chrome to read the debug information inside the <code>.wasm</code> file.</span>
-            <span class="data-ru">Установите расширение <b>C/C++ DevTools Support (DWARF)</b>: <a href="https://chromewebstore.google.com/detail/cc++-devtools-support-dwa/pdcpmagijalfljmkmjngeonclgbbannb" target="_blank">Chrome Web Store</a>. Это позволит Chrome читать отладочную информацию внутри файла <code>.wasm</code>.</span>
+            <span class="data-en">Install the <b>C/C++ DevTools Support (DWARF)</b> extension: <a href="https://chromewebstore.google.com/detail/cc++-devtools-support-dwa/pdcpmagijalfljmkmjngeonclgbbannb" target="_blank" rel="noopener noreferrer">Chrome Web Store</a>. This allows Chrome to read the debug information inside the <code>.wasm</code> file.</span>
+            <span class="data-ru">Установите расширение <b>C/C++ DevTools Support (DWARF)</b>: <a href="https://chromewebstore.google.com/detail/cc++-devtools-support-dwa/pdcpmagijalfljmkmjngeonclgbbannb" target="_blank" rel="noopener noreferrer">Chrome Web Store</a>. Это позволит Chrome читать отладочную информацию внутри файла <code>.wasm</code>.</span>
         </li>
         <li>
             <span class="data-en">Install <b>http-server</b> via npm to serve your files:</span>
@@ -231,8 +239,8 @@
     </h3>
 
     <p>
-        <span class="data-en">Download the example project: <a href="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-sdl3-opengl-wasm/sdl3-opengl-wasm-app.zip" target="_blank">sdl3-opengl-wasm-app.zip</a>.</span>
-        <span class="data-ru">Скачайте пример проекта: <a href="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-sdl3-opengl-wasm/sdl3-opengl-wasm-app.zip" target="_blank">sdl3-opengl-wasm-app.zip</a>.</span>
+        <span class="data-en">Download an example project at the bottom of the following page: <a href="/tutorials/sdl3-opengl/wasm/setting-up-sdl3-opengl-wasm" target="_blank" rel="noopener noreferrer">Setting up SDL3 with OpenGL ES 3.0 for WebAssembly</a></span>
+        <span class="data-ru">Скачайте пример проекта внизу следующий страницы: <a href="/tutorials/sdl3-opengl/wasm/setting-up-sdl3-opengl-wasm" target="_blank">Настройка SDL3 с OpenGL ES 3.0 для WebAssembly</a>.</span>
     </p>
 
     <p>
@@ -240,7 +248,7 @@
         <span class="data-ru">Откройте терминал и выполните следующие команды для сборки проекта с отладочными символами:</span>
     </p>
 
-    <pre><code class="language-bash">cd sdl3-opengl-wasm-app.zip
+    <pre><code class="language-bash">cd project-folder
 config-wasm
 build-wasm
 http-server -c-1
@@ -568,6 +576,32 @@ function copyToClipboard(text, button) {
                     button.classList.remove('copied');
                 }, 2000);
             });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                
+                // Set the content
+                block.textContent = code;
+                
+                // Re-run Prism highlight if available
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
         });
     });
 </script>

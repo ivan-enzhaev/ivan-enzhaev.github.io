@@ -161,6 +161,14 @@
     pre::-webkit-scrollbar-thumb:hover {
         background: #6c757d;
     }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
 </style>
 </head>
 
@@ -275,9 +283,9 @@
     └── main.c</code></pre>
         </div>
         <div class="col-lg-6 mb-4">
-            <p class="data-en"><strong>C++ Project:</strong> Create an empty folder named <code>sdl3-mixer-opengl-wasm-c</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.cpp</code> files:</p>
-            <p class="data-ru"><strong>Проект на C++:</strong> Создайте пустую папку с именем <code>sdl3-mixer-opengl-wasm-c</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.cpp</code>:</p>
-            <pre><code>sdl3-mixer-opengl-wasm-c/
+            <p class="data-en"><strong>C++ Project:</strong> Create an empty folder named <code>sdl3-mixer-opengl-wasm-cpp</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.cpp</code> files:</p>
+            <p class="data-ru"><strong>Проект на C++:</strong> Создайте пустую папку с именем <code>sdl3-mixer-opengl-wasm-cpp</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.cpp</code>:</p>
+            <pre><code>sdl3-mixer-opengl-wasm-cpp/
 ├── CMakeLists.txt
 ├── config-wasm.bat
 ├── build-wasm.bat
@@ -1028,6 +1036,32 @@ function copyToClipboard(text, button) {
                     button.classList.remove('copied');
                 }, 2000);
             });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                
+                // Set the content
+                block.textContent = code;
+                
+                // Re-run Prism highlight if available
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
         });
     });
 </script>

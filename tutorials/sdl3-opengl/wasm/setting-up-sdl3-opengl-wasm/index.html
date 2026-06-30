@@ -161,6 +161,14 @@
     pre::-webkit-scrollbar-thumb:hover {
         background: #6c757d;
     }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
 </style>
 </head>
 
@@ -229,11 +237,18 @@
     <p><span class="data-en">The following configuration uses platform-specific logic to handle <code>GLAD</code> on Windows while utilizing native <code>GLES3/gl3.h</code> on WebAssembly.</span></p> -->
 
     <h3 class="category-header">
-        <span class="data-en">2. Project Configuration (CMakeLists.txt)</span>
-        <span class="data-ru">2. Конфигурация проекта (CMakeLists.txt)</span>
+        <span class="data-en">2. Project Architecture</span>
+        <span class="data-ru">2. Архитектура проекта</span>
     </h3>
 
-    <ul>
+    <p>
+        <span class="data-en">Let's create a project that renders graphics with OpenGL.</span>
+        <span class="data-ru">Давайте создадим проект, который рендерит графику с помощью OpenGL.</span>
+        <br>
+        <img src="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-sdl3-opengl-wasm/simple-triangle.png" alt="Screenshot" class="img-fluid border rounded mt-3 shadow-sm">
+    </p>
+
+    <!-- <ul>
         <li>
             <span class="data-en">Create a new empty folder for your project (e.g., <code>sdl3-opengl-wasm-app</code>).</span>
             <span class="data-ru">Создайте новую пустую папку для вашего проекта (например, <code>sdl3-opengl-wasm-app</code>).</span>
@@ -242,99 +257,53 @@
             <span class="data-en">Inside that folder, create a file named <code>CMakeLists.txt</code> and paste the following content:</span>
             <span class="data-ru">Внутри этой папки создайте файл с именем <code>CMakeLists.txt</code> и вставьте следующее содержимое:</span>
         </li>
-    </ul>
+    </ul> -->
 
     <div class="row">
         <div class="col-lg-6 mb-4">
-            <h6 class="fw-bold text-primary">CMakeLists.txt (C version)</h6>
-            <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+            <p class="data-en"><strong>C Project:</strong> Create an empty folder named <code>simple-triangle-opengl-sdl3-wasm-c</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.c</code> files:</p>
+            <p class="data-ru"><strong>Проект на C:</strong> Создайте пустую папку с именем <code>simple-triangle-opengl-sdl3-wasm-c</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.c</code>:</p>
+            <pre><code>simple-triangle-opengl-sdl3-wasm-c/
+├── CMakeLists.txt
+├── config-wasm.bat
+├── build-wasm.bat
+│── public/
+│   └── index.html
+└── src/
+    └── main.c</code></pre>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <p class="data-en"><strong>C++ Project:</strong> Create an empty folder named <code>simple-triangle-opengl-sdl3-wasm-cpp</code> and set up the following hierarchy by creating new <code>CMakeLists.txt</code> and <code>main.cpp</code> files:</p>
+            <p class="data-ru"><strong>Проект на C++:</strong> Создайте пустую папку с именем <code>simple-triangle-opengl-sdl3-wasm-cpp</code> и подготовьте следующую иерархию, создав файлы <code>CMakeLists.txt</code> и <code>main.cpp</code>:</p>
+            <pre><code>simple-triangle-opengl-sdl3-wasm-cpp/
+├── CMakeLists.txt
+├── config-wasm.bat
+├── build-wasm.bat
+│── public/
+│   └── index.html
+└── src/
+    └── main.cpp</code></pre>
+        </div>
+    </div>
 
-cmake_minimum_required(VERSION 3.21)
-project(sdl3-opengl-wasm-app)
+    <h3 class="category-header">
+        <span class="data-en">3. CMake Configuration</span>
+        <span class="data-ru">3. Конфигурация CMake</span>
+    </h3>
 
-# Set the C standard
-set(CMAKE_C_STANDARD 17)
-set(CMAKE_C_STANDARD_REQUIRED ON)
-
-# Specify the exact location of the library configuration files
-# The variable name must strictly match: LibraryName_DIR
-set(SDL3_DIR "C:/libs/SDL3-devel-3.4.10-wasm/lib/cmake/SDL3")
-
-# Check for the presence of the library in the system
-# If it is not found, CMake will abort the configuration with an error
-# REQUIRED means the library is mandatory for the build
-find_package(SDL3 REQUIRED)
-
-# Set the name of the future application (on the web it will be app.js / app.wasm,
-# while on Windows it would be app.exe)
-add_executable(app)
-
-# Add source code to the project
-target_sources(app
-    PRIVATE
-    src/main.c
-)
-
-# Emscripten Linker Options for WebGL 2.0 / OpenGL ES 3.0
-target_link_options(app PRIVATE
-    # Use our own SDL3 build instead of Emscripten's internal version
-    "-sUSE_SDL=0"
-
-    # Force WebGL 2.0 (which corresponds to OpenGL ES 3.0)
-    "-sMAX_WEBGL_VERSION=2"
-    "-sMIN_WEBGL_VERSION=2"
-    "-sFULL_ES3=1"
-)
-
-# Link the library to our application (configures linking and include paths)
-target_link_libraries(app PRIVATE SDL3::SDL3)
-</code></pre>
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <!-- <h6 class="fw-bold text-primary">CMakeLists.txt (C version)</h6> -->
+            <p class="data-en"><strong>C Project:</strong> Copy and paste the following code into the <code>CMakeLists.txt</code> file:</p>
+            <p class="data-ru"><strong>Проект на C:</strong> Скопируйте и вставьте следующее содержимое в файл <code>CMakeLists.txt</code>:</p>
+            <pre><code class="language-cmake" data-url="https://raw.githubusercontent.com/ivan-enzhaev/simple-triangle-opengl-sdl3-wasm-c/main/CMakeLists.txt"></code></pre>
         </div>
 
         <div class="col-lg-6 mb-4">
-            <h6 class="fw-bold text-success">CMakeLists.txt (C++ version)</h6>
-            <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
-
-cmake_minimum_required(VERSION 3.21)
-project(sdl3-opengl-wasm-app)
-
-# Set the C++ standard
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Specify the exact location of the library configuration files
-# The variable name must strictly match: LibraryName_DIR
-set(SDL3_DIR "C:/libs/SDL3-devel-3.4.10-wasm/lib/cmake/SDL3")
-
-# Check for the presence of the library in the system
-# If it is not found, CMake will abort the configuration with an error
-# REQUIRED means the library is mandatory for the build
-find_package(SDL3 REQUIRED)
-
-# Set the name of the future application (on the web it will be app.js / app.wasm,
-# while on Windows it would be app.exe)
-add_executable(app)
-
-# Add source code to the project
-target_sources(app
-    PRIVATE
-    src/main.cpp
-)
-
-# Emscripten Linker Options for WebGL 2.0 / OpenGL ES 3.0
-target_link_options(app PRIVATE
-    # Use our own SDL3 build instead of Emscripten's internal version
-    "-sUSE_SDL=0"
-
-    # Force WebGL 2.0 (which corresponds to OpenGL ES 3.0)
-    "-sMAX_WEBGL_VERSION=2"
-    "-sMIN_WEBGL_VERSION=2"
-    "-sFULL_ES3=1"
-)
-
-# Link the library to our application (configures linking and include paths)
-target_link_libraries(app PRIVATE SDL3::SDL3)
-</code></pre>
+            <!-- <h6 class="fw-bold text-success">CMakeLists.txt (C++ version)</h6> -->
+            <p class="data-en"><strong>C++ Project:</strong> Copy and paste the following code into the <code>CMakeLists.txt</code> file:</p>
+            <p class="data-ru"><strong>Проект на C++:</strong> Скопируйте и вставьте следующее содержимое в файл <code>CMakeLists.txt</code>:</p>
+            <pre><code class="language-cmake" data-url="https://raw.githubusercontent.com/ivan-enzhaev/simple-triangle-opengl-sdl3-wasm-cpp/main/CMakeLists.txt"></code></pre>
         </div>
     </div>
 
@@ -405,163 +374,17 @@ target_compile_definitions(app PRIVATE SDL_MAIN_USE_CALLBACKS)</code></pre> -->
 </code></pre> -->
 
     <h3 class="category-header">
-        <span class="data-en">3. Source Code</span>
-        <span class="data-ru">3. Исходный код</span>
+        <span class="data-en">4. Source Code</span>
+        <span class="data-ru">4. Исходный код</span>
     </h3>
 
     <h6 class="fw-bold text-primary"><code>src/main.c</code> (or <code>src/main.cpp</code>):</h6>
 
-    <pre><code class="language-c">#define SDL_MAIN_USE_CALLBACKS 1 // Use callback functions instead of main()
-
-#include &lt;GLES3/gl3.h&gt; // Use GLES3 headers for WebGL 2.0
-#include &lt;SDL3/SDL.h&gt;
-#include &lt;SDL3/SDL_main.h&gt;
-
-const char *vertexShaderSource =
-    "#version 300 es\n"
-    "layout (location = 0) in vec3 aPosition;\n"
-    "void main()\n"
-    "{\n"
-    "    gl_Position = vec4(aPosition, 1.0);\n"
-    "}\n";
-
-const char *fragmentShaderSource =
-    "#version 300 es\n"
-    "precision mediump float;\n"
-    "out vec4 fragColor;\n"
-    "void main()\n"
-    "{\n"
-    "    fragColor = vec4(0.0, 1.0, 0.0, 1.0);\n"
-    "}\n";
-
-typedef struct {
-    SDL_Window *window;
-    SDL_GLContext glContext;
-    unsigned int shaderProgram;
-    unsigned int VAO, VBO;
-} App;
-
-SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
-{
-    App *myApp = (App *)SDL_malloc(sizeof(App));
-    *appstate = myApp; // This makes the pointer available to all other callbacks
-
-    if (!SDL_Init(SDL_INIT_VIDEO))
-        return SDL_APP_FAILURE;
-
-    // WebGL 2 requires GLES 3.0 context
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-
-    myApp->window = SDL_CreateWindow("SDL3 Wasm OpenGL", 380, 380, SDL_WINDOW_OPENGL);
-    if (!myApp->window)
-        return SDL_APP_FAILURE;
-
-    myApp->glContext = SDL_GL_CreateContext(myApp->window);
-    if (!myApp->glContext)
-        return SDL_APP_FAILURE;
-
-    SDL_GL_SetSwapInterval(1);
-
-    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-
-    myApp->shaderProgram = glCreateProgram();
-    glAttachShader(myApp->shaderProgram, vertexShader);
-    glAttachShader(myApp->shaderProgram, fragmentShader);
-    glLinkProgram(myApp->shaderProgram);
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    float vertices[] = {
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f
-    };
-
-    glGenVertexArrays(1, &myApp->VAO);
-    glGenBuffers(1, &myApp->VBO);
-    glBindVertexArray(myApp->VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, myApp->VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(0);
-
-    return SDL_APP_CONTINUE;
-}
-
-SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
-{
-    if (event->type == SDL_EVENT_QUIT) {
-        return SDL_APP_SUCCESS;
-    }
-    return SDL_APP_CONTINUE;
-}
-
-SDL_AppResult SDL_AppIterate(void *appstate)
-{
-    App *myApp = (App *)appstate;
-
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    glUseProgram(myApp->shaderProgram);
-    glBindVertexArray(myApp->VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-
-    SDL_GL_SwapWindow(myApp->window);
-    return SDL_APP_CONTINUE;
-}
-
-void SDL_AppQuit(void *appstate, SDL_AppResult result)
-{
-    // Cast the pointer back to your struct type
-    App *myApp = (App *)appstate;
-
-    // Only clean up if we actually successfully allocated the state
-    if (myApp) {
-        // Destroy SDL objects
-        if (myApp->glContext)
-        {
-            // Delete OpenGL objects
-            glDeleteVertexArrays(1, &myApp->VAO);
-            glDeleteBuffers(1, &myApp->VBO);
-            glDeleteProgram(myApp->shaderProgram);
-            SDL_GL_DestroyContext(myApp->glContext);
-        }
-        if (myApp->window)
-            SDL_DestroyWindow(myApp->window);
-
-        // Free the memory we allocated in SDL_AppInit
-        SDL_free(myApp);
-    }
-
-    // Final shutdown for the SDL subsystem
-    SDL_Quit();
-}</code></pre>
+    <pre><code class="language-c" data-url="https://raw.githubusercontent.com/ivan-enzhaev/simple-triangle-opengl-sdl3-wasm-c/main/src/main.c"></code></pre>
 
     <h6 class="fw-bold text-primary">public/index.html:</h6>
 
-    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-
-&lt;head&gt;
-    &lt;meta charset="utf-8"&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-&lt;/head&gt;
-
-&lt;body&gt;
-    &lt;canvas id="canvas"&gt;&lt;/canvas&gt;
-    &lt;script async src="./js/app.js"&gt;&lt;/script&gt;
-&lt;/body&gt;
-
-&lt;/html&gt;</code></pre>
+    <pre><code class="language-html" data-url="https://raw.githubusercontent.com/ivan-enzhaev/simple-triangle-opengl-sdl3-wasm-c/main/public/index.html"></code></pre>
 
     <!-- <h3 class="category-header"><span class="data-en">3. Build Automation</span><span class="data-ru">3. Автоматизация сборки</span></h3>
     <p><span class="data-en">Use <code>emcmake</code> to point CMake toward the Emscripten toolchain.</span></p>
@@ -574,8 +397,8 @@ cd dist/web
 cmake --build .</code></pre> -->
 
     <h3 class="category-header">
-        <span class="data-en">4. Automation Scripts (.bat)</span>
-        <span class="data-ru">4. Скрипты автоматизации (.bat)</span>
+        <span class="data-en">5. Automation Scripts (.bat)</span>
+        <span class="data-ru">5. Скрипты автоматизации (.bat)</span>
     </h3>
     <div class="row">
         <div class="col-md-6">
@@ -597,8 +420,8 @@ copy "%current_dir%dist\web\app.js" "%current_dir%public\js"</code></pre>
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">5. Build and Run</span>
-        <span class="data-ru">5. Сборка и запуск</span>
+        <span class="data-en">6. Build and Run</span>
+        <span class="data-ru">6. Сборка и запуск</span>
     </h3>
     <p>
         <span class="data-en">Configure and build the project:</span>
@@ -638,17 +461,29 @@ python -m http.server 8080</code></pre>
         <span class="data-en"><strong>Note:</strong> Ensure your assets are located in the <code>assets/</code> folder relative to the project root before running the build, as the <code>--embed-file</code> flag packages them into the resulting <code>.data</code> file.</span>
     </div> -->
 
-    <h3 class="category-header mt-5">
+    <!-- <h3 class="category-header mt-5">
         <span class="data-en">6. Downloads</span>
         <span class="data-ru">6. Загрузки</span>
+    </h3> -->
+
+    <h3 class="category-header mt-5">
+        <span class="data-en">7. Source Code</span>
+        <span class="data-ru">7. Исходный код</span>
     </h3>
+
     <!-- <p class="mt-3">
         <span class="data-en">You can download the complete configured project as a ZIP archive or explore the source code directly on GitHub:</span>
         <span class="data-ru">Вы можете скачать готовую настроенную сборку проекта в виде ZIP-архива или изучить исходный код прямо на GitHub:</span>
     </p> -->
-    <p class="mt-3">
+
+    <!-- <p class="mt-3">
         <span class="data-en">You can download the complete configured project as a ZIP archive:</span>
         <span class="data-ru">Вы можете скачать готовую настроенную сборку проекта в виде ZIP-архива:</span>
+    </p> -->
+
+    <p class="mt-3">
+        <span class="data-en">You can explore the source code and download the complete project directly from the GitHub repository:</span>
+        <span class="data-ru">Вы можете изучить исходный код и скачать готовый проект напрямую из репозитория на GitHub:</span>
     </p>
 
     <div class="d-flex flex-wrap gap-3 my-4">
@@ -659,8 +494,26 @@ python -m http.server 8080</code></pre>
             <span class="data-ru">Открыть на GitHub</span>
         </a> -->
 
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="fw-bold me-2">C Version:</span>
+            <a href="https://github.com/ivan-enzhaev/simple-triangle-opengl-sdl3-wasm-c" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
+                <i class="fab fa-github me-2"></i>
+                <span class="data-en">View C Repo</span>
+                <span class="data-ru">Репозиторий (C)</span>
+            </a>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="fw-bold me-2">C++ Version:</span>
+            <a href="https://github.com/ivan-enzhaev/simple-triangle-opengl-sdl3-wasm-cpp" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
+                <i class="fab fa-github me-2"></i>
+                <span class="data-en">View C++ Repo</span>
+                <span class="data-ru">Репозиторий (C++)</span>
+            </a>
+        </div>
+
         <!-- Direct Download Link -->
-        <a href="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-sdl3-opengl-wasm/sdl3-opengl-wasm-c.zip" download class="btn btn-primary d-inline-flex align-items-center">
+        <!-- <a href="/assets/img/tutorials/sdl3-opengl/wasm/setting-up-sdl3-opengl-wasm/sdl3-opengl-wasm-c.zip" download class="btn btn-primary d-inline-flex align-items-center">
             <i class="fas fa-file-archive me-2"></i>
             <span class="data-en">Download C Project (ZIP)</span>
             <span class="data-ru">Скачать проект на C (ZIP)</span>
@@ -669,7 +522,7 @@ python -m http.server 8080</code></pre>
             <i class="fas fa-file-archive me-2"></i>
             <span class="data-en">Download C++ Project (ZIP)</span>
             <span class="data-ru">Скачать проект на C++ (ZIP)</span>
-        </a>
+        </a> -->
     </div>
 </div>
 
@@ -981,6 +834,32 @@ function copyToClipboard(text, button) {
                     button.classList.remove('copied');
                 }, 2000);
             });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                
+                // Set the content
+                block.textContent = code;
+                
+                // Re-run Prism highlight if available
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
         });
     });
 </script>
