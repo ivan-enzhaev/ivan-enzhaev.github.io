@@ -7,7 +7,7 @@
 
 <title>
   
-    Setting up SDL3 and WebGPU for Desktop and Web
+    Line drawer in 3D (OpenGL)
   
   | Ivan Enzhaev
 </title>
@@ -203,107 +203,152 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">SDL3 + WebGPU: Setup for Desktop (MinGW) and Wasm</span>
-            <span class="data-ru">SDL3 + WebGPU: Настройка для Desktop (MinGW) и Wasm</span>
+            <span class="data-en">Line drawer in 3D</span>
+            <span class="data-ru">Рисование линии в 3D</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">Configure a single C/C++ codebase to run a rotating triangle using WebGPU on both native Windows and the Web.</span>
-            <span class="data-ru">Настройка единого кода на C/C++ для запуска вращающегося треугольника через WebGPU в Windows и браузере.</span>
+            <span class="data-en">Drawing a line in 3D for Windows, Android, and WebAssembly.</span>
+            <span class="data-ru">Рисование линии в 3D для Windows, Android, и WebAssembly.</span>
         </p>
     </header>
 
+    <img src="/assets/img/tutorials/sdl3-opengl/3-in-1/line-drawer-3d-3-in-1-sdl3-opengl/screenshot.png" alt="Download Link" class="img-fluid border rounded mt-3 shadow-sm">
+
+    <h3 class="category-header mt-5">
+        <span class="data-en">1. Source Code</span>
+        <span class="data-ru">1. Исходный код</span>
+    </h3>
+
+    <p class="mt-3">
+        <span class="data-en">You can explore the source code and download the complete project directly from the GitHub repository:</span>
+        <span class="data-ru">Вы можете изучить исходный код и скачать готовый проект напрямую из репозитория на GitHub:</span>
+    </p>
+
+    <div class="d-flex flex-wrap gap-3 my-4">
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="fw-bold me-2">C Version:</span>
+            <a href="https://github.com/ivan-enzhaev/line-drawer-3d-3-in-1-opengl-sdl3-c" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
+                <i class="fab fa-github me-2"></i>
+                <span class="data-en">View C Repo</span>
+                <span class="data-ru">Репозиторий (C)</span>
+            </a>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="fw-bold me-2">C++ Version:</span>
+            <a href="https://github.com/ivan-enzhaev/line-drawer-3d-3-in-1-opengl-sdl3-cpp" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
+                <i class="fab fa-github me-2"></i>
+                <span class="data-en">View C++ Repo</span>
+                <span class="data-ru">Репозиторий (C++)</span>
+            </a>
+        </div>
+    </div>
+
     <h3 class="category-header">
-        <span class="data-en">1. Prerequisites & Environment</span>
-        <span class="data-ru">1. Предварительные условия и окружение</span>
+        <span class="data-en">1. Obtain tools:</span>
+        <span class="data-ru">1. Получение инструментов:</span>
     </h3>
 
     <ul>
         <li>
-            <span class="data-en">Ensure you have followed the <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank">MinGW Setup Guide</a> and the <a href="/tutorials/tools/wasm/wasm-env/" target="_blank">Emscripten Setup Guide</a>.</span>
-            <span class="data-ru">Убедитесь, что вы выполнили <a href="/tutorials/tools/mingw/setup-mingw/" target="_blank">настройку MinGW</a> и <a href="/tutorials/tools/wasm/wasm-env/" target="_blank">настройку Emscripten</a>.</span>
+            <span class="data-en">Desktop (Windows): <a href="/tutorials/sdl3-opengl/mingw/setting-up-sdl3-opengl-mingw/" target="_blank" rel="noopener noreferrer">Setting up SDL3 with find_package (MinGW)</a></span>
+            <span class="data-ru">Desktop (Windows): <a href="/tutorials/sdl3-opengl/mingw/setting-up-sdl3-opengl-mingw/" target="_blank" rel="noopener noreferrer">Настройка SDL3 с помощью find_package (MinGW)</a></span>
         </li>
         <li>
-            <span class="data-en">Install <b>Node.js</b> and the <b>http-server</b>: <code>npm install -g http-server</code>.</span>
-            <span class="data-ru">Установите <b>Node.js</b> и <b>http-server</b>: <code>npm install -g http-server</code>.</span>
+            <span class="data-en">Android: <a href="/tutorials/sdl3-renderer/android/start-android/" target="_blank" rel="noopener noreferrer">Setting up a template project</a></span>
+            <span class="data-ru">Android: <a href="/tutorials/sdl3-renderer/android/start-android/" target="_blank" rel="noopener noreferrer">Настройка шаблонного проекта</a></span>
+        </li>
+        <li>
+            <span class="data-en">WebAssembly: <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/" target="_blank" rel="noopener noreferrer">Building SDL3 for WebAssembly</a></span>
+            <span class="data-ru">WebAssembly <a href="/tutorials/sdl3-renderer/wasm/building-sdl3-wasm/" target="_blank" rel="noopener noreferrer">Сборка SDL3 для WebAssembly</a></span>
         </li>
     </ul>
 
     <h3 class="category-header">
-        <span class="data-en">2. Download Required Libraries</span>
-        <span class="data-ru">2. Загрузка необходимых библиотек</span>
+        <span class="data-en">2. Build and Run for Windows (MinGW)</span>
+        <span class="data-ru">2. Сборка и запуск для Windows (MinGW)</span>
     </h3>
+    <p>
+        <span class="data-en">Configure the project:</span>
+        <span class="data-ru">Сконфигурируйте проект:</span>
+    </p>
+    <pre><code class="language-bash">config-exe</code></pre>
+    <p>
+        <span class="data-en">Build the project:</span>
+        <span class="data-ru">Соберите проект:</span>
+    </p>
+    <pre><code class="language-bash">build-exe</code></pre>
+    <p>
+        <span class="data-en">Run the project:</span>
+        <span class="data-ru">Запустите проект:</span>
+    </p>
+    <pre><code class="language-bash">run-exe</code></pre>
 
+    <h3 class="category-header">
+        <span class="data-en">3. Build and Run for Android</span>
+        <span class="data-ru">3. Сборка и запуск для Android</span>
+    </h3>
+    <p>
+        <span class="data-en">Build the project:</span>
+        <span class="data-ru">Соберите проект:</span>
+    </p>
+    <pre><code class="language-bash">build-apk</code></pre>
+    <p>
+        <span class="data-en">Install the app to the device:</span>
+        <span class="data-ru">Установите приложение на устройство:</span>
+    </p>
+    <pre><code class="language-bash">install-apk</code></pre>
+
+    <h3 class="category-header">
+        <span class="data-en">4. Useful Tips</span>
+        <span class="data-ru">4. Полезные советы</span>
+    </h3>
     <ul>
         <li>
-            <span class="data-en"><b>wgpu-native:</b> Download <a href="https://github.com/gfx-rs/wgpu-native/releases/tag/v29.0.0.0" target="_blank">wgpu-windows-x86_64-gnu-release.zip (v29.0.0.0)</a>. Unzip to <code>C:/libs/wgpu-windows-x86_64-gnu-release-29.0.0.0</code>.</span>
-            <span class="data-ru"><b>wgpu-native:</b> Скачайте <a href="https://github.com/gfx-rs/wgpu-native/releases/tag/v29.0.0.0" target="_blank">wgpu-windows-x86_64-gnu-release.zip (v29.0.0.0)</a>. Распакуйте в <code>C:/libs/wgpu-windows-x86_64-gnu-release-29.0.0.0</code>.</span>
+            <span class="data-en">Show a log: <code>adb logcat -s SDL</code></span>
+            <span class="data-ru">Показать лог: <code>adb logcat -s SDL</code></span>
         </li>
         <li>
-            <span class="data-en"><b>Environment Path:</b> Add <code>C:\libs\wgpu-windows-x86_64-gnu-release-29.0.0.0\lib</code> to your System <b>Path</b> so the OS can find <code>wgpu_native.dll</code>.</span>
-            <span class="data-ru"><b>Переменные окружения:</b> Добавьте <code>C:\libs\wgpu-windows-x86_64-gnu-release-29.0.0.0\lib</code> в системный <b>Path</b>, чтобы ОС могла найти <code>wgpu_native.dll</code>.</span>
+            <span class="data-en">Clear a log: <code>adb logcat -c</code></span>
+            <span class="data-ru">Очистить лог: <code>adb logcat -c</code></span>
+        </li>
+        <li>
+            <span class="data-en">Check connected devices: <code>adb devices</code></span>
+            <span class="data-ru">Проверка подключенных устройств: <code>adb devices</code></span>
+        </li>
+        <li>
+            <span class="data-en">Use <a href="https://github.com/Genymobile/scrcpy" target="_blank" rel="noopener noreferrer">scrcpy</a> to mirror your phone screen to your PC via USB.</span>
+            <span class="data-ru">Используйте <a href="https://github.com/Genymobile/scrcpy" target="_blank" rel="noopener noreferrer">scrcpy</a> для трансляции экрана телефона на ПК через USB.</span>
         </li>
     </ul>
 
-    <div class="alert alert-warning">
-        <span class="data-en"><b>sdl3webgpu:</b> I have downloaded <code>sdl3webgpu.h</code> and <code>sdl3webgpu.c</code> from <a href="https://github.com/eliemichel/sdl3webgpu/tree/4fa9d70935e41c075f664b231ee10a64262a8ac7" target="_blank">this specific commit</a>. I have applied the fix described in <a href="https://github.com/eliemichel/sdl3webgpu/issues/7" target="_blank">my GitHub issue</a> (Jan 2026) to <code>sdl3webgpu.h</code> and <code>sdl3webgpu.c</code> to ensure compatibility with the latest SDL3/WebGPU releases.</span>
-        <span class="data-ru"><b>sdl3webgpu:</b> Я скачал скачал <code>sdl3webgpu.h</code> и <code>sdl3webgpu.c</code> из <a href="https://github.com/eliemichel/sdl3webgpu/tree/4fa9d70935e41c075f664b231ee10a64262a8ac7" target="_blank">этого коммита</a>.</span>
-        <span class="data-ru">Я применил исправление, описанное в <a href="https://github.com/eliemichel/sdl3webgpu/issues/7" target="_blank">моем GitHub issue</a> (январь 2026) к файлу <code>sdl3webgpu.h</code> и <code>sdl3webgpu.c</code>, чтобы обеспечить совместимость.</span>
-    </div>
-
     <h3 class="category-header">
-        <span class="data-en">3. Desktop Build (MinGW)</span>
-        <span class="data-ru">3. Сборка для Desktop (MinGW)</span>
+        <span class="data-en">5. Build and Run for WebAssembly</span>
+        <span class="data-ru">5. Сборка и запуск для WebAssembly</span>
     </h3>
     <p>
-        <span class="data-en">You can open <code>CMakeLists.txt</code> in <b>CLion</b> or <b>QtCreator</b> to set breakpoints and debug natively. To build via command line, use:</span>
-        <span class="data-ru">Вы можете открыть <code>CMakeLists.txt</code> в <b>CLion</b> или <b>QtCreator</b> для отладки. Для сборки через командную строку используйте:</span>
+        <span class="data-en">Configure the project:</span>
+        <span class="data-ru">Сконфигурируйте проект:</span>
     </p>
-
-    <div class="row">
-        <div class="col-md-4">
-            <h6>config-exe.bat</h6>
-            <pre><code class="language-bash">cmake -S . -B dist/exe -G "MinGW Makefiles"</code></pre>
-        </div>
-        <div class="col-md-4">
-            <h6>build-exe.bat</h6>
-            <pre><code class="language-bash">cmake --build dist/exe</code></pre>
-        </div>
-        <div class="col-md-4">
-            <h6>run-exe.bat</h6>
-            <pre><code class="language-bash">start ./dist/exe/app.exe</code></pre>
-        </div>
-    </div>
-
-    <h3 class="category-header">
-        <span class="data-en">4. WebAssembly Build (Emscripten)</span>
-        <span class="data-ru">4. Сборка для WebAssembly (Emscripten)</span>
-    </h3>
-
-    <div class="row">
-        <div class="col-md-6">
-            <h6>config-wasm.bat</h6>
-            <pre><code class="language-bash">emcmake cmake -S . -B dist/web ^
--DCMAKE_BUILD_TYPE=Debug</code></pre>
-        </div>
-        <div class="col-md-6">
-            <h6>build-wasm.bat</h6>
-            <pre><code class="language-bash">cmake --build dist/web
-# ... copy app.js/wasm to public/js ...</code></pre>
-        </div>
-    </div>
-
-    <h3 class="category-header">
-        <span class="data-en">5. Running and Debugging Wasm</span>
-        <span class="data-ru">5. Запуск и отладка Wasm</span>
-    </h3>
+    <pre><code class="language-bash">config-wasm</code></pre>
     <p>
-        <span class="data-en">Run the local server:</span>
-        <span class="data-ru">Запустите локальный сервер:</span>
+        <span class="data-en">Build the project:</span>
+        <span class="data-ru">Соберите проект:</span>
     </p>
-    <pre><code class="language-bash">http-server -c-1</code></pre>
+    <pre><code class="language-bash">build-wasm</code></pre>
+    <p>
+        <span class="data-en">Now, start your local server:</span>
+        <span class="data-ru">Теперь запустите локальный сервер:</span>
+    </p>
+    <pre><code class="language-bash"># Option 1: Using Node.js (http-server)
+http-server -c-1
+
+# Option 2: Using Python
+python -m http.server 8080</code></pre>
+
     <div class="alert alert-info">
-        <span class="data-en">Go to <b>localhost:8080</b>. You can set breakpoints directly in C++ code within Chrome using this guide: <a href="/tutorials/sdl3-renderer/wasm/debugging-sdl3-wasm-in-chrome/">Debugging SDL3 Wasm in Chrome</a>.</span>
-        <span class="data-ru">Перейдите на <b>localhost:8080</b>. Вы можете ставить точки остановки прямо в C++ коде в Chrome, используя это руководство: <a href="/tutorials/sdl3-renderer/wasm/debugging-sdl3-wasm-in-chrome/">Debugging SDL3 Wasm in Chrome</a>.</span>
+        <span class="data-en">Open <strong>localhost:8080</strong> in your browser and check the console (F12 or Ctrl+Shift+J) to see the output.</span>
+        <span class="data-ru">Откройте <strong>localhost:8080</strong> в браузере и проверьте консоль (F12 или Ctrl+Shift+J), чтобы увидеть результат.</span>
     </div>
 </div>
 
@@ -444,28 +489,6 @@ function copyToClipboard(text, button) {
 <block>
     <script src="/libs/prism/1.30.0/prism.min.js"></script>
 
-    
-    <block>
-        
-        <block>
-            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
-        </block>
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-    </block>
     
     <block>
         
