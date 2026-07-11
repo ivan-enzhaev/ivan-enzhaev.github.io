@@ -81,7 +81,6 @@ function draw() {
 function loop() {
     update();
     draw();
-    console.log("Цикл работает, isStarted:", isStarted);
     requestAnimationFrame(loop);
 }
 
