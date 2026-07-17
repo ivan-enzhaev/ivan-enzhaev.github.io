@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    C/C++ Environment Setup with CLion, CMake, and MinGW 16.1
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold text-dark">
+            <span class="data-en">C/C++ Environment Setup with CLion and MinGW 16.1</span>
+            <span class="data-ru">Настройка окружения C/C++ в CLion и MinGW 16.1</span>
+        </h1>
+    </header>
+
+    <h3 class="category-header">
+        <span class="data-en">Download MinGW 16.1 (WinLibs)</span>
+        <span class="data-ru">Загрузка MinGW 16.1 (WinLibs)</span>
+    </h3>
+
+    <p>
+        <span class="data-en">Go to <a href="https://winlibs.com/" target="_blank" rel="noopener noreferrer">winlibs.com</a>. Download the latest <strong>GCC 16.1.0</strong> release (Win64, POSIX threads, SEH exceptions):</span>
+        <span class="data-ru">Перейдите на <a href="https://winlibs.com/" target="_blank" rel="noopener noreferrer">winlibs.com</a>. Скачайте крайнюю версию <strong>GCC 16.1.0</strong> (Win64, POSIX threads, SEH exceptions):</span>
+        <img src="/assets/img/tutorials/tools/mingw/setting-up-clion-with-mingw-16-1-winlibs/mingw-link.png" alt="WinLibs GCC Download Link" class="img-fluid border rounded mt-3 shadow-sm">
+    </p>
+
+    <div class="alert alert-info">
+        <span class="data-en"><strong>Installation:</strong> Extract the folder to a simple path without spaces, for example: <code>C:\mingw64_16.1</code></span>
+        <span class="data-ru"><strong>Установка:</strong> Извлеките папку по простому пути без пробелов, например: <code>C:\mingw64_16.1</code>.</span>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">Path Configuration</span>
+        <span class="data-ru">Настройка переменных окружения</span>
+    </h3>
+    <p>
+        <span class="data-en">Add the MinGW <code>bin</code> folder to your System Path to use <code>g++</code> and <code>make</code> in any terminal.</span>
+        <span class="data-ru">Добавьте папку <code>bin</code> вашего MinGW в системную переменную Path, чтобы использовать <code>g++</code> и <code>make</code> в любом терминале.</span>
+    </p>
+    <pre><code class="language-bash"># Add this to your System PATH:
+C:\mingw64_16.1\bin</code></pre>
+
+    <h3 class="category-header">
+        <span class="data-en">CMake Installation</span>
+        <span class="data-ru">Установка CMake</span>
+    </h3>
+    <p>
+        <span class="data-en">Download the Windows x64 Installer (<code>.msi</code>) from the <a href="https://cmake.org/download/" target="_blank" rel="noopener noreferrer">Official CMake Website</a>.</span>
+        <span class="data-ru">Скачайте установщик Windows x64 (<code>.msi</code>) с <a href="https://cmake.org/download/" target="_blank" rel="noopener noreferrer">официального сайта CMake</a>.</span>
+    </p>
+    <div class="alert alert-warning">
+        <span class="data-en">During installation, select: <strong>"Add CMake to the system PATH for all users"</strong>.</span>
+        <span class="data-ru">Во время установки выберите: <strong>"Add CMake to the system PATH for all users"</strong>.</span>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">CLion Installation</span>
+        <span class="data-ru">Установка CLion</span>
+    </h3>
+    <p>
+        <span class="data-en">Search Google for <code>clion download</code>, download the Windows installer, and run it to complete the installation</span>
+        <span class="data-ru">Поиске Google <code>clion download</code>, скачайте установщик для Windows и запустите его для завершения установки</span>
+    </p>
+
+    <h3 class="category-header">
+        <span class="data-en">Manual Configuration MinGW and CMake in CLion</span>
+        <span class="data-ru">Ручная настройка MinGW и CMake в CLion</span>
+    </h3>
+    <p>
+        <span class="data-en">Open CLion and click the <strong>Setting</strong> button in the left bottom curner and select <strong>Setting</strong>:</span>
+        <span class="data-ru">Откройте CLion и кликните по кнопке <strong>Setting</strong> в левом нижнем углу и выберите <strong>Setting</strong>:</span>
+        <br>
+        <img src="/assets/img/tutorials/tools/mingw/setting-up-clion-with-mingw-16-1-winlibs/settings.png" alt="WinLibs GCC Download Link" class="img-fluid border rounded mt-3 shadow-sm">
+    </p>
+    <p>
+        <span class="data-en">Click <strong>Build, Execution, Deployment</strong> -> <strong>Toolchains</strong> -> the <strong>+</strong> button:</span>
+        <span class="data-ru">Кликните CLion и кликните по <strong>Build, Execution, Deployment</strong> -> <strong>Toolchains</strong> -> и по кнопке <strong>+</strong>:</span>
+        <br>
+        <img src="/assets/img/tutorials/tools/mingw/setting-up-clion-with-mingw-16-1-winlibs/plus-button.png" alt="Plus button for MinGW" class="img-fluid border rounded mt-3 shadow-sm">
+    </p>
+    <p>
+        <span class="data-en">Select <strong>MinGW</strong>:</span>
+        <span class="data-ru">Выберите <strong>MinGW</strong>:</span>
+        <br>
+        <img src="/assets/img/tutorials/tools/mingw/setting-up-clion-with-mingw-16-1-winlibs/select-mingw.png" alt="Select MinGW" class="img-fluid border rounded mt-3 shadow-sm">
+    </p>
+    <p>
+        <span class="data-en">Rename <strong>MinGW (1)</strong> to <strong>MinGW 16.1</strong> and click the Up button:</span>
+        <span class="data-ru">Измените имя <strong>MinGW (1)</strong> на имя <strong>MinGW 16.1</strong> и нажмите кнопку вверх:</span>
+        <br>
+        <img src="/assets/img/tutorials/tools/mingw/setting-up-clion-with-mingw-16-1-winlibs/rename-mingw-and-up-button.png" alt="Rename to MinGW 16.1 and click the Up button" class="img-fluid border rounded mt-3 shadow-sm">
+    </p>
+    <p>
+        <span class="data-en">Switch <strong>Bundled MinGW</strong> to <strong>MinGW 16.1</strong>:</span>
+        <span class="data-ru">Переключите <strong>Bundled MinGW</strong> на <strong>MinGW 16.1</strong>:</span>
+        <br>
+        <img src="/assets/img/tutorials/tools/mingw/setting-up-clion-with-mingw-16-1-winlibs/switch-mingw.png" alt="Switch MinGW 16.1" class="img-fluid border rounded mt-3 shadow-sm">
+    </p>
+    <p>
+        <span class="data-en">Switch CMake <strong>Bundled</strong> to <strong>System CMake</strong>:</span>
+        <span class="data-ru">Переключите CMake <strong>Bundled</strong> на <strong>System CMake</strong>:</span>
+        <br>
+        <img src="/assets/img/tutorials/tools/mingw/setting-up-clion-with-mingw-16-1-winlibs/switch-cmake-and-ok.png" alt="Switch MinGW 16.1" class="img-fluid border rounded mt-3 shadow-sm">
+    </p>
+
+    <h3 class="category-header">
+        <span class="data-en">Creation of a Simple Project</span>
+        <span class="data-ru">Создание простого проекта</span>
+    </h3>
+    <p>
+        <span class="data-en">Click the <strong>New Project</strong> button:</span>
+        <span class="data-ru">Кликните по кнопке <strong>New Project</strong>:</span>
+        <br>
+        <img src="/assets/img/tutorials/tools/mingw/setting-up-clion-with-mingw-16-1-winlibs/new-project-button.png" alt="Click a new project button" class="img-fluid border rounded mt-3 shadow-sm">
+    </p>
+    <p>
+        <span class="data-en">You can select a <strong>Locaton</strong> (1) and a type of project (2) - C or C++:</span>
+        <span class="data-ru">Вы можете выбрать расположение проекта - <strong>Locaton</strong> (1) и тип проекта (2) - C или C++:</span>
+        <br>
+        <img src="/assets/img/tutorials/tools/mingw/setting-up-clion-with-mingw-16-1-winlibs/create-project.png" alt="Create a project" class="img-fluid border rounded mt-3 shadow-sm">
+    </p>
+    <p>
+        <span class="data-en">You can run a program (1) or start debugging (2):</span>
+        <span class="data-ru">Вы можете запустить программу (1) или начать отладку (2):</span>
+        <br>
+        <img src="/assets/img/tutorials/tools/mingw/setting-up-clion-with-mingw-16-1-winlibs/run-project.png" alt="Run a project" class="img-fluid border rounded mt-3 shadow-sm">
+    </p>
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">
+                        <span class="data-en">Sberbank (Russia only)</span>
+                        <span class="data-ru">Сбербанк (только для РФ)</span>
+                    </h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number (Russia only)</span>
+                        <span class="data-ru">Перевод по номеру телефона (только для РФ)</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">USDT TRC20</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+    //     if (link) {
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // Logic for dynamic links (persisting language across pages)
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        
+        if (link) {
+            // Check if the link is intended to open in a new tab
+            if (link.target === "_blank") {
+                // Allow the browser to handle the click naturally, 
+                // but we still want to append the language param.
+                const currentLang = document.documentElement.getAttribute("lang") || "en";
+                const targetUrl = new URL(link.href);
+                targetUrl.searchParams.set("lang", currentLang);
+                
+                // Update the href right before the browser follows it
+                link.href = targetUrl.toString();
+                return; // Exit the function so e.preventDefault() isn't called
+            }
+
+            // Existing logic for same-tab navigation
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(
+                link.href,
+                window.location.origin + window.location.pathname,
+            );
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    document.querySelectorAll('pre').forEach((pre) => {
+        // Create container and header
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        // Wrap the pre tag
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        // Copy Logic
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                
+                // Set the content
+                block.textContent = code;
+                
+                // Re-run Prism highlight if available
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
+        });
+    });
+</script>
+</body>
+
+</html>
