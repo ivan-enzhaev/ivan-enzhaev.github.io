@@ -7,7 +7,7 @@
 
 <title>
   
-    Setting up a template project
+    Building ImGui from source for SDL3 and OpenGL (MinGW and CMake)
   
   | Ivan Enzhaev
 </title>
@@ -200,161 +200,7 @@
 
     <main class="flex-grow-1">
         
-<div class="container bg-white p-5 shadow-sm rounded mb-5">
-    <header class="mb-5 border-bottom pb-3">
-        <h1 class="fw-bold">
-            <span class="data-en">SDL3 for Android: OpenGL</span>
-            <span class="data-ru">SDL3 для Android: OpenGL</span>
-        </h1>
-        <p class="lead text-muted">
-            <span class="data-en">A guide to setting up, building, and installing an SDL3 project on an Android device.</span>
-            <span class="data-ru">Руководство по настройке, сборке и установке проекта SDL3 на Android-устройство.</span>
-        </p>
-    </header>
 
-    <div class="alert alert-secondary">
-        <span class="data-en">If you haven't set up your environment (Android SDK, NDK, JDK), follow the</span>
-        <span class="data-ru">Если вы еще не настроили окружение (Android SDK, NDK, JDK), следуйте инструкции:</span>
-        <a href="/tutorials/tools/android/android-env/" class="fw-bold text-dark lang-link-dynamic">
-            <span class="data-en">Environment Setup Guide</span>
-            <span class="data-ru">Руководство по настройке окружения</span>
-        </a>
-    </div>
-
-    <h3 class="category-header">
-        <span class="data-en">Download the AAR library</span>
-        <span class="data-ru">Загрузка библиотеки AAR</span>
-    </h3>
-
-    <ul>
-        <li>
-            <span class="data-en">Download the Android development binaries (AAR) - specifically <b>SDL3-devel-3.4.14-android.zip</b> - from the <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.14" target="_blank" rel="noopener noreferrer">official SDL3 release page</a></span>
-            <span class="data-ru">Скачайте бинарные файлы для разработки под Android (AAR) — а именно <b>SDL3-devel-3.4.14-android.zip</b> — с <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.14" target="_blank" rel="noopener noreferrer">официальной страницы релизов SDL3</a>.</span>
-        </li>
-        <li>
-            <span class="data-en">Move <b>SDL3-devel-3.4.14-android.zip</b> to the <b>C:/libs</b> folder (or your preferred directory)</span>
-            <span class="data-ru">Переместите архив <b>SDL3-devel-3.4.14-android.zip</b> в папку <b>C:/libs</b> (или любой другой удобный каталог).</span>
-        </li>
-        <li>
-            <span class="data-en">Extract the ZIP file into a folder named <b>SDL3-devel-3.4.14-android</b> like this:</span>
-            <span class="data-ru">Распакуйте ZIP-файл в папку с названием <b>SDL3-devel-3.4.14-android</b> вот так:</span>
-            <br>
-            <img src="/assets/img/tutorials/sdl3-opengl/android/setting-up-sdl3-opengl-android/sdl3-devel-android.png">
-        </li>
-    </ul>
-
-    <h3 class="category-header">
-        <span class="data-en">Download a Template</span>
-        <span class="data-ru">Загрузка шаблона</span>
-    </h3>
-    <ul>
-        <li>
-            <span class="data-en">Download the SDL3 OpenGL Example:</span>
-            <span class="data-ru">Скачайте пример на SDL3 OpenGL:</span>
-
-            <div class="d-flex flex-wrap gap-3 my-4">
-                <div class="d-flex flex-wrap gap-2 align-items-center">
-                    <span class="fw-bold me-2">C Version:</span>
-                    <a href="https://github.com/ivan-enzhaev/simple-triangle-2d-3-in-1-opengl-sdl3-c" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
-                        <i class="fab fa-github me-2"></i>
-                        <span class="data-en">View C Repo</span>
-                        <span class="data-ru">Репозиторий (C)</span>
-                    </a>
-                </div>
-
-                <div class="d-flex flex-wrap gap-2 align-items-center">
-                    <span class="fw-bold me-2">C++ Version:</span>
-                    <a href="https://github.com/ivan-enzhaev/simple-triangle-2d-3-in-1-opengl-sdl3-cpp" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
-                        <i class="fab fa-github me-2"></i>
-                        <span class="data-en">View C++ Repo</span>
-                        <span class="data-ru">Репозиторий (C++)</span>
-                    </a>
-                </div>
-            </div>
-
-        </li>
-        <li>
-            <span class="data-en">Extract it to a folder of your choice</span>
-            <span class="data-ru">Распакуйте его в любую папку на ваш выбор.</span>
-        </li>
-        <li>
-            <span class="data-en">Open this folder in your preferred code editor (e.g., <a href="https://www.sublimetext.com/download" target="_blank" rel="noopener noreferrer">Sublime Text 4</a>, Notepad++, etc.)</span>
-            <span class="data-ru">Откройте эту папку в вашем любимом текстовом редакторе (например, <a href="https://www.sublimetext.com/download" target="_blank" rel="noopener noreferrer">Sublime Text 4</a>, Notepad++ и т.д.).</span>
-        </li>
-    </ul>
-
-    <h3 class="category-header">
-        <span class="data-en">Project Configuration in the "android-project/app/build.gradle" file</span>
-        <span class="data-ru">Конфигурация проекта в файле "android-project/app/build.gradle"</span>
-    </h3>
-
-    <ul>
-        <li>
-            <span class="data-en">Open the <b>android-project/app/build.gradle</b> file. Replace the path to SDL3 with your own:</span>
-            <span class="data-ru">Откройте файл <b>android-project/app/build.gradle</b>. Замените путь к SDL3 на свой:</span>
-        </li>
-
-        <pre><code class="language-gradle">dependencies {
-    implementation files('C:/libs/SDL3-devel-3.4.14-android/SDL3-3.4.14.aar')
-    implementation 'androidx.appcompat:appcompat:1.5.1'
-}</code></pre>
-    </ul>
-
-    <h3 class="category-header">
-        <span class="data-en">Build and Deploy</span>
-        <span class="data-ru">Сборка и установка</span>
-    </h3>
-
-    <p>
-        <span class="data-en">Open a terminal in the root of the project and run the following commands:</span>
-        <span class="data-ru">Откройте терминал в корне папки и выполните следующие команды:</span>
-    </p>
-
-    <div class="row mb-4">
-        <div class="col-12">
-            <h6 class="fw-bold">
-                <span class="data-en">Step 1: Compile</span>
-                <span class="data-ru">Шаг 1: Компиляция</span>
-            </h6>
-            <pre><code class="language-bash">build-apk</code></pre>
-        </div>
-    </div>
-
-    <div class="row mb-4">
-        <div class="col-12">
-            <h6 class="fw-bold">
-                <span class="data-en">Step 2: Install</span>
-                <span class="data-ru">Шаг 2: Установка</span>
-            </h6>
-            <div class="bg-light p-2 rounded border-start border-4 border-primary mb-2">
-                <pre class="m-0"><code class="language-bash">install-apk</code></pre>
-            </div>
-        </div>
-    </div>
-
-    <h3 class="category-header">
-        <span class="data-en">Useful Tips</span>
-        <span class="data-ru">Полезные советы</span>
-    </h3>
-    <ul>
-        <li>
-            <span class="data-en">Show a log: <code>adb logcat -s SDL</code></span>
-            <span class="data-ru">Показать лог: <code>adb logcat -s SDL</code></span>
-        </li>
-        <li>
-            <span class="data-en">Clear a log: <code>adb logcat -c</code></span>
-            <span class="data-ru">Очистить лог: <code>adb logcat -c</code></span>
-        </li>
-        <li>
-            <span class="data-en">Check connected devices: <code>adb devices</code></span>
-            <span class="data-ru">Проверка подключенных устройств: <code>adb devices</code></span>
-        </li>
-        <li>
-            <span class="data-en">Use <a href="https://github.com/Genymobile/scrcpy" target="_blank" rel="noopener noreferrer">scrcpy</a> to mirror your phone screen to your PC via USB.</span>
-            <span class="data-ru">Используйте <a href="https://github.com/Genymobile/scrcpy" target="_blank" rel="noopener noreferrer">scrcpy</a> для трансляции экрана телефона на ПК через USB.</span>
-        </li>
-    </ul>
-</div>
 
         
         
@@ -525,11 +371,11 @@ function copyToClipboard(text, button) {
         
 
         
-        <block>
-            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
-        </block>
-        
 
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
         
 
         
@@ -549,19 +395,19 @@ function copyToClipboard(text, button) {
         
 
         
-
-        
-
-        
-
-        
-
-        
-
-        
         <block>
-            <script src="/libs/prism/1.30.0/components/prism-gradle.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
         </block>
+        
+
+        
+
+        
+
+        
+
+        
+
         
 
         
