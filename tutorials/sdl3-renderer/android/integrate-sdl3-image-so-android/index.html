@@ -7,7 +7,7 @@
 
 <title>
   
-    Integrating compiled libSDL3.so on Android
+    Integrating compiled libSDL3_image.so on Android
   
   | Ivan Enzhaev
 </title>
@@ -203,199 +203,172 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Integrating compiled libSDL3.so on Android</span>
-            <span class="data-ru">Интеграция собранной библиотеки libSDL3.so на Android</span>
+            <span class="data-en">Integrating compiled libSDL3_image.so on Android</span>
+            <span class="data-ru">Интеграция собранной библиотеки libSDL3_image.so на Android</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A step-by-step guide to creating a test application, linking your compiled libSDL3.so, building an APK, and running it on an Android device.</span>
-            <span class="data-ru">Пошаговое руководство по созданию тестового приложения, связыванию собранной библиотеки libSDL3.so, сборке APK и запуску на Android-устройстве.</span>
+            <span class="data-en">A step-by-step guide to adding SDL3_image support to your Android project, handling asset copying via CMake, and rendering textures on mobile devices.</span>
+            <span class="data-ru">Пошаговое руководство по добавлению поддержки SDL3_image в ваш Android-проект, автоматической копировании ассетов через CMake и отрисовке текстур на мобильных устройствах.</span>
         </p>
     </header>
 
-    <!-- <div class="alert alert-secondary mb-4">
-        <span class="data-en">This guide builds on the previous tutorial. Make sure you have completed the</span>
-        <span class="data-ru">Это руководство является продолжением предыдущего. Убедитесь, что вы прошли</span>
-        <a href="/tutorials/sdl3/android/build-sdl3/" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-            <span class="data-en">Building SDL3 shared library for Android Guide</span>
-            <span class="data-ru">Руководство по сборке динамической библиотеки SDL3 для Android</span>
-        </a>
-    </div> -->
-
+    <!-- Prerequisites -->
     <div class="alert alert-secondary mb-3">
-        <span class="data-en">If you haven't built the core SDL3 library yet, follow the</span>
-        <span class="data-ru">Если вы еще не собрали основную библиотеку SDL3, следуйте инструкции:</span>
-        <a href="/tutorials/tools/android/build-sdl3-so-android" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-            <span class="data-en">Building SDL3 shared library for Android</span>
-            <span class="data-ru">Сборка динамической библиотеки SDL3 для Android</span>
-        </a>
+        <span class="data-en">Before starting this guide, make sure you have completed the foundational tutorials:</span>
+        <span class="data-ru">Перед началом работы убедитесь, что вы выполнили предыдущие руководства:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/sdl3-renderer/android/integrate-sdl3-so-android" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Integrating compiled libSDL3.so on Android</span>
+                    <span class="data-ru">Интеграция собранной библиотеки libSDL3.so на Android</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/android/build-sdl3-image-so-android" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3_image to .so for Android</span>
+                    <span class="data-ru">Сборка SDL3_image в .so для Android</span>
+                </a>
+            </li>
+        </ul>
     </div>
 
     <!-- Step 1 -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 1: Project Setup</span>
-            <span class="data-ru">Шаг 1: Настройка структуры проекта</span>
+            <span class="data-en">Step 1: Download Base Template and Rename Project</span>
+            <span class="data-ru">Шаг 1: Скачивание базового шаблона и переименование проекта</span>
         </h2>
         <p>
-            <span class="data-en">Create a new empty directory on your machine for your project (e.g., <code>android-app-sdl3-c</code>).</span>
-            <span class="data-ru">Создайте новую пустую директорию на вашем компьютере для проекта (например, <code>android-app-sdl3-c</code>).</span>
+            <span class="data-en">First, download the base starter project template depending on your language preference:</span>
+            <span class="data-ru">Сначала скачайте базовый шаблон проекта в зависимости от используемого языка:</span>
         </p>
+
+        <div class="d-flex flex-wrap gap-3 my-3">
+            <div class="d-flex align-items-center gap-2">
+                <span class="fw-bold">C:</span>
+                <a href="https://github.com/ivan-enzhaev/android-app-sdl3-c" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
+                    <i class="fab fa-github me-1"></i>
+                    <span class="data-en">View C Repo</span>
+                    <span class="data-ru">Репозиторий (C)</span>
+                </a>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+                <span class="fw-bold">C++:</span>
+                <a href="https://github.com/ivan-enzhaev/android-app-sdl3-cpp" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
+                    <i class="fab fa-github me-1"></i>
+                    <span class="data-en">View C++ Repo</span>
+                    <span class="data-ru">Репозиторий (C++)</span>
+                </a>
+            </div>
+        </div>
+
         <p>
-            <span class="data-en">Copy the <code>android-project</code> directory from the official SDL3 repository into your new folder:</span>
-            <span class="data-ru">Скопируйте директорию <code>android-project</code> из официального репозитория SDL3 в созданную папку:</span>
+            <span class="data-en">Rename your project folder to <code>integrate-sdl3-image-android-c</code> (or <code>integrate-sdl3-image-android-cpp</code>).</span>
+            <span class="data-ru">Переименуйте папку проекта в <code>integrate-sdl3-image-android-c</code> (или <code>integrate-sdl3-image-android-cpp</code>).</span>
         </p>
-        <p>
-            <a href="https://github.com/libsdl-org/SDL/tree/main/android-project" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">SDL3 android-project Source</span>
-                <span class="data-ru">Исходники android-project SDL3</span>
-            </a>
-        </p>
-        <p>
-            <span class="data-en">Next, delete the unneeded native source template folder:</span>
-            <span class="data-ru">Затем удалите ненужную папку с шаблоном нативных исходников:</span>
-        </p>
-        <ul>
-            <li><code>android-project\app\jni</code></li>
-        </ul>
     </section>
 
     <!-- Step 2 -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 2: Create CMakeLists.txt</span>
-            <span class="data-ru">Шаг 2: Создание CMakeLists.txt</span>
+            <span class="data-en">Step 2: Update CMakeLists.txt</span>
+            <span class="data-ru">Шаг 2: Обновление CMakeLists.txt</span>
         </h2>
         <p>
-            <span class="data-en">In the <strong>root</strong> of your created project folder (outside <code>android-project</code>), create a <code>CMakeLists.txt</code> file:</span>
-            <span class="data-ru">В <strong>корне</strong> созданной папки проекта (рядом с <code>android-project</code>) создайте файл <code>CMakeLists.txt</code>:</span>
+            <span class="data-en">Open <code>CMakeLists.txt</code> in the root directory and update it to link both <code>SDL3</code> and <code>SDL3_image</code> libraries:</span>
+            <span class="data-ru">Откройте <code>CMakeLists.txt</code> в корне проекта и обновите его для связывания обоих библиотек (<code>SDL3</code> и <code>SDL3_image</code>):</span>
         </p>
 
-        <pre><code class="language-cmake" data-url="https://raw.githubusercontent.com/ivan-enzhaev/android-app-sdl3-c/main/CMakeLists.txt"></code></pre>
+        <pre><code class="language-cmake" data-url="https://raw.githubusercontent.com/ivan-enzhaev/integrate-sdl3-image-android-c/main/CMakeLists.txt"></code></pre>
     </section>
 
     <!-- Step 3 -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 3: Create the C Source File</span>
-            <span class="data-ru">Шаг 3: Создание исходного файла C</span>
+            <span class="data-en">Step 3: Configure Gradle Source Sets</span>
+            <span class="data-ru">Шаг 3: Настройка Source Sets в Gradle</span>
         </h2>
         <p>
-            <span class="data-en">In the root directory, create a folder named <code>src</code>, and inside it, create a file named <code>main.c</code>:</span>
-            <span class="data-ru">В корневой директории создайте папку <code>src</code>, а внутри нее — файл <code>main.c</code>:</span>
+            <span class="data-en">Open <code>android-project/app/build.gradle</code> and set the <code>sourceSets</code> block inside <code>android { ... }</code>. This instructs Gradle to bundle assets directly from the project's root <code>assets</code> folder:</span>
+            <span class="data-ru">Откройте <code>android-project/app/build.gradle</code> и настройте блок <code>sourceSets</code> внутри <code>android { ... }</code>. Это укажет Gradle упаковывать ассеты напрямую из корневой папки <code>assets</code>:</span>
         </p>
 
-        <pre><code class="language-c" data-url="https://raw.githubusercontent.com/ivan-enzhaev/android-app-sdl3-c/main/src/main.c"></code></pre>
+        <pre><code class="language-gradle">android {
+    namespace "com.example.myapp"
+    compileSdkVersion 35
+
+    defaultConfig {
+        // ...
+    }
+
+    // Direct Gradle to fetch assets straight from the root project folder
+    sourceSets {
+        main {
+            assets.srcDirs = ['../../assets']
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path '../../CMakeLists.txt'
+        }
+    }
+}</code></pre>
     </section>
 
     <!-- Step 4 -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 4: Configure Gradle and Android Settings</span>
-            <span class="data-ru">Шаг 4: Настройка Gradle и параметров Android</span>
+            <span class="data-en">Step 4: Setup Project Assets</span>
+            <span class="data-ru">Шаг 4: Настройка ресурсов (Assets)</span>
         </h2>
         <p>
-            <span class="data-en">1. Replace the content of <code>android-project/app/build.gradle</code> with:</span>
-            <span class="data-ru">1. Замените содержимое файла <code>android-project/app/build.gradle</code> следующим кодом:</span>
+            <span class="data-en">1. Download a free texture, such as a crate texture from <a href="https://opengameart.org/content/crate-5" target="_blank" rel="noopener noreferrer">OpenGameArt Crate 5</a>.</span>
+            <span class="data-ru">1. Скачайте бесплатную текстуру, например, ящик с сайта <a href="https://opengameart.org/content/crate-5" target="_blank" rel="noopener noreferrer">OpenGameArt Crate 5</a>.</span>
         </p>
-
-        <pre><code class="language-gradle" data-url="https://raw.githubusercontent.com/ivan-enzhaev/android-app-sdl3-c/main/android-project/app/build.gradle"></code></pre>
-
-        <p class="mt-3">
-            <span class="data-en">2. Create a custom Java activity at path <code>android-project\app\src\main\java\com\example\myapp\MyActivity.java</code>:</span>
-            <span class="data-ru">2. Создайте пользовательский Java-класс по пути <code>android-project\app\src\main\java\com\example\myapp\MyActivity.java</code>:</span>
+        <p>
+            <span class="data-en">2. Create a new directory path in the root folder: <code>assets/images</code>.</span>
+            <span class="data-ru">2. Создайте новую папку в корне вашего проекта: <code>assets/images</code>.</span>
         </p>
-
-        <pre><code class="language-java" data-url="https://raw.githubusercontent.com/ivan-enzhaev/android-app-sdl3-c/main/android-project/app/src/main/java/com/example/myapp/MyActivity.java"></code></pre>
-
-        <p class="mt-3">
-            <span class="data-en">3. In <code>android-project\app\src\main\AndroidManifest.xml</code>, update the activity tag to point to your new package name:</span>
-            <span class="data-ru">3. В файле <code>android-project\app\src\main\AndroidManifest.xml</code> измените строку объявления activity:</span>
+        <p>
+            <span class="data-en">3. Place the downloaded image into <code>assets/images</code> and rename it to <code>crate.png</code>.</span>
+            <span class="data-ru">3. Поместите скачанное изображение в <code>assets/images</code> и переименуйте его в <code>crate.png</code>.</span>
         </p>
-
-        <pre><code class="language-markup">&lt;activity android:name="com.example.myapp.MyActivity"</code></pre>
-
-        <p class="mt-3">
-            <span class="data-en">4. Open <code>android-project\gradle.properties</code> and append this line:</span>
-            <span class="data-ru">4. Откройте <code>android-project\gradle.properties</code> и добавьте следующую строку:</span>
-        </p>
-
-        <pre><code class="language-properties">android.useAndroidX=true</code></pre>
     </section>
 
     <!-- Step 5 -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 5: Create Build and Install Scripts</span>
-            <span class="data-ru">Шаг 5: Создание скриптов сборки и установки</span>
+            <span class="data-en">Step 5: Write the C Source Code</span>
+            <span class="data-ru">Шаг 5: Написание исходного кода на C</span>
         </h2>
         <p>
-            <span class="data-en">In the root folder of your project, create two helper batch files to compile and install the application automatically.</span>
-            <span class="data-ru">В корневой папке проекта создайте два вспомогательных bat-файла для автоматической сборки и установки приложения.</span>
+            <span class="data-en">Replace the contents of <code>src/main.c</code> with the following code to load and display textures using <code>SDL3_image</code>:</span>
+            <span class="data-ru">Замените содержимое файла <code>src/main.c</code> следующим кодом для загрузки и отображения текстур с помощью <code>SDL3_image</code>:</span>
         </p>
 
-        <p><code>build-apk.bat</code></p>
-
-        <pre><code class="language-bash" data-url="https://raw.githubusercontent.com/ivan-enzhaev/android-app-sdl3-c/main/build-apk.bat"></code></pre>
-
-        <p class="mt-2"><code>install-apk.bat</code></p>
-
-        <pre><code class="language-bash" data-url="https://raw.githubusercontent.com/ivan-enzhaev/android-app-sdl3-c/main/install-apk.bat"></code></pre>
+        <pre><code class="language-c" data-url="https://raw.githubusercontent.com/ivan-enzhaev/integrate-sdl3-image-android-c/main/src/main.c"></code></pre>
     </section>
 
     <!-- Step 6 -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 6: Build, Deploy, and Debug</span>
-            <span class="data-ru">Шаг 6: Сборка, развертывание и отладка</span>
+            <span class="data-en">Step 6: Build and Run on Android</span>
+            <span class="data-ru">Шаг 6: Сборка и запуск на Android</span>
         </h2>
         <p>
-            <span class="data-en">Enable <strong>Developer Options</strong> and <strong>USB Debugging</strong> on your Android device, then connect it to your computer via USB.</span>
-            <span class="data-ru">Включите <strong>Режим разработчика</strong> и <strong>Отладку по USB</strong> на вашем Android-устройстве, после чего подключите его к компьютеру через USB-кабель.</span>
+            <span class="data-en">Run the provided helper scripts in your command prompt to compile the app and push it directly to your connected device:</span>
+            <span class="data-ru">Запустите готовые батч-скрипты в командной строке для сборки и автоматической установки на подключенное устройство:</span>
         </p>
 
-        <p>
-            <span class="data-en">Execute the batch scripts in your Command Prompt (CMD):</span>
-            <span class="data-ru">Выполните батч-скрипты в командной строке (CMD):</span>
-        </p>
         <pre><code class="language-bash">build-apk
 install-apk</code></pre>
 
-        <div class="card bg-light p-3 my-3">
-            <h3 class="h6 fw-bold">
-                <span class="data-en">Useful ADB Commands:</span>
-                <span class="data-ru">Полезные команды ADB:</span>
-            </h3>
-            <p class="mb-1">
-                <span class="data-en">Uninstall the application from the device:</span>
-                <span class="data-ru">Удаление приложения с устройства:</span>
-            </p>
-            <pre class="mb-2"><code class="language-bash">adb uninstall com.example.myapp</code></pre>
-
-            <p class="mb-1">
-                <span class="data-en">Clear logs and view real-time runtime errors (PowerShell):</span>
-                <span class="data-ru">Очистка логов и просмотр ошибок в реальном времени (PowerShell):</span>
-            </p>
-            <pre class="mb-0"><code class="language-bash">adb logcat -c
-adb shell 'logcat --pid=$(pidof -s com.example.myapp)'</code></pre>
-<!-- adb logcat -d AndroidRuntime:E DEBUG:E *:S -->
-
-            <p class="mb-1">
-                <span class="data-en">Clear logs and view real-time runtime errors (CMD):</span>
-                <span class="data-ru">Очистка логов и просмотр ошибок в реальном времени (CMD):</span>
-            </p>
-            <pre class="mb-0"><code class="language-bash">adb logcat -c
-for /f %i in ('adb shell pidof -s com.example.myapp') do set APP_PID=%i
-adb logcat --pid=%APP_PID%</code></pre>
-        </div>
-
-        <div class="alert alert-info">
-            <strong>
-                <span class="data-en">Tip:</span>
-                <span class="data-ru">Совет:</span>
-            </strong>
-            <span class="data-en">You can open the <code>android-project</code> directory directly in <strong>Android Studio</strong> to set breakpoints and debug your code in step-by-step mode!</span>
-            <span class="data-ru">Вы можете открыть папку <code>android-project</code> прямо в <strong>Android Studio</strong>, чтобы ставить точки останова (breakpoints) и отлаживать приложение в пошаговом режиме!</span>
-        </div>
+        <p class="mt-3">
+            <span class="data-en">Once installed, tap the application icon on your smartphone to launch it and view the rendered crate textures.</span>
+            <span class="data-ru">После завершения установки нажмите на иконку приложения на смартфоне, чтобы запустить его и увидеть отрисованные текстуры ящика.</span>
+        </p>
     </section>
 
     <!-- Step 7: Source Code -->
@@ -412,7 +385,7 @@ adb logcat --pid=%APP_PID%</code></pre>
         <div class="d-flex flex-wrap gap-3 my-3">
             <div class="d-flex align-items-center gap-2">
                 <span class="fw-bold">C:</span>
-                <a href="https://github.com/ivan-enzhaev/android-app-sdl3-c" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
+                <a href="https://github.com/ivan-enzhaev/integrate-sdl3-image-android-c" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
                     <i class="fab fa-github me-1"></i>
                     <span class="data-en">View C Repo</span>
                     <span class="data-ru">Репозиторий (C)</span>
@@ -421,7 +394,7 @@ adb logcat --pid=%APP_PID%</code></pre>
 
             <div class="d-flex align-items-center gap-2">
                 <span class="fw-bold">C++:</span>
-                <a href="https://github.com/ivan-enzhaev/android-app-sdl3-cpp" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
+                <a href="https://github.com/ivan-enzhaev/integrate-sdl3-image-android-cpp" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
                     <i class="fab fa-github me-1"></i>
                     <span class="data-en">View C++ Repo</span>
                     <span class="data-ru">Репозиторий (C++)</span>
