@@ -7,7 +7,7 @@
 
 <title>
   
-    Building zlib Static Library for WebAssembly (Emscripten &amp; CMake)
+    Building SDL3_image Static Library for WebAssembly (Emscripten &amp; CMake)
   
   | Ivan Enzhaev
 </title>
@@ -216,80 +216,113 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Building zlib Static Library for WebAssembly (Emscripten &amp; CMake)</span>
-            <span class="data-ru">Сборка статической библиотеки zlib для WebAssembly (Emscripten и CMake)</span>
+            <span class="data-en">Building SDL3_image Static Library for WebAssembly (Emscripten &amp; CMake)</span>
+            <span class="data-ru">Сборка статической библиотеки SDL3_image для WebAssembly (Emscripten и CMake)</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A comprehensive guide to compiling zlib statically on Windows using Emscripten and CMake.</span>
-            <span class="data-ru">Полное руководство по статической компиляции zlib на Windows с помощью Emscripten и CMake.</span>
+            <span class="data-en">A guide to compiling SDL3_image source code into a static library (libSDL3_image.a) for WebAssembly with WebP support.</span>
+            <span class="data-ru">Руководство по компиляции исходного кода SDL3_image в статическую библиотеку (libSDL3_image.a) для WebAssembly с поддержкой WebP.</span>
         </p>
     </header>
 
-    <div class="alert alert-primary">
-        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed the <a href="/tutorials/tools/wasm/wasm-env/" target="_blank" rel="noopener noreferrer">Emscripten Setup Guide</a></span>
-        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/wasm/wasm-env/" target="_blank" rel="noopener noreferrer">руководства по настройке Emscripten</a></span>
+    <div class="alert alert-secondary mb-3">
+        <span class="data-en">Make sure you have already built the core SDL3 and WebP libraries for WebAssembly by following these instructions:</span>
+        <span class="data-ru">Убедитесь, что вы уже собрали основные библиотеки SDL3 и WebP для WebAssembly, следуя этим инструкциям:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/tools/wasm/build-sdl3-static-wasm" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 static library for WebAssembly</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для WebAssembly</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/wasm/build-webp-static-wasm" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building WebP static library for WebAssembly</span>
+                    <span class="data-ru">Сборка статической библиотеки WebP для WebAssembly</span>
+                </a>
+            </li>
+        </ul>
     </div>
 
-    <h3 class="category-header mt-4">
-        <span class="data-en">1. Compile zlib (v1.3.2)</span>
-        <span class="data-ru">1. Компиляция zlib (v1.3.2)</span>
-    </h3>
-    <ul>
-        <li>
-            <span class="data-en">
-                Download the <b>Source code (zip)</b> archive from the <a href="https://github.com/madler/zlib/releases/tag/v1.3.2" target="_blank" rel="noopener noreferrer">official release page</a>:
-            </span>
-            <span class="data-ru">
-                Скачайте архив <b>Source code (zip)</b> со страницы <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">официального релиза</a>:
-            </span>
-            <br>
-            <img src="/assets/img/tutorials/tools/wasm/building-zlib-wasm/zlib-download-link.png" alt="Download Link" class="img-fluid border rounded mt-3 shadow-sm">
-        </li>
-        <li>
-            <span class="data-en">Extract the <b>zlib-1.3.2.zip</b> archive to the <code>C:/libs</code> folder. Open your terminal, navigate to your zlib source directory:</span>
-            <span class="data-ru">Распакуйте архив <b>zlib-1.3.2.zip</b> в папку <code>C:/libs</code>. Откройте терминал, перейдите в папку с исходным кодом zlib:</span>
-            <!-- <pre><code class="language-bash">cd C:\libs\zlib-1.3.2</code></pre> -->
-            <br>
-            <img src="/assets/img/tutorials/tools/mingw/building-ixwebsocket-mbedtls-zlib-mingw/zlib-terminal.png" alt="Terminal" class="img-fluid border rounded mt-3 shadow-sm">
-        </li>
-        <li>
-            <span class="data-en">Configure the build directory and options using CMake. Copy and paste the following command to generate the MinGW Makefiles:</span>
-            <span class="data-ru">Настройте директорию сборки и параметры конфигурации с помощью CMake. Скопируйте и вставьте следующую команду для генерации файлов сборки MinGW:</span>
-            <pre><code class="language-bash">emcmake cmake -S . -B dist -DCMAKE_INSTALL_PREFIX=C:/libs/zlib-1.3.2-wasm -DZLIB_BUILD_SHARED=OFF -DZLIB_BUILD_STATIC=ON -DCMAKE_BUILD_TYPE=Release</code></pre>
-        </li>
-        <li>
-            <span class="data-en">Compile the library using 8 parallel compilation threads to speed up the process:</span>
-            <span class="data-ru">Скомпилируйте библиотеку, используя 8 параллельных потоков сборки для ускорения процесса:</span>
-            <pre><code class="language-bash">cmake --build dist -j8</code></pre>
-        </li>
-        <li>
-            <span class="data-en">Install the compiled headers and binaries to the designated directory (<code>C:/libs/zlib-1.3.2-wasm</code>):</span>
-            <span class="data-ru">Установите скомпилированные заголовочные файлы и библиотеки в указанную директорию (<code>C:/libs/zlib-1.3.2-wasm</code>):</span>
-            <pre><code class="language-bash">cmake --install dist</code></pre>
-        </li>
-    </ul>
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 1: Download SDL3_image Source Code</span>
+            <span class="data-ru">Шаг 1: Скачивание исходного кода SDL3_image</span>
+        </h2>
+        <p>
+            <span class="data-en">Download the latest SDL3_image source archive (<code>.zip</code> or <code>.tar.gz</code>) from the official GitHub releases page:</span>
+            <span class="data-ru">Скачайте последний архив с исходным кодом SDL3_image (<code>.zip</code> или <code>.tar.gz</code>) с официальной страницы релизов GitHub:</span>
+        </p>
+        <p>
+            <a href="https://github.com/libsdl-org/SDL_image/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
+                <span class="data-en">Download SDL3_image Releases</span>
+                <span class="data-ru">Скачать релизы SDL3_image</span>
+            </a>
+        </p>
+        <p>
+            <span class="data-en">Extract the downloaded archive to a convenient directory on your machine.</span>
+            <span class="data-ru">Распакуйте скачанный архив в удобную директорию на вашем компьютере.</span>
+        </p>
+    </section>
 
-    <h3 class="category-header mt-5">
-        <span class="data-en">2. Expected Output Structure</span>
-        <span class="data-ru">2. Ожидаемая структура вывода</span>
-    </h3>
-    <p>
-        <span class="data-en">Once all installation processes complete, your <code>C:/libs</code> folder will contain the prepared standalone directories ready for project targeting:</span>
-        <span class="data-ru">После завершения всех процессов установки ваша папка <code>C:/libs</code> будет содержать готовые отдельные директории, готовые для подключения к проектам:</span>
-    </p>
-    <pre><code>C:/libs/
-└── zlib-1.3.2-wasm/
-    ├── include/
-    └── lib/libz.a</code></pre>
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 2: Create the Build Script</span>
+            <span class="data-ru">Шаг 2: Создание скрипта сборки</span>
+        </h2>
+        <p>
+            <span class="data-en">In the root directory of the extracted SDL3_image source folder, create an empty file named <code>build-wasm-static.bat</code> and paste the following content into it:</span>
+            <span class="data-ru">В корневой директории распакованного исходного кода SDL3_image создайте пустой файл <code>build-wasm-static.bat</code> и вставьте в него следующее содержимое:</span>
+        </p>
 
-    <!-- <h3 class="category-header mt-5">
-        <span class="data-en">5. Next Steps</span>
-        <span class="data-ru">5. Следующие шаги</span>
-    </h3>
-    <div class="alert alert-success mt-3">
-        <span class="data-en"><strong>Success!</strong> Your network library stack is successfully built. Ready to implement it into an application? Proceed to the next step: <a href="/tutorials/sdl3-opengl/mingw/setting-up-ixwebsocket-sdl3-opengl-mingw" class="fw-bold">Setting up IXWebSocket with SDL3 and OpenGL</a>.</span>
-        <span class="data-ru"><strong>Успех!</strong> Ваш сетевой стек библиотек успешно собран. Готовы интегрировать его в приложение? Переходите к следующему шагу: <a href="/tutorials/sdl3-opengl/mingw/setting-up-ixwebsocket-sdl3-opengl-mingw" class="fw-bold">Настройка IXWebSocket с SDL3 и OpenGL</a>.</span>
-    </div> -->
+        <pre><code class="language-bash">@echo off
+
+set WEBP_PATH=C:/libs/webp-1.6.0-wasm
+
+if not exist build-wasm-static mkdir build-wasm-static
+cd build-wasm-static
+
+if exist CMakeCache.txt del CMakeCache.txt
+if exist CMakeFiles rmdir /s /q CMakeFiles
+
+call emcmake cmake .. ^
+  -DSDL3_DIR="C:/libs/sdl3-3.4.14-wasm/lib/cmake/SDL3" ^
+  -DCMAKE_PREFIX_PATH="%WEBP_PATH%" ^
+  -Dwebp_DIR="%WEBP_PATH%/share/WebP/cmake" ^
+  -Dwebp_ROOT="%WEBP_PATH%" ^
+  -DBUILD_SHARED_LIBS=OFF ^
+  -DSDLIMAGE_SAMPLES=OFF ^
+  -DSDLIMAGE_TESTS=OFF ^
+  -DSDLIMAGE_WEBP=ON ^
+  -DSDLIMAGE_WEBP_SHARED=OFF ^
+  -DSDLIMAGE_VENDORED=OFF ^
+  -DSDLIMAGE_BACKEND_IMAGEIO=OFF ^
+  -DCMAKE_BUILD_TYPE=Release ^
+  -DCMAKE_INSTALL_PREFIX=C:/libs/sdl3-image-3.4.4-wasm ^
+  -G "MinGW Makefiles"
+
+call cmake --build . --config Release --parallel 8 --target install</code></pre>
+
+        <div class="alert alert-info mt-3">
+            <strong>
+                <span class="data-en">Note:</span>
+                <span class="data-ru">Примечание:</span>
+            </strong>
+            <span class="data-en">Ensure that the path variables (<code>WEBP_PATH</code>, <code>SDL3_DIR</code>, and <code>CMAKE_INSTALL_PREFIX</code>) match the paths to your locally compiled WebAssembly static libraries, and that your Emscripten environment (<code>emsdk_env.bat</code>) is activated.</span>
+            <span class="data-ru">Убедитесь, что переменные путей (<code>WEBP_PATH</code>, <code>SDL3_DIR</code> и <code>CMAKE_INSTALL_PREFIX</code>) соответствуют путям к вашим локально собранным статическим библиотекам WebAssembly, а также что ваше окружение Emscripten (<code>emsdk_env.bat</code>) активировано.</span>
+        </div>
+    </section>
+
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 3: Run and Compile</span>
+            <span class="data-ru">Шаг 3: Запуск и сборка</span>
+        </h2>
+        <p>
+            <span class="data-en">Run <code>build-wasm-static.bat</code> via Command Prompt (CMD) so you can catch any potential compilation errors in the console. Once completed, your compiled static library (<code>libSDL3_image.a</code>) along with headers will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
+            <span class="data-ru">Запустите <code>build-wasm-static.bat</code> через командную строку (CMD), чтобы вы могли увидеть возможные ошибки сборки прямо в консоли. После завершения собранная статическая библиотека (<code>libSDL3_image.a</code>) вместе с заголовочными файлами будет установлена по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
+        </p>
+    </section>
 </div>
 
         
@@ -429,34 +462,6 @@ function copyToClipboard(text, button) {
 <block>
     <script src="/libs/prism/1.30.0/prism.min.js"></script>
 
-    
-    <block>
-        
-
-        
-
-        
-
-        
-        <block>
-            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
-        </block>
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-    </block>
     
     <block>
         

@@ -7,7 +7,7 @@
 
 <title>
   
-    Building WebP shared library for Android
+    Building WebP Shared Library for Android (NDK &amp; CMake)
   
   | Ivan Enzhaev
 </title>
@@ -216,12 +216,12 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Building WebP to .so for Android</span>
-            <span class="data-ru">Сборка WebP в .so для Android</span>
+            <span class="data-en">Building WebP Shared Library for Android (NDK &amp; CMake)</span>
+            <span class="data-ru">Сборка динамической библиотеки WebP для Android (NDK и CMake)</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to compiling WebP source code into a shared library (libwebp.so) for Android (arm64-v8a) using CMake.</span>
-            <span class="data-ru">Руководство по компиляции исходного кода WebP в динамическую библиотеку (libwebp.so) для Android (arm64-v8a) с помощью CMake.</span>
+            <span class="data-en">A guide to compiling WebP source code into a shared library (libwebp.so) for Android using CMake and NDK.</span>
+            <span class="data-ru">Руководство по компиляции исходного кода WebP в динамическую библиотеку (libwebp.so) для Android с помощью CMake и NDK.</span>
         </p>
     </header>
 
@@ -284,7 +284,7 @@ cd build-android-64
 if exist CMakeCache.txt del CMakeCache.txt
 if exist CMakeFiles rmdir /s /q CMakeFiles
 
-cmake .. ^
+call cmake .. ^
   -DCMAKE_TOOLCHAIN_FILE=%NDK%/build/cmake/android.toolchain.cmake ^
   -DANDROID_ABI=arm64-v8a ^
   -DANDROID_PLATFORM=android-21 ^
@@ -305,7 +305,7 @@ cmake .. ^
   -DCMAKE_INSTALL_PREFIX=C:/libs/webp-android/arm64-v8a ^
   -G "MinGW Makefiles"
 
-cmake --build . --config Release --target install</code></pre>
+call cmake --build . --config Release --parallel 8 --target install</code></pre>
 
         <div class="alert alert-info mt-3">
             <strong>

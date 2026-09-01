@@ -7,7 +7,7 @@
 
 <title>
   
-    Building SDL3_image shared library for Android
+    Building SDL3_image Shared Library for Android (NDK &amp; CMake)
   
   | Ivan Enzhaev
 </title>
@@ -216,22 +216,32 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Building SDL3_image to .so for Android</span>
-            <span class="data-ru">Сборка SDL3_image в .so для Android</span>
+            <span class="data-en">Building SDL3_image Shared Library for Android (NDK &amp; CMake)</span>
+            <span class="data-ru">Сборка динамической библиотеки SDL3_image для Android (NDK и CMake)</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to compiling SDL3_image source code into a shared library (libSDL3_image.so) for Android (arm64-v8a) using CMake.</span>
-            <span class="data-ru">Руководство по компиляции исходного кода SDL3_image в динамическую библиотеку (libSDL3_image.so) для Android (arm64-v8a) с помощью CMake.</span>
+            <span class="data-en">A guide to compiling SDL3_image source code into a shared library (libSDL3_image.so) for Android using CMake and NDK with WebP support.</span>
+            <span class="data-ru">Руководство по компиляции исходного кода SDL3_image в динамическую библиотеку (libSDL3_image.so) для Android с помощью CMake и NDK с поддержкой WebP.</span>
         </p>
     </header>
 
     <div class="alert alert-secondary mb-3">
-        <span class="data-en">If you haven't built the core SDL3 library yet, follow the</span>
-        <span class="data-ru">Если вы еще не собрали основную библиотеку SDL3, следуйте инструкции:</span>
-        <a href="/tutorials/tools/android/build-sdl3-so-android" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-            <span class="data-en">Building SDL3 shared library for Android</span>
-            <span class="data-ru">Сборка динамической библиотеки SDL3 для Android</span>
-        </a>
+        <span class="data-en">Make sure you have already built the core SDL3 and WebP libraries for Android by following these instructions:</span>
+        <span class="data-ru">Убедитесь, что вы уже собрали основные библиотеки SDL3 и WebP для Android, следуя этим инструкциям:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/tools/android/build-sdl3-so-android" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 shared library for Android</span>
+                    <span class="data-ru">Сборка динамической библиотеки SDL3 для Android</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/android/build-webp-so-android" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building WebP shared library for Android</span>
+                    <span class="data-ru">Сборка динамической библиотеки WebP для Android</span>
+                </a>
+            </li>
+        </ul>
     </div>
 
     <section class="mb-4">
@@ -267,6 +277,7 @@
 
         <pre><code class="language-bash">@echo off
 set NDK=H:/AndroidSDK/ndk/28.2.13676358
+set WEBP_PATH=C:/libs/webp-1.6.0-android/arm64-v8a
 
 if not exist build-android-64 mkdir build-android-64
 cd build-android-64
@@ -277,11 +288,15 @@ if exist CMakeFiles rmdir /s /q CMakeFiles
 cmake .. ^
   -DCMAKE_TOOLCHAIN_FILE=%NDK%/build/cmake/android.toolchain.cmake ^
   -DSDL3_DIR="C:/libs/sdl3-3.4.14-android/arm64-v8a/lib/cmake/SDL3" ^
+  -DCMAKE_PREFIX_PATH="%WEBP_PATH%" ^
+  -Dwebp_DIR="%WEBP_PATH%/share/WebP/cmake" ^
+  -Dwebp_ROOT="%WEBP_PATH%" ^
   -DANDROID_ABI=arm64-v8a ^
   -DANDROID_PLATFORM=android-21 ^
   -DBUILD_SHARED_LIBS=ON ^
   -DSDLIMAGE_SAMPLES=OFF ^
   -DSDLIMAGE_TESTS=OFF ^
+  -DSDLIMAGE_WEBP=ON ^
   -DSDLIMAGE_VENDORED=OFF ^
   -DSDLIMAGE_BACKEND_IMAGEIO=OFF ^
   -DCMAKE_BUILD_TYPE=Release ^
@@ -290,14 +305,14 @@ cmake .. ^
 
 cmake --build . --config Release --parallel 8 --target install</code></pre>
 
-        <!-- <div class="alert alert-info mt-3">
+        <div class="alert alert-info mt-3">
             <strong>
                 <span class="data-en">Note:</span>
                 <span class="data-ru">Примечание:</span>
             </strong>
-            <span class="data-en">Make sure that SDL3, zlib, and WebP are already built and installed. Verify that all input dependency paths (such as <code>SDL3_DIR</code>, <code>WEBP_PATH</code>, and <code>CMAKE_PREFIX_PATH</code>) match your local directory structure.</span>
-            <span class="data-ru">Убедитесь, что библиотеки SDL3, zlib и WebP уже собраны и установлены. Проверьте, что все пути к зависимостям (такие как <code>SDL3_DIR</code>, <code>WEBP_PATH</code> и <code>CMAKE_PREFIX_PATH</code>) соответствуют вашей локальной структуре каталогов.</span>
-        </div> -->
+            <span class="data-en">Ensure that the path variables (<code>NDK</code>, <code>WEBP_PATH</code>, <code>SDL3_DIR</code>, and <code>CMAKE_INSTALL_PREFIX</code>) match your local directory structure.</span>
+            <span class="data-ru">Убедитесь, что переменные путей (<code>NDK</code>, <code>WEBP_PATH</code>, <code>SDL3_DIR</code> и <code>CMAKE_INSTALL_PREFIX</code>) соответствуют вашей локальной структуре каталогов.</span>
+        </div>
     </section>
 
     <section class="mb-4">
@@ -306,8 +321,8 @@ cmake --build . --config Release --parallel 8 --target install</code></pre>
             <span class="data-ru">Шаг 3: Запуск и сборка</span>
         </h2>
         <p>
-            <span class="data-en">Double-click <code>build-android-64-bit.bat</code> or run it via Command Prompt. Once completed, your compiled <code>libSDL3_image.so</code> along with headers will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
-            <span class="data-ru">Дважды кликните по <code>build-android-64-bit.bat</code> или запустите его через командную строку. После завершения собранная библиотека <code>libSDL3_image.so</code> вместе с заголовочными файлами будет установлена по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
+            <span class="data-en">Run <code>build-android-64-bit.bat</code> via Command Prompt (CMD) so you can catch any potential compilation errors in the console. Once completed, your compiled shared library (<code>libSDL3_image.so</code>) along with headers will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
+            <span class="data-ru">Запустите <code>build-android-64-bit.bat</code> через командную строку (CMD), чтобы вы могли увидеть возможные ошибки сборки прямо в консоли. После завершения собранная динамическая библиотека (<code>libSDL3_image.so</code>) вместе с заголовочными файлами будет установлена по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
         </p>
     </section>
 </div>

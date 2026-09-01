@@ -7,7 +7,7 @@
 
 <title>
   
-    Building zlib Static Library for WebAssembly (Emscripten &amp; CMake)
+    Building WebP Static Library for WebAssembly (Emscripten &amp; CMake)
   
   | Ivan Enzhaev
 </title>
@@ -216,80 +216,113 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Building zlib Static Library for WebAssembly (Emscripten &amp; CMake)</span>
-            <span class="data-ru">Сборка статической библиотеки zlib для WebAssembly (Emscripten и CMake)</span>
+            <span class="data-en">Building WebP Static Library for WebAssembly (Emscripten &amp; CMake)</span>
+            <span class="data-ru">Сборка статической библиотеки WebP для WebAssembly (Emscripten и CMake)</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A comprehensive guide to compiling zlib statically on Windows using Emscripten and CMake.</span>
-            <span class="data-ru">Полное руководство по статической компиляции zlib на Windows с помощью Emscripten и CMake.</span>
+            <span class="data-en">A guide to compiling WebP source code into a static library (libwebp.a) for WebAssembly using Emscripten and CMake.</span>
+            <span class="data-ru">Руководство по компиляции исходного кода WebP в статическую библиотеку (libwebp.a) для WebAssembly с помощью Emscripten и CMake.</span>
         </p>
     </header>
 
-    <div class="alert alert-primary">
-        <span class="data-en"><strong>Prerequisite:</strong> Ensure you have followed the <a href="/tutorials/tools/wasm/wasm-env/" target="_blank" rel="noopener noreferrer">Emscripten Setup Guide</a></span>
-        <span class="data-ru"><strong>Предварительное условие:</strong> Убедитесь, что вы выполнили инструкции из <a href="/tutorials/tools/wasm/wasm-env/" target="_blank" rel="noopener noreferrer">руководства по настройке Emscripten</a></span>
+    <div class="alert alert-secondary mb-3">
+        <span class="data-en">If you haven't set up MinGW and CMake on your machine, follow the</span>
+        <span class="data-ru">Если вы еще не настроили MinGW и CMake на своем компьютере, следуйте инструкции:</span>
+        <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+            <span class="data-en">MinGW & CMake Setup Guide</span>
+            <span class="data-ru">Руководство по настройке MinGW и CMake</span>
+        </a>
     </div>
 
-    <h3 class="category-header mt-4">
-        <span class="data-en">1. Compile zlib (v1.3.2)</span>
-        <span class="data-ru">1. Компиляция zlib (v1.3.2)</span>
-    </h3>
-    <ul>
-        <li>
-            <span class="data-en">
-                Download the <b>Source code (zip)</b> archive from the <a href="https://github.com/madler/zlib/releases/tag/v1.3.2" target="_blank" rel="noopener noreferrer">official release page</a>:
-            </span>
-            <span class="data-ru">
-                Скачайте архив <b>Source code (zip)</b> со страницы <a href="https://github.com/libsdl-org/SDL/releases/tag/release-3.4.8" target="_blank" rel="noopener noreferrer">официального релиза</a>:
-            </span>
-            <br>
-            <img src="/assets/img/tutorials/tools/wasm/building-zlib-wasm/zlib-download-link.png" alt="Download Link" class="img-fluid border rounded mt-3 shadow-sm">
-        </li>
-        <li>
-            <span class="data-en">Extract the <b>zlib-1.3.2.zip</b> archive to the <code>C:/libs</code> folder. Open your terminal, navigate to your zlib source directory:</span>
-            <span class="data-ru">Распакуйте архив <b>zlib-1.3.2.zip</b> в папку <code>C:/libs</code>. Откройте терминал, перейдите в папку с исходным кодом zlib:</span>
-            <!-- <pre><code class="language-bash">cd C:\libs\zlib-1.3.2</code></pre> -->
-            <br>
-            <img src="/assets/img/tutorials/tools/mingw/building-ixwebsocket-mbedtls-zlib-mingw/zlib-terminal.png" alt="Terminal" class="img-fluid border rounded mt-3 shadow-sm">
-        </li>
-        <li>
-            <span class="data-en">Configure the build directory and options using CMake. Copy and paste the following command to generate the MinGW Makefiles:</span>
-            <span class="data-ru">Настройте директорию сборки и параметры конфигурации с помощью CMake. Скопируйте и вставьте следующую команду для генерации файлов сборки MinGW:</span>
-            <pre><code class="language-bash">emcmake cmake -S . -B dist -DCMAKE_INSTALL_PREFIX=C:/libs/zlib-1.3.2-wasm -DZLIB_BUILD_SHARED=OFF -DZLIB_BUILD_STATIC=ON -DCMAKE_BUILD_TYPE=Release</code></pre>
-        </li>
-        <li>
-            <span class="data-en">Compile the library using 8 parallel compilation threads to speed up the process:</span>
-            <span class="data-ru">Скомпилируйте библиотеку, используя 8 параллельных потоков сборки для ускорения процесса:</span>
-            <pre><code class="language-bash">cmake --build dist -j8</code></pre>
-        </li>
-        <li>
-            <span class="data-en">Install the compiled headers and binaries to the designated directory (<code>C:/libs/zlib-1.3.2-wasm</code>):</span>
-            <span class="data-ru">Установите скомпилированные заголовочные файлы и библиотеки в указанную директорию (<code>C:/libs/zlib-1.3.2-wasm</code>):</span>
-            <pre><code class="language-bash">cmake --install dist</code></pre>
-        </li>
-    </ul>
+    <div class="alert alert-secondary mb-3">
+        <span class="data-en">If you haven't set up Emscripten SDK and CMake on your machine, follow the</span>
+        <span class="data-ru">Если вы еще не настроили Emscripten SDK и CMake на своем компьютере, следуйте инструкции:</span>
+        <a href="/tutorials/tools/wasm/wasm-env" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+            <span class="data-en">Emscripten & CMake Setup Guide</span>
+            <span class="data-ru">Руководство по настройке Emscripten и CMake</span>
+        </a>
+    </div>
 
-    <h3 class="category-header mt-5">
-        <span class="data-en">2. Expected Output Structure</span>
-        <span class="data-ru">2. Ожидаемая структура вывода</span>
-    </h3>
-    <p>
-        <span class="data-en">Once all installation processes complete, your <code>C:/libs</code> folder will contain the prepared standalone directories ready for project targeting:</span>
-        <span class="data-ru">После завершения всех процессов установки ваша папка <code>C:/libs</code> будет содержать готовые отдельные директории, готовые для подключения к проектам:</span>
-    </p>
-    <pre><code>C:/libs/
-└── zlib-1.3.2-wasm/
-    ├── include/
-    └── lib/libz.a</code></pre>
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 1: Download WebP Source Code</span>
+            <span class="data-ru">Шаг 1: Скачивание исходного кода WebP</span>
+        </h2>
+        <p>
+            <span class="data-en">Download the latest WebP source archive (<code>.zip</code> or <code>.tar.gz</code>) from the official GitHub tags page:</span>
+            <span class="data-ru">Скачайте последний архив с исходным кодом WebP (<code>.zip</code> или <code>.tar.gz</code>) с официальной страницы тегов GitHub:</span>
+        </p>
+        <p>
+            <a href="https://github.com/webmproject/libwebp/tags" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
+                <span class="data-en">Download WebP Releases</span>
+                <span class="data-ru">Скачать релизы WebP</span>
+            </a>
+        </p>
+        <p>
+            <span class="data-en">Extract the downloaded archive to a convenient directory on your machine.</span>
+            <span class="data-ru">Распакуйте скачанный архив в удобную директорию на вашем компьютере.</span>
+        </p>
+    </section>
 
-    <!-- <h3 class="category-header mt-5">
-        <span class="data-en">5. Next Steps</span>
-        <span class="data-ru">5. Следующие шаги</span>
-    </h3>
-    <div class="alert alert-success mt-3">
-        <span class="data-en"><strong>Success!</strong> Your network library stack is successfully built. Ready to implement it into an application? Proceed to the next step: <a href="/tutorials/sdl3-opengl/mingw/setting-up-ixwebsocket-sdl3-opengl-mingw" class="fw-bold">Setting up IXWebSocket with SDL3 and OpenGL</a>.</span>
-        <span class="data-ru"><strong>Успех!</strong> Ваш сетевой стек библиотек успешно собран. Готовы интегрировать его в приложение? Переходите к следующему шагу: <a href="/tutorials/sdl3-opengl/mingw/setting-up-ixwebsocket-sdl3-opengl-mingw" class="fw-bold">Настройка IXWebSocket с SDL3 и OpenGL</a>.</span>
-    </div> -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 2: Create the Build Script</span>
+            <span class="data-ru">Шаг 2: Создание скрипта сборки</span>
+        </h2>
+        <p>
+            <span class="data-en">In the root directory of the extracted WebP source folder, create an empty file named <code>build-wasm-static.bat</code> and paste the following content into it:</span>
+            <span class="data-ru">В корневой директории распакованного исходного кода WebP создайте пустой файл <code>build-wasm-static.bat</code> и вставьте в него следующее содержимое:</span>
+        </p>
+
+        <pre><code class="language-bash">@echo off
+
+if not exist build-wasm-static mkdir build-wasm-static
+cd build-wasm-static
+
+:: Clean old cache completely
+if exist CMakeCache.txt del CMakeCache.txt
+if exist CMakeFiles rmdir /s /q CMakeFiles
+
+call emcmake cmake .. ^
+  -DBUILD_SHARED_LIBS=OFF ^
+  -DWEBP_BUILD_CWEBP=OFF ^
+  -DWEBP_BUILD_DWEBP=OFF ^
+  -DWEBP_BUILD_GIF2WEBP=OFF ^
+  -DWEBP_BUILD_IMG2WEBP=OFF ^
+  -DWEBP_BUILD_VWEBP=OFF ^
+  -DWEBP_BUILD_WEBPINFO=OFF ^
+  -DWEBP_BUILD_WEBPMUX=OFF ^
+  -DWEBP_BUILD_ANIM_UTILS=OFF ^
+  -DWEBP_BUILD_EXTRAS=OFF ^
+  -DWEBP_BUILD_LIBWEBPMUX=ON ^
+  -DWEBP_NEAR_LOSSLESS=ON ^
+  -DWEBP_ENABLE_SIMD=OFF ^
+  -DCMAKE_BUILD_TYPE=Release ^
+  -DCMAKE_INSTALL_PREFIX=C:/libs/webp-1.6.0-wasm ^
+  -G "MinGW Makefiles"
+
+call cmake --build . --config Release --parallel 8 --target install</code></pre>
+
+        <!-- <div class="alert alert-info mt-3">
+            <strong>
+                <span class="data-en">Note:</span>
+                <span class="data-ru">Примечание:</span>
+            </strong>
+            <span class="data-en">Using <code>emcmake cmake</code> passes the Emscripten toolchain settings to CMake automatically. Make sure your EMSDK environment variables are active before running the script. SIMD is disabled by default for broader WebAssembly compatibility (can be enabled with <code>-DWEBP_ENABLE_SIMD=ON</code> if compiling with <code>-msimd128</code> flags).</span>
+            <span class="data-ru">Использование <code>emcmake cmake</code> автоматически передает настройки инструментария Emscripten в CMake. Убедитесь, что переменные окружения EMSDK активны перед запуском скрипта. SIMD отключен по умолчанию для более широкой совместимости с WebAssembly (можно включить с помощью <code>-DWEBP_ENABLE_SIMD=ON</code> при компиляции с флагами <code>-msimd128</code>).</span>
+        </div> -->
+    </section>
+
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 3: Run and Compile</span>
+            <span class="data-ru">Шаг 3: Запуск и сборка</span>
+        </h2>
+        <p>
+            <span class="data-en">Run <code>build-wasm-static.bat</code> via Command Prompt (CMD) in an environment with EMSDK activated so you can catch any potential compilation errors in the console. Once completed, your compiled WebAssembly static libraries (such as <code>libwebp.a</code>, <code>libwebpmux.a</code>) along with headers will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
+            <span class="data-ru">Запустите <code>build-wasm-static.bat</code> через командную строку (CMD) в окружении с активированным EMSDK, чтобы вы могли увидеть возможные ошибки сборки прямо в консоли. После завершения собранные статические библиотеки WebAssembly (такие как <code>libwebp.a</code>, <code>libwebpmux.a</code>) вместе с заголовочными файлами будут установлены по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
+        </p>
+    </section>
 </div>
 
         
@@ -429,34 +462,6 @@ function copyToClipboard(text, button) {
 <block>
     <script src="/libs/prism/1.30.0/prism.min.js"></script>
 
-    
-    <block>
-        
-
-        
-
-        
-
-        
-        <block>
-            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
-        </block>
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-    </block>
     
     <block>
         
