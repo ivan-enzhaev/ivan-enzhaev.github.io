@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    Simple texture in 2D (WebGPU)
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
+
+    /* How to hide non-active language blocks without collapsing iframe dimensions */
+    .data-en.d-none, 
+    .data-ru.d-none {
+        display: none !important;
+    }
+
+    /* Add this to prevent resolution drops during language toggles */
+    .ratio iframe {
+        width: 100%;
+        height: 100%;
+        content-visibility: visible;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold">
+            <span class="data-en">Simple texture in 2D (WebGPU)</span>
+            <span class="data-ru">Отображение простой текстуры в 2D (WebGPU)</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">Rendering a simple texture in 2D using WebGPU for Windows, Android, and WebAssembly.</span>
+            <span class="data-ru">Отображение простой текстуры в 2D с использованием WebGPU для Windows, Android, и WebAssembly.</span>
+        </p>
+    </header>
+
+    <p>
+        <span class="data-en"><a href="https://ivan-enzhaev.github.io/examples/webgpu/shapes/simple-texture-webgpu-sdl3-c" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">View the Wasm Demo in the Browser</a></span>
+        <span class="data-ru"><a href="https://ivan-enzhaev.github.io/examples/webgpu/shapes/simple-texture-webgpu-sdl3-c" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">Запустить Wasm-демо в браузере</a></span>
+    </p>
+
+    <!-- <img src="/assets/img/tutorials/sdl3-webgpu/3-in-1/simple-texture-webgpu-sdl3/screenshot.png" alt="Screenshot" class="img-fluid border rounded mt-3 shadow-sm"> -->
+
+    <!-- <div class="mt-4">
+        <h5>Release Build Size: 909 KB (Includes: 909 KB WASM/JS, 466 bytes HTML)</h5> -->
+        <!-- , 1 KB CSS/Assets -->
+        <!-- <img src="/assets/img/tutorials/sdl3-webgpu/3-in-1/simple-texture-webgpu-sdl3/release-size.png" 
+             alt="File explorer showing the release build size" 
+             class="img-fluid border rounded mt-2 shadow-sm">
+    </div> -->
+
+    <h3 class="category-header mt-5">
+        <span class="data-en">Source Code</span>
+        <span class="data-ru">Исходный код</span>
+    </h3>
+
+    <p class="mt-3">
+        <span class="data-en">You can explore the source code and download the complete project directly from the GitHub repository:</span>
+        <span class="data-ru">Вы можете изучить исходный код и скачать готовый проект напрямую из репозитория на GitHub:</span>
+    </p>
+
+    <div class="d-flex flex-wrap gap-3 my-4">
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="fw-bold me-2">C Version:</span>
+            <a href="https://github.com/ivan-enzhaev/simple-texture-webgpu-sdl3-c" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
+                <i class="fab fa-github me-2"></i>
+                <span class="data-en">View C Repo</span>
+                <span class="data-ru">Репозиторий (C)</span>
+            </a>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="fw-bold me-2">C++ Version:</span>
+            <a href="https://github.com/ivan-enzhaev/simple-texture-webgpu-sdl3-cpp" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
+                <i class="fab fa-github me-2"></i>
+                <span class="data-en">View C++ Repo</span>
+                <span class="data-ru">Репозиторий (C++)</span>
+            </a>
+        </div>
+    </div>
+
+    <h3 class="category-header">
+        <span class="data-en">Build and Run for Windows (MinGW)</span>
+        <span class="data-ru">Сборка и запуск для Windows (MinGW)</span>
+    </h3>
+
+    <div class="alert alert-secondary mb-3">
+        <span class="data-en">Make sure you have set up your environment and built the required libraries for Windows (MinGW) by following these instructions:</span>
+        <span class="data-ru">Убедитесь, что вы настроили окружение и собрали необходимые библиотеки для Windows (MinGW), следуя этим инструкциям:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">C/C++ Development Environment Setup for Windows (MinGW, CMake & IDEs)</span>
+                    <span class="data-ru">Настройка среды разработки C/C++ для Windows (MinGW, CMake и IDE)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/mingw/build-sdl3-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 Static Library for Windows (MinGW & CMake)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для Windows (MinGW и CMake)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/mingw/build-webp-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building WebP Static Library for Windows (MinGW & CMake)</span>
+                    <span class="data-ru">Сборка статической библиотеки WebP для Windows (MinGW и CMake)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/mingw/build-sdl3-image-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3_image static library for Windows (MinGW & CMake)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3_image для Windows (MinGW и CMake)</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <p>
+        <span class="data-en">Configure the project:</span>
+        <span class="data-ru">Сконфигурируйте проект:</span>
+    </p>
+    <pre><code class="language-bash">config-exe</code></pre>
+    <p>
+        <span class="data-en">Build the project:</span>
+        <span class="data-ru">Соберите проект:</span>
+    </p>
+    <pre><code class="language-bash">build-exe</code></pre>
+    <p>
+        <span class="data-en">Run the project:</span>
+        <span class="data-ru">Запустите проект:</span>
+    </p>
+    <pre><code class="language-bash">run-exe</code></pre>
+
+    <h3 class="category-header">
+        <span class="data-en">Build and Run for Android</span>
+        <span class="data-ru">Сборка и запуск для Android</span>
+    </h3>
+
+    <div class="alert alert-secondary mb-3">
+        <span class="data-en">Make sure you have set up your environment and built the required shared libraries for Android by following these instructions:</span>
+        <span class="data-ru">Убедитесь, что вы настроили окружение и собрали необходимые динамические библиотеки для Android, следуя этим инструкциям:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/tools/android/android-env" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Android Environment Setup</span>
+                    <span class="data-ru">Настройка окружения Android</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/android/build-sdl3-so-android" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 Shared Library for Android (NDK & CMake)</span>
+                    <span class="data-ru">Сборка динамической библиотеки SDL3 для Android (NDK и CMake)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/android/build-webp-so-android" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building WebP Shared Library for Android (NDK & CMake)</span>
+                    <span class="data-ru">Сборка динамической библиотеки WebP для Android (NDK и CMake)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/android/build-sdl3-image-so-android" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3_image Shared Library for Android (NDK & CMake)</span>
+                    <span class="data-ru">Сборка динамической библиотеки SDL3_image для Android (NDK и CMake)</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <p>
+        <span class="data-en">Build the project:</span>
+        <span class="data-ru">Соберите проект:</span>
+    </p>
+    <pre><code class="language-bash">build-apk</code></pre>
+    <p>
+        <span class="data-en">Install the app to the device:</span>
+        <span class="data-ru">Установите приложение на устройство:</span>
+    </p>
+    <pre><code class="language-bash">install-apk</code></pre>
+
+    <h3 class="category-header">
+        <span class="data-en">Useful Tips</span>
+        <span class="data-ru">Полезные советы</span>
+    </h3>
+    <ul>
+        <li>
+            <span class="data-en">Show a log: <code>adb logcat -s MY_APP SDL stdout stderr wgpu wgpu_native AndroidRuntime</code></span>
+            <span class="data-ru">Показать лог: <code>adb logcat -s MY_APP SDL stdout stderr wgpu wgpu_native AndroidRuntime</code></span>
+        </li>
+        <li>
+            <span class="data-en">Clear a log: <code>adb logcat -c</code></span>
+            <span class="data-ru">Очистить лог: <code>adb logcat -c</code></span>
+        </li>
+        <li>
+            <span class="data-en">Check connected devices: <code>adb devices</code></span>
+            <span class="data-ru">Проверка подключенных устройств: <code>adb devices</code></span>
+        </li>
+        <!-- <li>
+            <span class="data-en">Use <a href="https://github.com/Genymobile/scrcpy" target="_blank" rel="noopener noreferrer">scrcpy</a> to mirror your phone screen to your PC via USB.</span>
+            <span class="data-ru">Используйте <a href="https://github.com/Genymobile/scrcpy" target="_blank" rel="noopener noreferrer">scrcpy</a> для трансляции экрана телефона на ПК через USB.</span>
+        </li> -->
+    </ul>
+
+    <h3 class="category-header">
+        <span class="data-en">Build and Run for WebAssembly</span>
+        <span class="data-ru">Сборка и запуск для WebAssembly</span>
+    </h3>
+
+    <div class="alert alert-secondary mb-3">
+        <span class="data-en">Make sure you have set up your environment and built the required static libraries for WebAssembly by following these instructions:</span>
+        <span class="data-ru">Убедитесь, что вы настроили окружение и собрали необходимые статические библиотеки для WebAssembly, следуя этим инструкциям:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">C/C++ Development Environment Setup for Windows (MinGW, CMake & IDEs)</span>
+                    <span class="data-ru">Настройка среды разработки C/C++ для Windows (MinGW, CMake и IDE)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/wasm/build-sdl3-static-wasm" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 Static Library for WebAssembly (Emscripten & CMake)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для WebAssembly (Emscripten и CMake)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/wasm/build-webp-static-wasm" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building WebP Static Library for WebAssembly (Emscripten & CMake)</span>
+                    <span class="data-ru">Сборка статической библиотеки WebP для WebAssembly (Emscripten и CMake)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/wasm/build-sdl3-image-static-wasm" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3_image Static Library for WebAssembly (Emscripten & CMake)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3_image для WebAssembly (Emscripten и CMake)</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <p>
+        <span class="data-en">Configure the project:</span>
+        <span class="data-ru">Сконфигурируйте проект:</span>
+    </p>
+    <pre><code class="language-bash">config-wasm</code></pre>
+    <p>
+        <span class="data-en">Build the project:</span>
+        <span class="data-ru">Соберите проект:</span>
+    </p>
+    <pre><code class="language-bash">build-wasm</code></pre>
+    <p>
+        <span class="data-en">Now, start your local server:</span>
+        <span class="data-ru">Теперь запустите локальный сервер:</span>
+    </p>
+    <pre><code class="language-bash"># Option 1: Using Node.js (http-server)
+http-server -c-1
+
+# Option 2: Using Python
+python -m http.server 8080</code></pre>
+
+    <div class="alert alert-info">
+        <span class="data-en">Open <strong>localhost:8080</strong> in your browser and check the console (F12 or Ctrl+Shift+J) to see the output.</span>
+        <span class="data-ru">Откройте <strong>localhost:8080</strong> в браузере и проверьте консоль (F12 или Ctrl+Shift+J), чтобы увидеть результат.</span>
+    </div>
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">
+                        <span class="data-en">Sberbank (Russia only)</span>
+                        <span class="data-ru">Сбербанк (только для РФ)</span>
+                    </h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number (Russia only)</span>
+                        <span class="data-ru">Перевод по номеру телефона (только для РФ)</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">USDT TRC20</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+    //     if (link) {
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // Logic for dynamic links (persisting language across pages)
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        
+        if (link) {
+            // Check if the link is intended to open in a new tab
+            if (link.target === "_blank") {
+                // Allow the browser to handle the click naturally, 
+                // but we still want to append the language param.
+                const currentLang = document.documentElement.getAttribute("lang") || "en";
+                const targetUrl = new URL(link.href);
+                targetUrl.searchParams.set("lang", currentLang);
+                
+                // Update the href right before the browser follows it
+                link.href = targetUrl.toString();
+                return; // Exit the function so e.preventDefault() isn't called
+            }
+
+            // Existing logic for same-tab navigation
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(
+                link.href,
+                window.location.origin + window.location.pathname,
+            );
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    document.querySelectorAll('pre').forEach((pre) => {
+        // Create container and header
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        // Wrap the pre tag
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        // Copy Logic
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                
+                // Set the content
+                block.textContent = code;
+                
+                // Re-run Prism highlight if available
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
+        });
+    });
+
+
+    function updateVideoPlayerLanguage(lang) {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        const targetSrc = lang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = lang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        // Only update if the URL actually changed to prevent unneeded reloads
+        if (player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // Example listener: Call this function inside your existing language-switcher click handler:
+    document.querySelectorAll('.lang-link').forEach(link => {
+        link.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+            updateVideoPlayerLanguage(lang);
+        });
+    });
+
+    function initVideoPlayer() {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        // Detect language from URL query string (?lang=ru), or <html lang="..."> attribute
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentLang = urlParams.get('lang') || document.documentElement.lang || 'en';
+
+        // Set correct video source on page load
+        const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        if (player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // Run immediately when DOM is ready
+    document.addEventListener('DOMContentLoaded', initVideoPlayer);
+</script>
+</body>
+
+</html>
