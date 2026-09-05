@@ -227,17 +227,17 @@
                 allowfullscreen></iframe>
     </div> -->
 
-    <p class="mb-3">
+    <!-- <p class="mb-3">
         <span class="data-en">
             <strong>Prefer video?</strong> You can follow the core setup process (MinGW and CMake) visually in the video below. 
         </span>
         <span class="data-ru">
             <strong>Предпочитаете видео?</strong> Вы можете посмотреть основные этапы настройки (MinGW и CMake) в видео ниже.
         </span>
-    </p>
+    </p> -->
 
     <!-- Single Video Player Container -->
-    <div class="row">
+    <!-- <div class="row">
         <div class="col-md-6">
             <div class="ratio ratio-16x9 mb-4 shadow-sm rounded border overflow-hidden">
                 <iframe 
@@ -254,7 +254,7 @@
                 </iframe>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- <p class="text-muted mb-5">
         <span class="data-en">
@@ -268,19 +268,19 @@
     </p> -->
 
     <h3 class="category-header">
-        <span class="data-en">MinGW 16.1 (WinLibs)</span>
-        <span class="data-ru">MinGW 16.1 (WinLibs)</span>
+        <span class="data-en">MinGW 16.2 (WinLibs)</span>
+        <span class="data-ru">MinGW 16.2 (WinLibs)</span>
     </h3>
 
     <p>
-        <span class="data-en">Go to <a href="https://winlibs.com/" target="_blank" rel="noopener noreferrer">winlibs.com</a>. Download the <strong>GCC 16.1.0</strong> release (Win64, POSIX threads, SEH exceptions):</span>
-        <span class="data-ru">Перейдите на <a href="https://winlibs.com/" target="_blank" rel="noopener noreferrer">winlibs.com</a>. Скачайте версию <strong>GCC 16.1.0</strong> (Win64, POSIX threads, SEH exceptions):</span>
-        <img src="/assets/img/tutorials/tools/mingw/setup-mingw/mingw-link.png" alt="WinLibs GCC 13.1.0 Download Link" class="img-fluid border rounded mt-3 shadow-sm">
+        <span class="data-en">Go to <a href="https://winlibs.com/" target="_blank" rel="noopener noreferrer">winlibs.com</a>. Download the <strong>GCC 16.2.0</strong> release (Win64, POSIX threads, SEH exceptions):</span>
+        <span class="data-ru">Перейдите на <a href="https://winlibs.com/" target="_blank" rel="noopener noreferrer">winlibs.com</a>. Скачайте версию <strong>GCC 16.2.0</strong> (Win64, POSIX threads, SEH exceptions):</span>
+        <img src="/assets/img/tutorials/tools/mingw/setup-mingw/mingw-link.png" alt="WinLibs GCC Download Link" class="img-fluid border rounded mt-3 shadow-sm">
     </p>
 
     <div class="alert alert-info">
-        <span class="data-en"><strong>Installation:</strong> Extract the folder to a simple path without spaces, for example: <code>C:\mingw64_16.1</code></span>
-        <span class="data-ru"><strong>Установка:</strong> Извлеките папку по простому пути без пробелов, например: <code>C:\mingw64_16.1</code>.</span>
+        <span class="data-en"><strong>Installation:</strong> Extract the folder to a simple path without spaces, for example: <code>C:\mingw64_16.2</code></span>
+        <span class="data-ru"><strong>Установка:</strong> Извлеките папку по простому пути без пробелов, например: <code>C:\mingw64_16.2</code>.</span>
     </div>
 
     <h3 class="category-header">
@@ -292,11 +292,11 @@
         <span class="data-ru">Добавьте папку <code>bin</code> вашего MinGW в системную переменную Path, чтобы использовать <code>g++</code> и <code>make</code> в любом терминале.</span>
     </p>
     <pre><code class="language-bash"># Add this to your System PATH:
-C:\mingw64_16.1\bin</code></pre>
+C:\mingw64_16.2\bin</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">3. CMake Installation</span>
-        <span class="data-ru">3. Установка CMake</span>
+        <span class="data-en">CMake Installation</span>
+        <span class="data-ru">Установка CMake</span>
     </h3>
     <p>
         <span class="data-en">Download the Windows x64 Installer (<code>.msi</code>) from the <a href="https://cmake.org/download/" target="_blank" rel="noopener noreferrer">Official CMake Website</a>.</span>
@@ -308,20 +308,20 @@ C:\mingw64_16.1\bin</code></pre>
     </div>
 
     <h3 class="category-header">
-        <span class="data-en">4. IDE & Editor Setup (Sublime, Qt Creator, CLion)</span>
-        <span class="data-ru">4. Установка IDE и редакторов (Sublime, Qt Creator, CLion)</span>
+        <span class="data-en">IDE & Editor Setup (Sublime, Qt Creator, CLion)</span>
+        <span class="data-ru">Установка IDE и редакторов (Sublime, Qt Creator, CLion)</span>
     </h3>
     <ul>
-        <li>
-            <strong>Sublime Text 4:</strong> 
-            <span class="data-en">Download from the <a href="https://www.sublimetext.com/download" target="_blank" rel="noopener noreferrer">official website</a>. It is a sophisticated text editor for code, markup, and prose that works perfectly with MinGW via the build systems.</span>
-            <span class="data-ru">Скачайте с <a href="https://www.sublimetext.com/download" target="_blank" rel="noopener noreferrer">официального сайта</a>. Это продвинутый текстовый редактор для кода, разметки и прозы, который отлично работает с MinGW через системы сборки.</span>
-        </li>
         <!-- <li>
             <strong>Qt Creator:</strong> 
             <span class="data-en">Download the standalone Windows installer (<code>.msi</code>) from the <a href="https://github.com/qt-creator/qt-creator/releases" target="_blank" rel="noopener noreferrer">Official GitHub Releases</a>. This provides the IDE without requiring a full Qt Framework installation.</span>
             <span class="data-ru">Скачайте автономный установщик Windows (<code>.msi</code>) с <a href="https://github.com/qt-creator/qt-creator/releases" target="_blank" rel="noopener noreferrer">официальных релизов GitHub</a>. Это позволит установить IDE без необходимости загрузки всего фреймворка Qt.</span>
         </li> -->
+        <li>
+            <strong>CLion:</strong> 
+            <span class="data-en">Install via <a href="https://www.jetbrains.com/clion/download/" target="_blank" rel="noopener noreferrer">JetBrains</a>. CLion is now <strong>free for non-commercial use</strong> (learning, hobby development, and open-source)</span>
+            <span class="data-ru">Установите через <a href="https://www.jetbrains.com/clion/download/" target="_blank" rel="noopener noreferrer">JetBrains</a>. CLion теперь <strong>бесплатна для некоммерческого использования</strong> (обучение, хобби, open-source)</span>
+        </li>
         <li>
             <strong>Qt Creator:</strong> 
             <span class="data-en">
@@ -334,9 +334,9 @@ C:\mingw64_16.1\bin</code></pre>
             </span>
         </li>
         <li>
-            <strong>CLion:</strong> 
-            <span class="data-en">Install via <a href="https://www.jetbrains.com/clion/download/" target="_blank" rel="noopener noreferrer">JetBrains</a>. CLion is now <strong>free for non-commercial use</strong> (learning, hobby development, and open-source)</span>
-            <span class="data-ru">Установите через <a href="https://www.jetbrains.com/clion/download/" target="_blank" rel="noopener noreferrer">JetBrains</a>. CLion теперь <strong>бесплатна для некоммерческого использования</strong> (обучение, хобби, open-source)</span>
+            <strong>Sublime Text 4:</strong> 
+            <span class="data-en">Download from the <a href="https://www.sublimetext.com/download" target="_blank" rel="noopener noreferrer">official website</a>. It is a sophisticated text editor for code, markup, and prose that works perfectly with MinGW via the build systems.</span>
+            <span class="data-ru">Скачайте с <a href="https://www.sublimetext.com/download" target="_blank" rel="noopener noreferrer">официального сайта</a>. Это продвинутый текстовый редактор для кода, разметки и прозы, который отлично работает с MinGW через системы сборки.</span>
         </li>
     </ul>
 
