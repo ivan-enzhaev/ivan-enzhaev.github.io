@@ -277,7 +277,7 @@ if exist CMakeFiles rmdir /s /q CMakeFiles
 cmake .. ^
   -G "MinGW Makefiles" ^
   -DCMAKE_BUILD_TYPE=Release ^
-  -DCMAKE_INSTALL_PREFIX=C:/libs/sdl3-3.4.14-mingw ^
+  -DCMAKE_INSTALL_PREFIX=C:/libs/sdl3-3.4.16-mingw ^
   -DBUILD_SHARED_LIBS=OFF ^
   -DSDL_SHARED=OFF ^
   -DSDL_STATIC=ON ^
@@ -302,8 +302,8 @@ cmake --build . --config Release --parallel 8 --target install</code></pre>
             <span class="data-ru">Шаг 3: Запуск и сборка</span>
         </h2>
         <p>
-            <span class="data-en">Double-click <code>build-mingw-static.bat</code> or run it via Command Prompt. Once completed, your compiled static library <code>libSDL3.a</code> along with header files will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
-            <span class="data-ru">Дважды кликните по <code>build-mingw-static.bat</code> или запустите его через командную строку. После завершения собранная статическая библиотека <code>libSDL3.a</code> вместе с заголовочными файлами будет установлена по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
+            <span class="data-en">Run <code>build-mingw-static.bat</code> via Command Prompt (CMD) so you can catch any potential compilation errors in the console. Once completed, your compiled static library <code>libSDL3.a</code> along with header files will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
+            <span class="data-ru">Запустите <code>build-mingw-static.bat</code> через командную строку (CMD), чтобы вы могли увидеть возможные ошибки сборки прямо в консоли. После завершения собранная статическая библиотека <code>libSDL3.a</code> вместе с заголовочными файлами будет установлена по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
         </p>
     </section>
 </div>
