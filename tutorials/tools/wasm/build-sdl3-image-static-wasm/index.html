@@ -286,7 +286,7 @@ if exist CMakeCache.txt del CMakeCache.txt
 if exist CMakeFiles rmdir /s /q CMakeFiles
 
 call emcmake cmake .. ^
-  -DSDL3_DIR="C:/libs/sdl3-3.4.14-wasm/lib/cmake/SDL3" ^
+  -DSDL3_DIR="C:/libs/sdl3-3.4.16-wasm/lib/cmake/SDL3" ^
   -DCMAKE_PREFIX_PATH="%WEBP_PATH%" ^
   -Dwebp_DIR="%WEBP_PATH%/share/WebP/cmake" ^
   -Dwebp_ROOT="%WEBP_PATH%" ^
@@ -298,7 +298,7 @@ call emcmake cmake .. ^
   -DSDLIMAGE_VENDORED=OFF ^
   -DSDLIMAGE_BACKEND_IMAGEIO=OFF ^
   -DCMAKE_BUILD_TYPE=Release ^
-  -DCMAKE_INSTALL_PREFIX=C:/libs/sdl3-image-3.4.4-wasm ^
+  -DCMAKE_INSTALL_PREFIX=C:/libs/sdl3-image-3.4.6-wasm ^
   -G "MinGW Makefiles"
 
 call cmake --build . --config Release --parallel 8 --target install</code></pre>
