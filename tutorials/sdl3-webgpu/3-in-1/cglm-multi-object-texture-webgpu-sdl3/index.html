@@ -7,7 +7,7 @@
 
 <title>
   
-    Simple texture in 2D (WebGPU)
+    Dynamic Uniform Offsets in 2D (WebGPU)
   
   | Ivan Enzhaev
 </title>
@@ -216,26 +216,26 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Simple texture in 2D (WebGPU)</span>
-            <span class="data-ru">Отображение простой текстуры в 2D (WebGPU)</span>
+            <span class="data-en">Dynamic Uniform Offsets in 2D (WebGPU)</span>
+            <span class="data-ru">Динамические смещения униформов в 2D (WebGPU)</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">Rendering a simple WebP texture in 2D using WebGPU and SDL3_image for Windows, Android, and WebAssembly.</span>
-            <span class="data-ru">Рендеринг простой WebP-текстуры в 2D с использованием WebGPU и SDL3_image для Windows, Android и WebAssembly.</span>
+            <span class="data-en">Rendering multiple 2D objects sharing a WebP texture using dynamic uniform offsets in WebGPU and SDL3_image for Windows, Android, and WebAssembly.</span>
+            <span class="data-ru">Рендеринг нескольких 2D-объектов с общей WebP-текстурой с использованием динамических смещений униформов в WebGPU и SDL3_image для Windows, Android и WebAssembly.</span>
         </p>
     </header>
 
     <p>
-        <span class="data-en"><a href="https://ivan-enzhaev.github.io/examples/webgpu/shapes/simple-texture-webgpu-sdl3-c" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">View the Wasm Demo in the Browser</a></span>
-        <span class="data-ru"><a href="https://ivan-enzhaev.github.io/examples/webgpu/shapes/simple-texture-webgpu-sdl3-c" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">Запустить Wasm-демо в браузере</a></span>
+        <span class="data-en"><a href="https://ivan-enzhaev.github.io/examples/webgpu/shapes/cglm-multi-object-texture-webgpu-sdl3-c" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">View the Wasm Demo in the Browser</a></span>
+        <span class="data-ru"><a href="https://ivan-enzhaev.github.io/examples/webgpu/shapes/cglm-multi-object-texture-webgpu-sdl3-c" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">Запустить Wasm-демо в браузере</a></span>
     </p>
 
-    <!-- <img src="/assets/img/tutorials/sdl3-webgpu/3-in-1/simple-texture-webgpu-sdl3/screenshot.png" alt="Screenshot" class="img-fluid border rounded mt-3 shadow-sm"> -->
+    <!-- <img src="/assets/img/tutorials/sdl3-webgpu/3-in-1/multi-object-texture-webgpu-sdl3/screenshot.png" alt="Screenshot" class="img-fluid border rounded mt-3 shadow-sm"> -->
 
     <!-- <div class="mt-4">
         <h5>Release Build Size: 909 KB (Includes: 909 KB WASM/JS, 466 bytes HTML)</h5> -->
         <!-- , 1 KB CSS/Assets -->
-        <!-- <img src="/assets/img/tutorials/sdl3-webgpu/3-in-1/simple-texture-webgpu-sdl3/release-size.png" 
+        <!-- <img src="/assets/img/tutorials/sdl3-webgpu/3-in-1/multi-object-texture-webgpu-sdl3/release-size.png" 
              alt="File explorer showing the release build size" 
              class="img-fluid border rounded mt-2 shadow-sm">
     </div> -->
@@ -253,7 +253,7 @@
     <div class="d-flex flex-wrap gap-3 my-4">
         <div class="d-flex flex-wrap gap-2 align-items-center">
             <span class="fw-bold me-2">C Version:</span>
-            <a href="https://github.com/ivan-enzhaev/simple-texture-webgpu-sdl3-c" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
+            <a href="https://github.com/ivan-enzhaev/cglm-multi-object-texture-webgpu-sdl3-c" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
                 <i class="fab fa-github me-2"></i>
                 <span class="data-en">View C Repo</span>
                 <span class="data-ru">Репозиторий (C)</span>
@@ -262,7 +262,7 @@
 
         <div class="d-flex flex-wrap gap-2 align-items-center">
             <span class="fw-bold me-2">C++ Version:</span>
-            <a href="https://github.com/ivan-enzhaev/simple-texture-webgpu-sdl3-cpp" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
+            <a href="https://github.com/ivan-enzhaev/cglm-multi-object-texture-webgpu-sdl3-cpp" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-sm d-inline-flex align-items-center">
                 <i class="fab fa-github me-2"></i>
                 <span class="data-en">View C++ Repo</span>
                 <span class="data-ru">Репозиторий (C++)</span>
@@ -386,10 +386,6 @@
             <span class="data-en">Check connected devices: <code>adb devices</code></span>
             <span class="data-ru">Проверка подключенных устройств: <code>adb devices</code></span>
         </li>
-        <!-- <li>
-            <span class="data-en">Use <a href="https://github.com/Genymobile/scrcpy" target="_blank" rel="noopener noreferrer">scrcpy</a> to mirror your phone screen to your PC via USB.</span>
-            <span class="data-ru">Используйте <a href="https://github.com/Genymobile/scrcpy" target="_blank" rel="noopener noreferrer">scrcpy</a> для трансляции экрана телефона на ПК через USB.</span>
-        </li> -->
     </ul>
 
     <h3 class="category-header">
