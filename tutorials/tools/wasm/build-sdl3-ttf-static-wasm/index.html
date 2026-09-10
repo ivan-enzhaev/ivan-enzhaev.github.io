@@ -7,7 +7,7 @@
 
 <title>
   
-    Building FreeType Shared Library for Android (NDK &amp; CMake)
+    Building SDL3_ttf Static Library for WebAssembly (Emscripten &amp; CMake)
   
   | Ivan Enzhaev
 </title>
@@ -216,46 +216,47 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Building FreeType Shared Library for Android (NDK &amp; CMake)</span>
-            <span class="data-ru">Сборка динамической библиотеки FreeType для Android (NDK и CMake)</span>
+            <span class="data-en">Building SDL3_ttf Static Library for WebAssembly (Emscripten &amp; CMake)</span>
+            <span class="data-ru">Сборка статической библиотеки SDL3_ttf для WebAssembly (Emscripten и CMake)</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to compiling FreeType source code into a shared library (libfreetype.so) for Android using CMake and NDK.</span>
-            <span class="data-ru">Руководство по компиляции исходного кода FreeType в динамическую библиотеку (libfreetype.so) для Android с помощью CMake и NDK.</span>
+            <span class="data-en">A guide to compiling SDL3_ttf source code into a static library (libSDL3_ttf.a) for WebAssembly with FreeType support.</span>
+            <span class="data-ru">Руководство по компиляции исходного кода SDL3_ttf в статическую библиотеку (libSDL3_ttf.a) для WebAssembly с поддержкой FreeType.</span>
         </p>
     </header>
 
     <div class="alert alert-secondary mb-3">
-        <span class="data-en">If you haven't set up MinGW and CMake on your machine, follow the</span>
-        <span class="data-ru">Если вы еще не настроили MinGW и CMake на своем компьютере, следуйте инструкции:</span>
-        <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-            <span class="data-en">MinGW & CMake Setup Guide</span>
-            <span class="data-ru">Руководство по настройке MinGW и CMake</span>
-        </a>
-    </div>
-
-    <div class="alert alert-secondary">
-        <span class="data-en">If you haven't set up your environment (Android SDK, NDK, JDK), follow the</span>
-        <span class="data-ru">Если вы еще не настроили окружение (Android SDK, NDK, JDK), следуйте инструкции:</span>
-        <a href="/tutorials/tools/android/android-env/" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-            <span class="data-en">Environment Setup Guide</span>
-            <span class="data-ru">Руководство по настройке окружения</span>
-        </a>
+        <span class="data-en">Make sure you have already built the core SDL3 and FreeType libraries for WebAssembly by following these instructions:</span>
+        <span class="data-ru">Убедитесь, что вы уже собрали основные библиотеки SDL3 и FreeType для WebAssembly, следуя этим инструкциям:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/tools/wasm/build-sdl3-static-wasm" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 static library for WebAssembly</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для WebAssembly</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/wasm/build-freetype-static-wasm" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building FreeType static library for WebAssembly</span>
+                    <span class="data-ru">Сборка статической библиотеки FreeType для WebAssembly</span>
+                </a>
+            </li>
+        </ul>
     </div>
 
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 1: Download FreeType Source Code</span>
-            <span class="data-ru">Шаг 1: Скачивание исходного кода FreeType</span>
+            <span class="data-en">Step 1: Download SDL3_ttf Source Code</span>
+            <span class="data-ru">Шаг 1: Скачивание исходного кода SDL3_ttf</span>
         </h2>
         <p>
-            <span class="data-en">Download the latest FreeType source code release from the official GitHub releases page:</span>
-            <span class="data-ru">Скачайте последнюю версию исходного кода FreeType с официальной страницы релизов GitHub:</span>
+            <span class="data-en">Download the latest SDL3_ttf source archive (<code>.zip</code> or <code>.tar.gz</code>) from the official GitHub releases page:</span>
+            <span class="data-ru">Скачайте последний архив с исходным кодом SDL3_ttf (<code>.zip</code> или <code>.tar.gz</code>) с официальной страницы релизов GitHub:</span>
         </p>
         <p>
-            <a href="https://github.com/freetype/freetype/tags" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">Download Latest FreeType Release</span>
-                <span class="data-ru">Скачать последний релиз FreeType</span>
+            <a href="https://github.com/libsdl-org/SDL_ttf/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
+                <span class="data-en">Download SDL3_ttf Releases</span>
+                <span class="data-ru">Скачать релизы SDL3_ttf</span>
             </a>
         </p>
         <p>
@@ -270,39 +271,43 @@
             <span class="data-ru">Шаг 2: Создание скрипта сборки</span>
         </h2>
         <p>
-            <span class="data-en">In the root directory of the extracted FreeType source folder, create an empty file named <code>build-android-64-bit.bat</code> and paste the following content into it:</span>
-            <span class="data-ru">В корневой директории распакованного исходного кода FreeType создайте пустой файл <code>build-android-64-bit.bat</code> и вставьте в него следующее содержимое:</span>
+            <span class="data-en">In the root directory of the extracted SDL3_ttf source folder, create an empty file named <code>build-wasm-static.bat</code> and paste the following content into it:</span>
+            <span class="data-ru">В корневой директории распакованного исходного кода SDL3_ttf создайте пустой файл <code>build-wasm-static.bat</code> и вставьте в него следующее содержимое:</span>
         </p>
 
         <pre><code class="language-bash">@echo off
-set NDK=H:/AndroidSDK/ndk/28.2.13676358
 
-if not exist build-android-64 mkdir build-android-64
-cd build-android-64
+set FREETYPE_PATH=C:/libs/freetype-2.14.3-wasm
+
+if not exist build-wasm-static mkdir build-wasm-static
+cd build-wasm-static
 
 if exist CMakeCache.txt del CMakeCache.txt
 if exist CMakeFiles rmdir /s /q CMakeFiles
 
-cmake .. ^
-  -DCMAKE_TOOLCHAIN_FILE="%NDK%/build/cmake/android.toolchain.cmake" ^
-  -DANDROID_ABI=arm64-v8a ^
-  -DANDROID_PLATFORM=android-21 ^
-  -DBUILD_SHARED_LIBS=ON ^
-  -DFT_DISABLE_HARFBUZZ=ON ^
-  -DFT_DISABLE_ZLIB=ON ^
+call emcmake cmake .. ^
+  -DSDL3_DIR="C:/libs/sdl3-3.4.16-wasm/lib/cmake/SDL3" ^
+  -DCMAKE_PREFIX_PATH="%FREETYPE_PATH%" ^
+  -DFREETYPE_INCLUDE_DIR_ft2build="%FREETYPE_PATH%/include/freetype2" ^
+  -DFREETYPE_INCLUDE_DIR_freetype2="%FREETYPE_PATH%/include/freetype2" ^
+  -DFREETYPE_LIBRARY="%FREETYPE_PATH%/lib/libfreetype.a" ^
+  -DBUILD_SHARED_LIBS=OFF ^
+  -DSDLTTF_SAMPLES=OFF ^
+  -DSDLTTF_HARFBUZZ=OFF ^
+  -DSDLTTF_VENDORED=OFF ^
   -DCMAKE_BUILD_TYPE=Release ^
-  -DCMAKE_INSTALL_PREFIX="C:/libs/freetype-2.14.3-android/arm64-v8a" ^
+  -DCMAKE_INSTALL_PREFIX=C:/libs/sdl3-ttf-3.2.2-wasm ^
   -G "MinGW Makefiles"
 
-cmake --build . --config Release --parallel 8 --target install</code></pre>
+call cmake --build . --config Release --parallel 8 --target install</code></pre>
 
         <!-- <div class="alert alert-info mt-3">
             <strong>
                 <span class="data-en">Note:</span>
                 <span class="data-ru">Примечание:</span>
             </strong>
-            <span class="data-en">Make sure that zlib is already built and installed. Verify that all input dependency paths (such as <code>CMAKE_PREFIX_PATH</code>) match your local directory structure.</span>
-            <span class="data-ru">Убедитесь, что библиотека zlib уже собрана и установлена. Проверьте, что все пути к зависимостям (такие как <code>CMAKE_PREFIX_PATH</code>) соответствуют вашей локальной структуре каталогов.</span>
+            <span class="data-en">Ensure that the path variables (<code>FREETYPE_PATH</code>, <code>SDL3_DIR</code>, and <code>CMAKE_INSTALL_PREFIX</code>) match the paths to your locally compiled WebAssembly static libraries.</span>
+            <span class="data-ru">Убедитесь, что переменные путей (<code>FREETYPE_PATH</code>, <code>SDL3_DIR</code> и <code>CMAKE_INSTALL_PREFIX</code>) соответствуют путям к вашим локально собранным статическим библиотекам WebAssembly.</span>
         </div> -->
     </section>
 
@@ -312,8 +317,8 @@ cmake --build . --config Release --parallel 8 --target install</code></pre>
             <span class="data-ru">Шаг 3: Запуск и сборка</span>
         </h2>
         <p>
-            <span class="data-en">Double-click <code>build-android-64-bit.bat</code> or run it via Command Prompt. Once completed, your compiled <code>libfreetype.so</code> along with headers will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
-            <span class="data-ru">Дважды кликните по <code>build-android-64-bit.bat</code> или запустите его через командную строку. После завершения собранная библиотека <code>libfreetype.so</code> вместе с заголовочными файлами будет установлена по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
+            <span class="data-en">Run <code>build-wasm-static.bat</code> via Command Prompt (CMD) so you can catch any potential compilation errors in the console. Once completed, your compiled static library (<code>libSDL3_ttf.a</code>) along with headers will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
+            <span class="data-ru">Запустите <code>build-wasm-static.bat</code> через командную строку (CMD), чтобы вы могли увидеть возможные ошибки сборки прямо в консоли. После завершения собранная статическая библиотека (<code>libSDL3_ttf.a</code>) вместе с заголовочными файлами будет установлена по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
         </p>
     </section>
 </div>
