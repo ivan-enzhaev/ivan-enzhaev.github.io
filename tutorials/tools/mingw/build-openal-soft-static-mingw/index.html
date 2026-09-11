@@ -7,7 +7,7 @@
 
 <title>
   
-    Building Box2D Shared Library for Android (NDK &amp; CMake)
+    Building OpenAL-Soft static library for Windows (MinGW &amp; CMake)
   
   | Ivan Enzhaev
 </title>
@@ -216,12 +216,12 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Building Box2D Shared Library for Android (NDK &amp; CMake)</span>
-            <span class="data-ru">Сборка динамической библиотеки Box2D для Android (NDK и CMake)</span>
+            <span class="data-en">Building OpenAL-Soft Static Library for Windows (MinGW &amp; CMake)</span>
+            <span class="data-ru">Сборка статической библиотеки OpenAL-Soft для Windows (MinGW и CMake)</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to compiling Box2D source code into a shared library (libbox2d.so) for Android using CMake and NDK.</span>
-            <span class="data-ru">Руководство по компиляции исходного кода Box2D в динамическую библиотеку (libbox2d.so) для Android с помощью CMake и NDK.</span>
+            <span class="data-en">A guide to compiling OpenAL-Soft source code into a static library (libOpenAL32.a) for MinGW on Windows Desktop.</span>
+            <span class="data-ru">Руководство по компиляции исходного кода OpenAL-Soft в статическую библиотеку (libOpenAL32.a) для MinGW на Windows Desktop.</span>
         </p>
     </header>
 
@@ -234,28 +234,19 @@
         </a>
     </div>
 
-    <div class="alert alert-secondary">
-        <span class="data-en">If you haven't set up your environment (Android SDK, NDK, JDK), follow the</span>
-        <span class="data-ru">Если вы еще не настроили окружение (Android SDK, NDK, JDK), следуйте инструкции:</span>
-        <a href="/tutorials/tools/android/android-env/" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-            <span class="data-en">Environment Setup Guide</span>
-            <span class="data-ru">Руководство по настройке окружения</span>
-        </a>
-    </div>
-
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 1: Download Box2D Source Code</span>
-            <span class="data-ru">Шаг 1: Скачивание исходного кода Box2D</span>
+            <span class="data-en">Step 1: Download OpenAL-Soft Source Code</span>
+            <span class="data-ru">Шаг 1: Скачивание исходного кода OpenAL-Soft</span>
         </h2>
         <p>
-            <span class="data-en">Download the latest Box2D source archive (<code>.zip</code> or <code>.tar.gz</code>) from the official GitHub releases page:</span>
-            <span class="data-ru">Скачайте последний архив с исходным кодом Box2D (<code>.zip</code> или <code>.tar.gz</code>) с официальной страницы релизов GitHub:</span>
+            <span class="data-en">Download the latest OpenAL-Soft source archive (<code>.zip</code> or <code>.tar.gz</code>) from the official download page:</span>
+            <span class="data-ru">Скачайте последний архив с исходным кодом OpenAL-Soft (<code>.zip</code> или <code>.tar.gz</code>) с официальной страницы скачивания:</span>
         </p>
         <p>
-            <a href="https://github.com/erincatto/box2d/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">Download Box2D Releases</span>
-                <span class="data-ru">Скачать релизы Box2D</span>
+            <a href="https://github.com/kcat/openal-soft/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
+                <span class="data-en">Download OpenAL-Soft Releases</span>
+                <span class="data-ru">Скачать релизы OpenAL-Soft</span>
             </a>
         </p>
         <p>
@@ -270,42 +261,58 @@
             <span class="data-ru">Шаг 2: Создание скрипта сборки</span>
         </h2>
         <p>
-            <span class="data-en">In the root directory of the extracted Box2D source folder, create an empty file named <code>build-android-64-bit.bat</code> and paste the following content into it:</span>
-            <span class="data-ru">В корневой директории распакованного исходного кода Box2D создайте пустой файл <code>build-android-64-bit.bat</code> и вставьте в него следующее содержимое:</span>
+            <span class="data-en">In the root directory of the extracted OpenAL-Soft source folder, create an empty file named <code>build-mingw-static.bat</code> and paste the following content into it:</span>
+            <span class="data-ru">В корневой директории распакованного исходного кода OpenAL-Soft создайте пустой файл <code>build-mingw-static.bat</code> и вставьте в него следующее содержимое:</span>
         </p>
 
-        <pre><code class="language-bash">@echo off
-set NDK=H:/AndroidSDK/ndk/28.2.13676358
+        <!-- <pre><code class="language-bash">@echo off
 
-if not exist build-android-64 mkdir build-android-64
-cd build-android-64
+set OPENAL_PATH=C:/libs/openal-soft-1.25.2-mingw
 
-:: Clean old cache if it exists
+if not exist build-mingw-static mkdir build-mingw-static
+cd build-mingw-static
+
 if exist CMakeCache.txt del CMakeCache.txt
+if exist CMakeFiles rmdir /s /q CMakeFiles
 
-cmake .. ^
-  -DCMAKE_TOOLCHAIN_FILE=%NDK%/build/cmake/android.toolchain.cmake ^
-  -DANDROID_ABI=arm64-v8a ^
-  -DANDROID_PLATFORM=android-21 ^
-  -DBUILD_SHARED_LIBS=ON ^
-  -DBOX2D_UNIT_TESTS=OFF ^
-  -DBOX2D_SAMPLES=OFF ^
-  -DBOX2D_BENCHMARKS=OFF ^
-  -DBOX2D_DOCS=OFF ^
+call cmake .. ^
   -DCMAKE_BUILD_TYPE=Release ^
-  -DCMAKE_INSTALL_PREFIX=C:/libs/box2d-3.1.1-android/arm64-v8a ^
+  -DBUILD_SHARED_LIBS=OFF ^
+  -DALSOFT_BUILD_EXAMPLES=OFF ^
+  -DALSOFT_BUILD_TESTS=OFF ^
+  -DALSOFT_UTILS=OFF ^
+  -DCMAKE_INSTALL_PREFIX="%OPENAL_PATH%" ^
   -G "MinGW Makefiles"
 
-cmake --build . --config Release --parallel 8 --target install</code></pre>
+call cmake --build . --config Release --parallel 8 --target install</code></pre> -->
 
-        <div class="alert alert-info mt-3">
+        <pre><code class="language-bash">@echo off
+
+if not exist build-mingw-static mkdir build-mingw-static
+cd build-mingw-static
+
+if exist CMakeCache.txt del CMakeCache.txt
+if exist CMakeFiles rmdir /s /q CMakeFiles
+
+call cmake .. ^
+  -DCMAKE_BUILD_TYPE=Release ^
+  -DLIBTYPE=STATIC ^
+  -DALSOFT_EXAMPLES=OFF ^
+  -DALSOFT_TESTS=OFF ^
+  -DALSOFT_UTILS=OFF ^
+  -DCMAKE_INSTALL_PREFIX="C:/libs/openal-soft-1.25.2-mingw" ^
+  -G "MinGW Makefiles"
+
+call cmake --build . --config Release --parallel 8 --target install</code></pre>
+
+        <!-- <div class="alert alert-info mt-3">
             <strong>
                 <span class="data-en">Note:</span>
                 <span class="data-ru">Примечание:</span>
             </strong>
-            <span class="data-en">Make sure to adjust the <code>NDK</code> path and <code>CMAKE_INSTALL_PREFIX</code> according to your local environment paths. Set <code>-DBUILD_SHARED_LIBS=ON</code> to output a <code>.so</code> dynamic library instead of a static <code>.a</code> archive.</span>
-            <span class="data-ru">Убедитесь, что пути к <code>NDK</code> и <code>CMAKE_INSTALL_PREFIX</code> соответствуют вашему локальному окружению. Установите <code>-DBUILD_SHARED_LIBS=ON</code> для получения динамической библиотеки <code>.so</code> вместо статической <code>.a</code>.</span>
-        </div>
+            <span class="data-en">The flags <code>-DALSOFT_BUILD_EXAMPLES=OFF</code>, <code>-DALSOFT_BUILD_TESTS=OFF</code>, and <code>-DALSOFT_UTILS=OFF</code> disable additional executables and unit tests, speeding up the build process and generating a lean static library. Adjust <code>OPENAL_PATH</code> as needed.</span>
+            <span class="data-ru">Флаги <code>-DALSOFT_BUILD_EXAMPLES=OFF</code>, <code>-DALSOFT_BUILD_TESTS=OFF</code> и <code>-DALSOFT_UTILS=OFF</code> отключают вспомогательные утилиты и тесты, ускоряя процесс сборки и генерируя только статическую библиотеку. При необходимости измените <code>OPENAL_PATH</code>.</span>
+        </div> -->
     </section>
 
     <section class="mb-4">
@@ -314,8 +321,8 @@ cmake --build . --config Release --parallel 8 --target install</code></pre>
             <span class="data-ru">Шаг 3: Запуск и сборка</span>
         </h2>
         <p>
-            <span class="data-en">Run <code>build-android-64-bit.bat</code> via Command Prompt (CMD) so you can catch any potential compilation errors in the console. Once completed, your compiled shared library (<code>libbox2d.so</code>) along with headers will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
-            <span class="data-ru">Запустите <code>build-android-64-bit.bat</code> через командную строку (CMD), чтобы вы могли увидеть возможные ошибки сборки прямо в консоли. После завершения собранная динамическая библиотека (<code>libbox2d.so</code>) вместе с заголовочными файлами будет установлена по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
+            <span class="data-en">Run <code>build-mingw-static.bat</code> via Command Prompt (CMD) so you can catch any potential compilation errors in the console. Once completed, your compiled static library (<code>libOpenAL32.a</code>) along with headers will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
+            <span class="data-ru">Запустите <code>build-mingw-static.bat</code> через командную строку (CMD), чтобы вы могли увидеть возможные ошибки сборки прямо в консоли. После завершения собранная статическая библиотека (<code>libOpenAL32.a</code>) вместе с заголовочными файлами будет установлена по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
         </p>
     </section>
 </div>
