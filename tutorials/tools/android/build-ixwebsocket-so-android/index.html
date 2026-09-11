@@ -7,7 +7,7 @@
 
 <title>
   
-    Building zlib Shared Library for Android (NDK &amp; CMake)
+    Building IXWebSocket Shared Library for Android (NDK &amp; CMake)
   
   | Ivan Enzhaev
 </title>
@@ -216,12 +216,12 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Building zlib Shared Library for Android (NDK &amp; CMake)</span>
-            <span class="data-ru">Сборка динамической библиотеки zlib для Android (NDK и CMake)</span>
+            <span class="data-en">Building IXWebSocket Shared Library for Android (NDK &amp; CMake)</span>
+            <span class="data-ru">Сборка динамической библиотеки IXWebSocket для Android (NDK и CMake)</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to compiling zlib source code into a shared library (libz.so) for Android using CMake and NDK.</span>
-            <span class="data-ru">Руководство по компиляции исходного кода zlib в динамическую библиотеку (libz.so) для Android с помощью CMake и NDK.</span>
+            <span class="data-en">A guide to compiling IXWebSocket source code into a shared library (libixwebsocket.so) for Android using CMake and NDK.</span>
+            <span class="data-ru">Руководство по компиляции исходного кода IXWebSocket в динамическую библиотеку (libixwebsocket.so) для Android с помощью CMake и NDK.</span>
         </p>
     </header>
 
@@ -243,19 +243,38 @@
         </a>
     </div>
 
+    <div class="alert alert-warning mb-3">
+        <span class="data-en">Before building IXWebSocket, make sure you have built both required dependencies:</span>
+        <span class="data-ru">Перед сборкой IXWebSocket убедитесь, что вы собрали обе необходимые зависимости:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/tools/android/build-mbedtls-so-android" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building MbedTLS Shared Library for Android</span>
+                    <span class="data-ru">Сборка динамической библиотеки MbedTLS для Android</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/android/build-zlib-so-android" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building Zlib Shared Library for Android</span>
+                    <span class="data-ru">Сборка динамической библиотеки Zlib для Android</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 1: Download zlib Source Code</span>
-            <span class="data-ru">Шаг 1: Скачивание исходного кода zlib</span>
+            <span class="data-en">Step 1: Download IXWebSocket Source Code</span>
+            <span class="data-ru">Шаг 1: Скачивание исходного кода IXWebSocket</span>
         </h2>
         <p>
-            <span class="data-en">Download the latest zlib source archive (<code>.zip</code> or <code>.tar.gz</code>) from the official GitHub releases page:</span>
-            <span class="data-ru">Скачайте последний архив с исходным кодом zlib (<code>.zip</code> или <code>.tar.gz</code>) с официальной страницы релизов GitHub:</span>
+            <span class="data-en">Download the latest IXWebSocket source archive (<code>.zip</code> or <code>.tar.gz</code>) from the official GitHub releases page:</span>
+            <span class="data-ru">Скачайте последний архив с исходным кодом IXWebSocket (<code>.zip</code> или <code>.tar.gz</code>) с официальной страницы релизов GitHub:</span>
         </p>
         <p>
-            <a href="https://github.com/madler/zlib/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">Download zlib Releases</span>
-                <span class="data-ru">Скачать релизы zlib</span>
+            <a href="https://github.com/machinezone/IXWebSocket/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
+                <span class="data-en">Download IXWebSocket Releases</span>
+                <span class="data-ru">Скачать релизы IXWebSocket</span>
             </a>
         </p>
         <p>
@@ -270,8 +289,8 @@
             <span class="data-ru">Шаг 2: Создание скрипта сборки</span>
         </h2>
         <p>
-            <span class="data-en">In the root directory of the extracted zlib source folder, create an empty file named <code>build-android-64-bit.bat</code> and paste the following content into it:</span>
-            <span class="data-ru">В корневой директории распакованного исходного кода zlib создайте пустой файл <code>build-android-64-bit.bat</code> и вставьте в него следующее содержимое:</span>
+            <span class="data-en">In the root directory of the extracted IXWebSocket source folder, create an empty file named <code>build-android-64-bit.bat</code> and paste the following content into it:</span>
+            <span class="data-ru">В корневой директории распакованного исходного кода IXWebSocket создайте пустой файл <code>build-android-64-bit.bat</code> и вставьте в него следующее содержимое:</span>
         </p>
 
         <pre><code class="language-bash">@echo off
@@ -280,6 +299,7 @@ set NDK=H:/AndroidSDK/ndk/28.2.13676358
 if not exist build-android-64 mkdir build-android-64
 cd build-android-64
 
+:: Clean old cache if it exists
 if exist CMakeCache.txt del CMakeCache.txt
 if exist CMakeFiles rmdir /s /q CMakeFiles
 
@@ -287,9 +307,18 @@ call cmake .. ^
   -DCMAKE_TOOLCHAIN_FILE=%NDK%/build/cmake/android.toolchain.cmake ^
   -DANDROID_ABI=arm64-v8a ^
   -DANDROID_PLATFORM=android-21 ^
-  -DCMAKE_INSTALL_PREFIX=C:/libs/zlib-1.3.2-android/arm64-v8a ^
   -DCMAKE_BUILD_TYPE=Release ^
+  -DCMAKE_INSTALL_PREFIX=C:/libs/ixwebsocket-12.0.1-android/arm64-v8a ^
   -DBUILD_SHARED_LIBS=ON ^
+  -DUSE_TLS=ON ^
+  -DUSE_MBED_TLS=ON ^
+  -DMBEDTLS_INCLUDE_DIRS=C:/libs/mbedtls-4.2.0-android/arm64-v8a/include ^
+  -DMBEDTLS_LIBRARY=C:/libs/mbedtls-4.2.0-android/arm64-v8a/lib/libmbedtls.so ^
+  -DMBEDX509_LIBRARY=C:/libs/mbedtls-4.2.0-android/arm64-v8a/lib/libmbedx509.so ^
+  -DMBEDCRYPTO_LIBRARY=C:/libs/mbedtls-4.2.0-android/arm64-v8a/lib/libmbedcrypto.so ^
+  -DUSE_ZLIB=ON ^
+  -DZLIB_INCLUDE_DIR=C:/libs/zlib-1.3.2-android/arm64-v8a/include ^
+  -DZLIB_LIBRARY=C:/libs/zlib-1.3.2-android/arm64-v8a/lib/libz.so ^
   -G "MinGW Makefiles"
 
 call cmake --build . --config Release --parallel 8 --target install</code></pre>
@@ -299,8 +328,8 @@ call cmake --build . --config Release --parallel 8 --target install</code></pre>
                 <span class="data-en">Note:</span>
                 <span class="data-ru">Примечание:</span>
             </strong>
-            <span class="data-en">Make sure to adjust the <code>NDK</code> path and <code>CMAKE_INSTALL_PREFIX</code> according to your local environment paths.</span>
-            <span class="data-ru">Убедитесь, что пути к <code>NDK</code> и <code>CMAKE_INSTALL_PREFIX</code> соответствуют вашему локальному окружению.</span>
+            <span class="data-en">Make sure to adjust the <code>NDK</code> path, <code>CMAKE_INSTALL_PREFIX</code>, and MbedTLS library paths according to your local environment. Setting <code>BUILD_SHARED_LIBS=ON</code> compiles IXWebSocket as a dynamic library (<code>.so</code>).</span>
+            <span class="data-ru">Убедитесь, что пути к <code>NDK</code>, <code>CMAKE_INSTALL_PREFIX</code> и MbedTLS соответствуют вашему локальному окружению. Настройка <code>BUILD_SHARED_LIBS=ON</code> собирает IXWebSocket как динамическую библиотеку (<code>.so</code>).</span>
         </div> -->
     </section>
 
@@ -310,8 +339,8 @@ call cmake --build . --config Release --parallel 8 --target install</code></pre>
             <span class="data-ru">Шаг 3: Запуск и сборка</span>
         </h2>
         <p>
-            <span class="data-en">Run <code>build-android-64-bit.bat</code> via Command Prompt (CMD) so you can catch any potential compilation errors in the console. Once completed, your compiled shared library (<code>libz.so</code>) along with headers will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
-            <span class="data-ru">Запустите <code>build-android-64-bit.bat</code> через командную строку (CMD), чтобы вы могли увидеть возможные ошибки сборки прямо в консоли. После завершения собранная динамическая библиотека (<code>libz.so</code>) вместе с заголовочными файлами будет установлена по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
+            <span class="data-en">Run <code>build-android-64-bit.bat</code> via Command Prompt (CMD) so you can catch any potential compilation errors in the console. Once completed, your compiled shared library (<code>libixwebsocket.so</code>) along with header files will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
+            <span class="data-ru">Запустите <code>build-android-64-bit.bat</code> через командную строку (CMD), чтобы вы могли увидеть возможные ошибки сборки прямо в консоли. После завершения собранная динамическая библиотека (<code>libixwebsocket.so</code>) вместе с заголовочными файлами будет установлена по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
         </p>
     </section>
 </div>

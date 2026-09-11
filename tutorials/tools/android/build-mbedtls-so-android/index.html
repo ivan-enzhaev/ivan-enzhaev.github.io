@@ -7,7 +7,7 @@
 
 <title>
   
-    Building zlib Shared Library for Android (NDK &amp; CMake)
+    Building Mbed TLS Shared Library for Android (NDK &amp; CMake)
   
   | Ivan Enzhaev
 </title>
@@ -216,12 +216,12 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Building zlib Shared Library for Android (NDK &amp; CMake)</span>
-            <span class="data-ru">Сборка динамической библиотеки zlib для Android (NDK и CMake)</span>
+            <span class="data-en">Building Mbed TLS Shared Library for Android (NDK &amp; CMake)</span>
+            <span class="data-ru">Сборка динамической библиотеки Mbed TLS для Android (NDK и CMake)</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to compiling zlib source code into a shared library (libz.so) for Android using CMake and NDK.</span>
-            <span class="data-ru">Руководство по компиляции исходного кода zlib в динамическую библиотеку (libz.so) для Android с помощью CMake и NDK.</span>
+            <span class="data-en">A guide to compiling Mbed TLS source code into shared libraries for Android using CMake and NDK.</span>
+            <span class="data-ru">Руководство по компиляции исходного кода Mbed TLS в динамические библиотеки для Android с помощью CMake и NDK.</span>
         </p>
     </header>
 
@@ -245,17 +245,17 @@
 
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 1: Download zlib Source Code</span>
-            <span class="data-ru">Шаг 1: Скачивание исходного кода zlib</span>
+            <span class="data-en">Step 1: Download Mbed TLS Source Code</span>
+            <span class="data-ru">Шаг 1: Скачивание исходного кода Mbed TLS</span>
         </h2>
         <p>
-            <span class="data-en">Download the latest zlib source archive (<code>.zip</code> or <code>.tar.gz</code>) from the official GitHub releases page:</span>
-            <span class="data-ru">Скачайте последний архив с исходным кодом zlib (<code>.zip</code> или <code>.tar.gz</code>) с официальной страницы релизов GitHub:</span>
+            <span class="data-en">Download the <code>mbedtls-x.y.z.tar.bz2</code> archive (do not download the generic "Source code" archive, as it lacks pre-generated sources) from the official GitHub releases page:</span>
+            <span class="data-ru">Скачайте архив <code>mbedtls-x.y.z.tar.bz2</code> (не скачивайте обычный архив "Source code", так как в нем отсутствуют предсгенерированные исходники) с официальной страницы релизов GitHub:</span>
         </p>
         <p>
-            <a href="https://github.com/madler/zlib/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">Download zlib Releases</span>
-                <span class="data-ru">Скачать релизы zlib</span>
+            <a href="https://github.com/Mbed-TLS/mbedtls/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
+                <span class="data-en">Download Mbed TLS Releases</span>
+                <span class="data-ru">Скачать релизы Mbed TLS</span>
             </a>
         </p>
         <p>
@@ -270,8 +270,8 @@
             <span class="data-ru">Шаг 2: Создание скрипта сборки</span>
         </h2>
         <p>
-            <span class="data-en">In the root directory of the extracted zlib source folder, create an empty file named <code>build-android-64-bit.bat</code> and paste the following content into it:</span>
-            <span class="data-ru">В корневой директории распакованного исходного кода zlib создайте пустой файл <code>build-android-64-bit.bat</code> и вставьте в него следующее содержимое:</span>
+            <span class="data-en">In the root directory of the extracted Mbed TLS source folder, create an empty file named <code>build-android-64-bit.bat</code> and paste the following content into it:</span>
+            <span class="data-ru">В корневой директории распакованного исходного кода Mbed TLS создайте пустой файл <code>build-android-64-bit.bat</code> и вставьте в него следующее содержимое:</span>
         </p>
 
         <pre><code class="language-bash">@echo off
@@ -280,6 +280,7 @@ set NDK=H:/AndroidSDK/ndk/28.2.13676358
 if not exist build-android-64 mkdir build-android-64
 cd build-android-64
 
+:: Clean old cache if it exists
 if exist CMakeCache.txt del CMakeCache.txt
 if exist CMakeFiles rmdir /s /q CMakeFiles
 
@@ -287,9 +288,12 @@ call cmake .. ^
   -DCMAKE_TOOLCHAIN_FILE=%NDK%/build/cmake/android.toolchain.cmake ^
   -DANDROID_ABI=arm64-v8a ^
   -DANDROID_PLATFORM=android-21 ^
-  -DCMAKE_INSTALL_PREFIX=C:/libs/zlib-1.3.2-android/arm64-v8a ^
+  -DUSE_SHARED_MBEDTLS_LIBRARY=ON ^
+  -DUSE_STATIC_MBEDTLS_LIBRARY=OFF ^
+  -DENABLE_PROGRAMS=OFF ^
+  -DENABLE_TESTING=OFF ^
   -DCMAKE_BUILD_TYPE=Release ^
-  -DBUILD_SHARED_LIBS=ON ^
+  -DCMAKE_INSTALL_PREFIX=C:/libs/mbedtls-4.2.0-android/arm64-v8a ^
   -G "MinGW Makefiles"
 
 call cmake --build . --config Release --parallel 8 --target install</code></pre>
@@ -299,8 +303,8 @@ call cmake --build . --config Release --parallel 8 --target install</code></pre>
                 <span class="data-en">Note:</span>
                 <span class="data-ru">Примечание:</span>
             </strong>
-            <span class="data-en">Make sure to adjust the <code>NDK</code> path and <code>CMAKE_INSTALL_PREFIX</code> according to your local environment paths.</span>
-            <span class="data-ru">Убедитесь, что пути к <code>NDK</code> и <code>CMAKE_INSTALL_PREFIX</code> соответствуют вашему локальному окружению.</span>
+            <span class="data-en">Make sure to adjust the <code>NDK</code> path and <code>CMAKE_INSTALL_PREFIX</code> according to your local environment paths. Setting <code>USE_SHARED_MBEDTLS_LIBRARY=ON</code> and <code>USE_STATIC_MBEDTLS_LIBRARY=OFF</code> ensures shared libraries (<code>.so</code>) are compiled.</span>
+            <span class="data-ru">Убедитесь, что пути к <code>NDK</code> и <code>CMAKE_INSTALL_PREFIX</code> соответствуют вашему локальному окружению. Настройка <code>USE_SHARED_MBEDTLS_LIBRARY=ON</code> и <code>USE_STATIC_MBEDTLS_LIBRARY=OFF</code> гарантирует сборку динамических библиотек (<code>.so</code>).</span>
         </div> -->
     </section>
 
@@ -310,8 +314,8 @@ call cmake --build . --config Release --parallel 8 --target install</code></pre>
             <span class="data-ru">Шаг 3: Запуск и сборка</span>
         </h2>
         <p>
-            <span class="data-en">Run <code>build-android-64-bit.bat</code> via Command Prompt (CMD) so you can catch any potential compilation errors in the console. Once completed, your compiled shared library (<code>libz.so</code>) along with headers will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
-            <span class="data-ru">Запустите <code>build-android-64-bit.bat</code> через командную строку (CMD), чтобы вы могли увидеть возможные ошибки сборки прямо в консоли. После завершения собранная динамическая библиотека (<code>libz.so</code>) вместе с заголовочными файлами будет установлена по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
+            <span class="data-en">Run <code>build-android-64-bit.bat</code> via Command Prompt (CMD) so you can catch any potential compilation errors in the console. Once completed, your compiled shared libraries (such as <code>libmbedtls.so</code>, <code>libmbedx509.so</code>, <code>libmbedcrypto.so</code>) along with headers will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
+            <span class="data-ru">Запустите <code>build-android-64-bit.bat</code> через командную строку (CMD), чтобы вы могли увидеть возможные ошибки сборки прямо в консоли. После завершения собранные динамические библиотеки (такие как <code>libmbedtls.so</code>, <code>libmbedx509.so</code>, <code>libmbedcrypto.so</code>) вместе с заголовочными файлами будут установлены по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
         </p>
     </section>
 </div>
