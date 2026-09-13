@@ -248,7 +248,7 @@
         <span class="data-en">Install <code>build-essential</code> which includes the GCC compiler suite (<code>gcc</code>, <code>g++</code>), <code>make</code>, and standard development libraries:</span>
         <span class="data-ru">Установите пакет <code>build-essential</code>, который включает компиляторы GCC (<code>gcc</code>, <code>g++</code>), <code>make</code> и стандартные библиотеки разработки:</span>
     </p>
-    <pre><code class="language-bash">sudo apt install -y build-essential gdb tar curl wget git</code></pre>
+    <pre><code class="language-bash">sudo apt install -y build-essential cmake gdb rsync tar curl wget git</code></pre>
 
     <h3 class="category-header">
         <span class="data-en">3. Build Systems (CMake &amp; Ninja)</span>
@@ -275,7 +275,7 @@
         <span class="data-ru"><strong>Опционально (Инструментарий Clang):</strong> Если вы предпочитаете сборку с помощью LLVM/Clang вместо GCC, выполните: <code>sudo apt install -y clang lldb</code></span>
     </div>
 
-    <h3 class="category-header">
+    <!-- <h3 class="category-header">
         <span class="data-en">5. Verification</span>
         <span class="data-ru">5. Проверка установки</span>
     </h3>
@@ -287,6 +287,25 @@
 cmake --version
 ninja --version
 git --version</code></pre>
+
+    <div class="alert alert-success mt-4">
+        <span class="data-en">
+            <strong>Next Step:</strong> Your Ubuntu VPS is now ready to build C++ projects. Continue to the next guide to build static libraries like ZLIB, MBedTLS, and IXWebSocket!
+        </span>
+        <span class="data-ru">
+            <strong>Следующий шаг:</strong> Ваш Ubuntu VPS готов к сборке проектов на C++. Переходите к следующему руководству для сборки статических библиотек, таких как ZLIB, MBedTLS и IXWebSocket!
+        </span>
+    </div> -->
+
+    <h3 class="category-header">
+        <span class="data-en">5. Verification</span>
+        <span class="data-ru">5. Проверка установки</span>
+    </h3>
+    <p>
+        <span class="data-en">Verify that all essential tools and libraries are installed on the system:</span>
+        <span class="data-ru">Проверьте, что все необходимые инструменты и библиотеки успешно установлены в системе:</span>
+    </p>
+    <pre><code class="language-bash">dpkg -l build-essential gcc g++ make cmake ninja-build gdb rsync tar curl wget git zlib1g-dev libssl-dev pkg-config | cat</code></pre>
 
     <div class="alert alert-success mt-4">
         <span class="data-en">
