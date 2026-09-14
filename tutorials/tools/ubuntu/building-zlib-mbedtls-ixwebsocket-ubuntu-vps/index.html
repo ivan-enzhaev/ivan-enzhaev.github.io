@@ -7,7 +7,7 @@
 
 <title>
   
-    C/C++ Development Environment Setup for Ubuntu VPS (GCC, CMake &amp; Ninja)
+    Building ZLIB, MBedTLS &amp; IXWebSocket 12.0.1 Static Libraries on Ubuntu VPS
   
   | Ivan Enzhaev
 </title>
@@ -216,97 +216,116 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold text-dark">
-            <span class="data-en">C/C++ Development Environment Setup for Ubuntu VPS (GCC, CMake &amp; Ninja)</span>
-            <span class="data-ru">Настройка среды разработки C/C++ для Ubuntu VPS (GCC, CMake и Ninja)</span>
+            <span class="data-en">Building ZLIB, MBedTLS &amp; IXWebSocket 12.0.1 Static Libraries on Ubuntu VPS</span>
+            <span class="data-ru">Сборка статических библиотек ZLIB, MBedTLS и IXWebSocket 12.0.1 на Ubuntu VPS</span>
         </h1>
     </header>
 
     <p class="mb-4">
         <span class="data-en">
-            This guide covers installing the necessary C/C++ toolchain, build systems, and version control tools on a fresh headless <strong>Ubuntu VPS</strong> (Server).
+            This guide covers installing key library headers and compiling specific static versions of <strong>ZLIB (v1.3.2)</strong>, <strong>MBedTLS (mbedtls-4.2.0)</strong>, and <strong>IXWebSocket (v12.0.1)</strong> on your headless Ubuntu VPS using CMake and Ninja.
         </span>
         <span class="data-ru">
-            В этом руководстве описана установка необходимого инструментария C/C++, систем сборки и инструментов контроля версий на чистый сервер <strong>Ubuntu VPS</strong>.
+            В этом руководстве описана установка ключевых заголовков библиотек и компиляция конкретных статических версий <strong>ZLIB (v1.3.2)</strong>, <strong>MBedTLS (mbedtls-4.2.0)</strong> и <strong>IXWebSocket (v12.0.1)</strong> на вашем сервере Ubuntu VPS с использованием CMake и Ninja.
         </span>
     </p>
 
     <h3 class="category-header">
-        <span class="data-en">1. System Update</span>
-        <span class="data-ru">1. Обновление системы</span>
+        <span class="data-en">1. Additional C/C++ Library Headers</span>
+        <span class="data-ru">1. Дополнительные заголовки библиотек C/C++</span>
     </h3>
     <p>
-        <span class="data-en">Connect to your VPS via SSH and update the package index and installed packages to their latest versions:</span>
-        <span class="data-ru">Подключитесь к вашему VPS по SSH и обновите индекс пакетов и установленные программы до последних версий:</span>
+        <span class="data-en">Install common development headers required for building networking and cryptography static libraries (such as ZLIB and MBedTLS):</span>
+        <span class="data-ru">Установите основные заголовки библиотек, необходимые для сборки сетевых и криптографических статических библиотек (таких как ZLIB и MBedTLS):</span>
     </p>
-    <pre><code class="language-bash">sudo apt update && sudo apt upgrade -y</code></pre>
+    <pre><code class="language-bash">sudo apt update && sudo apt install -y zlib1g-dev libssl-dev pkg-config</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">2. Essential C/C++ Toolchain (GCC, G++, Make)</span>
-        <span class="data-ru">2. Основной инструментарий C/C++ (GCC, G++, Make)</span>
+        <span class="data-en">2. Build and Install ZLIB Static Library (v1.3.2)</span>
+        <span class="data-ru">2. Сборка и установка статической библиотеки ZLIB (v1.3.2)</span>
     </h3>
     <p>
-        <span class="data-en">Install <code>build-essential</code> which includes the GCC compiler suite (<code>gcc</code>, <code>g++</code>), <code>make</code>, and standard development libraries:</span>
-        <span class="data-ru">Установите пакет <code>build-essential</code>, который включает компиляторы GCC (<code>gcc</code>, <code>g++</code>), <code>make</code> и стандартные библиотеки разработки:</span>
+        <span class="data-en">Clone release tag <code>v1.3.2</code> of ZLIB, build the static library using CMake &amp; Ninja, and install it into system directories:</span>
+        <span class="data-ru">Клонируйте релизный тег <code>v1.3.2</code> ZLIB, соберите статическую библиотеку с помощью CMake и Ninja и установите её в системные директории:</span>
     </p>
-    <pre><code class="language-bash">sudo apt install -y build-essential cmake gdb rsync tar curl wget git</code></pre>
+    <pre><code class="language-bash">git clone --branch v1.3.2 --depth 1 https://github.com/madler/zlib.git ~/zlib
+cd ~/zlib
+cmake -B dist -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF
+cmake --build dist
+sudo cmake --install dist</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">3. Build Systems (CMake &amp; Ninja)</span>
-        <span class="data-ru">3. Системы сборки (CMake и Ninja)</span>
+        <span class="data-en">3. Build and Install MBedTLS Static Library (mbedtls-4.2.0)</span>
+        <span class="data-ru">3. Сборка и установка статической библиотеки MBedTLS (mbedtls-4.2.0)</span>
     </h3>
     <p>
-        <span class="data-en">Install <strong>CMake</strong> and <strong>Ninja</strong>. Ninja provides significantly faster parallel compilation compared to traditional Makefiles:</span>
-        <span class="data-ru">Установите <strong>CMake</strong> и <strong>Ninja</strong>. Ninja обеспечивает значительно более быструю параллельную сборку по сравнению с традиционными Makefile:</span>
+        <span class="data-en">Clone release tag <code>mbedtls-4.2.0</code> of MBedTLS, update git submodules, build the static libraries, and install them:</span>
+        <span class="data-ru">Клонируйте релизный тег <code>mbedtls-4.2.0</code> MBedTLS, обновите подмодули git, соберите статические библиотеки и установите их:</span>
     </p>
-    <pre><code class="language-bash">sudo apt install -y cmake ninja-build</code></pre>
+    <pre><code class="language-bash">git clone --branch mbedtls-4.2.0 --recursive --depth 1 https://github.com/Mbed-TLS/mbedtls.git ~/mbedtls
+cd ~/mbedtls
+cmake -B dist -G Ninja -DCMAKE_BUILD_TYPE=Release -DENABLE_PROGRAMS=OFF -DENABLE_TESTING=OFF -DUSE_SHARED_MBEDTLS_LIBRARY=OFF
+cmake --build dist
+sudo cmake --install dist</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">4. Verification</span>
-        <span class="data-ru">4. Проверка установки</span>
+        <span class="data-en">4. Build and Install IXWebSocket (v12.0.1)</span>
+        <span class="data-ru">4. Сборка и установка IXWebSocket (v12.0.1)</span>
     </h3>
     <p>
-        <span class="data-en">Verify that all essential tools are installed on the system:</span>
-        <span class="data-ru">Проверьте, что все необходимые инструменты успешно установлены в системе:</span>
+        <span class="data-en">Clone release tag <code>v12.0.1</code> of IXWebSocket and build it using the installed MBedTLS TLS provider and ZLIB:</span>
+        <span class="data-ru">Клонируйте релизный тег <code>v12.0.1</code> IXWebSocket и соберите его с использованием установленного провайдера MBedTLS и ZLIB:</span>
     </p>
-    <pre><code class="language-bash">dpkg -l build-essential gcc g++ make cmake ninja-build gdb rsync tar curl wget git | cat</code></pre>
+    <pre><code class="language-bash">git clone --branch v12.0.1 --depth 1 https://github.com/machinezone/IXWebSocket.git ~/IXWebSocket
+cd ~/IXWebSocket
+cmake -B dist -G Ninja -DCMAKE_BUILD_TYPE=Release -DUSE_MBED_TLS=ON -DUSE_TLS=ON -DBUILD_SHARED_LIBS=OFF
+cmake --build dist
+sudo cmake --install dist</code></pre>
+
+    <h3 class="category-header">
+        <span class="data-en">5. Verification</span>
+        <span class="data-ru">5. Проверка установки</span>
+    </h3>
+    <p>
+        <span class="data-en">Verify that the package headers are present and the compiled static libraries exist under <code>/usr/local/lib/</code>:</span>
+        <span class="data-ru">Убедитесь, что заголовки пакетов присутствуют, а собранные статические библиотеки находятся в <code>/usr/local/lib/</code>:</span>
+    </p>
+    <pre><code class="language-bash">dpkg -l zlib1g-dev libssl-dev pkg-config | cat
+ls -l /usr/local/lib/libz.a /usr/local/lib/libmbedcrypto.a /usr/local/lib/libmbedtls.a /usr/local/lib/libixwebsocket.a</code></pre>
 
     <div class="alert alert-success mt-4">
         <span class="data-en">
-            <strong>Next Step:</strong> Your Ubuntu VPS is now ready to build C and C++ projects. Continue to the next guide to install development headers and build static libraries like ZLIB, MBedTLS, and IXWebSocket!
+            <strong>Next Step:</strong> All static libraries are now compiled and installed! You can now link <code>libixwebsocket.a</code>, <code>libmbedtls.a</code>, <code>libmbedx509.a</code>, <code>libmbedcrypto.a</code>, and <code>libz.a</code> into your C++ projects.
         </span>
         <span class="data-ru">
-            <strong>Следующий шаг:</strong> Ваш Ubuntu VPS готов к сборке проектов на C и C++. Переходите к следующему руководству для установки заголовков библиотек и сборки статических библиотек, таких как ZLIB, MBedTLS и IXWebSocket!
+            <strong>Следующий шаг:</strong> Все статические библиотеки успешно собраны и установлены! Теперь вы можете линковать <code>libixwebsocket.a</code>, <code>libmbedtls.a</code>, <code>libmbedx509.a</code>, <code>libmbedcrypto.a</code> и <code>libz.a</code> в ваши проекты C++.
         </span>
     </div>
 
-    <!-- <div class="alert alert-info my-4">
-
-        <span class="data-en"><strong>Optional (Clang Toolchain):</strong> If you prefer building with LLVM/Clang instead of GCC, run: <code>sudo apt install -y clang lldb</code></span>
-
-        <span class="data-ru"><strong>Опционально (Инструментарий Clang):</strong> Если вы предпочитаете сборку с помощью LLVM/Clang вместо GCC, выполните: <code>sudo apt install -y clang lldb</code></span>
-
-    </div> -->
-
     <!--
     <h3 class="category-header mt-5">
-        <span class="data-en">5. Reset / Cleanup (For Demonstration Setup)</span>
-        <span class="data-ru">5. Сброс / Очистка (Для повторной демонстрации)</span>
+        <span class="data-en">6. Reset / Cleanup (For Demonstration Setup)</span>
+        <span class="data-ru">6. Сброс / Очистка (Для повторной демонстрации)</span>
     </h3>
     <p>
-        <span class="data-en">To remove all installed toolchain packages and automatically clean up unused dependencies:</span>
-        <span class="data-ru">Чтобы удалить все установленные пакеты инструментария и автоматически очистить неиспользуемые зависимости:</span>
+        <span class="data-en">Remove installed development headers, built static files under /usr/local, and source repositories:</span>
+        <span class="data-ru">Удалите установленные заголовки разработки, собранные статические файлы в /usr/local и исходные репозитории:</span>
     </p>
-    <pre><code class="language-bash">sudo apt purge -y build-essential gcc g++ make cmake ninja-build gdb git && sudo apt autoremove --purge -y && sudo apt clean</code></pre>
+    <pre><code class="language-bash">sudo apt purge -y zlib1g-dev libssl-dev pkg-config && sudo apt autoremove --purge -y && sudo apt clean
+sudo rm -rf ~/zlib ~/mbedtls ~/IXWebSocket
+sudo rm -f /usr/local/lib/libz* /usr/local/lib/libmbed* /usr/local/lib/libixwebsocket*
+sudo rm -rf /usr/local/include/zlib* /usr/local/include/mbedtls /usr/local/include/psa /usr/local/include/ixwebsocket</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">6. Reset Verification</span>
-        <span class="data-ru">6. Проверка сброса</span>
+        <span class="data-en">7. Reset Verification</span>
+        <span class="data-ru">7. Проверка сброса</span>
     </h3>
     <p>
-        <span class="data-en">Verify that all development toolchain packages have been removed (status should show 'un' or 'rc'):</span>
-        <span class="data-ru">Убедитесь, что все пакеты инструментария разработки были удалены (статус должен показывать 'un' или 'rc'):</span>
+        <span class="data-en">Verify that headers are purged and static library files are removed from /usr/local/lib/:</span>
+        <span class="data-ru">Убедитесь, что заголовки удалены, а файлы статических библиотек отсутствуют в /usr/local/lib/:</span>
     </p>
-    <pre><code class="language-bash">dpkg -l build-essential gcc g++ make cmake ninja-build gdb git | cat</code></pre>
+    <pre><code class="language-bash">dpkg -l zlib1g-dev libssl-dev pkg-config | cat
+ls -l /usr/local/lib/libz.a /usr/local/lib/libmbedcrypto.a /usr/local/lib/libmbedtls.a /usr/local/lib/libixwebsocket.a 2>&1 | cat</code></pre>
     -->
 </div>
 
