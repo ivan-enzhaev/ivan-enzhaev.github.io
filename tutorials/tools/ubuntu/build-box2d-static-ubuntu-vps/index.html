@@ -236,40 +236,30 @@
 
     <p class="mb-4">
         <span class="data-en">
-            This guide covers installing key build tool dependencies and compiling the static library version of <strong>Box2D (v3.1.1)</strong> on your headless Ubuntu VPS using CMake and Ninja.
+            This guide covers compiling the static library version of <strong>Box2D (v3.1.1)</strong> on your Ubuntu VPS using CMake and Ninja without requiring any GUI or display dependencies.
         </span>
         <span class="data-ru">
-            В этом руководстве описана установка ключевых зависимостей инструментов сборки и компиляция статической версии библиотеки <strong>Box2D (v3.1.1)</strong> на вашем сервере Ubuntu VPS с использованием CMake и Ninja.
+            В этом руководстве описана компиляция статической версии библиотеки <strong>Box2D (v3.1.1)</strong> на вашем сервере Ubuntu VPS с использованием CMake и Ninja без необходимости установки графических зависимостей.
         </span>
     </p>
 
     <h3 class="category-header">
-        <span class="data-en">1. Additional C/C++ Build Dependencies</span>
-        <span class="data-ru">1. Дополнительные зависимости сборки C/C++</span>
-    </h3>
-    <p>
-        <span class="data-en">Install essential development tools and build utilities required for compilation:</span>
-        <span class="data-ru">Установите основные инструменты разработки и утилиты сборки, необходимые для компиляции:</span>
-    </p>
-    <pre><code class="language-bash">sudo apt update && sudo apt install -y build-essential cmake ninja-build git pkg-config</code></pre>
-
-    <h3 class="category-header">
-        <span class="data-en">2. Build and Install Box2D Static Library (v3.1.1)</span>
-        <span class="data-ru">2. Сборка и установка статической библиотеки Box2D (v3.1.1)</span>
+        <span class="data-en">1. Build and Install Box2D Static Library (v3.1.1)</span>
+        <span class="data-ru">1. Сборка и установка статической библиотеки Box2D (v3.1.1)</span>
     </h3>
     <p>
         <span class="data-en">Clone release tag <code>v3.1.1</code> of Box2D, build the static library using CMake &amp; Ninja with unit tests and samples disabled for a lightweight headless build, and install it into system directories:</span>
-        <span class="data-ru">Клонируйте релизный тег <code>v3.1.1</code> Box2D, соберите статическую библиотеку с помощью CMake и Ninja с отключенными юнит-тестами и примерами для облегченной сборки на сервере, и установите её в системные директории:</span>
+        <span class="data-ru">Клонируйте релизный тег <code>v3.1.1</code> Box2D, соберите статическую библиотеку с помощью CMake и Ninja с отключенными юнит-тестами и примерами для облегченной сборки, и установите её в системные директории:</span>
     </p>
     <pre><code class="language-bash">git clone --branch v3.1.1 --depth 1 https://github.com/erincatto/box2d.git ~/box2d
 cd ~/box2d
-cmake -B dist -G Ninja -DCMAKE_BUILD_TYPE=Release -DBOX2D_BUILD_SAMPLES=OFF -DBOX2D_BUILD_UNIT_TESTS=OFF -DBUILD_SHARED_LIBS=OFF
+cmake -B dist -G Ninja -DCMAKE_BUILD_TYPE=Release -DBOX2D_SAMPLES=OFF -DBOX2D_UNIT_TESTS=OFF -DBUILD_SHARED_LIBS=OFF
 cmake --build dist
 sudo cmake --install dist</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">3. Verification</span>
-        <span class="data-ru">3. Проверка установки</span>
+        <span class="data-en">2. Verification</span>
+        <span class="data-ru">2. Проверка установки</span>
     </h3>
     <p>
         <span class="data-en">Verify that the package headers are present and the compiled static library exists under <code>/usr/local/lib/</code>:</span>
@@ -287,29 +277,37 @@ ls -l /usr/local/lib/libbox2d.a</code></pre>
         </span>
     </div>
 
-    <!--
     <h3 class="category-header mt-5">
-        <span class="data-en">4. Reset / Cleanup (For Demonstration Setup)</span>
-        <span class="data-ru">4. Сброс / Очистка (Для повторной демонстрации)</span>
+        <span class="data-en">3. Reset / Cleanup (For Demonstration Setup)</span>
+        <span class="data-ru">3. Сброс / Очистка (Для повторной демонстрации)</span>
     </h3>
+
+    <!-- <p class="text-warning">
+        <span class="data-en"><strong>Note:</strong> Only run this if you want to completely remove Box2D build files and headers. Skip this step if you plan to keep using Box2D.</span>
+        <span class="data-ru"><strong>Примечание:</strong> Выполняйте этот шаг, только если хотите полностью удалить файлы сборки и заголовки Box2D. Пропустите его, если планируете продолжать использовать Box2D.</span>
+    </p> -->
+
+    <div class="alert alert-warning" role="alert">
+        <span class="data-en"><strong>Note:</strong> Only run this if you want to completely remove Box2D build files and headers. Skip this step if you plan to keep using Box2D.</span>
+        <span class="data-ru"><strong>Примечание:</strong> Выполняйте этот шаг, только если хотите полностью удалить файлы сборки и заголовки Box2D. Пропустите его, если планируете продолжать использовать Box2D.</span>
+    </div>
+
     <p>
-        <span class="data-en">Remove built static files under /usr/local, include directories, and source repositories:</span>
-        <span class="data-ru">Удалите собранные статические файлы в /usr/local, директории заголовков и исходные репозитории:</span>
+        <span class="data-en">Remove built static files, header directories, and source repositories:</span>
+        <span class="data-ru">Удалите собранные статические файлы, директории заголовков и исходные репозитории:</span>
     </p>
-    <pre><code class="language-bash">sudo rm -rf ~/box2d
-sudo rm -f /usr/local/lib/libbox2d*
-sudo rm -rf /usr/local/include/box2d</code></pre>
+
+    <pre><code class="language-bash">sudo rm -rf ~/box2d /usr/local/lib/libbox2d.a /usr/local/lib/cmake/box2d /usr/local/include/box2d</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">5. Reset Verification</span>
-        <span class="data-ru">5. Проверка сброса</span>
+        <span class="data-en">4. Reset Verification</span>
+        <span class="data-ru">4. Проверка сброса</span>
     </h3>
     <p>
-        <span class="data-en">Verify that headers are purged and static library files are removed from /usr/local/lib/:</span>
-        <span class="data-ru">Убедитесь, что заголовки удалены, а файлы статических библиотек отсутствуют в /usr/local/lib/:</span>
+        <span class="data-en">Verify that headers and static library files are removed from <code>/usr/local/</code>:</span>
+        <span class="data-ru">Убедитесь, что заголовки и файлы статической библиотеки удалены из <code>/usr/local/</code>:</span>
     </p>
     <pre><code class="language-bash">ls -l /usr/local/include/box2d/box2d.h /usr/local/lib/libbox2d.a 2>&1 | cat</code></pre>
-    -->
 </div>
 
         
@@ -616,7 +614,6 @@ function copyToClipboard(text, button) {
         });
     });
 
-
     function updateVideoPlayerLanguage(lang) {
         const player = document.getElementById('main-video-player');
         if (!player) return;
@@ -658,7 +655,7 @@ function copyToClipboard(text, button) {
     }
 
     // Run immediately when DOM is ready
-    document.addEventListener('DOMContentLoaded', initVideoPlayer);
+    // document.addEventListener('DOMContentLoaded', initVideoPlayer);
 </script>
 </body>
 
