@@ -222,26 +222,41 @@
     </header>
 
     <!-- Security Alert -->
+    <!-- <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+        <div class="me-3">
+            <i class="bi bi-exclamation-triangle-fill fs-3 text-danger"></i>
+        </div>
+        <div>
+            <span class="data-en">
+                <strong>Security Warning:</strong> Never commit plain-text passwords or secret credentials inside your <code>sftp-config.json</code> file to public repositories. Always use SSH key authentication.
+            </span>
+            <span class="data-ru">
+                <strong>Предупреждение по безопасности:</strong> Никогда не сохраняйте пароли в открытом виде в файле <code>sftp-config.json</code> при отправке кода в публичные репозитории. Всегда используйте аутентификацию по SSH-ключам.
+            </span>
+        </div>
+    </div> -->
+
+    <!-- Security Alert -->
     <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
         <div class="me-3">
             <i class="bi bi-exclamation-triangle-fill fs-3 text-danger"></i>
         </div>
         <div>
             <span class="data-en">
-                <strong>Security Warning:</strong> Never commit plain-text passwords or secret credentials inside your <code>sftp-config.json</code> file to public repositories.
+                <strong>Security Warning:</strong> Never commit plain-text passwords or secret credentials inside your <code>sftp-config.json</code> file to public repositories. Add <code>sftp-config.json</code> to your <code>.gitignore</code> file and use SSH key authentication.
             </span>
             <span class="data-ru">
-                <strong>Предупреждение по безопасности:</strong> Никогда не сохраняйте пароли в открытом виде в файле <code>sftp-config.json</code> при отправке кода в публичные репозитории.
+                <strong>Предупреждение по безопасности:</strong> Никогда не сохраняйте пароли в открытом виде в файле <code>sftp-config.json</code> при отправке кода в публичные репозитории. Добавьте <code>sftp-config.json</code> в файл <code>.gitignore</code> и используйте аутентификацию по SSH-ключам.
             </span>
         </div>
     </div>
 
     <p class="mb-4">
         <span class="data-en">
-            This guide covers how to install the <strong>SFTP</strong> package in <strong>Sublime Text 4</strong>, configure automated uploads on save, and sync local directories with a remote server over SSH.
+            This guide covers how to install the <strong>SFTP</strong> package in <strong>Sublime Text 4</strong>, configure automated uploads on save, and sync local directories with a remote server over SSH using key authentication on Windows.
         </span>
         <span class="data-ru">
-            В этом руководстве рассмотрено, как установить пакет <strong>SFTP</strong> в <strong>Sublime Text 4</strong>, настроить автоматическую загрузку при сохранении и синхронизировать локальные папки с удаленным сервером по SSH.
+            В этом руководстве рассмотрено, как установить пакет <strong>SFTP</strong> в <strong>Sublime Text 4</strong>, настроить автоматическую загрузку при сохранении и синхронизировать локальные папки с удаленным сервером по SSH с использованием SSH-ключей в Windows.
         </span>
     </p>
 
@@ -286,18 +301,18 @@
     "confirm_downloads": false,
     "confirm_sync": true,
     "confirm_overwrite_newer": false,
+    "allow_config_upload": true,
     
     "host": "YOUR_SERVER_IP",
     "user": "root",
-    "password": "YOUR_PASSWORD",
+    "ssh_key_file": "C:/Users/YOUR_WINDOWS_USERNAME/.ssh/id_ed25519",
     "port": "22",
     
-    "remote_path": "/root/simple_server/",
+    "remote_path": "/root/my_ix_hello_server/",
     "ignore_regexes": [
         "\\.sublime-(project|workspace)", "sftp-config(-alt\\d?)?\\.json",
         "sftp-settings\\.json", "/venv/", "\\.svn/", "\\.hg/", "\\.git/",
-        "\\.bzr", "_darcs", "CVS", "\\.DS_Store", "Thumbs\\.db", "desktop\\.ini",
-        "/dist/", "dist/"
+        "\\.bzr", "_darcs", "CVS", "\\.DS_Store", "Thumbs\\.db", "desktop\\.ini"
     ],
 
     "connect_timeout": 30
@@ -330,11 +345,19 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><code>save_before_upload</code></td>
+                    <td><code>ssh_key_file</code></td>
+                    <td><code>Path</code></td>
+                    <td>
+                        <span class="data-en">Path to your private SSH key on Windows. Replaces plain-text password authentication.</span>
+                        <span class="data-ru">Путь к вашему приватному SSH-ключу в Windows. Заменяет аутентификацию по открытому паролю.</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td><code>allow_config_upload</code></td>
                     <td><code>true</code></td>
                     <td>
-                        <span class="data-en">Ensures all unsaved changes are written locally before initiation of the upload.</span>
-                        <span class="data-ru">Гарантирует сохранение локальных изменений перед началом загрузки.</span>
+                        <span class="data-en">Prevents upload popup warnings when saving or syncing <code>sftp-config.json</code> itself.</span>
+                        <span class="data-ru">Предотвращает появление всплывающих предупреждений при сохранении или синхронизации <code>sftp-config.json</code>.</span>
                     </td>
                 </tr>
                 <tr>
@@ -349,36 +372,55 @@
                     <td><code>ignore_regexes</code></td>
                     <td><code>Array</code></td>
                     <td>
-                        <span class="data-en">Excludes specified files and directories (like <code>.git</code>, <code>/venv/</code>, and <code>dist/</code>) from remote transfer.</span>
-                        <span class="data-ru">Исключает указанные файлы и каталоги (например, <code>.git</code>, <code>/venv/</code> и <code>dist/</code>) из передачи.</span>
+                        <span class="data-en">Excludes specified files and directories (like <code>.git</code>, <code>/venv/</code>, and <code>.DS_Store</code>) from remote transfer.</span>
+                        <span class="data-ru">Исключает указанные файлы и каталоги (например, <code>.git</code>, <code>/venv/</code> и <code>.DS_Store</code>) из передачи.</span>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <!-- Section 4: Recommended Security Best Practice -->
+    <!-- Section 4: Recommended Security Best Practice (Windows) -->
     <h3 class="category-header mt-5">
-        <span class="data-en">4. Recommended Security: SSH Key Authentication</span>
-        <span class="data-ru">4. Рекомендуемая безопасность: Аутентификация по SSH-ключу</span>
+        <span class="data-en">4. Recommended Security: SSH Key Authentication (Windows)</span>
+        <span class="data-ru">4. Рекомендуемая безопасность: Аутентификация по SSH-ключу (Windows)</span>
     </h3>
     <p>
-        <span class="data-en">Instead of storing your server password in plain text, use SSH keys for authentication:</span>
-        <span class="data-ru">Вместо хранения пароля сервера в открытом виде используйте SSH-ключи для аутентификации:</span>
+        <span class="data-en">Instead of storing your server password in plain text, set up SSH key authentication from Windows:</span>
+        <span class="data-ru">Вместо хранения пароля сервера в открытом виде настройте аутентификацию по SSH-ключу из Windows:</span>
     </p>
 
-    <pre><code class="language-bash"># Generate an SSH key on your machine
-ssh-keygen -t ed25519
+    <ol>
+        <li class="mb-3">
+            <span class="data-en">Open <strong>PowerShell</strong> on Windows and generate an SSH key pair:</span>
+            <span class="data-ru">Откройте <strong>PowerShell</strong> в Windows и сгенерируйте пару SSH-ключей:</span>
+            <pre class="mt-2"><code class="language-powershell">ssh-keygen -t ed25519</code></pre>
+            <small class="text-muted">
+                <span class="data-en">(Press <strong>Enter</strong> for all prompts to accept default settings).</span>
+                <span class="data-ru">(Нажимайте <strong>Enter</strong> на все запросы, чтобы принять настройки по умолчанию).</span>
+            </small>
+        </li>
 
-# Copy your key to the server
-ssh-copy-id root@YOUR_SERVER_IP</code></pre>
+        <li class="mb-3">
+            <span class="data-en">Copy your public key to the Linux server by running:</span>
+            <span class="data-ru">Скопируйте ваш публичный ключ на сервер Linux, выполнив команду:</span>
+            <pre class="mt-2"><code class="language-powershell">Get-Content $env:USERPROFILE\.ssh\id_ed25519.pub | ssh root@YOUR_SERVER_IP "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"</code></pre>
+            <small class="text-muted d-block mt-1">
+                <span class="data-en">Note: <code>$env:USERPROFILE</code> is a PowerShell variable that automatically points to your Windows user folder (e.g., <code>C:\Users\YourName</code>). You can paste this command without changing it.</span>
+                <span class="data-ru">Примечание: <code>$env:USERPROFILE</code> — это переменная PowerShell, которая автоматически указывает на вашу папку пользователя Windows (например, <code>C:\Users\ВашеИмя</code>). Вы можете вставить эту команду без изменений.</span>
+            </small>
+        </li>
 
-    <p class="mt-3">
-        <span class="data-en">Then update your <code>sftp-config.json</code> by replacing the <code>"password"</code> field with:</span>
-        <span class="data-ru">Затем обновите <code>sftp-config.json</code>, заменив поле <code>"password"</code> на:</span>
-    </p>
-
-    <pre><code class="language-json">"ssh_key_file": "~/.ssh/id_ed25519"</code></pre>
+        <li class="mb-3">
+            <span class="data-en">Update <code>sftp-config.json</code> in Sublime Text 4. Replace the <code>"password"</code> line with <code>"ssh_key_file"</code>:</span>
+            <span class="data-ru">Обновите <code>sftp-config.json</code> в Sublime Text 4. Замените строку <code>"password"</code> на <code>"ssh_key_file"</code>:</span>
+            <pre class="mt-2"><code class="language-json">"ssh_key_file": "C:/Users/YOUR_WINDOWS_USERNAME/.ssh/id_ed25519"</code></pre>
+            <small class="text-muted">
+                <span class="data-en">Note: <code>sftp-config.json</code> is a JSON configuration file. In JSON, paths must use forward slashes (<code>/</code>) instead of Windows backslashes (<code>\</code>).</span>
+                <span class="data-ru">Примечание: <code>sftp-config.json</code> — это конфигурационный файл формата JSON. В формате JSON в путях необходимо использовать прямые слеши (<code>/</code>) вместо обратных (<code>\</code>).</span>
+            </small>
+        </li>
+    </ol>
 </div>
 
         
@@ -564,6 +606,34 @@ function copyToClipboard(text, button) {
 
         
 
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-powershell.min.js"></script>
+        </block>
         
 
         
