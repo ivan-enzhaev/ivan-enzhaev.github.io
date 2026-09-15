@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    How to Build and Run an IXWebSocket C++ Server on Ubuntu VPS &amp; Windows
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
+
+    /* How to hide non-active language blocks without collapsing iframe dimensions */
+    .data-en.d-none, 
+    .data-ru.d-none {
+        display: none !important;
+    }
+
+    /* Add this to prevent resolution drops during language toggles */
+    .ratio iframe {
+        width: 100%;
+        height: 100%;
+        content-visibility: visible;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-4 border-bottom pb-3">
+        <h1 class="fw-bold text-dark">
+            <span class="data-en">How to Build and Run an IXWebSocket C++ Server on Ubuntu VPS &amp; Windows</span>
+            <span class="data-ru">Как собрать и запустить C++ сервер IXWebSocket на Ubuntu VPS и Windows</span>
+        </h1>
+    </header>
+
+    <!-- Prerequisite Banner Link (Ubuntu) -->
+    <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
+        <div class="me-3">
+            <i class="bi bi-info-circle-fill fs-3 text-info"></i>
+        </div>
+        <div>
+            <span class="data-en">
+                <strong>Ubuntu Prerequisite:</strong> To compile the server on Linux, build the static dependencies first:
+                <a href="/tutorials/tools/ubuntu/build-zlib-mbedtls-ixwebsocket-ubuntu-vps/" class="fw-bold text-decoration-underline">Building ZLIB, MBedTLS &amp; IXWebSocket 12.0.1 Static Libraries on Ubuntu VPS</a>.
+            </span>
+            <span class="data-ru">
+                <strong>Предварительные требования для Ubuntu:</strong> Чтобы собрать сервер на Linux, сначала соберите статические библиотеки:
+                <a href="/tutorials/tools/ubuntu/build-zlib-mbedtls-ixwebsocket-ubuntu-vps/" class="fw-bold text-decoration-underline">Сборка статических библиотек ZLIB, MBedTLS и IXWebSocket 12.0.1 на Ubuntu VPS</a>.
+            </span>
+        </div>
+    </div>
+
+    <!-- Prerequisite Banner Link (Windows) -->
+    <div class="alert alert-warning d-flex align-items-start mb-5" role="alert">
+        <div class="me-3">
+            <i class="bi bi-windows fs-3 text-warning"></i>
+        </div>
+        <div>
+            <div class="fw-bold mb-1">
+                <span class="data-en">Windows Prerequisite (MinGW):</span>
+                <span class="data-ru">Предварительные требования для Windows (MinGW):</span>
+            </div>
+            <div class="small">
+                <span class="data-en">Before building on Windows, ensure you have compiled all required static libraries using MinGW:</span>
+                <span class="data-ru">Перед сборкой на Windows убедитесь, что вы собрали все необходимые статические библиотеки с помощью MinGW:</span>
+            </div>
+            <ul class="mb-0 mt-2 ps-3 small">
+                <li>
+                    <a href="/tutorials/tools/mingw/build-zlib-static-mingw" class="fw-bold text-decoration-underline">Building Zlib Static Library for Windows (MinGW &amp; CMake)</a>
+                </li>
+                <li>
+                    <a href="/tutorials/tools/mingw/build-mbedtls-static-mingw" class="fw-bold text-decoration-underline">Building Mbed TLS Static Library for Windows (MinGW &amp; CMake)</a>
+                </li>
+                <li>
+                    <a href="/tutorials/tools/mingw/build-ixwebsocket-static-mingw" class="fw-bold text-decoration-underline">Building IXWebSocket Static Library for Windows (MinGW &amp; CMake)</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <p class="mb-4">
+        <span class="data-en">
+            This tutorial demonstrates how to build a high-performance C++ WebSocket server using <strong>IXWebSocket</strong>, static <strong>MBedTLS</strong>, and <strong>ZLIB</strong> on both <strong>Ubuntu VPS</strong> and <strong>Windows (MinGW)</strong>.
+        </span>
+        <span class="data-ru">
+            В этом руководстве показано, как собрать высокопроизводительный C++ WebSocket сервер с использованием <strong>IXWebSocket</strong>, статических библиотек <strong>MBedTLS</strong> и <strong>ZLIB</strong> как на <strong>Ubuntu VPS</strong>, так и на <strong>Windows (MinGW)</strong>.
+        </span>
+    </p>
+
+    <!-- Section 1: Server Source Code -->
+    <h3 class="category-header">
+        <span class="data-en">1. Server Source Code (src/main.cpp)</span>
+        <span class="data-ru">1. Исходный код сервера (src/main.cpp)</span>
+    </h3>
+    <p>
+        <span class="data-en">Create <code>src/main.cpp</code> with an echo WebSocket server implementation:</span>
+        <span class="data-ru">Создайте файл <code>src/main.cpp</code> с реализацией эхо-сервера WebSocket:</span>
+    </p>
+    <pre><code class="language-cpp">#include &lt;ixwebsocket/IXNetSystem.h&gt;
+#include &lt;ixwebsocket/IXWebSocketServer.h&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+    // Initialize networking subsystem (required for Windows / Winsock)
+    ix::initNetSystem();
+
+    int port = 8080;
+    std::string host = "0.0.0.0";
+    ix::WebSocketServer server(port, host);
+
+    server.setOnConnectionCallback(
+        [](std::weak_ptr&lt;ix::WebSocket&gt; webSocketWeak,
+           std::shared_ptr&lt;ix::ConnectionState&gt; connectionState)
+        {
+            auto webSocket = webSocketWeak.lock();
+            if (!webSocket)
+            {
+                return;
+            }
+
+            webSocket-&gt;setOnMessageCallback(
+                [webSocketWeak, connectionState](const ix::WebSocketMessagePtr&amp; msg)
+                {
+                    auto ws = webSocketWeak.lock();
+                    if (!ws)
+                    {
+                        return;
+                    }
+
+                    if (msg-&gt;type == ix::WebSocketMessageType::Open)
+                    {
+                        std::cout &lt;&lt; "[Server] New Connection ID: " &lt;&lt; connectionState-&gt;getId() &lt;&lt; std::endl;
+                        std::cout &lt;&lt; "[Server] Uri: " &lt;&lt; msg-&gt;openInfo.uri &lt;&lt; std::endl;
+                        std::cout &lt;&lt; "[Server] Headers:" &lt;&lt; std::endl;
+                        for (const auto&amp; [key, value] : msg-&gt;openInfo.headers)
+                        {
+                            std::cout &lt;&lt; "  " &lt;&lt; key &lt;&lt; ": " &lt;&lt; value &lt;&lt; std::endl;
+                        }
+                    }
+                    else if (msg-&gt;type == ix::WebSocketMessageType::Close)
+                    {
+                        std::cout &lt;&lt; "[Server] Connection closed. Code: " &lt;&lt; msg-&gt;closeInfo.code
+                                  &lt;&lt; " Reason: " &lt;&lt; msg-&gt;closeInfo.reason &lt;&lt; std::endl;
+                    }
+                    else if (msg-&gt;type == ix::WebSocketMessageType::Message)
+                    {
+                        std::cout &lt;&lt; "[Server] Received: " &lt;&lt; msg-&gt;str &lt;&lt; std::endl;
+
+                        // Echo response back to client
+                        ws-&gt;send("Echo from server: " + msg-&gt;str);
+                    }
+                    else if (msg-&gt;type == ix::WebSocketMessageType::Error)
+                    {
+                        std::cerr &lt;&lt; "[Server] Error: " &lt;&lt; msg-&gt;errorInfo.reason &lt;&lt; std::endl;
+                    }
+                });
+        });
+
+    auto res = server.listen();
+    if (!res.first)
+    {
+        std::cerr &lt;&lt; "[Server] Error listening on " &lt;&lt; host &lt;&lt; ":" &lt;&lt; port &lt;&lt; " - " &lt;&lt; res.second &lt;&lt; std::endl;
+        ix::uninitNetSystem();
+        return 1;
+    }
+
+    server.start();
+    std::cout &lt;&lt; "[Server] WebSocket server running on " &lt;&lt; host &lt;&lt; ":" &lt;&lt; port &lt;&lt; ". Press Enter to stop..." &lt;&lt; std::endl;
+
+    std::cin.get();
+
+    server.stop();
+    ix::uninitNetSystem();
+
+    return 0;
+}</code></pre>
+
+    <!-- Section 2: CMake Configuration -->
+    <h3 class="category-header mt-5">
+        <span class="data-en">2. CMake Build Setup (CMakeLists.txt)</span>
+        <span class="data-ru">2. Конфигурация сборки CMake (CMakeLists.txt)</span>
+    </h3>
+    <p>
+        <span class="data-en">Add the following cross-platform <code>CMakeLists.txt</code> targeting MinGW on Windows and system static library paths on Ubuntu Linux:</span>
+        <span class="data-ru">Добавьте кроссплатформенный <code>CMakeLists.txt</code> с поддержкой MinGW на Windows и путей к статическим библиотекам на Ubuntu Linux:</span>
+    </p>
+    <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+
+cmake_minimum_required(VERSION 3.21)
+project(ixwebsocket-server-example)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(PROJECT_SOURCES
+    src/main.cpp
+)
+
+add_executable(app)
+target_sources(app PRIVATE ${PROJECT_SOURCES})
+
+if(WIN32)
+    set(IXWEBSOCKET_DIR "C:/libs/ixwebsocket-12.0.1-mingw")
+    set(MBEDTLS_DIR     "C:/libs/mbedtls-4.2.0-mingw")
+    set(ZLIB_DIR        "C:/libs/zlib-1.3.2-mingw")
+
+    target_include_directories(app PRIVATE
+        ${IXWEBSOCKET_DIR}/include
+        ${MBEDTLS_DIR}/include
+        ${ZLIB_DIR}/include
+    )
+
+    add_library(IXWebSocket_Static STATIC IMPORTED)
+    set_target_properties(IXWebSocket_Static PROPERTIES
+        IMPORTED_LOCATION "${IXWEBSOCKET_DIR}/lib/libixwebsocket.a"
+    )
+
+    add_library(MBedTLS_Static STATIC IMPORTED)
+    set_target_properties(MBedTLS_Static PROPERTIES
+        IMPORTED_LOCATION "${MBEDTLS_DIR}/lib/libmbedtls.a"
+    )
+
+    add_library(MBedX509_Static STATIC IMPORTED)
+    set_target_properties(MBedX509_Static PROPERTIES
+        IMPORTED_LOCATION "${MBEDTLS_DIR}/lib/libmbedx509.a"
+    )
+
+    add_library(MBedCrypto_Static STATIC IMPORTED)
+    set_target_properties(MBedCrypto_Static PROPERTIES
+        IMPORTED_LOCATION "${MBEDTLS_DIR}/lib/libmbedcrypto.a"
+    )
+
+    add_library(ZLIB_Static STATIC IMPORTED)
+    set_target_properties(ZLIB_Static PROPERTIES
+        IMPORTED_LOCATION "${ZLIB_DIR}/lib/libzs.a"
+    )
+
+    target_link_libraries(app PRIVATE
+        IXWebSocket_Static
+        MBedTLS_Static
+        MBedX509_Static
+        MBedCrypto_Static
+        ZLIB_Static
+        ws2_32
+        crypt32
+        bcrypt
+    )
+
+    target_compile_options(app PRIVATE -Os)
+    target_link_options(app PRIVATE -static -s -static-libgcc -static-libstdc++ -mconsole)
+
+else() # Linux / Ubuntu VPS Target
+    target_include_directories(app PRIVATE
+        /usr/local/include
+    )
+
+    add_library(IXWebSocket_Static STATIC IMPORTED)
+    set_target_properties(IXWebSocket_Static PROPERTIES
+        IMPORTED_LOCATION "/usr/local/lib/libixwebsocket.a"
+    )
+
+    add_library(MBedTLS_Static STATIC IMPORTED)
+    set_target_properties(MBedTLS_Static PROPERTIES
+        IMPORTED_LOCATION "/usr/local/lib/libmbedtls.a"
+    )
+
+    add_library(MBedX509_Static STATIC IMPORTED)
+    set_target_properties(MBedX509_Static PROPERTIES
+        IMPORTED_LOCATION "/usr/local/lib/libmbedx509.a"
+    )
+
+    add_library(MBedCrypto_Static STATIC IMPORTED)
+    set_target_properties(MBedCrypto_Static PROPERTIES
+        IMPORTED_LOCATION "/usr/local/lib/libmbedcrypto.a"
+    )
+
+    add_library(ZLIB_Static STATIC IMPORTED)
+    set_target_properties(ZLIB_Static PROPERTIES
+        IMPORTED_LOCATION "/usr/local/lib/libz.a"
+    )
+
+    find_package(Threads REQUIRED)
+
+    target_link_libraries(app PRIVATE
+        IXWebSocket_Static
+        MBedTLS_Static
+        MBedX509_Static
+        MBedCrypto_Static
+        ZLIB_Static
+        Threads::Threads
+    )
+endif()</code></pre>
+
+    <!-- Section 3: Ubuntu VPS Build Scripts -->
+    <h3 class="category-header mt-5">
+        <span class="data-en">3. Building and Running on Ubuntu VPS</span>
+        <span class="data-ru">3. Сборка и запуск на Ubuntu VPS</span>
+    </h3>
+    <p>
+        <span class="data-en">Create shell scripts in your project root to handle the build and execution workflow on Ubuntu:</span>
+        <span class="data-ru">Создайте shell-скрипты в корне проекта для управления процессами сборки и запуска на Ubuntu:</span>
+    </p>
+
+    <p class="fw-bold mb-1">config-exe.sh</p>
+    <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+cmake -G Ninja -S . -B dist/linux</code></pre>
+
+    <p class="fw-bold mb-1">build-exe.sh</p>
+    <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+cmake --build dist/linux</code></pre>
+
+    <p class="fw-bold mb-1">run-exe.sh</p>
+    <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+./dist/linux/app</code></pre>
+
+    <p>
+        <span class="data-en">Grant execute permissions and run the build scripts:</span>
+        <span class="data-ru">Предоставьте права на выполнение и запустите скрипты сборки:</span>
+    </p>
+    <pre><code class="language-bash">chmod +x config-exe.sh build-exe.sh run-exe.sh
+./config-exe.sh
+./build-exe.sh
+./run-exe.sh</code></pre>
+
+    <!-- Section 4: Windows Build Scripts (MinGW) -->
+    <h3 class="category-header mt-5">
+        <span class="data-en">4. Building and Running on Windows (MinGW)</span>
+        <span class="data-ru">4. Сборка и запуск на Windows (MinGW)</span>
+    </h3>
+    <p>
+        <span class="data-en">
+            To build and run the same server locally on Windows using MinGW, create batch scripts in your project root. Make sure you have previously built the required static libraries:
+        </span>
+        <span class="data-ru">
+            Чтобы собрать и запустить этот же сервер локально на Windows с помощью MinGW, создайте batch-скрипты в корне проекта. Убедитесь, что вы предварительно собрали необходимые статические библиотеки:
+        </span>
+    </p>
+
+    <ul class="mb-4">
+        <li>
+            <a href="/tutorials/tools/mingw/build-zlib-static-mingw" class="fw-bold text-decoration-underline">Zlib Static Library (MinGW)</a>
+        </li>
+        <li>
+            <a href="/tutorials/tools/mingw/build-mbedtls-static-mingw" class="fw-bold text-decoration-underline">Mbed TLS Static Library (MinGW)</a>
+        </li>
+        <li>
+            <a href="/tutorials/tools/mingw/build-ixwebsocket-static-mingw" class="fw-bold text-decoration-underline">IXWebSocket Static Library (MinGW)</a>
+        </li>
+    </ul>
+
+    <p class="fw-bold mb-1">config-exe.bat</p>
+    <pre><code class="language-bat">cmake -G Ninja -S . -B dist/win</code></pre>
+
+    <p class="fw-bold mb-1">build-exe.bat</p>
+    <pre><code class="language-bat">cmake --build dist/win</code></pre>
+
+    <p class="fw-bold mb-1">run-exe.bat</p>
+    <pre><code class="language-bat">.\dist\win\app.exe</code></pre>
+
+    <p>
+        <span class="data-en">Execute the batch scripts sequentially in your Windows Command Prompt or PowerShell:</span>
+        <span class="data-ru">Последовательно запустите batch-скрипты в командной строке Windows (cmd) или PowerShell:</span>
+    </p>
+    <pre><code class="language-bat">config-exe.bat
+build-exe.bat
+run-exe.bat</code></pre>
+
+    <!-- Next Step Banner Link -->
+    <div class="card border-primary bg-light mt-5 shadow-sm">
+        <div class="card-body p-4">
+            <h4 class="card-title text-primary fw-bold mb-2">
+                <span class="data-en">Next Step: Run as a Background Service</span>
+                <span class="data-ru">Следующий шаг: Запуск в качестве фоновой службы</span>
+            </h4>
+            <p class="card-text mb-3">
+                <span class="data-en">
+                    Now that your server binary builds and runs cleanly on both systems, configure your Linux VPS instance to automatically run on system boot, restart on crashes, and manage background logs via Systemd.
+                </span>
+                <span class="data-ru">
+                    Теперь, когда бинарный файл вашего сервера успешно собирается и запускается на обеих системах, настройте его автоматический запуск при загрузке Linux VPS, перезапуск при сбоях и управление фоновыми логами с помощью Systemd.
+                </span>
+            </p>systemd-ixwebsocket-server-ubuntu
+            <a href="/tutorials/tools/ubuntu/systemd-ixwebsocket-server-ubuntu" class="btn btn-primary fw-bold">
+                <span class="data-en">Running IXWebSocket C++ Server as a Systemd Background Service on Ubuntu VPS &rarr;</span>
+                <span class="data-ru">Запуск C++ сервера IXWebSocket как фоновой службы Systemd на Ubuntu VPS &rarr;</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">
+                        <span class="data-en">Sberbank (Russia only)</span>
+                        <span class="data-ru">Сбербанк (только для РФ)</span>
+                    </h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number (Russia only)</span>
+                        <span class="data-ru">Перевод по номеру телефона (только для РФ)</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">USDT TRC20</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+    //     if (link) {
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // Logic for dynamic links (persisting language across pages)
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        
+        if (link) {
+            // Check if the link is intended to open in a new tab
+            if (link.target === "_blank") {
+                // Allow the browser to handle the click naturally, 
+                // but we still want to append the language param.
+                const currentLang = document.documentElement.getAttribute("lang") || "en";
+                const targetUrl = new URL(link.href);
+                targetUrl.searchParams.set("lang", currentLang);
+                
+                // Update the href right before the browser follows it
+                link.href = targetUrl.toString();
+                return; // Exit the function so e.preventDefault() isn't called
+            }
+
+            // Existing logic for same-tab navigation
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(
+                link.href,
+                window.location.origin + window.location.pathname,
+            );
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    document.querySelectorAll('pre').forEach((pre) => {
+        // Create container and header
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        // Wrap the pre tag
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        // Copy Logic
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                
+                // Set the content
+                block.textContent = code;
+                
+                // Re-run Prism highlight if available
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
+        });
+    });
+
+    function updateVideoPlayerLanguage(lang) {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        const targetSrc = lang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = lang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        // Only update if the URL actually changed to prevent unneeded reloads
+        if (player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // Example listener: Call this function inside your existing language-switcher click handler:
+    document.querySelectorAll('.lang-link').forEach(link => {
+        link.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+            updateVideoPlayerLanguage(lang);
+        });
+    });
+
+    function initVideoPlayer() {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        // Detect language from URL query string (?lang=ru), or <html lang="..."> attribute
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentLang = urlParams.get('lang') || document.documentElement.lang || 'en';
+
+        // Set correct video source on page load
+        const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        if (player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // Run immediately when DOM is ready
+    // document.addEventListener('DOMContentLoaded', initVideoPlayer);
+</script>
+</body>
+
+</html>
