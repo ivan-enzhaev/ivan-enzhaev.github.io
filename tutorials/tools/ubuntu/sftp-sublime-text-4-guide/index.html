@@ -334,8 +334,8 @@
                     <td><code>ssh_key_file</code></td>
                     <td><code>Path</code></td>
                     <td>
-                        <span class="data-en">Path to your SSH key on Windows (`.ppk` format). Replaces plain-text password authentication.</span>
-                        <span class="data-ru">Путь к вашему SSH-ключу в Windows (в формате `.ppk`). Заменяет аутентификацию по открытому паролю.</span>
+                        <span class="data-en">Path to your SSH key on Windows in <code>.ppk</code> format. Replaces plain-text password authentication.</span>
+                        <span class="data-ru">Путь к вашему SSH-ключу в Windows в формате <code>.ppk</code>. Заменяет аутентификацию по открытому паролю.</span>
                     </td>
                 </tr>
                 <tr>
@@ -372,17 +372,17 @@
         <span class="data-ru">4. Рекомендуемая безопасность: Аутентификация по SSH-ключу (Windows)</span>
     </h3>
     <p>
-        <span class="data-en">Instead of storing your server password in plain text, set up SSH key authentication from Windows:</span>
-        <span class="data-ru">Вместо хранения пароля сервера в открытом виде настройте аутентификацию по SSH-ключу из Windows:</span>
+        <span class="data-en">Instead of storing your server password in plain text, set up SSH key authentication from Windows using PuTTYgen:</span>
+        <span class="data-ru">Вместо хранения пароля сервера в открытом виде настройте аутентификацию по SSH-ключу из Windows с помощью PuTTYgen:</span>
     </p>
 
     <ol>
         <li class="mb-3">
-            <span class="data-en">Open <strong>PowerShell</strong> on Windows and generate an RSA key pair:</span>
+            <span class="data-en">Open <strong>PowerShell</strong> on Windows and generate an RSA SSH key pair:</span>
             <span class="data-ru">Откройте <strong>PowerShell</strong> в Windows и сгенерируйте пару SSH-ключей RSA:</span>
             <pre class="mt-2"><code class="language-powershell">ssh-keygen -t rsa -b 4096 -f "$env:USERPROFILE\.ssh\id_rsa"</code></pre>
             <small class="text-muted">
-                <span class="data-en">(Press <strong>Enter</strong> for all prompts to accept default settings and leave passphrase empty).</span>
+                <span class="data-en">(Press <strong>Enter</strong> for all prompts to accept default settings and leave the passphrase empty).</span>
                 <span class="data-ru">(Нажимайте <strong>Enter</strong> на все запросы, чтобы принять настройки по умолчанию и оставить парольную фразу пустой).</span>
             </small>
         </li>
@@ -392,27 +392,45 @@
             <span class="data-ru">Скопируйте ваш публичный ключ на сервер Linux, выполнив команду:</span>
             <pre class="mt-2"><code class="language-powershell">Get-Content $env:USERPROFILE\.ssh\id_rsa.pub | ssh root@YOUR_SERVER_IP "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"</code></pre>
             <small class="text-muted d-block mt-1">
-                <span class="data-en">Note: <code>$env:USERPROFILE</code> is a PowerShell variable pointing to your Windows user folder (e.g., <code>C:\Users\YourName</code>).</span>
-                <span class="data-ru">Примечание: <code>$env:USERPROFILE</code> — это переменная PowerShell, указывающая на вашу папку пользователя Windows (например, <code>C:\Users\ВашеИмя</code>).</span>
+                <span class="data-en">Note: <code>$env:USERPROFILE</code> is a PowerShell variable that automatically points to your Windows user folder (e.g., <code>C:\Users\YourName</code>).</span>
+                <span class="data-ru">Примечание: <code>$env:USERPROFILE</code> — это переменная PowerShell, которая автоматически указывает на вашу папку пользователя Windows (например, <code>C:\Users\ВашеИмя</code>).</span>
             </small>
         </li>
 
         <li class="mb-3">
-            <span class="data-en"><strong>Convert key for Sublime Text (Windows):</strong> Sublime SFTP on Windows relies on PuTTY engines and requires keys in <code>.ppk</code> format, or active <code>ssh-agent</code> integration. Convert your key using PuTTYgen (<strong>Conversions &gt; Import Key</strong> &gt; Save as <code>id_rsa.ppk</code>) or enable the Windows OpenSSH Agent service:</span>
-            <span class="data-ru"><strong>Конвертация ключа для Sublime Text (Windows):</strong> Пакет SFTP в Sublime Text на Windows использует движок PuTTY и требует ключ в формате <code>.ppk</code> (либо активную службу <code>ssh-agent</code>). Сконвертируйте ключ через PuTTYgen (<strong>Conversions &gt; Import Key</strong> &gt; Сохраните как <code>id_rsa.ppk</code>) или включите службу Windows OpenSSH Agent:</span>
-            <pre class="mt-2"><code class="language-powershell"># Run in PowerShell (Admin) to enable Windows SSH Agent
-Set-Service -Name ssh-agent -StartupType Automatic
-Start-Service ssh-agent
-ssh-add "$env:USERPROFILE\.ssh\id_rsa"</code></pre>
+            <span class="data-en"><strong>Convert Private Key to .ppk Format:</strong> Sublime SFTP on Windows uses PuTTY's engine under the hood and requires keys in <code>.ppk</code> format:</span>
+            <span class="data-ru"><strong>Конвертация приватного ключа в формат .ppk:</strong> Пакет SFTP в Sublime Text на Windows использует движок PuTTY и требует ключи в формате <code>.ppk</code>:</span>
+            <ul class="mt-2">
+                <li>
+                    <span class="data-en">Download and open <strong>PuTTYgen</strong> (from <a href="https://www.putty.org/" target="_blank">putty.org</a>).</span>
+                    <span class="data-ru">Скачайте и откройте <strong>PuTTYgen</strong> (с сайта <a href="https://www.putty.org/" target="_blank">putty.org</a>).</span>
+                </li>
+                <li>
+                    <span class="data-en">Click <strong>Conversions &gt; Import key</strong> in the top menu bar.</span>
+                    <span class="data-ru">Нажмите <strong>Conversions &gt; Import key</strong> в верхнем меню.</span>
+                </li>
+                <li>
+                    <span class="data-en">Select your private key file: <code>C:\Users\YOUR_WINDOWS_USERNAME\.ssh\id_rsa</code>.</span>
+                    <span class="data-ru">Выберите ваш файл приватного ключа: <code>C:\Users\YOUR_WINDOWS_USERNAME\.ssh\id_rsa</code>.</span>
+                </li>
+                <li>
+                    <span class="data-en">Click <strong>Save private key</strong> (click <em>Yes</em> if asked to save without a passphrase).</span>
+                    <span class="data-ru">Нажмите <strong>Save private key</strong> (нажмите <em>Yes</em>, если появится запрос на сохранение без парольной фразы).</span>
+                </li>
+                <li>
+                    <span class="data-en">Save the file as <code>C:\Users\YOUR_WINDOWS_USERNAME\.ssh\id_rsa.ppk</code>.</span>
+                    <span class="data-ru">Сохраните файл как <code>C:\Users\YOUR_WINDOWS_USERNAME\.ssh\id_rsa.ppk</code>.</span>
+                </li>
+            </ul>
         </li>
 
         <li class="mb-3">
-            <span class="data-en">Update <code>sftp-config.json</code> in Sublime Text 4. Specify the path to your <code>.ppk</code> key (or leave empty if using <code>ssh-agent</code>):</span>
-            <span class="data-ru">Обновите <code>sftp-config.json</code> в Sublime Text 4. Укажите путь к вашему <code>.ppk</code> ключу (или оставьте пустым при использовании <code>ssh-agent</code>):</span>
+            <span class="data-en">Update <code>sftp-config.json</code> in Sublime Text 4 to point to your new <code>.ppk</code> key file:</span>
+            <span class="data-ru">Обновите <code>sftp-config.json</code> в Sublime Text 4, указав путь к новому файлу ключа <code>.ppk</code>:</span>
             <pre class="mt-2"><code class="language-json">"ssh_key_file": "C:/Users/YOUR_WINDOWS_USERNAME/.ssh/id_rsa.ppk"</code></pre>
             <small class="text-muted">
-                <span class="data-en">Note: <code>sftp-config.json</code> paths must use forward slashes (<code>/</code>) instead of Windows backslashes (<code>\</code>).</span>
-                <span class="data-ru">Примечание: В путях файла <code>sftp-config.json</code> необходимо использовать прямые слеши (<code>/</code>) вместо обратных (<code>\</code>).</span>
+                <span class="data-en">Note: <code>sftp-config.json</code> is a JSON configuration file. In JSON, paths must use forward slashes (<code>/</code>) instead of Windows backslashes (<code>\</code>).</span>
+                <span class="data-ru">Примечание: <code>sftp-config.json</code> — это конфигурационный файл формата JSON. В формате JSON в путях необходимо использовать прямые слеши (<code>/</code>) вместо обратных (<code>\</code>).</span>
             </small>
         </li>
     </ol>
