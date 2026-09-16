@@ -356,7 +356,11 @@ int main()
     server.start();
     std::cout &lt;&lt; "[Server] WebSocket server running on " &lt;&lt; host &lt;&lt; ":" &lt;&lt; port &lt;&lt; ". Press Enter to stop..." &lt;&lt; std::endl;
 
-    std::cin.get();
+    // Keep the main thread alive for systemd service execution
+    while (true)
+    {
+        std::this_thread::sleep_for(std::chrono::hours(1));
+    }
 
     server.stop();
     ix::uninitNetSystem();
@@ -747,6 +751,8 @@ function copyToClipboard(text, button) {
         
 
         
+
+        
     </block>
     
     <block>
@@ -760,6 +766,8 @@ function copyToClipboard(text, button) {
         <block>
             <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
         </block>
+        
+
         
 
         
@@ -807,9 +815,13 @@ function copyToClipboard(text, button) {
         
 
         
+
+        
     </block>
     
     <block>
+        
+
         
 
         

@@ -235,10 +235,33 @@
         <span class="data-ru">1. Создание файла юнита Systemd</span>
     </h3>
     <p>
-        <span class="data-en">Create a new service configuration file under <code>/etc/systemd/system/</code> using a text editor:</span>
-        <span class="data-ru">Создайте новый конфигурационный файл службы в <code>/etc/systemd/system/</code> с помощью текстового редактора:</span>
+        <span class="data-en">Open a new service configuration file under <code>/etc/systemd/system/</code> using the Nano text editor:</span>
+        <span class="data-ru">Откройте новый конфигурационный файл службы в <code>/etc/systemd/system/</code> с помощью текстового редактора Nano:</span>
     </p>
-    <pre><code class="language-bash">sudo nano /etc/systemd/system/ixwebsocket-server.service</code></pre>
+    <pre><code class="language-bash">sudo nano /etc/systemd/system/my_server.service</code></pre>
+
+    <p class="mt-4 fw-bold">
+        <span class="data-en">How to Edit in Nano:</span>
+        <span class="data-ru">Как редактировать файл в Nano:</span>
+    </p>
+    <ul class="mb-4">
+        <li>
+            <span class="data-en"><strong>Editing &amp; Typing:</strong> Once Nano opens, type or modify text directly using your keyboard arrows to navigate.</span>
+            <span class="data-ru"><strong>Редактирование и ввод:</strong> После открытия Nano вы можете вводить или изменять текст напрямую, используя стрелки на клавиатуре для навигации.</span>
+        </li>
+        <li>
+            <span class="data-en"><strong>Pasting Text (CMD / PowerShell):</strong> Click the <strong>Right Mouse Button (RMB)</strong> inside the window to instantly paste your copied configuration into the editor.</span>
+            <span class="data-ru"><strong>Вставка текста (CMD / PowerShell):</strong> Нажмите <strong>правую кнопку мыши (ПКМ)</strong> в окне для мгновенной вставки скопированной конфигурации в редактор.</span>
+        </li>
+        <li>
+            <span class="data-en"><strong>Saving File:</strong> Press <code>Ctrl + O</code>, then press <code>Enter</code> to confirm writing the file.</span>
+            <span class="data-ru"><strong>Сохранение файла:</strong> Нажмите <code>Ctrl + O</code>, затем нажмите <code>Enter</code> для подтверждения записи файла.</span>
+        </li>
+        <li>
+            <span class="data-en"><strong>Exiting Editor:</strong> Press <code>Ctrl + X</code> to exit Nano and return to the terminal prompt.</span>
+            <span class="data-ru"><strong>Выход из редактора:</strong> Нажмите <code>Ctrl + X</code>, чтобы выйти из Nano и вернуться в терминал.</span>
+        </li>
+    </ul>
 
     <p>
         <span class="data-en">Paste the following unit configuration into the file:</span>
@@ -251,8 +274,8 @@ After=network.target
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/home/ubuntu/connection-ixwebsocket-cpp
-ExecStart=/home/ubuntu/connection-ixwebsocket-cpp/dist/linux/app
+WorkingDirectory=/root/my_server
+ExecStart=/root/my_server/dist/linux/app
 Restart=always
 RestartSec=5
 
@@ -262,15 +285,6 @@ StandardError=journal
 
 [Install]
 WantedBy=multi-user.target</code></pre>
-
-    <div class="alert alert-warning mb-4">
-        <span class="data-en">
-            <strong>Note:</strong> Replace <code>/home/ubuntu/connection-ixwebsocket-cpp</code> with the exact absolute path to your project directory on your VPS.
-        </span>
-        <span class="data-ru">
-            <strong>Примечание:</strong> Замените <code>/home/ubuntu/connection-ixwebsocket-cpp</code> на точный абсолютный путь к директории вашего проекта на VPS.
-        </span>
-    </div>
 
     <h3 class="category-header">
         <span class="data-en">2. Enable and Start the Service</span>
@@ -284,10 +298,10 @@ WantedBy=multi-user.target</code></pre>
 sudo systemctl daemon-reload
 
 # Enable service to auto-start on boot
-sudo systemctl enable ixwebsocket-server
+sudo systemctl enable my_server
 
 # Start the service right now
-sudo systemctl start ixwebsocket-server</code></pre>
+sudo systemctl start my_server</code></pre>
 
     <h3 class="category-header">
         <span class="data-en">3. Service Management &amp; Verification</span>
@@ -297,7 +311,7 @@ sudo systemctl start ixwebsocket-server</code></pre>
         <span class="data-en">Check the active running status of your WebSocket server process:</span>
         <span class="data-ru">Проверьте текущий статус выполнения процесса вашего WebSocket сервера:</span>
     </p>
-    <pre><code class="language-bash">sudo systemctl status ixwebsocket-server</code></pre>
+    <pre><code class="language-bash">sudo systemctl status my_server</code></pre>
 
     <p class="mt-4 fw-bold">
         <span class="data-en">Common Service Commands:</span>
@@ -313,19 +327,19 @@ sudo systemctl start ixwebsocket-server</code></pre>
             </thead>
             <tbody>
                 <tr>
-                    <td><code>sudo systemctl start ixwebsocket-server</code></td>
+                    <td><code>sudo systemctl start my_server</code></td>
                     <td><span class="data-en">Starts the server process.</span><span class="data-ru">Запускает процесс сервера.</span></td>
                 </tr>
                 <tr>
-                    <td><code>sudo systemctl stop ixwebsocket-server</code></td>
+                    <td><code>sudo systemctl stop my_server</code></td>
                     <td><span class="data-en">Stops the server process.</span><span class="data-ru">Останавливает процесс сервера.</span></td>
                 </tr>
                 <tr>
-                    <td><code>sudo systemctl restart ixwebsocket-server</code></td>
+                    <td><code>sudo systemctl restart my_server</code></td>
                     <td><span class="data-en">Restarts the server process.</span><span class="data-ru">Перезапускает процесс сервера.</span></td>
                 </tr>
                 <tr>
-                    <td><code>sudo journalctl -u ixwebsocket-server -f</code></td>
+                    <td><code>sudo journalctl -u my_server -f</code></td>
                     <td><span class="data-en">Streams live logs (std::cout / std::cerr).</span><span class="data-ru">Выводит логи в реальном времени (std::cout / std::cerr).</span></td>
                 </tr>
             </tbody>
@@ -508,6 +522,8 @@ function copyToClipboard(text, button) {
         
 
         
+
+        
     </block>
     
     <block>
@@ -533,6 +549,12 @@ function copyToClipboard(text, button) {
 
         
 
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-ini.min.js"></script>
+        </block>
         
     </block>
     
