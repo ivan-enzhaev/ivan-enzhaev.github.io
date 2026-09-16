@@ -253,8 +253,8 @@
         <span class="data-ru">1. Исходный код клиента (src/main.cpp)</span>
     </h3>
     <p>
-        <span class="data-en">Create <code>src/main.cpp</code> with an interactive WebSocket client implementation:</span>
-        <span class="data-ru">Создайте файл <code>src/main.cpp</code> с интерактивной реализацией WebSocket-клиента:</span>
+        <span class="data-en">Create <code>src/main.cpp</code> with an interactive WebSocket client implementation that accepts a custom server IP address via command line arguments:</span>
+        <span class="data-ru">Создайте файл <code>src/main.cpp</code> с интерактивной реализацией WebSocket-клиента, принимающего IP-адрес сервера из аргументов командной строки:</span>
     </p>
     <pre><code class="language-cpp">#include &lt;ixwebsocket/IXNetSystem.h&gt;
 #include &lt;ixwebsocket/IXWebSocket.h&gt;
@@ -262,15 +262,21 @@
 #include &lt;string&gt;
 #include &lt;thread&gt;
 
-int main()
+int main(int argc, char* argv[])
 {
     // Initialize network subsystem (required for Windows / Winsock)
     ix::initNetSystem();
 
     ix::WebSocket webSocket;
 
-    // Target server URL (Replace with your VPS IP or domain)
-    std::string url("ws://127.0.0.1:8080");
+    // Target server IP (Defaults to 127.0.0.1 unless passed as an argument)
+    std::string targetIp = "127.0.0.1";
+    if (argc &gt; 1)
+    {
+        targetIp = argv[1];
+    }
+
+    std::string url = "ws://" + targetIp + ":8080";
     webSocket.setUrl(url);
 
     std::cout &lt;&lt; "[Client] Connecting to " &lt;&lt; url &lt;&lt; "..." &lt;&lt; std::endl;
@@ -288,7 +294,7 @@ int main()
             std::cout &lt;&lt; "[Client] Type a message and press Enter (or type 'quit' to exit):" &lt;&lt; std::endl;
             std::cout &lt;&lt; "&gt; " &lt;&lt; std::flush;
         }
-        else if (msg-&gt;type == ix::WebSocketMessageType::Closed)
+        else if (msg-&gt;type == ix::WebSocketMessageType::Close)
         {
             std::cout &lt;&lt; "\n[Client] Connection closed. Code: " &lt;&lt; msg-&gt;closeInfo.code
                       &lt;&lt; " Reason: " &lt;&lt; msg-&gt;closeInfo.reason &lt;&lt; std::endl;
@@ -457,7 +463,18 @@ endif()</code></pre>
     <pre><code class="language-bat">cmake --build dist/win</code></pre>
 
     <p class="fw-bold mb-1">run-exe.bat</p>
-    <pre><code class="language-bat">.\dist\win\app.exe</code></pre>
+    <pre><code class="language-bat">@echo off
+set SERVER_IP=127.0.0.1
+if not "%~1"=="" set SERVER_IP=%~1
+.\dist\win\app.exe %SERVER_IP%</code></pre>
+
+    <p class="mt-3">
+            <span class="data-en">Run the scripts sequentially in Command Prompt or PowerShell:</span>
+            <span class="data-ru">Последовательно запустите скрипты в командной строке или PowerShell:</span>
+        </p>
+        <pre><code class="language-bat">config-exe.bat
+build-exe.bat
+run-exe.bat YOUR_SERVER_IP</code></pre>
 
     <!-- Ubuntu Tab/Sub-block -->
     <h5 class="fw-bold mt-4 text-primary">Ubuntu (Bash Scripts)</h5>
@@ -474,7 +491,8 @@ cmake --build dist/ubuntu</code></pre>
     <p class="fw-bold mb-1">run-exe.sh</p>
     <pre><code class="language-bash">#!/usr/bin/env bash
 set -e
-./dist/ubuntu/app</code></pre>
+SERVER_IP="${1:-127.0.0.1}"
+./dist/ubuntu/app "$SERVER_IP"</code></pre>
 
     <p class="mt-3">
         <span class="data-en">Grant execute permissions on Ubuntu before running:</span>
@@ -483,7 +501,7 @@ set -e
     <pre><code class="language-bash">chmod +x config-exe.sh build-exe.sh run-exe.sh
 ./config-exe.sh
 ./build-exe.sh
-./run-exe.sh</code></pre>
+./run-exe.sh YOUR_SERVER_IP</code></pre>
 
     <!-- Testing Output Section -->
     <h3 class="category-header mt-5">
@@ -494,7 +512,7 @@ set -e
         <span class="data-en">When connected to a running IXWebSocket server instance:</span>
         <span class="data-ru">При подключении к работающему экземпляру сервера IXWebSocket:</span>
     </p>
-    <pre><code class="language-bash">[Client] Connecting to ws://127.0.0.1:8080...
+    <pre><code class="language-bash">[Client] Connecting to ws://YOUR_SERVER_IP:8080...
 
 [Client] Connected successfully!
 [Client] Type a message and press Enter (or type 'quit' to exit):

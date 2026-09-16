@@ -228,20 +228,20 @@
         </div>
         <div>
             <span class="data-en">
-                <strong>Security Warning:</strong> Never commit plain-text passwords or secret credentials inside your <code>sftp-config.json</code> file to public repositories. Add <code>sftp-config.json</code> to your <code>.gitignore</code> file and use SSH key authentication.
+                <strong>Security Warning:</strong> Always add <code>sftp-config.json</code> to your <code>.gitignore</code> file to avoid committing server configuration details to public repositories.
             </span>
             <span class="data-ru">
-                <strong>Предупреждение по безопасности:</strong> Никогда не сохраняйте пароли в открытом виде в файле <code>sftp-config.json</code> при отправке кода в публичные репозитории. Добавьте <code>sftp-config.json</code> в файл <code>.gitignore</code> и используйте аутентификацию по SSH-ключам.
+                <strong>Предупреждение по безопасности:</strong> Всегда добавляйте <code>sftp-config.json</code> в файл <code>.gitignore</code>, чтобы избежать публикации конфигурации сервера в публичных репозиториях.
             </span>
         </div>
     </div>
 
     <p class="mb-4">
         <span class="data-en">
-            This guide covers how to install the <strong>SFTP</strong> package in <strong>Sublime Text 4</strong>, configure automated uploads on save, and sync local directories with a remote server over SSH using key authentication on Windows.
+            This guide covers how to install the <strong>SFTP</strong> package in <strong>Sublime Text 4</strong>, configure automated uploads on save, and sync local directories with a remote server over SSH using PuTTY key authentication on Windows.
         </span>
         <span class="data-ru">
-            В этом руководстве рассмотрено, как установить пакет <strong>SFTP</strong> в <strong>Sublime Text 4</strong>, настроить автоматическую загрузку при сохранении и синхронизировать локальные папки с удаленным сервером по SSH с использованием SSH-ключей в Windows.
+            В этом руководстве рассмотрено, как установить пакет <strong>SFTP</strong> в <strong>Sublime Text 4</strong>, настроить автоматическую загрузку при сохранении и синхронизировать локальные папки с удаленным сервером по SSH с использованием ключей PuTTY в Windows.
         </span>
     </p>
 
@@ -334,8 +334,8 @@
                     <td><code>ssh_key_file</code></td>
                     <td><code>Path</code></td>
                     <td>
-                        <span class="data-en">Path to your SSH key on Windows in <code>.ppk</code> format. Replaces plain-text password authentication.</span>
-                        <span class="data-ru">Путь к вашему SSH-ключу в Windows в формате <code>.ppk</code>. Заменяет аутентификацию по открытому паролю.</span>
+                        <span class="data-en">Path to your SSH key on Windows in <code>.ppk</code> format for key authentication.</span>
+                        <span class="data-ru">Путь к вашему SSH-ключу в Windows в формате <code>.ppk</code> для аутентификации по ключу.</span>
                     </td>
                 </tr>
                 <tr>
@@ -366,14 +366,14 @@
         </table>
     </div>
 
-    <!-- Section 4: Recommended Security Best Practice (Windows) -->
+    <!-- Section 4: SSH Key Authentication Setup -->
     <h3 class="category-header mt-5">
-        <span class="data-en">4. Recommended Security: SSH Key Authentication (Windows)</span>
-        <span class="data-ru">4. Рекомендуемая безопасность: Аутентификация по SSH-ключу (Windows)</span>
+        <span class="data-en">4. SSH Key Authentication Setup (Windows)</span>
+        <span class="data-ru">4. Настройка аутентификации по SSH-ключу (Windows)</span>
     </h3>
     <p>
-        <span class="data-en">Instead of storing your server password in plain text, set up SSH key authentication from Windows using PuTTYgen:</span>
-        <span class="data-ru">Вместо хранения пароля сервера в открытом виде настройте аутентификацию по SSH-ключу из Windows с помощью PuTTYgen:</span>
+        <span class="data-en">Set up PuTTY SSH key authentication from Windows using PuTTYgen:</span>
+        <span class="data-ru">Настройте аутентификацию по SSH-ключу PuTTY из Windows с помощью PuTTYgen:</span>
     </p>
 
     <ol>
