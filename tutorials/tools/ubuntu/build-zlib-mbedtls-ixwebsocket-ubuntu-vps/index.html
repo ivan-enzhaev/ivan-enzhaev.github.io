@@ -7,7 +7,7 @@
 
 <title>
   
-    Building ZLIB, MBedTLS &amp; IXWebSocket 12.0.1 Static Libraries on Ubuntu VPS
+    Building ZLIB, MBedTLS &amp; IXWebSocket 12.0.1 Static Libraries on Ubuntu (VPS &amp; Desktop)
   
   | Ivan Enzhaev
 </title>
@@ -216,8 +216,8 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold text-dark">
-            <span class="data-en">Building ZLIB, MBedTLS &amp; IXWebSocket 12.0.1 Static Libraries on Ubuntu VPS</span>
-            <span class="data-ru">Сборка статических библиотек ZLIB, MBedTLS и IXWebSocket 12.0.1 на Ubuntu VPS</span>
+            <span class="data-en">Building ZLIB, MBedTLS &amp; IXWebSocket 12.0.1 Static Libraries on Ubuntu</span>
+            <span class="data-ru">Сборка статических библиотек ZLIB, MBedTLS и IXWebSocket 12.0.1 на Ubuntu</span>
         </h1>
     </header>
 
@@ -226,9 +226,9 @@
         <span class="data-ru">Предварительное руководство:</span>
         <ul class="mb-0 mt-2">
             <li>
-                <a href="/tutorials/tools/ubuntu/setup-ubuntu-vps-env" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-                    <span class="data-en">Setting Up C/C++ Development Environment on Ubuntu VPS</span>
-                    <span class="data-ru">Настройка среды разработки C/C++ на Ubuntu VPS</span>
+                <a href="/tutorials/tools/ubuntu/setup-ubuntu-cpp-env" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Setting Up C/C++ Development Environment on Ubuntu</span>
+                    <span class="data-ru">Настройка среды разработки C/C++ на Ubuntu</span>
                 </a>
             </li>
         </ul>
@@ -236,10 +236,10 @@
 
     <p class="mb-4">
         <span class="data-en">
-            This guide covers installing key library headers and compiling specific static versions of <strong>ZLIB (v1.3.2)</strong>, <strong>MBedTLS (mbedtls-4.2.0)</strong>, and <strong>IXWebSocket (v12.0.1)</strong> on your headless Ubuntu VPS using CMake and Ninja.
+            This guide covers installing key library headers and compiling specific static versions of <strong>ZLIB (v1.3.2)</strong>, <strong>MBedTLS (mbedtls-4.2.0)</strong>, and <strong>IXWebSocket (v12.0.1)</strong> on <strong>Ubuntu VPS</strong> or <strong>Ubuntu Desktop</strong> using CMake and Ninja.
         </span>
         <span class="data-ru">
-            В этом руководстве описана установка ключевых заголовков библиотек и компиляция конкретных статических версий <strong>ZLIB (v1.3.2)</strong>, <strong>MBedTLS (mbedtls-4.2.0)</strong> и <strong>IXWebSocket (v12.0.1)</strong> на вашем сервере Ubuntu VPS с использованием CMake и Ninja.
+            В этом руководстве описана установка ключевых заголовков библиотек и компиляция конкретных статических версий <strong>ZLIB (v1.3.2)</strong>, <strong>MBedTLS (mbedtls-4.2.0)</strong> и <strong>IXWebSocket (v12.0.1)</strong> на <strong>Ubuntu VPS</strong> или <strong>Ubuntu Desktop</strong> с использованием CMake и Ninja.
         </span>
     </p>
 
@@ -314,32 +314,6 @@ ls -l /usr/local/lib/libz.a /usr/local/lib/libmbedcrypto.a /usr/local/lib/libmbe
             <strong>Следующий шаг:</strong> Все статические библиотеки успешно собраны и установлены! Теперь вы можете линковать <code>libixwebsocket.a</code>, <code>libmbedtls.a</code>, <code>libmbedx509.a</code>, <code>libmbedcrypto.a</code> и <code>libz.a</code> в ваши проекты C++.
         </span>
     </div>
-
-    <!--
-    <h3 class="category-header mt-5">
-        <span class="data-en">6. Reset / Cleanup (For Demonstration Setup)</span>
-        <span class="data-ru">6. Сброс / Очистка (Для повторной демонстрации)</span>
-    </h3>
-    <p>
-        <span class="data-en">Remove installed development headers, built static files under /usr/local, and source repositories:</span>
-        <span class="data-ru">Удалите установленные заголовки разработки, собранные статические файлы в /usr/local и исходные репозитории:</span>
-    </p>
-    <pre><code class="language-bash">sudo apt purge -y zlib1g-dev libssl-dev pkg-config && sudo apt autoremove --purge -y && sudo apt clean
-sudo rm -rf ~/zlib ~/mbedtls ~/IXWebSocket
-sudo rm -f /usr/local/lib/libz* /usr/local/lib/libmbed* /usr/local/lib/libixwebsocket*
-sudo rm -rf /usr/local/include/zlib* /usr/local/include/mbedtls /usr/local/include/psa /usr/local/include/ixwebsocket</code></pre>
-
-    <h3 class="category-header">
-        <span class="data-en">7. Reset Verification</span>
-        <span class="data-ru">7. Проверка сброса</span>
-    </h3>
-    <p>
-        <span class="data-en">Verify that headers are purged and static library files are removed from /usr/local/lib/:</span>
-        <span class="data-ru">Убедитесь, что заголовки удалены, а файлы статических библиотек отсутствуют в /usr/local/lib/:</span>
-    </p>
-    <pre><code class="language-bash">dpkg -l zlib1g-dev libssl-dev pkg-config | cat
-ls -l /usr/local/lib/libz.a /usr/local/lib/libmbedcrypto.a /usr/local/lib/libmbedtls.a /usr/local/lib/libixwebsocket.a 2>&1 | cat</code></pre>
-    -->
 </div>
 
         

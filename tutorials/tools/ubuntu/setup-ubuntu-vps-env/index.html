@@ -7,7 +7,7 @@
 
 <title>
   
-    C/C++ Development Environment Setup for Ubuntu VPS (GCC, CMake &amp; Ninja)
+    C/C++ Development Environment Setup for Ubuntu VPS &amp; Desktop (GCC, CMake &amp; Ninja)
   
   | Ivan Enzhaev
 </title>
@@ -216,17 +216,17 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold text-dark">
-            <span class="data-en">C/C++ Development Environment Setup for Ubuntu VPS (GCC, CMake &amp; Ninja)</span>
-            <span class="data-ru">Настройка среды разработки C/C++ для Ubuntu VPS (GCC, CMake и Ninja)</span>
+            <span class="data-en">C/C++ Development Environment Setup for Ubuntu VPS &amp; Desktop (GCC, CMake &amp; Ninja)</span>
+            <span class="data-ru">Настройка среды разработки C/C++ для Ubuntu VPS и Desktop (GCC, CMake и Ninja)</span>
         </h1>
     </header>
 
     <p class="mb-4">
         <span class="data-en">
-            This guide covers installing the necessary C/C++ toolchain, build systems, and version control tools on a fresh headless <strong>Ubuntu VPS</strong> (Server).
+            This guide covers installing the necessary C/C++ toolchain, build systems, and version control tools on a fresh <strong>Ubuntu VPS (Server)</strong> or <strong>Ubuntu Desktop</strong> system.
         </span>
         <span class="data-ru">
-            В этом руководстве описана установка необходимого инструментария C/C++, систем сборки и инструментов контроля версий на чистый сервер <strong>Ubuntu VPS</strong>.
+            В этом руководстве описана установка необходимого инструментария C/C++, систем сборки и инструментов контроля версий на чистую систему <strong>Ubuntu VPS (Server)</strong> или <strong>Ubuntu Desktop</strong>.
         </span>
     </p>
 
@@ -235,8 +235,8 @@
         <span class="data-ru">1. Обновление системы</span>
     </h3>
     <p>
-        <span class="data-en">Connect to your VPS via SSH and update the package index and installed packages to their latest versions:</span>
-        <span class="data-ru">Подключитесь к вашему VPS по SSH и обновите индекс пакетов и установленные программы до последних версий:</span>
+        <span class="data-en">Open your local terminal (or connect to your remote VPS via SSH) and update the package index and installed packages to their latest versions:</span>
+        <span class="data-ru">Откройте локальный терминал (или подключитесь к удаленному VPS по SSH) и обновите индекс пакетов и установленные программы до последних версий:</span>
     </p>
     <pre><code class="language-bash">sudo apt update && sudo apt upgrade -y</code></pre>
 
@@ -245,8 +245,8 @@
         <span class="data-ru">2. Основной инструментарий C/C++ (GCC, G++, Make)</span>
     </h3>
     <p>
-        <span class="data-en">Install <code>build-essential</code> which includes the GCC compiler suite (<code>gcc</code>, <code>g++</code>), <code>make</code>, and standard development libraries:</span>
-        <span class="data-ru">Установите пакет <code>build-essential</code>, который включает компиляторы GCC (<code>gcc</code>, <code>g++</code>), <code>make</code> и стандартные библиотеки разработки:</span>
+        <span class="data-en">Install <code>build-essential</code> which includes the GCC compiler suite (<code>gcc</code>, <code>g++</code>), <code>make</code>, and standard development libraries along with essential networking and archival tools:</span>
+        <span class="data-ru">Установите пакет <code>build-essential</code>, который включает компиляторы GCC (<code>gcc</code>, <code>g++</code>), <code>make</code> и стандартные библиотеки разработки, а также необходимые сетевые и архивные утилиты:</span>
     </p>
     <pre><code class="language-bash">sudo apt install -y build-essential cmake gdb rsync tar curl wget git</code></pre>
 
@@ -270,61 +270,22 @@
     </p>
     <pre><code class="language-bash">dpkg -l build-essential gcc g++ make cmake ninja-build gdb rsync tar curl wget git | cat</code></pre>
 
-    <!-- <div class="alert alert-success mt-4">
-        <span class="data-en">
-            <strong>Next Step:</strong> Your Ubuntu VPS is now ready to build C and C++ projects. Continue to the next guide to install development headers and build static libraries like ZLIB, MBedTLS, and IXWebSocket!
-        </span>
-        <span class="data-ru">
-            <strong>Следующий шаг:</strong> Ваш Ubuntu VPS готов к сборке проектов на C и C++. Переходите к следующему руководству для установки заголовков библиотек и сборки статических библиотек, таких как ZLIB, MBedTLS и IXWebSocket!
-        </span>
-    </div> -->
-
     <div class="alert alert-success mt-4">
         <span class="data-en">
-            <strong>Next Step:</strong> Your Ubuntu VPS is now ready to build C and C++ projects!
+            <strong>Next Step:</strong> Your Ubuntu system is now ready to build C and C++ projects!
         </span>
         <span class="data-ru">
-            <strong>Следующий шаг:</strong> Ваш Ubuntu VPS готов к сборке проектов на C и C++!
+            <strong>Следующий шаг:</strong> Ваша система Ubuntu готова к сборке проектов на C и C++!
         </span>
         <ul class="mb-0 mt-2">
             <li>
                 <a href="/tutorials/tools/ubuntu/build-zlib-mbedtls-ixwebsocket-ubuntu-vps" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-                    <span class="data-en">Building ZLIB, MBedTLS &amp; IXWebSocket 12.0.1 Static Libraries on Ubuntu VPS</span>
-                    <span class="data-ru">Сборка статических библиотек ZLIB, MBedTLS и IXWebSocket 12.0.1 на Ubuntu VPS</span>
+                    <span class="data-en">Building ZLIB, MBedTLS &amp; IXWebSocket 12.0.1 Static Libraries on Ubuntu</span>
+                    <span class="data-ru">Сборка статических библиотек ZLIB, MBedTLS и IXWebSocket 12.0.1 на Ubuntu</span>
                 </a>
             </li>
         </ul>
     </div>
-
-    <!-- <div class="alert alert-info my-4">
-
-        <span class="data-en"><strong>Optional (Clang Toolchain):</strong> If you prefer building with LLVM/Clang instead of GCC, run: <code>sudo apt install -y clang lldb</code></span>
-
-        <span class="data-ru"><strong>Опционально (Инструментарий Clang):</strong> Если вы предпочитаете сборку с помощью LLVM/Clang вместо GCC, выполните: <code>sudo apt install -y clang lldb</code></span>
-
-    </div> -->
-
-    <!--
-    <h3 class="category-header mt-5">
-        <span class="data-en">5. Reset / Cleanup (For Demonstration Setup)</span>
-        <span class="data-ru">5. Сброс / Очистка (Для повторной демонстрации)</span>
-    </h3>
-    <p>
-        <span class="data-en">To remove all installed toolchain packages and automatically clean up unused dependencies:</span>
-        <span class="data-ru">Чтобы удалить все установленные пакеты инструментария и автоматически очистить неиспользуемые зависимости:</span>
-    </p>
-    <pre><code class="language-bash">sudo apt purge -y build-essential gcc g++ make cmake ninja-build gdb git && sudo apt autoremove --purge -y && sudo apt clean</code></pre>
-
-    <h3 class="category-header">
-        <span class="data-en">6. Reset Verification</span>
-        <span class="data-ru">6. Проверка сброса</span>
-    </h3>
-    <p>
-        <span class="data-en">Verify that all development toolchain packages have been removed (status should show 'un' or 'rc'):</span>
-        <span class="data-ru">Убедитесь, что все пакеты инструментария разработки были удалены (статус должен показывать 'un' или 'rc'):</span>
-    </p>
-    <pre><code class="language-bash">dpkg -l build-essential gcc g++ make cmake ninja-build gdb git | cat</code></pre>
-    -->
 </div>
 
         
