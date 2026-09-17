@@ -223,63 +223,71 @@
 
     <p class="mb-4">
         <span class="data-en">
-            This guide covers installing the necessary C/C++ toolchain, build systems, and version control tools on a fresh <strong>Ubuntu VPS (Server)</strong> or <strong>Ubuntu Desktop</strong> system.
+            This guide covers installing the core C/C++ toolchain, build systems, and version control tools on a fresh <strong>Ubuntu VPS (Server)</strong> or <strong>Ubuntu Desktop</strong> system.
         </span>
         <span class="data-ru">
-            В этом руководстве описана установка необходимого инструментария C/C++, систем сборки и инструментов контроля версий на чистую систему <strong>Ubuntu VPS (Server)</strong> или <strong>Ubuntu Desktop</strong>.
+            В этом руководстве описана установка основного инструментария C/C++, систем сборки и инструментов контроля версий на чистую систему <strong>Ubuntu VPS (Server)</strong> или <strong>Ubuntu Desktop</strong>.
         </span>
     </p>
 
+    <!-- Section 1: System Update -->
     <h3 class="category-header">
         <span class="data-en">1. System Update</span>
         <span class="data-ru">1. Обновление системы</span>
     </h3>
     <p>
-        <span class="data-en">Open your local terminal (or connect to your remote VPS via SSH) and update the package index and installed packages to their latest versions:</span>
-        <span class="data-ru">Откройте локальный терминал (или подключитесь к удаленному VPS по SSH) и обновите индекс пакетов и установленные программы до последних версий:</span>
+        <span class="data-en">Open your terminal (or connect to your remote VPS via SSH) and update the package index:</span>
+        <span class="data-ru">Откройте терминал (или подключитесь к удаленному VPS по SSH) и обновите индекс пакетов:</span>
     </p>
     <pre><code class="language-bash">sudo apt update && sudo apt upgrade -y</code></pre>
 
-    <h3 class="category-header">
-        <span class="data-en">2. Essential C/C++ Toolchain (GCC, G++, Make)</span>
-        <span class="data-ru">2. Основной инструментарий C/C++ (GCC, G++, Make)</span>
+    <!-- Section 2: Core Toolchain -->
+    <h3 class="category-header mt-5">
+        <span class="data-en">2. Core C/C++ Toolchain &amp; Build Systems</span>
+        <span class="data-ru">2. Основной инструментарий C/C++ и системы сборки</span>
     </h3>
     <p>
-        <span class="data-en">Install <code>build-essential</code> which includes the GCC compiler suite (<code>gcc</code>, <code>g++</code>), <code>make</code>, and standard development libraries along with essential networking and archival tools:</span>
-        <span class="data-ru">Установите пакет <code>build-essential</code>, который включает компиляторы GCC (<code>gcc</code>, <code>g++</code>), <code>make</code> и стандартные библиотеки разработки, а также необходимые сетевые и архивные утилиты:</span>
+        <span class="data-en">Install <code>build-essential</code> (includes <code>gcc</code>, <code>g++</code>, and <code>make</code>), <strong>CMake</strong>, <strong>Ninja</strong>, and <strong>Git</strong>:</span>
+        <span class="data-ru">Установите пакет <code>build-essential</code> (включает <code>gcc</code>, <code>g++</code> и <code>make</code>), <strong>CMake</strong>, <strong>Ninja</strong> и <strong>Git</strong>:</span>
     </p>
-    <pre><code class="language-bash">sudo apt install -y build-essential cmake gdb rsync tar curl wget git</code></pre>
+    <pre><code class="language-bash">sudo apt install -y build-essential cmake ninja-build git</code></pre>
 
-    <h3 class="category-header">
-        <span class="data-en">3. Build Systems (CMake &amp; Ninja)</span>
-        <span class="data-ru">3. Системы сборки (CMake и Ninja)</span>
+    <!-- Section 3: Remote VPS / SSH Tools -->
+    <h3 class="category-header mt-5">
+        <span class="data-en">3. Remote &amp; Debugging Utilities (VPS / Remote SSH Only)</span>
+        <span class="data-ru">3. Утилиты для удаленной работы и отладки (Только для VPS / SSH)</span>
     </h3>
     <p>
-        <span class="data-en">Install <strong>CMake</strong> and <strong>Ninja</strong>. Ninja provides significantly faster parallel compilation compared to traditional Makefiles:</span>
-        <span class="data-ru">Установите <strong>CMake</strong> и <strong>Ninja</strong>. Ninja обеспечивает значительно более быструю параллельную сборку по сравнению с традиционными Makefile:</span>
+        <span class="data-en">If you are setting up a VPS or building remotely via CLion / VS Code over SSH, install <code>gdb</code> for debugging and <code>rsync</code> for file synchronization:</span>
+        <span class="data-ru">Если вы настраиваете VPS или собираете проект удаленно через CLion / VS Code по SSH, установите <code>gdb</code> для отладки и <code>rsync</code> для синхронизации файлов:</span>
     </p>
-    <pre><code class="language-bash">sudo apt install -y cmake ninja-build</code></pre>
+    <pre><code class="language-bash">sudo apt install -y gdb rsync</code></pre>
 
-    <h3 class="category-header">
+    <!-- Section 4: Verification -->
+    <h3 class="category-header mt-5">
         <span class="data-en">4. Verification</span>
         <span class="data-ru">4. Проверка установки</span>
     </h3>
     <p>
-        <span class="data-en">Verify that all essential tools are installed on the system:</span>
-        <span class="data-ru">Проверьте, что все необходимые инструменты успешно установлены в системе:</span>
+        <span class="data-en">Verify that the primary build tools are correctly installed and available in your system path:</span>
+        <span class="data-ru">Проверьте, что основные инструменты сборки успешно установлены и доступны в системе:</span>
     </p>
-    <pre><code class="language-bash">dpkg -l build-essential gcc g++ make cmake ninja-build gdb rsync tar curl wget git | cat</code></pre>
+    <pre><code class="language-bash">gcc --version | head -n 1
+g++ --version | head -n 1
+cmake --version | head -n 1
+ninja --version
+git --version</code></pre>
 
     <div class="alert alert-success mt-4">
         <span class="data-en">
-            <strong>Next Step:</strong> Your Ubuntu system is now ready to build C and C++ projects!
+            <strong>Next Step:</strong> Your Ubuntu environment is ready to build C and C++ projects!
         </span>
         <span class="data-ru">
             <strong>Следующий шаг:</strong> Ваша система Ubuntu готова к сборке проектов на C и C++!
         </span>
         <ul class="mb-0 mt-2">
             <li>
-                <a href="/tutorials/tools/ubuntu/build-zlib-mbedtls-ixwebsocket-ubuntu-vps" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                <a href="/tutorials/tools/ubuntu/build-zlib-mbedtls-ixwebsocket-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
                     <span class="data-en">Building ZLIB, MBedTLS &amp; IXWebSocket 12.0.1 Static Libraries on Ubuntu</span>
                     <span class="data-ru">Сборка статических библиотек ZLIB, MBedTLS и IXWebSocket 12.0.1 на Ubuntu</span>
                 </a>

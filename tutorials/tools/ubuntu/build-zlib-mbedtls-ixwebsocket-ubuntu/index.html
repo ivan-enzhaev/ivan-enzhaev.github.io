@@ -236,75 +236,92 @@
 
     <p class="mb-4">
         <span class="data-en">
-            This guide covers installing key library headers and compiling specific static versions of <strong>ZLIB (v1.3.2)</strong>, <strong>MBedTLS (mbedtls-4.2.0)</strong>, and <strong>IXWebSocket (v12.0.1)</strong> on <strong>Ubuntu VPS</strong> or <strong>Ubuntu Desktop</strong> using CMake and Ninja.
+            This guide covers compiling specific static versions of <strong>ZLIB (v1.3.2)</strong>, <strong>MBedTLS (mbedtls-4.2.0)</strong>, and <strong>IXWebSocket (v12.0.1)</strong> on <strong>Ubuntu VPS</strong> or <strong>Ubuntu Desktop</strong> using CMake and Ninja. All source repositories are compiled in temporary directories and cleaned up immediately after installation.
         </span>
         <span class="data-ru">
-            В этом руководстве описана установка ключевых заголовков библиотек и компиляция конкретных статических версий <strong>ZLIB (v1.3.2)</strong>, <strong>MBedTLS (mbedtls-4.2.0)</strong> и <strong>IXWebSocket (v12.0.1)</strong> на <strong>Ubuntu VPS</strong> или <strong>Ubuntu Desktop</strong> с использованием CMake и Ninja.
+            В этом руководстве описана компиляция конкретных статических версий <strong>ZLIB (v1.3.2)</strong>, <strong>MBedTLS (mbedtls-4.2.0)</strong> и <strong>IXWebSocket (v12.0.1)</strong> на <strong>Ubuntu VPS</strong> или <strong>Ubuntu Desktop</strong> с использованием CMake и Ninja. Все исходные репозитории компилируются во временных директориях и сразу же удаляются после установки.
         </span>
     </p>
 
     <h3 class="category-header">
-        <span class="data-en">1. Additional C/C++ Library Headers</span>
-        <span class="data-ru">1. Дополнительные заголовки библиотек C/C++</span>
+        <span class="data-en">1. Build and Install ZLIB Static Library (v1.3.2)</span>
+        <span class="data-ru">1. Сборка и установка статической библиотеки ZLIB (v1.3.2)</span>
     </h3>
     <p>
-        <span class="data-en">Install common development headers required for building networking and cryptography static libraries (such as ZLIB and MBedTLS):</span>
-        <span class="data-ru">Установите основные заголовки библиотек, необходимые для сборки сетевых и криптографических статических библиотек (таких как ZLIB и MBedTLS):</span>
+        <span class="data-en">Clone release tag <code>v1.3.2</code> of ZLIB into <code>/tmp</code>, build the static library using CMake &amp; Ninja, install it, and clean up the build directory:</span>
+        <span class="data-ru">Клонируйте релизный тег <code>v1.3.2</code> ZLIB в <code>/tmp</code>, соберите статическую библиотеку с помощью CMake и Ninja, установите её и удалите директорию сборки:</span>
     </p>
-    <pre><code class="language-bash">sudo apt update && sudo apt install -y zlib1g-dev libssl-dev pkg-config</code></pre>
-
-    <h3 class="category-header">
-        <span class="data-en">2. Build and Install ZLIB Static Library (v1.3.2)</span>
-        <span class="data-ru">2. Сборка и установка статической библиотеки ZLIB (v1.3.2)</span>
-    </h3>
-    <p>
-        <span class="data-en">Clone release tag <code>v1.3.2</code> of ZLIB, build the static library using CMake &amp; Ninja, and install it into system directories:</span>
-        <span class="data-ru">Клонируйте релизный тег <code>v1.3.2</code> ZLIB, соберите статическую библиотеку с помощью CMake и Ninja и установите её в системные директории:</span>
-    </p>
-    <pre><code class="language-bash">git clone --branch v1.3.2 --depth 1 https://github.com/madler/zlib.git ~/zlib
-cd ~/zlib
+    <pre><code class="language-bash">rm -rf /tmp/zlib
+git clone --branch v1.3.2 --depth 1 https://github.com/madler/zlib.git /tmp/zlib
+cd /tmp/zlib
 cmake -B dist -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF
 cmake --build dist
-sudo cmake --install dist</code></pre>
+sudo cmake --install dist
+rm -rf /tmp/zlib</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">3. Build and Install MBedTLS Static Library (mbedtls-4.2.0)</span>
-        <span class="data-ru">3. Сборка и установка статической библиотеки MBedTLS (mbedtls-4.2.0)</span>
+        <span class="data-en">2. Build and Install MBedTLS Static Library (mbedtls-4.2.0)</span>
+        <span class="data-ru">2. Сборка и установка статической библиотеки MBedTLS (mbedtls-4.2.0)</span>
     </h3>
     <p>
-        <span class="data-en">Clone release tag <code>mbedtls-4.2.0</code> of MBedTLS, update git submodules, build the static libraries, and install them:</span>
-        <span class="data-ru">Клонируйте релизный тег <code>mbedtls-4.2.0</code> MBedTLS, обновите подмодули git, соберите статические библиотеки и установите их:</span>
+        <span class="data-en">Clone release tag <code>mbedtls-4.2.0</code> into <code>/tmp</code>, fetch required submodules with depth 1, build the static libraries, install them, and clean up:</span>
+        <span class="data-ru">Клонируйте релизный тег <code>mbedtls-4.2.0</code> в <code>/tmp</code>, загрузите необходимые подмодули с глубиной 1, соберите статические библиотеки, установите их и выполните очистку:</span>
     </p>
-    <pre><code class="language-bash">git clone --branch mbedtls-4.2.0 --recursive --depth 1 https://github.com/Mbed-TLS/mbedtls.git ~/mbedtls
-cd ~/mbedtls
+    <pre><code class="language-bash">rm -rf /tmp/mbedtls
+git clone --branch mbedtls-4.2.0 --depth 1 https://github.com/Mbed-TLS/mbedtls.git /tmp/mbedtls
+cd /tmp/mbedtls
+git submodule update --init --recursive --depth 1
 cmake -B dist -G Ninja -DCMAKE_BUILD_TYPE=Release -DENABLE_PROGRAMS=OFF -DENABLE_TESTING=OFF -DUSE_SHARED_MBEDTLS_LIBRARY=OFF
 cmake --build dist
-sudo cmake --install dist</code></pre>
+sudo cmake --install dist
+rm -rf /tmp/mbedtls</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">4. Build and Install IXWebSocket (v12.0.1)</span>
-        <span class="data-ru">4. Сборка и установка IXWebSocket (v12.0.1)</span>
+        <span class="data-en">3. Build and Install IXWebSocket (v12.0.1)</span>
+        <span class="data-ru">3. Сборка и установка IXWebSocket (v12.0.1)</span>
     </h3>
     <p>
-        <span class="data-en">Clone release tag <code>v12.0.1</code> of IXWebSocket and build it using the installed MBedTLS TLS provider and ZLIB:</span>
-        <span class="data-ru">Клонируйте релизный тег <code>v12.0.1</code> IXWebSocket и соберите его с использованием установленного провайдера MBedTLS и ZLIB:</span>
+        <span class="data-en">Clone release tag <code>v12.0.1</code> of IXWebSocket into <code>/tmp</code>, build it using the installed MBedTLS TLS provider and ZLIB, install it, and clean up:</span>
+        <span class="data-ru">Клонируйте релизный тег <code>v12.0.1</code> IXWebSocket в <code>/tmp</code>, соберите его с использованием установленного провайдера MBedTLS и ZLIB, установите и выполните очистку:</span>
     </p>
-    <pre><code class="language-bash">git clone --branch v12.0.1 --depth 1 https://github.com/machinezone/IXWebSocket.git ~/IXWebSocket
-cd ~/IXWebSocket
+    <pre><code class="language-bash">rm -rf /tmp/IXWebSocket
+git clone --branch v12.0.1 --depth 1 https://github.com/machinezone/IXWebSocket.git /tmp/IXWebSocket
+cd /tmp/IXWebSocket
 cmake -B dist -G Ninja -DCMAKE_BUILD_TYPE=Release -DUSE_MBED_TLS=ON -DUSE_TLS=ON -DBUILD_SHARED_LIBS=OFF
 cmake --build dist
-sudo cmake --install dist</code></pre>
+sudo cmake --install dist
+rm -rf /tmp/IXWebSocket</code></pre>
 
     <h3 class="category-header">
-        <span class="data-en">5. Verification</span>
-        <span class="data-ru">5. Проверка установки</span>
+        <span class="data-en">4. Verification</span>
+        <span class="data-ru">4. Проверка установки</span>
     </h3>
     <p>
-        <span class="data-en">Verify that the package headers are present and the compiled static libraries exist under <code>/usr/local/lib/</code>:</span>
-        <span class="data-ru">Убедитесь, что заголовки пакетов присутствуют, а собранные статические библиотеки находятся в <code>/usr/local/lib/</code>:</span>
+        <span class="data-en">Verify that the compiled static libraries exist under <code>/usr/local/lib/</code>:</span>
+        <span class="data-ru">Убедитесь, что собранные статические библиотеки находятся в <code>/usr/local/lib/</code>:</span>
     </p>
-    <pre><code class="language-bash">dpkg -l zlib1g-dev libssl-dev pkg-config | cat
-ls -l /usr/local/lib/libz.a /usr/local/lib/libmbedcrypto.a /usr/local/lib/libmbedtls.a /usr/local/lib/libixwebsocket.a</code></pre>
+    <pre><code class="language-bash">ls -l /usr/local/lib/libz.a /usr/local/lib/libmbedcrypto.a /usr/local/lib/libmbedtls.a /usr/local/lib/libixwebsocket.a</code></pre>
+
+    <h3 class="category-header">
+        <span class="data-en">5. Clean Up Home Directory &amp; Full Uninstallation</span>
+        <span class="data-ru">5. Очистка домашней директории и полное удаление</span>
+    </h3>
+    <p>
+        <span class="data-en">If you previously cloned repositories to your home directory, run the command below to delete them along with all system-installed files:</span>
+        <span class="data-ru">Если вы ранее клонировали репозитории в домашнюю директорию, выполните приведенную ниже команду для их удаления вместе со всеми установленными в систему файлами:</span>
+    </p>
+    <pre><code class="language-bash"># Remove any leftover source folders from Home directory
+rm -rf ~/zlib ~/mbedtls ~/IXWebSocket
+
+# Remove installed static libraries and pkg-config files
+sudo rm -f /usr/local/lib/libz.a /usr/local/lib/libmbed*.a /usr/local/lib/libtfpsacrypto.a /usr/local/lib/libixwebsocket.a
+sudo rm -f /usr/local/lib/pkgconfig/zlib.pc /usr/local/lib/pkgconfig/mbed*.pc /usr/local/lib/pkgconfig/tfpsacrypto.pc /usr/local/lib/pkgconfig/ixwebsocket.pc
+
+# Remove installed header directories
+sudo rm -rf /usr/local/include/zlib.h /usr/local/include/zconf.h /usr/local/include/mbedtls /usr/local/include/psa /usr/local/include/tf-psa-crypto /usr/local/include/ixwebsocket
+
+# Remove installed CMake config targets
+sudo rm -rf /usr/local/lib/cmake/MbedTLS /usr/local/lib/cmake/TF-PSA-Crypto /usr/local/lib/cmake/ixwebsocket /usr/local/lib/cmake/ZLIB</code></pre>
 
     <div class="alert alert-success mt-4">
         <span class="data-en">
