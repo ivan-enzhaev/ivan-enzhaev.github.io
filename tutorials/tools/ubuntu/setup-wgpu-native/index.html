@@ -7,7 +7,7 @@
 
 <title>
   
-    Building SDL3 Static Library for Ubuntu (GCC, CMake &amp; Ninja)
+    Installing Prebuilt wgpu-native Library for Ubuntu
   
   | Ivan Enzhaev
 </title>
@@ -216,12 +216,12 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Building SDL3 Static Library for Ubuntu (GCC, CMake &amp; Ninja)</span>
-            <span class="data-ru">Сборка статической библиотеки SDL3 для Ubuntu (GCC, CMake и Ninja)</span>
+            <span class="data-en">Installing Prebuilt wgpu-native Library for Ubuntu</span>
+            <span class="data-ru">Установка предкомпилированной библиотеки wgpu-native для Ubuntu</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to compiling SDL3 source code into a static library (libSDL3.a) on Ubuntu using CMake and GCC.</span>
-            <span class="data-ru">Руководство по компиляции исходного кода SDL3 в статическую библиотеку (libSDL3.a) в Ubuntu с помощью CMake и GCC.</span>
+            <span class="data-en">A guide to downloading and extracting prebuilt wgpu-native binaries (libwgpu_native.so / libwgpu_native.a) on Ubuntu.</span>
+            <span class="data-ru">Руководство по скачиванию и распаковке предкомпилированных бинарных файлов wgpu-native (libwgpu_native.so / libwgpu_native.a) в Ubuntu.</span>
         </p>
     </header>
 
@@ -236,104 +236,98 @@
 
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 1: Install Audio and Display Dependencies</span>
-            <span class="data-ru">Шаг 1: Установка зависимостей аудио и видео</span>
+            <span class="data-en">Step 1: Install System Dependencies</span>
+            <span class="data-ru">Шаг 1: Установка системных зависимостей</span>
         </h2>
         <p>
-            <span class="data-en">Before compiling SDL3, install the development headers required for X11, Wayland, and audio backends:</span>
-            <span class="data-ru">Перед сборкой SDL3 установите библиотеки разработки, необходимые для работы X11, Wayland и аудио систем:</span>
+            <span class="data-en">Before using wgpu-native, install the required graphics runtime libraries (Vulkan drivers and helper tools):</span>
+            <span class="data-ru">Перед использованием wgpu-native установите необходимые графические библиотеки (драйверы Vulkan и утилиты):</span>
         </p>
-        <pre><code class="language-bash">sudo apt update && sudo apt install -y \
-  libasound2-dev libpulse-dev libaudio-dev \
-  libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev libxinerama-dev \
-  libxss-dev libxtst-dev libxxf86vm-dev \
-  libwayland-dev libxkbcommon-dev libegl1-mesa-dev libgl1-mesa-dev libgbm-dev libdrm-dev</code></pre>
+        <!-- <pre><code class="language-bash">sudo apt update && sudo apt install -y \
+  libvulkan1 vulkan-tools libx11-dev libwayland-dev wget unzip</code></pre> -->
+        <pre><code class="language-bash">sudo apt update && sudo apt install -y wget unzip</code></pre>
     </section>
 
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 2: Download SDL3 Source Code</span>
-            <span class="data-ru">Шаг 2: Скачивание исходного кода SDL3</span>
+            <span class="data-en">Step 2: Download wgpu-native Prebuilt Binary</span>
+            <span class="data-ru">Шаг 2: Скачивание предкомпилированного бинарного файла wgpu-native</span>
         </h2>
         <p>
-            <span class="data-en">Clone the specific SDL3 release tag directly from GitHub (or download the source archive):</span>
-            <span class="data-ru">Клонируйте конкретный тег релиза SDL3 напрямую из GitHub (или скачайте архив с исходным кодом):</span>
+            <span class="data-en">Download the prebuilt release archive corresponding to your target architecture directly from GitHub Releases:</span>
+            <span class="data-ru">Скачайте архив предкомпилированного релиза для вашей архитектуры напрямую из GitHub Releases:</span>
         </p>
         <p>
-            <a href="https://github.com/libsdl-org/SDL/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">Download SDL3 Releases</span>
-                <span class="data-ru">Скачать релизы SDL3</span>
+            <a href="https://github.com/gfx-rs/wgpu-native/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
+                <span class="data-en">Download wgpu-native Releases</span>
+                <span class="data-ru">Скачать релизы wgpu-native</span>
             </a>
         </p>
+        <!-- <pre><code class="language-bash">cd ~
+# For x86_64 Release build:
+wget https://github.com/gfx-rs/wgpu-native/releases/latest/download/wgpu-linux-x86_64-release.zip
+
+# Or for AArch64 Release build:
+# wget https://github.com/gfx-rs/wgpu-native/releases/latest/download/wgpu-linux-aarch64-release.zip</code></pre> -->
         <pre><code class="language-bash">cd ~
-git clone --depth 1 --branch release-3.4.16 https://github.com/libsdl-org/SDL.git
-cd SDL</code></pre>
+wget https://github.com/gfx-rs/wgpu-native/releases/download/v29.0.1.1/wgpu-linux-x86_64-release.zip</code></pre>
     </section>
 
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 3: Create the Build Script</span>
-            <span class="data-ru">Шаг 3: Создание скрипта сборки</span>
+            <span class="data-en">Step 3: Create the Installation Script</span>
+            <span class="data-ru">Шаг 3: Создание скрипта установки</span>
         </h2>
         <p>
-            <span class="data-en">In the root directory of the extracted or cloned SDL3 source folder, create a script named <code>build-ubuntu-static.sh</code> with the following content:</span>
-            <span class="data-ru">В корневой директории исходного кода SDL3 создайте файл <code>build-ubuntu-static.sh</code> со следующим содержимым:</span>
+            <span class="data-en">In the directory where you downloaded the zip archive, create a script named <code>install-wgpu-native.sh</code> with the following content:</span>
+            <span class="data-ru">В директории со скачанный zip-архивом создайте файл <code>install-wgpu-native.sh</code> со следующим содержимым:</span>
         </p>
 
         <pre><code class="language-bash">#!/usr/bin/env bash
 set -e
 
-BUILD_DIR="build-ubuntu-static"
+ARCHIVE_NAME="wgpu-linux-x86_64-release.zip"
+INSTALL_PREFIX="$HOME/libs/wgpu-native-29.0.1.1-ubuntu"
 
-mkdir -p "$BUILD_DIR"
-cd "$BUILD_DIR"
+mkdir -p "$INSTALL_PREFIX"
+mkdir -p temp_wgpu
+unzip -o "$ARCHIVE_NAME" -d temp_wgpu
 
-# Clean old CMake cache if it exists
-rm -f CMakeCache.txt
-rm -rf CMakeFiles
+cp -r temp_wgpu/* "$INSTALL_PREFIX/"
+rm -rf temp_wgpu
 
-cmake .. \
-  -GNinja \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_INSTALL_PREFIX="$HOME/libs/sdl3-3.4.16-ubuntu" \
-  -DBUILD_SHARED_LIBS=OFF \
-  -DSDL_SHARED=OFF \
-  -DSDL_STATIC=ON \
-  -DSDL_TESTS=OFF \
-  -DSDL_EXAMPLES=OFF
-
-cmake --build . --config Release --parallel $(nproc) --target install</code></pre>
+echo "wgpu-native successfully extracted to $INSTALL_PREFIX"</code></pre>
 
         <div class="alert alert-info mt-3">
             <strong>
                 <span class="data-en">Note:</span>
                 <span class="data-ru">Примечание:</span>
             </strong>
-            <span class="data-en">Adjust the <code>CMAKE_INSTALL_PREFIX</code> path to point to your preferred target installation folder.</span>
-            <span class="data-ru">Убедитесь, что путь <code>CMAKE_INSTALL_PREFIX</code> указывает на удобную для вас директорию установки.</span>
+            <span class="data-en">Adjust the <code>INSTALL_PREFIX</code> path to point to your preferred target installation folder.</span>
+            <span class="data-ru">Убедитесь, что путь <code>INSTALL_PREFIX</code> указывает на удобную для вас директорию установки.</span>
         </div>
     </section>
 
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 4: Run, Compile, and Clean Up</span>
-            <span class="data-ru">Шаг 4: Запуск, сборка и очистка</span>
+            <span class="data-en">Step 4: Run, Install, and Clean Up</span>
+            <span class="data-ru">Шаг 4: Запуск, установка и очистка</span>
         </h2>
         <p>
             <span class="data-en">Grant execution permissions to the script and run it in your terminal:</span>
             <span class="data-ru">Сделайте скрипт исполняемым и запустите его в терминале:</span>
         </p>
-        <pre><code class="language-bash">chmod +x build-ubuntu-static.sh
-./build-ubuntu-static.sh</code></pre>
+        <pre><code class="language-bash">chmod +x install-wgpu-native.sh
+./install-wgpu-native.sh</code></pre>
         <p>
-            <span class="data-en">Upon completion, your static library <code>libSDL3.a</code> along with header files will be installed in your specified <code>CMAKE_INSTALL_PREFIX</code> directory.</span>
-            <span class="data-ru">После успешного завершения собранная статическая библиотека <code>libSDL3.a</code> и заголовочные файлы будут установлены по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
+            <span class="data-en">Upon completion, the library binaries (<code>libwgpu_native.so</code> / <code>libwgpu_native.a</code>) along with header files will be installed in your specified <code>INSTALL_PREFIX</code> directory.</span>
+            <span class="data-ru">После успешного завершения бинарные файлы библиотеки (<code>libwgpu_native.so</code> / <code>libwgpu_native.a</code>) и заголовочные файлы будут установлены по пути, указанному в <code>INSTALL_PREFIX</code>.</span>
         </p>
         <p>
-            <span class="data-en">Once installed, you can safely remove the temporary source directory:</span>
-            <span class="data-ru">После установки вы можете безопасно удалить временную директорию с исходным кодом:</span>
+            <span class="data-en">Once installed, you can safely remove the downloaded archive and the installer script:</span>
+            <span class="data-ru">После установки вы можете безопасно удалить скачанный архив и скрипт установки:</span>
         </p>
-        <pre><code class="language-bash">cd ~ && rm -rf ~/SDL</code></pre>
+        <pre><code class="language-bash">rm -f ~/wgpu-linux-x86_64-release.zip ~/install-wgpu-native.sh</code></pre>
     </section>
 </div>
 
