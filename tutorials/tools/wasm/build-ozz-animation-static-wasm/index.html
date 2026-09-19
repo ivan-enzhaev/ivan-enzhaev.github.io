@@ -7,7 +7,7 @@
 
 <title>
   
-    Emscripten (WebAssembly) Environment Setup for Windows (Emsdk, CMake &amp; Node.js)
+    Building ozz-animation Static Library for WebAssembly (Emscripten &amp; CMake)
   
   | Ivan Enzhaev
 </title>
@@ -215,167 +215,106 @@
         
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
-        <h1 class="fw-bold text-dark">
-            <span class="data-en">Emscripten (WebAssembly) Environment Setup for Windows (Emsdk, CMake &amp; Node.js)</span>
-            <span class="data-ru">Настройка окружения Emscripten (WebAssembly) для Windows (Emsdk, CMake и Node.js)</span>
+        <h1 class="fw-bold">
+            <span class="data-en">Building ozz-animation Static Library for WebAssembly (Emscripten &amp; CMake)</span>
+            <span class="data-ru">Сборка статической библиотеки ozz-animation для WebAssembly (Emscripten и CMake)</span>
         </h1>
+        <p class="lead text-muted">
+            <span class="data-en">A guide to compiling ozz-animation source code into static libraries for WebAssembly on Windows using Emscripten and CMake.</span>
+            <span class="data-ru">Руководство по компиляции исходного кода ozz-animation в статические библиотеки для WebAssembly на Windows с помощью Emscripten и CMake.</span>
+        </p>
     </header>
 
-    <h3 class="category-header">
-        <span class="data-en">1. Prerequisites: Git</span>
-        <span class="data-ru">1. Подготовка: Git</span>
-    </h3>
-    <p>
-        <span class="data-en">To clone the Emscripten SDK, you first need to install Git. Download the installer from the <a href="https://git-scm.com/install/windows" target="_blank" rel="noopener noreferrer">official site</a> and follow the standard installation steps.</span>
-        <span class="data-ru">Для клонирования Emscripten SDK сначала необходимо установить Git. Скачайте установщик с <a href="https://git-scm.com/install/windows" target="_blank" rel="noopener noreferrer">официального сайта</a> и следуйте стандартной процедуре установки.</span>
-    </p>
-
-    <h3 class="category-header">
-        <span class="data-en">2. Emscripten SDK (emsdk) Installation</span>
-        <span class="data-ru">2. Установка Emscripten SDK (emsdk)</span>
-    </h3>
-    <p>
-        <span class="data-en">You can check the latest released versions on the official <a href="https://github.com/emscripten-core/emscripten/releases" target="_blank" rel="noopener noreferrer">GitHub Releases</a> page. Open CMD at the root of your drive (e.g., <code>C:\</code>) and run:</span>
-        <span class="data-ru">Вы можете проверить актуальные версии на официальной странице <a href="https://github.com/emscripten-core/emscripten/releases" target="_blank" rel="noopener noreferrer">GitHub Releases</a>. Откройте CMD в корне диска (например, <code>C:\</code>) и выполните:</span>
-    </p>
-    <pre><code class="language-bash"># Clone the repository
-git clone https://github.com/emscripten-core/emsdk.git
-cd emsdk
-
-# Install and activate the latest version
-emsdk install latest
-emsdk activate latest</code></pre>
-
-    <div class="alert alert-warning">
-        <span class="data-en"><strong>Note:</strong> Always build your libraries with the same emsdk version. Do not mix versions. Add <code>C:\emsdk\upstream\emscripten</code> to your <strong>Path</strong> environment variable.</span>
-        <span class="data-ru"><strong>Примечание:</strong> Всегда собирайте библиотеки одной и той же версией emsdk. Не смешивайте версии. Добавьте путь <code>C:\emsdk\upstream\emscripten</code> в переменную окружения <strong>Path</strong>.</span>
+    <div class="alert alert-secondary mb-3">
+        <span class="data-en">If you haven't set up MinGW and CMake on your machine, follow the</span>
+        <span class="data-ru">Если вы еще не настроили MinGW и CMake на своем компьютере, следуйте инструкции:</span>
+        <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+            <span class="data-en">MinGW & CMake Setup Guide</span>
+            <span class="data-ru">Руководство по настройке MinGW и CMake</span>
+        </a>
     </div>
 
-    <h3 class="category-header">
-        <span class="data-en">3. Updating emsdk & Verifying Installation</span>
-        <span class="data-ru">3. Обновление emsdk и проверка версии</span>
-    </h3>
-    <p>
-        <span class="data-en">To check the currently active Emscripten compiler version, run:</span>
-        <span class="data-ru">Чтобы проверить текущую активную версию компилятора Emscripten, выполните:</span>
-    </p>
-    <pre><code class="language-bash">emcc --version</code></pre>
-    <p>
-        <span class="data-en">To update the SDK to the latest tools and install a new version in the future, navigate to your <code>emsdk</code> directory and run:</span>
-        <span class="data-ru">Чтобы обновить SDK до последних инструментов и установить новую версию в будущем, перейдите в папку <code>emsdk</code> и выполните:</span>
-    </p>
-    <pre><code class="language-bash"># Fetch the latest version list from Git
-git pull
-
-# Install and activate the latest SDK version (or a specific version)
-emsdk install latest
-emsdk activate latest</code></pre>
-
-    <h3 class="category-header">
-        <span class="data-en">4. MinGW, CMake & Node.js</span>
-        <span class="data-ru">4. MinGW, CMake и Node.js</span>
-    </h3>
-    <ul>
-        <li>
-            <span class="data-en">Install MinGW and CMake by following the <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">C/C++ Development Environment Setup Guide</a>. Verify installation with <code>gcc --version</code> and <code>cmake --version</code>.</span>
-            <span class="data-ru">Установите MinGW и CMake, следуя <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">Руководству по настройке окружения C/C++</a>. Проверьте установку командами <code>gcc --version</code> и <code>cmake --version</code>.</span>
-        </li>
-        <li>
-            <span class="data-en">Install <a href="https://nodejs.org/" target="_blank" rel="noopener noreferrer">Node.js</a>. Then, install a local server:</span>
-            <span class="data-ru">Установите <a href="https://nodejs.org/" target="_blank" rel="noopener noreferrer">Node.js</a>. Затем установите локальный сервер:</span>
-            <pre><code class="language-bash">npm i http-server -g</code></pre>
-        </li>
-    </ul>
-
-    <h3 class="category-header">
-        <span class="data-en">5. "Hello World" Project</span>
-        <span class="data-ru">5. Проект "Hello World"</span>
-    </h3>
-    <p>
-        <span class="data-en">Structure your project <code>hello-wasm-c</code> as follows:</span>
-        <span class="data-ru">Создайте структуру проекта <code>hello-wasm-c</code> следующим образом:</span>
-    </p>
-
-    <p><strong>src/main.c:</strong></p>
-    <pre><code class="language-c">#include &lt;stdio.h&gt;
-#include &lt;emscripten.h&gt;
-
-// Function that will be called by the browser every iteration (frame)
-void loop()
-{
-    // User input processing or frame updates usually happen here
-}
-
-int main()
-{
-    printf("Hello from WebAssembly!\n");
-
-    // Sets the main application loop. 
-    // 0 — use the browser's default frame rate.
-    // 1 — simulate an infinite loop (prevents exiting main).
-    emscripten_set_main_loop(loop, 0, 1); 
-
-    return 0;
-}</code></pre>
-
-    <p><strong>CMakeLists.txt:</strong></p>
-    <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
-project(hello-wasm-c)
-
-# Set the C standard (required before add_executable)
-set(CMAKE_C_STANDARD 17)
-set(CMAKE_C_STANDARD_REQUIRED ON)
-
-# Define the output application name (on Windows it would be app.exe, 
-# while for the web it will be app.js / app.wasm)
-add_executable(app)
-
-# Add source files to the executable build
-target_sources(app
-PRIVATE
-    src/main.c
-)</code></pre>
-
-    <p><strong>public/index.html:</strong></p>
-    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-
-&lt;head&gt;
-    &lt;meta charset="utf-8"&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-&lt;/head&gt;
-
-&lt;body&gt;
-    &lt;canvas id="canvas"&gt;&lt;/canvas&gt;
-    &lt;script async src="./js/app.js"&gt;&lt;/script&gt;
-&lt;/body&gt;
-
-&lt;/html&gt;
-</code></pre>
-
-    <h3 class="category-header">
-        <span class="data-en">6. Build and Run</span>
-        <span class="data-ru">6. Сборка и запуск</span>
-    </h3>
-    <p>
-        <span class="data-en">Configure and build the project:</span>
-        <span class="data-ru">Сконфигурируйте и соберите проект:</span>
-    </p>
-    <pre><code class="language-bash"># Configure
-emcmake cmake -S . -B dist -DCMAKE_BUILD_TYPE=Debug
-
-# Build
-cmake --build dist</code></pre>
-
-    <p>
-        <span class="data-en">Move <code>app.js</code> and <code>app.wasm</code> to your <code>public/js/</code> folder, create an <code>index.html</code> linking the script, and start the server:</span>
-        <span class="data-ru">Переместите <code>app.js</code> и <code>app.wasm</code> в <code>public/js/</code>, создайте <code>index.html</code> с подключением скрипта и запустите сервер:</span>
-    </p>
-    <pre><code class="language-bash">http-server -c-1</code></pre>
-    <div class="alert alert-info">
-        <span class="data-en">Open <strong>localhost:8080</strong> and check the browser console (F12) to see the output.</span>
-        <span class="data-ru">Откройте <strong>localhost:8080</strong> и проверьте консоль браузера (F12), чтобы увидеть результат.</span>
+    <div class="alert alert-secondary mb-3">
+        <span class="data-en">If you haven't set up Emscripten SDK and CMake on your machine, follow the</span>
+        <span class="data-ru">Если вы еще не настроили Emscripten SDK и CMake на своем компьютере, следуйте инструкции:</span>
+        <a href="/tutorials/tools/wasm/wasm-env" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+            <span class="data-en">Emscripten & CMake Setup Guide</span>
+            <span class="data-ru">Руководство по настройке Emscripten и CMake</span>
+        </a>
     </div>
+
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 1: Download ozz-animation Source Code</span>
+            <span class="data-ru">Шаг 1: Скачивание исходного кода ozz-animation</span>
+        </h2>
+        <p>
+            <span class="data-en">Download the latest ozz-animation source archive (<code>.zip</code> or <code>.tar.gz</code>) from the official GitHub releases page:</span>
+            <span class="data-ru">Скачайте последний архив с исходным кодом ozz-animation (<code>.zip</code> или <code>.tar.gz</code>) с официальной страницы релизов GitHub:</span>
+        </p>
+        <p>
+            <a href="https://github.com/guillaumeblanc/ozz-animation/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
+                <span class="data-en">Download ozz-animation Releases</span>
+                <span class="data-ru">Скачать релизы ozz-animation</span>
+            </a>
+        </p>
+        <p>
+            <span class="data-en">Extract the downloaded archive to a convenient directory on your machine.</span>
+            <span class="data-ru">Распакуйте скачанный архив в удобную директорию на вашем компьютере.</span>
+        </p>
+    </section>
+
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 2: Create the Build Script</span>
+            <span class="data-ru">Шаг 2: Создание скрипта сборки</span>
+        </h2>
+        <p>
+            <span class="data-en">In the root directory of the extracted ozz-animation source folder, create an empty file named <code>build-wasm-static.bat</code> and paste the following content into it:</span>
+            <span class="data-ru">В корневой директории распакованного исходного кода ozz-animation создайте пустой файл <code>build-wasm-static.bat</code> и вставьте в него следующее содержимое:</span>
+        </p>
+
+        <pre><code class="language-bash">@echo off
+
+if not exist build-wasm-static mkdir build-wasm-static
+cd build-wasm-static
+
+:: Clean old cache if it exists
+if exist CMakeCache.txt del CMakeCache.txt
+if exist CMakeFiles rmdir /s /q CMakeFiles
+
+call emcmake cmake .. ^
+  -G "MinGW Makefiles" ^
+  -DCMAKE_BUILD_TYPE=Release ^
+  -DCMAKE_INSTALL_PREFIX="C:/libs/ozz-animation-0.17.0-wasm" ^
+  -DBUILD_SHARED_LIBS=OFF ^
+  -Dozz_build_tools=OFF ^
+  -Dozz_build_samples=OFF ^
+  -Dozz_build_tests=OFF ^
+  -Dozz_build_howtos=OFF
+
+call emmake cmake --build . --config Release --parallel 8 --target install</code></pre>
+
+        <!-- <div class="alert alert-info mt-3">
+            <strong>
+                <span class="data-en">Note:</span>
+                <span class="data-ru">Примечание:</span>
+            </strong>
+            <span class="data-en">Ensure the Emscripten environment is activated in Command Prompt (via <code>emsdk_env.bat</code>) before running the build script.</span>
+            <span class="data-ru">Убедитесь, что окружение Emscripten активировано в командной строке (через <code>emsdk_env.bat</code>) перед запуском скрипта сборки.</span>
+        </div> -->
+    </section>
+
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 3: Run and Compile</span>
+            <span class="data-ru">Шаг 3: Запуск и сборка</span>
+        </h2>
+        <p>
+            <span class="data-en">Run <code>build-emscripten.bat</code> via Command Prompt (CMD) so you can catch any potential compilation errors in the console. Once completed, your compiled static libraries along with header files will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
+            <span class="data-ru">Запустите <code>build-emscripten.bat</code> через командную строку (CMD), чтобы вы могли увидеть возможные ошибки сборки прямо в консоли. После завершения собранные статические библиотеки вместе с заголовочными файлами будут установлены по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
+        </p>
+    </section>
 </div>
 
         
@@ -529,102 +468,6 @@ function copyToClipboard(text, button) {
 
         
 
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-    </block>
-    
-    <block>
-        
-        <block>
-            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
-        </block>
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-    </block>
-    
-    <block>
-        
-
-        
-
-        
-
-        
-        <block>
-            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
-        </block>
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-
-        
-    </block>
-    
-    <block>
-        
-
-        
-
-        
-
-        
-
-        
-        <block>
-            <script src="/libs/prism/1.30.0/components/prism-markup.min.js"></script>
-        </block>
         
 
         
