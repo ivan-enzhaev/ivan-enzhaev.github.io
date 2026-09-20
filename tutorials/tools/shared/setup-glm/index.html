@@ -7,7 +7,7 @@
 
 <title>
   
-    Installing cglm C Mathematics Library
+    Installing GLM C++ Mathematics Library
   
   | Ivan Enzhaev
 </title>
@@ -216,12 +216,12 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Installing cglm Library</span>
-            <span class="data-ru">Установка библиотеки cglm</span>
+            <span class="data-en">Installing GLM Library</span>
+            <span class="data-ru">Установка библиотеки GLM</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A step-by-step guide to downloading, extracting, and configuring the cglm C math library on Windows and Ubuntu.</span>
-            <span class="data-ru">Пошаговое руководство по скачиванию, распаковке и настройке математической C-библиотеки cglm в Windows и Ubuntu.</span>
+            <span class="data-en">A step-by-step guide to downloading, extracting, and configuring the GLM C++ math library on Windows and Ubuntu.</span>
+            <span class="data-ru">Пошаговое руководство по скачиванию, распаковке и настройке математической C++-библиотеки GLM в Windows и Ubuntu.</span>
         </p>
     </header>
 
@@ -254,9 +254,9 @@
             <span class="data-ru">Скачайте zip-архив последнего релиза напрямую из GitHub Releases:</span>
         </p>
         <p>
-            <a href="https://github.com/recp/cglm/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">Download cglm Releases</span>
-                <span class="data-ru">Скачать релизы cglm</span>
+            <a href="https://github.com/g-truc/glm/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
+                <span class="data-en">Download GLM Releases</span>
+                <span class="data-ru">Скачать релизы GLM</span>
             </a>
         </p>
         <p>
@@ -266,7 +266,7 @@
         <pre><code class="language-bash">sudo apt update &amp;&amp; sudo apt install -y wget unzip
 
 cd ~
-wget https://github.com/recp/cglm/archive/refs/tags/v0.9.6.zip -O cglm-0.9.6.zip</code></pre>
+wget https://github.com/g-truc/glm/archive/refs/tags/1.0.3.zip -O glm-1.0.3.zip</code></pre>
     </section>
 
     <section class="mb-4">
@@ -274,14 +274,14 @@ wget https://github.com/recp/cglm/archive/refs/tags/v0.9.6.zip -O cglm-0.9.6.zip
             <span class="data-en">Step 2: Extract the Library</span>
             <span class="data-ru">Шаг 2: Распаковка библиотеки</span>
         </h2>
-
+        
         <h3 class="h6 fw-bold mt-3">
             <span class="data-en">Option A: Windows</span>
             <span class="data-ru">Вариант A: Windows</span>
         </h3>
         <p>
-            <span class="data-en">Unzip the downloaded archive so that the header files are located in <code>C:\libs\cglm-0.9.6\include</code>.</span>
-            <span class="data-ru">Распакуйте скачанный архив так, чтобы заголовочные файлы находились в папке <code>C:\libs\cglm-0.9.6\include</code>.</span>
+            <span class="data-en">Unzip the downloaded archive so that the header files are located in <code>C:\libs\glm-1.0.3\glm</code>.</span>
+            <span class="data-ru">Распакуйте скачанный архив так, чтобы заголовочные файлы находились в папке <code>C:\libs\glm-1.0.3\glm</code>.</span>
         </p>
 
         <h3 class="h6 fw-bold mt-3">
@@ -293,11 +293,11 @@ wget https://github.com/recp/cglm/archive/refs/tags/v0.9.6.zip -O cglm-0.9.6.zip
             <span class="data-ru">Распакуйте архив в директорию <code>~/libs</code>:</span>
         </p>
         <pre><code class="language-bash">mkdir -p ~/libs
-unzip -o cglm-0.9.6.zip -d ~/libs/
-rm -f cglm-0.9.6.zip</code></pre>
+unzip -o glm-1.0.3.zip -d ~/libs/
+rm -f glm-1.0.3.zip</code></pre>
         <p>
-            <span class="data-en">This will extract the headers into <code>~/libs/cglm-0.9.6/include</code>.</span>
-            <span class="data-ru">Заголовочные файлы будут распакованы по пути <code>~/libs/cglm-0.9.6/include</code>.</span>
+            <span class="data-en">This will extract the headers into <code>~/libs/glm-1.0.3/glm</code>.</span>
+            <span class="data-ru">Заголовочные файлы будут распакованы по пути <code>~/libs/glm-1.0.3/glm</code>.</span>
         </p>
     </section>
 
@@ -307,25 +307,25 @@ rm -f cglm-0.9.6.zip</code></pre>
             <span class="data-ru">Шаг 3: Создание директории проекта</span>
         </h2>
         <p>
-            <span class="data-en">Create a workspace folder and a new directory for your cglm test project:</span>
-            <span class="data-ru">Создайте рабочую папку для проектов и новую директорию для вашего тестового проекта cglm:</span>
+            <span class="data-en">Create a workspace folder and a new directory for your GLM test project:</span>
+            <span class="data-ru">Создайте рабочую папку для проектов и новую директорию для вашего тестового проекта GLM:</span>
         </p>
 
         <!-- Windows Command -->
         <h3 class="h6 fw-bold mt-3 text-primary">Windows (Command Prompt / PowerShell)</h3>
-        <pre><code class="language-bash">mkdir C:\projects\cglm-test
-cd C:\projects\cglm-test</code></pre>
+        <pre><code class="language-bash">mkdir C:\projects\glm-test
+cd C:\projects\glm-test</code></pre>
 
         <!-- Ubuntu Command -->
         <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal)</h3>
-        <pre><code class="language-bash">mkdir -p ~/projects/cglm-test
-cd ~/projects/cglm-test</code></pre>
+        <pre><code class="language-bash">mkdir -p ~/projects/glm-test
+cd ~/projects/glm-test</code></pre>
     </section>
 
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 4: Create Source Files (main.c &amp; CMakeLists.txt)</span>
-            <span class="data-ru">Шаг 4: Создание исходных файлов (main.c и CMakeLists.txt)</span>
+            <span class="data-en">Step 4: Create Source Files (main.cpp &amp; CMakeLists.txt)</span>
+            <span class="data-ru">Шаг 4: Создание исходных файлов (main.cpp и CMakeLists.txt)</span>
         </h2>
 
         <p>
@@ -335,12 +335,12 @@ cd ~/projects/cglm-test</code></pre>
 
         <!-- Windows Quick File Creation -->
         <h3 class="h6 fw-bold mt-3 text-primary">Windows (Terminal / Notepad)</h3>
-        <pre><code class="language-bash">notepad main.c
+        <pre><code class="language-bash">notepad main.cpp
 notepad CMakeLists.txt</code></pre>
 
         <!-- Ubuntu Quick File Creation -->
         <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal / Nano)</h3>
-        <pre><code class="language-bash">nano main.c
+        <pre><code class="language-bash">nano main.cpp
 nano CMakeLists.txt</code></pre>
 
         <div class="alert alert-info py-2 my-3">
@@ -351,20 +351,19 @@ nano CMakeLists.txt</code></pre>
 
         <!-- Code File 1 -->
         <h3 class="h6 fw-bold mt-4">
-            <span class="data-en">1. File Contents for main.c</span>
-            <span class="data-ru">1. Содержимое файла main.c</span>
+            <span class="data-en">1. File Contents for main.cpp</span>
+            <span class="data-ru">1. Содержимое файла main.cpp</span>
         </h3>
-        <pre><code class="language-c">#include &lt;stdio.h&gt;
-#include &lt;cglm/cglm.h&gt;
+        <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;glm/glm.hpp&gt;
+#include &lt;glm/gtc/matrix_transform.hpp&gt;
 
-int main(int argc, char *argv[]) {
-    vec3 v1 = {1.0f, 2.0f, 3.0f};
-    vec3 v2 = {4.0f, 5.0f, 6.0f};
-    vec3 result;
+int main() {
+    glm::vec3 v1(1.0f, 2.0f, 3.0f);
+    glm::vec3 v2(4.0f, 5.0f, 6.0f);
+    glm::vec3 result = v1 + v2;
 
-    glm_vec3_add(v1, v2, result);
-
-    printf("Result vector: [%.1f, %.1f, %.1f]\n", result[0], result[1], result[2]);
+    std::cout &lt;&lt; "Result vector: [" &lt;&lt; result.x &lt;&lt; ", " &lt;&lt; result.y &lt;&lt; ", " &lt;&lt; result.z &lt;&lt; "]" &lt;&lt; std::endl;
     return 0;
 }</code></pre>
 
@@ -374,14 +373,17 @@ int main(int argc, char *argv[]) {
             <span class="data-ru">2. Содержимое файла CMakeLists.txt</span>
         </h3>
         <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
-project(cglm_test C)
+project(glm_test CXX)
 
-add_executable(app main.c)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_executable(app main.cpp)
 
 if(WIN32)
-    target_include_directories(app PRIVATE C:/libs/cglm-0.9.6/include)
+    target_include_directories(app PRIVATE C:/libs/glm-1.0.3)
 else()
-    target_include_directories(app PRIVATE $ENV{HOME}/libs/cglm-0.9.6/include)
+    target_include_directories(app PRIVATE $ENV{HOME}/libs/glm-1.0.3)
 endif()</code></pre>
     </section>
 
@@ -580,11 +582,12 @@ function copyToClipboard(text, button) {
     
     <block>
         
+
+        
         <block>
             <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
         </block>
-        
-
         
 
         
