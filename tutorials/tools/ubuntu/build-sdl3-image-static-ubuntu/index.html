@@ -7,7 +7,7 @@
 
 <title>
   
-    Building WebP Static Library for Windows (MinGW &amp; CMake)
+    Building SDL3_image Static Library for Ubuntu (GCC, CMake &amp; Ninja)
   
   | Ivan Enzhaev
 </title>
@@ -216,120 +216,157 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Building WebP Static Library for Windows (MinGW &amp; CMake)</span>
-            <span class="data-ru">Сборка статической библиотеки WebP для Windows (MinGW и CMake)</span>
+            <span class="data-en">Building SDL3_image Static Library for Ubuntu (GCC, CMake &amp; Ninja)</span>
+            <span class="data-ru">Сборка статической библиотеки SDL3_image для Ubuntu (GCC, CMake и Ninja)</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to compiling WebP source code into a static library (libwebp.a) for Windows using MinGW and CMake.</span>
-            <span class="data-ru">Руководство по компиляции исходного кода WebP в статическую библиотеку (libwebp.a) для Windows с помощью MinGW и CMake.</span>
+            <span class="data-en">A guide to compiling SDL3_image source code into a static library (libSDL3_image.a) on Ubuntu with WebP support.</span>
+            <span class="data-ru">Руководство по компиляции исходного кода SDL3_image в статическую библиотеку (libSDL3_image.a) в Ubuntu с поддержкой WebP.</span>
         </p>
     </header>
 
     <div class="alert alert-secondary mb-3">
-        <span class="data-en">If you haven't set up MinGW and CMake on your machine, follow the</span>
-        <span class="data-ru">Если вы еще не настроили MinGW и CMake на своем компьютере, следуйте инструкции:</span>
-        <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-            <span class="data-en">MinGW & CMake Setup Guide</span>
-            <span class="data-ru">Руководство по настройке MinGW и CMake</span>
-        </a>
+        <span class="data-en">Make sure you have already built the core SDL3 and WebP libraries for Ubuntu by following these instructions:</span>
+        <span class="data-ru">Убедитесь, что вы уже собрали основные библиотеки SDL3 и WebP для Ubuntu, следуя этим инструкциям:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/tools/ubuntu/build-sdl3-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 Static Library for Ubuntu</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для Ubuntu</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/ubuntu/build-webp-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building WebP Static Library for Ubuntu</span>
+                    <span class="data-ru">Сборка статической библиотеки WebP для Ubuntu</span>
+                </a>
+            </li>
+        </ul>
     </div>
 
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 1: Download WebP Source Code</span>
-            <span class="data-ru">Шаг 1: Скачивание исходного кода WebP</span>
+            <span class="data-en">Step 1: Install Build Dependencies</span>
+            <span class="data-ru">Шаг 1: Установка зависимостей сборки</span>
         </h2>
         <p>
-            <span class="data-en">Download the latest WebP source archive (<code>.zip</code> or <code>.tar.gz</code>) from the official GitHub tags page:</span>
-            <span class="data-ru">Скачайте последний архив с исходным кодом WebP (<code>.zip</code> или <code>.tar.gz</code>) с официальной страницы тегов GitHub:</span>
+            <span class="data-en">Ensure that <code>wget</code> is installed on your system to download the source archives:</span>
+            <span class="data-ru">Убедитесь, что <code>wget</code> установлен в вашей системе для скачивания архивов исходного кода:</span>
         </p>
-        <p>
-            <a href="https://github.com/webmproject/libwebp/tags" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">Download WebP Releases</span>
-                <span class="data-ru">Скачать релизы WebP</span>
-            </a>
-        </p>
-        <p>
-            <span class="data-en">Extract the downloaded archive to a convenient directory on your machine.</span>
-            <span class="data-ru">Распакуйте скачанный архив в удобную директорию на вашем компьютере.</span>
-        </p>
+        <pre><code class="language-bash">sudo apt update &amp;&amp; sudo apt install -y wget</code></pre>
     </section>
 
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 2: Create the Build Script</span>
-            <span class="data-ru">Шаг 2: Создание скрипта сборки</span>
+            <span class="data-en">Step 2: Download SDL3_image Source Code Archive</span>
+            <span class="data-ru">Шаг 2: Скачивание архива исходного кода SDL3_image</span>
         </h2>
         <p>
-            <span class="data-en">In the root directory of the extracted WebP source folder, create an empty file named <code>build-mingw-static.bat</code> and paste the following content into it:</span>
-            <span class="data-ru">В корневой директории распакованного исходного кода WebP создайте пустой файл <code>build-mingw-static.bat</code> и вставьте в него следующее содержимое:</span>
+            <span class="data-en">You can browse the official GitHub releases page to check the latest available release assets:</span>
+            <span class="data-ru">Вы можете перейти на страницу релизов GitHub, чтобы посмотреть список доступных версий:</span>
+        </p>
+        <p>
+            <a href="https://github.com/libsdl-org/SDL_image/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
+                <span class="data-en">View SDL3_image Releases</span>
+                <span class="data-ru">Смотреть релизы SDL3_image</span>
+            </a>
+        </p>
+        <p>
+            <span class="data-en">Download and extract the source archive for your desired version release using <code>wget</code>:</span>
+            <span class="data-ru">Скачайте и распакуйте архив с исходным кодом для нужного релиза с помощью <code>wget</code>:</span>
+        </p>
+        <pre><code class="language-bash">cd ~
+wget https://github.com/libsdl-org/SDL_image/releases/download/release-3.4.6/SDL3_image-3.4.6.tar.gz -O SDL3_image-3.4.6.tar.gz
+tar -xzf SDL3_image-3.4.6.tar.gz
+cd SDL3_image-3.4.6</code></pre>
+    </section>
+
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 3: Create the Build Script</span>
+            <span class="data-ru">Шаг 3: Создание скрипта сборки</span>
+        </h2>
+        <p>
+            <span class="data-en">In the root directory of the extracted SDL3_image source folder, create a script named <code>build-ubuntu-static.sh</code> with the following content:</span>
+            <span class="data-ru">В корневой директории извлеченного исходного кода SDL3_image создайте файл <code>build-ubuntu-static.sh</code> со следующим содержимым:</span>
         </p>
 
-        <pre><code class="language-bash">@echo off
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
 
-if not exist build-mingw-static mkdir build-mingw-static
-cd build-mingw-static
+WEBP_PATH="$HOME/libs/webp-1.6.0-ubuntu"
+BUILD_DIR="build-ubuntu-static"
 
-:: Clean old cache completely
-if exist CMakeCache.txt del CMakeCache.txt
-if exist CMakeFiles rmdir /s /q CMakeFiles
+mkdir -p "$BUILD_DIR"
+cd "$BUILD_DIR"
 
-call cmake .. ^
-  -DBUILD_SHARED_LIBS=OFF ^
-  -DWEBP_BUILD_CWEBP=OFF ^
-  -DWEBP_BUILD_DWEBP=OFF ^
-  -DWEBP_BUILD_GIF2WEBP=OFF ^
-  -DWEBP_BUILD_IMG2WEBP=OFF ^
-  -DWEBP_BUILD_VWEBP=OFF ^
-  -DWEBP_BUILD_WEBPINFO=OFF ^
-  -DWEBP_BUILD_WEBPMUX=OFF ^
-  -DWEBP_BUILD_ANIM_UTILS=OFF ^
-  -DWEBP_BUILD_EXTRAS=OFF ^
-  -DWEBP_BUILD_LIBWEBPMUX=ON ^
-  -DWEBP_NEAR_LOSSLESS=ON ^
-  -DWEBP_ENABLE_SIMD=ON ^
-  -DCMAKE_BUILD_TYPE=Release ^
-  -DCMAKE_INSTALL_PREFIX=C:/libs/webp-1.6.0-mingw ^
-  -G "MinGW Makefiles"
+# Clean old CMake cache if it exists
+rm -f CMakeCache.txt
+rm -rf CMakeFiles
 
-call cmake --build . --config Release --parallel 8 --target install</code></pre>
+cmake .. \
+  -GNinja \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX="$HOME/libs/sdl3-image-3.4.6-ubuntu" \
+  -DSDL3_DIR="$HOME/libs/sdl3-3.4.16-ubuntu/lib/cmake/SDL3" \
+  -DCMAKE_PREFIX_PATH="$WEBP_PATH" \
+  -Dwebp_DIR="$WEBP_PATH/share/WebP/cmake" \
+  -Dwebp_ROOT="$WEBP_PATH" \
+  -DBUILD_SHARED_LIBS=OFF \
+  -DSDLIMAGE_SAMPLES=OFF \
+  -DSDLIMAGE_TESTS=OFF \
+  -DSDLIMAGE_WEBP=ON \
+  -DSDLIMAGE_WEBP_SHARED=OFF \
+  -DSDLIMAGE_VENDORED=OFF \
+  -DSDLIMAGE_BACKEND_IMAGEIO=OFF
+
+cmake --build . --config Release --parallel $(nproc) --target install</code></pre>
 
         <div class="alert alert-info mt-3">
             <strong>
                 <span class="data-en">Note:</span>
                 <span class="data-ru">Примечание:</span>
             </strong>
-            <!-- <span class="data-en">Make sure to adjust the <code>CMAKE_INSTALL_PREFIX</code> path according to your target library directory structure. Setting <code>BUILD_SHARED_LIBS=OFF</code> ensures static libraries (<code>.a</code>) are compiled instead of dynamic ones (<code>.dll</code>).</span>
-            <span class="data-ru">Убедитесь, что путь в <code>CMAKE_INSTALL_PREFIX</code> соответствует вашей структуре директорий для библиотек. Флаг <code>BUILD_SHARED_LIBS=OFF</code> гарантирует сборку статических библиотек (<code>.a</code>) вместо динамических (<code>.dll</code>).</span> -->
-            <span class="data-en">Adjust the <code>CMAKE_INSTALL_PREFIX</code> path to point to your preferred target installation folder.</span>
-            <span class="data-ru">Убедитесь, что путь <code>CMAKE_INSTALL_PREFIX</code> указывает на удобную для вас директорию установки.</span>
+            <span class="data-en">Ensure that the path variables (<code>WEBP_PATH</code>, <code>SDL3_DIR</code>, and <code>CMAKE_INSTALL_PREFIX</code>) match the paths to your locally compiled static libraries.</span>
+            <span class="data-ru">Убедитесь, что переменные путей (<code>WEBP_PATH</code>, <code>SDL3_DIR</code> и <code>CMAKE_INSTALL_PREFIX</code>) соответствуют путям к вашим локально собранным статическим библиотекам.</span>
         </div>
     </section>
 
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 3: Run and Compile</span>
-            <span class="data-ru">Шаг 3: Запуск и сборка</span>
+            <span class="data-en">Step 4: Run, Compile, and Clean Up</span>
+            <span class="data-ru">Шаг 4: Запуск, сборка и очистка</span>
         </h2>
         <p>
-            <span class="data-en">Run <code>build-mingw-static.bat</code> via Command Prompt (CMD) so you can catch any potential compilation errors in the console. Once completed, your compiled static libraries (such as <code>libwebp.a</code>, <code>libwebpmux.a</code>) along with headers will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
-            <span class="data-ru">Запустите <code>build-mingw-static.bat</code> через командную строку (CMD), чтобы вы могли увидеть возможные ошибки сборки прямо в консоли. После завершения собранные статические библиотеки (такие как <code>libwebp.a</code>, <code>libwebpmux.a</code>) вместе с заголовочными файлами будут установлены по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
+            <span class="data-en">Grant execution permissions to the script and run it in your terminal:</span>
+            <span class="data-ru">Сделайте скрипт исполняемым и запустите его в терминале:</span>
         </p>
+        <pre><code class="language-bash">chmod +x build-ubuntu-static.sh
+./build-ubuntu-static.sh</code></pre>
+        <p>
+            <span class="data-en">Upon completion, your compiled static library (<code>libSDL3_image.a</code>) along with headers will be installed in your specified <code>CMAKE_INSTALL_PREFIX</code> directory.</span>
+            <span class="data-ru">После успешного завершения собранная статическая библиотека (<code>libSDL3_image.a</code>) вместе с заголовочными файлами будет установлена по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
+        </p>
+        <p>
+            <span class="data-en">Once installed, you can safely remove the temporary source directory and the downloaded archive:</span>
+            <span class="data-ru">После установки вы можете безопасно удалить временную директорию с исходным кодом и скачанный архив:</span>
+        </p>
+        <pre><code class="language-bash">cd ~ &amp;&amp; rm -rf ~/SDL3_image-3.4.6 ~/SDL3_image-3.4.6.tar.gz</code></pre>
     </section>
 
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 4: Next Steps</span>
-            <span class="data-ru">Шаг 4: Следующие шаги</span>
+            <span class="data-en">Step 5: Next Steps</span>
+            <span class="data-ru">Шаг 5: Следующие шаги</span>
         </h2>
         <p>
-            <span class="data-en">Now that you have compiled and installed the WebP static library, you can proceed with building SDL3_image:</span>
-            <span class="data-ru">Теперь, когда вы собрали и установили статическую библиотеку WebP, вы можете перейти к сборке SDL3_image:</span>
+            <span class="data-en">Now that you have compiled and installed the SDL3_image static library, you can proceed with integrating WebGPU-Native, SDL3, and SDL3_image:</span>
+            <span class="data-ru">Теперь, когда вы собрали и установили статическую библиотеку SDL3_image, вы можете перейти к интеграции WebGPU-Native, SDL3 и SDL3_image:</span>
         </p>
         <p>
-            <a href="/tutorials/tools/mingw/build-sdl3-image-static-mingw" class="btn btn-outline-primary fw-bold lang-link-dynamic">
-                <span class="data-en">Building SDL3_image Static Library for Windows (MinGW &amp; CMake)</span>
-                <span class="data-ru">Сборка статической библиотеки SDL3_image для Windows (MinGW и CMake)</span>
+            <a href="/tutorials/tools/shared/integrate-webgpu-sdl3-image" class="btn btn-outline-primary fw-bold lang-link-dynamic">
+                <span class="data-en">Integrating WebGPU-Native, SDL3, and SDL3_image on Windows and Ubuntu</span>
+                <span class="data-ru">Интеграция WebGPU-Native, SDL3 и SDL3_image под Windows и Ubuntu</span>
             </a>
         </p>
     </section>
