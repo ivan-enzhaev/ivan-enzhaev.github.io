@@ -7,7 +7,7 @@
 
 <title>
   
-    Installing Dear ImGui (Master Branch) &amp; WebGPU Setup Guide
+    Installing Dear ImGui Library (Master Branch)
   
   | Ivan Enzhaev
 </title>
@@ -216,12 +216,12 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Installing Dear ImGui &amp; WebGPU Integration</span>
-            <span class="data-ru">Установка Dear ImGui и интеграция с WebGPU</span>
+            <span class="data-en">Installing Dear ImGui Library</span>
+            <span class="data-ru">Установка библиотеки Dear ImGui</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A step-by-step guide to setting up Dear ImGui from the master branch with WebGPU support on Windows and Ubuntu.</span>
-            <span class="data-ru">Пошаговое руководство по настройке Dear ImGui из ветки master с поддержкой WebGPU в Windows и Ubuntu.</span>
+            <span class="data-en">A step-by-step guide to downloading, extracting, and configuring the Dear ImGui C++ library on Windows and Ubuntu.</span>
+            <span class="data-ru">Пошаговое руководство по скачиванию, распаковке и настройке C++ библиотеки Dear ImGui в Windows и Ubuntu.</span>
         </p>
     </header>
 
@@ -275,7 +275,7 @@
             <span class="data-en">For Ubuntu, you can download and extract it directly via <code>wget</code> in terminal:</span>
             <span class="data-ru">В Ubuntu вы можете скачать и распаковать архив напрямую с помощью <code>wget</code> в терминале:</span>
         </p>
-        <pre><code class="language-bash">sudo apt update &amp;&amp; sudo apt install -y wget unzip
+        <pre><code class="language-bash">sudo apt update &amp;&amp; sudo apt install -y wget unzip git
 
 cd ~
 wget https://github.com/ocornut/imgui/archive/refs/heads/master.zip -O imgui-master.zip</code></pre>
@@ -319,19 +319,19 @@ rm -f imgui-master.zip</code></pre>
             <span class="data-ru">Шаг 3: Создание директории проекта</span>
         </h2>
         <p>
-            <span class="data-en">Create a workspace folder and a new directory for your ImGui WebGPU test project:</span>
-            <span class="data-ru">Создайте рабочую папку для проектов и новую директорию для вашего тестового проекта ImGui с WebGPU:</span>
+            <span class="data-en">Create a workspace folder and a new directory for your ImGui test project:</span>
+            <span class="data-ru">Создайте рабочую папку для проектов и новую директорию для вашего тестового проекта ImGui:</span>
         </p>
 
         <!-- Windows Command -->
         <h3 class="h6 fw-bold mt-3 text-primary">Windows (Command Prompt / PowerShell)</h3>
-        <pre><code class="language-bash">mkdir C:\projects\imgui-webgpu-test
-cd C:\projects\imgui-webgpu-test</code></pre>
+        <pre><code class="language-bash">mkdir C:\projects\imgui-test
+cd C:\projects\imgui-test</code></pre>
 
         <!-- Ubuntu Command -->
         <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal)</h3>
-        <pre><code class="language-bash">mkdir -p ~/projects/imgui-webgpu-test
-cd ~/projects/imgui-webgpu-test</code></pre>
+        <pre><code class="language-bash">mkdir -p ~/projects/imgui-test
+cd ~/projects/imgui-test</code></pre>
     </section>
 
     <section class="mb-4">
@@ -370,8 +370,7 @@ nano CMakeLists.txt</code></pre>
 #include "imgui.h"
 #include "imgui_impl_wgpu.h"
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
     // Initialize ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -413,7 +412,7 @@ int main(int argc, char** argv)
         <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
 
 cmake_minimum_required(VERSION 3.21)
-project(imgui_webgpu_test CXX)
+project(imgui_test CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -426,7 +425,7 @@ if(WIN32)
     set(WGPU_DIR "C:/libs/wgpu-29.0.1.1-mingw")
 else()
     set(IMGUI_DIR "$ENV{HOME}/libs/imgui-master")
-    set(WGPU_DIR "$ENV{HOME}/libs/wgpu-native-29.0.1.1-ubuntu")
+    set(WGPU_DIR "$ENV{HOME}/libs/wgpu-native")
 endif()
 
 set(IMGUI_SOURCES
