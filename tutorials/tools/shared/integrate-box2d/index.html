@@ -7,7 +7,7 @@
 
 <title>
   
-    Building Recast Navigation Static Libraries for Windows (MinGW &amp; CMake)
+    Integrating Box2D Static Library with CMake on Windows &amp; Ubuntu
   
   | Ivan Enzhaev
 </title>
@@ -216,112 +216,298 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Building Recast Navigation Static Libraries for Windows (MinGW &amp; CMake)</span>
-            <span class="data-ru">Сборка статических библиотек Recast Navigation для Windows (MinGW и CMake)</span>
+            <span class="data-en">Integrating Box2D Static Library with CMake on Windows &amp; Ubuntu</span>
+            <span class="data-ru">Интеграция статической библиотеки Box2D с CMake под Windows и Ubuntu</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to compiling Recast Navigation source code into static libraries for Windows using MinGW and CMake.</span>
-            <span class="data-ru">Руководство по компиляции исходного кода Recast Navigation в статические библиотеки для Windows с помощью MinGW и CMake.</span>
+            <span class="data-en">A step-by-step guide to configuring and integrating the Box2D static library in your CMake projects on Windows and Ubuntu.</span>
+            <span class="data-ru">Пошаговое руководство по настройке и интеграции статической библиотеки Box2D в проекты CMake под Windows и Ubuntu.</span>
         </p>
     </header>
 
     <div class="alert alert-secondary mb-3">
-        <span class="data-en">If you haven't set up MinGW and CMake on your machine, follow the</span>
-        <span class="data-ru">Если вы еще не настроили MinGW и CMake на своем компьютере, следуйте инструкции:</span>
-        <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-            <span class="data-en">MinGW & CMake Setup Guide</span>
-            <span class="data-ru">Руководство по настройке MinGW и CMake</span>
-        </a>
+        <span class="data-en">Before proceeding, make sure you have built and installed the Box2D static library on your system using the appropriate guide:</span>
+        <span class="data-ru">Перед продолжением убедитесь, что вы собрали и установили статическую библиотеку Box2D в вашей системе, следуя соответствующей инструкции:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/tools/mingw/build-box2d-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building Box2D Static Library for Windows (MinGW &amp; CMake)</span>
+                    <span class="data-ru">Сборка статической библиотеки Box2D для Windows (MinGW и CMake)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/ubuntu/build-box2d-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building Box2D Static Library for Ubuntu (GCC, CMake &amp; Ninja)</span>
+                    <span class="data-ru">Сборка статической библиотеки Box2D для Ubuntu (GCC, CMake и Ninja)</span>
+                </a>
+            </li>
+        </ul>
     </div>
 
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 1: Download Recast Navigation Source Code</span>
-            <span class="data-ru">Шаг 1: Скачивание исходного кода Recast Navigation</span>
+            <span class="data-en">Step 1: Create Project Directory</span>
+            <span class="data-ru">Шаг 1: Создание директории проекта</span>
         </h2>
         <p>
-            <span class="data-en">Download the latest source archive from the <code>main</code> branch of the official GitHub repository:</span>
-            <span class="data-ru">Скачайте свежий архив с исходным кодом из ветки <code>main</code> официального репозитория GitHub:</span>
+            <span class="data-en">Create a workspace folder and a new directory for your Box2D test project:</span>
+            <span class="data-ru">Создайте рабочую папку для проектов и новую директорию для вашего тестового проекта Box2D:</span>
         </p>
-        <p>
-            <a href="https://github.com/recastnavigation/recastnavigation" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">Download Recast Navigation (main branch)</span>
-                <span class="data-ru">Скачать Recast Navigation (ветка main)</span>
-            </a>
-        </p>
-        <p>
-            <span class="data-en">Extract the downloaded archive to a convenient directory on your machine.</span>
-            <span class="data-ru">Распакуйте скачанный архив в удобную директорию на вашем компьютере.</span>
-        </p>
+
+        <!-- Windows Command -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (Command Prompt / PowerShell)</h3>
+        <pre><code class="language-bash">mkdir C:\projects\box2d-test
+cd C:\projects\box2d-test</code></pre>
+
+        <!-- Ubuntu Command -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal)</h3>
+        <pre><code class="language-bash">mkdir -p ~/projects/box2d-test
+cd ~/projects/box2d-test</code></pre>
     </section>
 
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 2: Create the Build Script</span>
-            <span class="data-ru">Шаг 2: Создание скрипта сборки</span>
+            <span class="data-en">Step 2: Create Source Files (main.cpp &amp; CMakeLists.txt)</span>
+            <span class="data-ru">Шаг 2: Создание исходных файлов (main.cpp и CMakeLists.txt)</span>
         </h2>
+
         <p>
-            <span class="data-en">In the root directory of the extracted Recast Navigation source folder, create an empty file named <code>build-mingw-static.bat</code> and paste the following content into it:</span>
-            <span class="data-ru">В корневой директории распакованного исходного кода Recast Navigation создайте пустой файл <code>build-mingw-static.bat</code> и вставьте в него следующее содержимое:</span>
+            <span class="data-en">You can create these files using Notepad / Sublime Text on Windows, or <code>nano</code> in Ubuntu terminal:</span>
+            <span class="data-ru">Вы можете создать эти файлы через Блокнот / Sublime Text в Windows или с помощью <code>nano</code> в терминале Ubuntu:</span>
         </p>
 
-        <pre><code class="language-bash">@echo off
+        <!-- Windows Quick File Creation -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (Terminal / Notepad)</h3>
+        <pre><code class="language-bash">notepad main.cpp
+notepad CMakeLists.txt</code></pre>
 
-set BUILD_DIR=build-mingw-static
+        <!-- Ubuntu Quick File Creation -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal / Nano)</h3>
+        <pre><code class="language-bash">nano main.cpp
+nano CMakeLists.txt</code></pre>
 
-if exist %BUILD_DIR% rmdir /s /q %BUILD_DIR%
-mkdir %BUILD_DIR%
-cd %BUILD_DIR%
-
-cmake .. ^
-  -G "MinGW Makefiles" ^
-  -DCMAKE_BUILD_TYPE=Release ^
-  -DCMAKE_INSTALL_PREFIX="C:/libs/recastnavigation-mingw" ^
-  -DCMAKE_CXX_STANDARD=20 ^
-  -DCMAKE_CXX_STANDARD_REQUIRED=ON ^
-  -DBUILD_SHARED_LIBS=OFF ^
-  -DRECASTNAVIGATION_DEMO=OFF ^
-  -DRECASTNAVIGATION_TESTS=OFF ^
-  -DRECASTNAVIGATION_EXAMPLES=OFF
-
-cmake --build . --config Release --parallel 8 --target install</code></pre>
-
-        <div class="alert alert-info mt-3">
-            <strong>
-                <span class="data-en">Note:</span>
-                <span class="data-ru">Примечание:</span>
-            </strong>
-            <span class="data-en">Make sure to adjust the <code>CMAKE_INSTALL_PREFIX</code> path according to your target installation directory. Setting <code>RECASTNAVIGATION_DEMO=OFF</code> and <code>RECASTNAVIGATION_TESTS=OFF</code> ensures only the core static libraries (Recast, Detour, DebugUtils, etc.) are built.</span>
-            <span class="data-ru">Убедитесь, что путь к <code>CMAKE_INSTALL_PREFIX</code> соответствует вашей целевой директории установки. Флаги <code>RECASTNAVIGATION_DEMO=OFF</code> и <code>RECASTNAVIGATION_TESTS=OFF</code> гарантируют сборку только основных статических библиотек (Recast, Detour, DebugUtils и др.).</span>
+        <div class="alert alert-info py-2 my-3">
+            <strong><span class="data-en">Quick Nano Commands (Ubuntu):</span><span class="data-ru">Быстрые команды Nano (Ubuntu):</span></strong>
+            <span class="data-en">Paste code with Right Mouse Button (RMB) &rarr; Press <kbd>Ctrl</kbd> + <kbd>O</kbd> and <kbd>Enter</kbd> to save &rarr; Press <kbd>Ctrl</kbd> + <kbd>X</kbd> to exit.</span>
+            <span class="data-ru">Вставьте код правой кнопкой мыши (ПКМ) &rarr; Нажмите <kbd>Ctrl</kbd> + <kbd>O</kbd> и <kbd>Enter</kbd> для сохранения &rarr; Нажмите <kbd>Ctrl</kbd> + <kbd>X</kbd> для выхода.</span>
         </div>
+
+        <!-- Code File 1 -->
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">1. File Contents for main.cpp</span>
+            <span class="data-ru">1. Содержимое файла main.cpp</span>
+        </h3>
+        <pre><code class="language-cpp">#include &lt;box2d/box2d.h&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+    std::cout &lt;&lt; "Initializing Box2D v3 physics world..." &lt;&lt; std::endl;
+
+    // Create world definition and set gravity
+    b2WorldDef worldDef = b2DefaultWorldDef();
+    worldDef.gravity = (b2Vec2) { 0.0f, -9.8f };
+
+    // Create physics world
+    b2WorldId worldId = b2CreateWorld(&amp;worldDef);
+
+    // Create ground static body
+    b2BodyDef groundBodyDef = b2DefaultBodyDef();
+    groundBodyDef.position = (b2Vec2) { 0.0f, -10.0f };
+    b2BodyId groundId = b2CreateBody(worldId, &amp;groundBodyDef);
+
+    // Attach ground box shape
+    b2Polygon groundBox = b2MakeBox(50.0f, 10.0f);
+    b2ShapeDef groundShapeDef = b2DefaultShapeDef();
+    b2CreatePolygonShape(groundId, &amp;groundShapeDef, &amp;groundBox);
+
+    // Create dynamic body
+    b2BodyDef bodyDef = b2DefaultBodyDef();
+    bodyDef.type = b2_dynamicBody;
+    bodyDef.position = (b2Vec2) { 0.0f, 4.0f };
+    b2BodyId bodyId = b2CreateBody(worldId, &amp;bodyDef);
+
+    // Attach dynamic box shape
+    b2Polygon dynamicBox = b2MakeBox(1.0f, 1.0f);
+    b2ShapeDef dynamicShapeDef = b2DefaultShapeDef();
+    dynamicShapeDef.density = 1.0f;
+    dynamicShapeDef.material.friction = 0.3f; // Or simply omit friction to use default shape settings
+
+    // If using Box2D v3.0+, surface properties are set on the shape definition:
+    b2CreatePolygonShape(bodyId, &amp;dynamicShapeDef, &amp;dynamicBox);
+
+    // Prepare simulation parameters
+    float timeStep = 1.0f / 60.0f;
+    int subStepCount = 4;
+
+    // Simulate 10 steps
+    for (int i = 0; i &lt; 10; ++i)
+    {
+        b2World_Step(worldId, timeStep, subStepCount);
+        b2Vec2 position = b2Body_GetPosition(bodyId);
+        b2Rot rotation = b2Body_GetRotation(bodyId);
+        float angle = b2Rot_GetAngle(rotation);
+        std::cout &lt;&lt; "Step " &lt;&lt; i + 1 &lt;&lt; " -&gt; Position: (" &lt;&lt; position.x &lt;&lt; ", " &lt;&lt; position.y &lt;&lt; ") Angle: " &lt;&lt; angle &lt;&lt; std::endl;
+    }
+
+    // Clean up world
+    b2DestroyWorld(worldId);
+
+    std::cout &lt;&lt; "Box2D simulation finished successfully!" &lt;&lt; std::endl;
+    return 0;
+}</code></pre>
+
+        <!-- Code File 2 -->
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">2. File Contents for CMakeLists.txt</span>
+            <span class="data-ru">2. Содержимое файла CMakeLists.txt</span>
+        </h3>
+        <p>
+            <span class="data-en">Imports Box2D static library target explicitly and configures platform-specific paths:</span>
+            <span class="data-ru">Явно импортирует цель статической библиотеки Box2D и настраивает пути под платформу:</span>
+        </p>
+        <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+
+cmake_minimum_required(VERSION 3.21)
+project(box2d_test CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(PROJECT_SOURCES
+    main.cpp
+)
+
+add_executable(app)
+target_sources(app PRIVATE ${PROJECT_SOURCES})
+
+if(WIN32)
+    set(BOX2D_DIR "C:/libs/box2d-3.1.1-mingw")
+
+    target_include_directories(app PRIVATE
+        ${BOX2D_DIR}/include
+    )
+
+    add_library(Box2D_Static STATIC IMPORTED)
+    set_target_properties(Box2D_Static PROPERTIES
+        IMPORTED_LOCATION "${BOX2D_DIR}/lib/libbox2d.a"
+    )
+
+    target_link_libraries(app PRIVATE
+        Box2D_Static
+    )
+
+    # Strip symbols and optimize aggressive for size
+    target_compile_options(app PRIVATE -Os)
+
+    # MinGW static build settings
+    target_link_options(app PRIVATE -static -s -static-libgcc -static-libstdc++)
+
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_link_options(app PRIVATE -mconsole)
+    else()
+        target_link_options(app PRIVATE -mwindows)
+    endif()
+
+else() # Linux / Ubuntu
+    set(BOX2D_DIR "$ENV{HOME}/libs/box2d-3.1.1-ubuntu")
+
+    target_include_directories(app PRIVATE
+        ${BOX2D_DIR}/include
+    )
+
+    add_library(Box2D_Static STATIC IMPORTED)
+    set_target_properties(Box2D_Static PROPERTIES
+        IMPORTED_LOCATION "${BOX2D_DIR}/lib/libbox2d.a"
+    )
+
+    find_package(Threads REQUIRED)
+
+    target_link_libraries(app PRIVATE
+        Box2D_Static
+        Threads::Threads
+    )
+endif()</code></pre>
     </section>
 
+    <!-- Step 3: Build & Execution Scripts -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 3: Run and Compile</span>
-            <span class="data-ru">Шаг 3: Запуск и сборка</span>
+            <span class="data-en">Step 3: Create Build &amp; Execution Scripts</span>
+            <span class="data-ru">Шаг 3: Создание скриптов сборки и запуска</span>
         </h2>
-        <p>
-            <span class="data-en">Run <code>build-mingw-static.bat</code> via Command Prompt (CMD) so you can catch any potential compilation errors in the console. Once completed, your compiled static libraries along with header files will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
-            <span class="data-ru">Запустите <code>build-mingw-static.bat</code> через командную строку (CMD), чтобы вы могли увидеть возможные ошибки сборки прямо в консоли. После завершения собранные статические библиотеки вместе с заголовочными файлами будут установлены по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
+
+        <!-- Windows Tab/Sub-block -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (MinGW / Batch Scripts)</h3>
+        <p class="fw-bold mb-1">config-exe.bat</p>
+        <pre><code class="language-bash">cmake -G Ninja -S . -B dist/win</code></pre>
+
+        <p class="fw-bold mb-1">build-exe.bat</p>
+        <pre><code class="language-bash">cmake --build dist/win</code></pre>
+
+        <p class="fw-bold mb-1">run-exe.bat</p>
+        <pre><code class="language-bash">@echo off
+.\dist\win\app.exe</code></pre>
+
+        <p class="mt-3">
+            <span class="data-en">Run the scripts sequentially in Command Prompt or PowerShell:</span>
+            <span class="data-ru">Последовательно запустите скрипты в командной строке или PowerShell:</span>
         </p>
+        <pre><code class="language-bash">config-exe.bat
+build-exe.bat
+run-exe.bat</code></pre>
+
+        <!-- Ubuntu Tab/Sub-block -->
+        <h3 class="h6 fw-bold mt-4 text-primary">Ubuntu (Bash Scripts)</h3>
+        <p class="fw-bold mb-1">config-bin.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+cmake -G Ninja -S . -B dist/linux</code></pre>
+
+        <p class="fw-bold mb-1">build-bin.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+cmake --build dist/linux</code></pre>
+
+        <p class="fw-bold mb-1">run-bin.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+./dist/linux/app</code></pre>
+
+        <p class="mt-3">
+            <span class="data-en">Grant execute permissions on Ubuntu before running:</span>
+            <span class="data-ru">Предоставьте права на выполнение в Ubuntu перед запуском:</span>
+        </p>
+        <pre><code class="language-bash">chmod +x config-bin.sh build-bin.sh run-bin.sh
+./config-bin.sh
+./build-bin.sh
+./run-bin.sh</code></pre>
     </section>
 
+    <!-- Step 4: Expected Output -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 4: Next Steps</span>
-            <span class="data-ru">Шаг 4: Следующие шаги</span>
+            <span class="data-en">Step 4: Expected Output</span>
+            <span class="data-ru">Шаг 4: Ожидаемый результат</span>
         </h2>
+
         <p>
-            <span class="data-en">Now that you have compiled and installed the Recast Navigation static library, you can integrate it into your C++ projects using CMake:</span>
-            <span class="data-ru">Теперь, когда вы собрали и установили статическую библиотеку Recast Navigation, вы можете интегрировать её в свои C++ проекты с помощью CMake:</span>
+            <span class="data-en">After running the build and execution scripts, you should see output similar to this:</span>
+            <span class="data-ru">После запуска скриптов сборки и выполнения вы должны увидеть результат, похожий на следующий:</span>
         </p>
-        <p>
-            <a href="/tutorials/tools/shared/integrate-recastnavigation" class="btn btn-outline-primary fw-bold lang-link-dynamic">
-                <span class="data-en">Integrating Recast Navigation C++ Library with CMake on Windows &amp; Ubuntu</span>
-                <span class="data-ru">Интеграция C++-библиотеки Recast Navigation с CMake под Windows и Ubuntu</span>
-            </a>
-        </p>
+
+        <pre><code class="language-text">Initializing Box2D v3 physics world...
+Step 1 -&gt; Position: (0, 3.99728) Angle: 0
+Step 2 -&gt; Position: (0, 3.98911) Angle: 0
+Step 3 -&gt; Position: (0, 3.9755) Angle: 0
+Step 4 -&gt; Position: (0, 3.95644) Angle: 0
+Step 5 -&gt; Position: (0, 3.93194) Angle: 0
+Step 6 -&gt; Position: (0, 3.902) Angle: 0
+Step 7 -&gt; Position: (0, 3.86661) Angle: 0
+Step 8 -&gt; Position: (0, 3.82578) Angle: 0
+Step 9 -&gt; Position: (0, 3.7795) Angle: 0
+Step 10 -&gt; Position: (0, 3.72778) Angle: 0
+Box2D simulation finished successfully!</code></pre>
     </section>
 </div>
 
@@ -462,6 +648,71 @@ function copyToClipboard(text, button) {
 <block>
     <script src="/libs/prism/1.30.0/prism.min.js"></script>
 
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
     
     <block>
         
