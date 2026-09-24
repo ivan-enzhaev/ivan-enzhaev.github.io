@@ -245,8 +245,8 @@
         </p>
         <p>
             <a href="https://github.com/kcat/openal-soft/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">Download OpenAL-Soft Releases</span>
-                <span class="data-ru">Скачать релизы OpenAL-Soft</span>
+                <span class="data-en">Download the latest OpenAL-Soft Release</span>
+                <span class="data-ru">Скачать последний релиз OpenAL-Soft</span>
             </a>
         </p>
         <p>
@@ -288,11 +288,9 @@ call cmake --build . --config Release --parallel 8 --target install</code></pre>
 
         <pre><code class="language-bash">@echo off
 
-if not exist build-mingw-static mkdir build-mingw-static
+if exist build-mingw-static rmdir /s /q build-mingw-static
+mkdir build-mingw-static
 cd build-mingw-static
-
-if exist CMakeCache.txt del CMakeCache.txt
-if exist CMakeFiles rmdir /s /q CMakeFiles
 
 call cmake .. ^
   -DCMAKE_BUILD_TYPE=Release ^
@@ -323,6 +321,34 @@ call cmake --build . --config Release --parallel 8 --target install</code></pre>
         <p>
             <span class="data-en">Run <code>build-mingw-static.bat</code> via Command Prompt (CMD) so you can catch any potential compilation errors in the console. Once completed, your compiled static library (<code>libOpenAL32.a</code>) along with headers will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
             <span class="data-ru">Запустите <code>build-mingw-static.bat</code> через командную строку (CMD), чтобы вы могли увидеть возможные ошибки сборки прямо в консоли. После завершения собранная статическая библиотека (<code>libOpenAL32.a</code>) вместе с заголовочными файлами будет установлена по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
+        </p>
+    </section>
+
+    <!-- <div class="alert alert-secondary mb-0">
+        <span class="data-en">Next Step: Learn how to integrate the compiled library into your CMake projects:</span>
+        <span class="data-ru">Следующий шаг: Узнайте, как интегрировать собранную библиотеку в ваши проекты CMake:</span>
+        <div class="mt-2">
+            <a href="/tutorials/cpp/openal-soft/integrate-openal-soft-cmake" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                <span class="data-en">Integrating OpenAL-Soft Library with CMake on Windows &amp; Ubuntu</span>
+                <span class="data-ru">Интеграция C++-библиотеки OpenAL-Soft с CMake под Windows и Ubuntu</span>
+            </a>
+        </div>
+    </div> -->
+
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 4: Next Steps</span>
+            <span class="data-ru">Шаг 4: Следующие шаги</span>
+        </h2>
+        <p>
+            <span class="data-en">Now that you have configured your environment, you can proceed with integrating the OpenAL-Soft library using CMake:</span>
+            <span class="data-ru">Теперь, когда вы настроили окружение, вы можете перейти к интеграции библиотеки OpenAL-Soft с помощью CMake:</span>
+        </p>
+        <p>
+            <a href="/tutorials/tools/shared/integrate-openal-soft" class="btn btn-outline-primary fw-bold lang-link-dynamic">
+                <span class="data-en">Integrating OpenAL-Soft Library with CMake on Windows &amp; Ubuntu</span>
+                <span class="data-ru">Интеграция C++-библиотеки OpenAL-Soft с CMake под Windows и Ubuntu</span>
+            </a>
         </p>
     </section>
 </div>
