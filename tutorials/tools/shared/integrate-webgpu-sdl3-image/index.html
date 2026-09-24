@@ -216,12 +216,12 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Integrating WebGPU-Native, SDL3, and SDL3_image</span>
-            <span class="data-ru">Интеграция WebGPU-Native, SDL3 и SDL3_image</span>
+            <span class="data-en">Integrating WebGPU-Native, SDL3, and SDL3_image on Windows &amp; Ubuntu</span>
+            <span class="data-ru">Интеграция WebGPU-Native, SDL3 и SDL3_image под Windows и Ubuntu</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A step-by-step guide to setting up and configuring WebGPU-Native with SDL3 and SDL3_image on Windows and Ubuntu.</span>
-            <span class="data-ru">Пошаговое руководство по настройке и конфигурированию WebGPU-Native с SDL3 и SDL3_image под Windows и Ubuntu.</span>
+            <span class="data-en">A step-by-step guide to setting up and configuring WebGPU-Native with SDL3 and SDL3_image in your CMake projects on Windows and Ubuntu.</span>
+            <span class="data-ru">Пошаговое руководство по настройке и конфигурированию WebGPU-Native с SDL3 и SDL3_image в проекты CMake под Windows и Ubuntu.</span>
         </p>
     </header>
 
@@ -239,18 +239,6 @@
                 <a href="/tutorials/tools/ubuntu/setup-wgpu-native" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
                     <span class="data-en">Installing Prebuilt wgpu-native Library for Ubuntu</span>
                     <span class="data-ru">Установка предкомпилированной библиотеки wgpu-native для Ubuntu</span>
-                </a>
-            </li>
-            <li>
-                <a href="/tutorials/tools/mingw/build-sdl3-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-                    <span class="data-en">Building SDL3 Static Library for Windows (MinGW &amp; CMake)</span>
-                    <span class="data-ru">Сборка статической библиотеки SDL3 для Windows (MinGW и CMake)</span>
-                </a>
-            </li>
-            <li>
-                <a href="/tutorials/tools/ubuntu/build-sdl3-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-                    <span class="data-en">Building SDL3 Static Library for Ubuntu (GCC, CMake &amp; Ninja)</span>
-                    <span class="data-ru">Сборка статической библиотеки SDL3 для Ubuntu (GCC, CMake и Ninja)</span>
                 </a>
             </li>
             <li>
@@ -590,16 +578,9 @@ set -e
             <span class="data-ru">После сборки и запуска исполняемого файла вы должны увидеть вывод, подтверждающий успешную инициализацию SDL3, SDL3_image и WebGPU Native:</span>
         </p>
 
-        <!-- Windows Output -->
-        <h3 class="h6 fw-bold mt-3 text-primary">Windows (Command Prompt)</h3>
+        <!-- Output -->
         <pre><code class="language-text">C:\projects\webgpu-sdl3-image-starter>run-exe
 SDL3_image warning: Could not load 'test.png' (Couldn't open test.png: The system cannot find the file specified.), but SDL3_image library is linked and initialized properly!
-SDL3, SDL3_image, and WebGPU Native initialized successfully!</code></pre>
-
-        <!-- Ubuntu Output -->
-        <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal)</h3>
-        <pre><code class="language-text">ivan@DESKTOP-IGQBLF4:~/projects/webgpu-sdl3-image-starter$ ./run-bin.sh
-SDL3_image warning: Could not load 'test.png' (Couldn't open test.png), but SDL3_image library is linked and initialized properly!
 SDL3, SDL3_image, and WebGPU Native initialized successfully!</code></pre>
     </section>
 </div>
