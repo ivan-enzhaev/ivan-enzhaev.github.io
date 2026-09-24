@@ -7,7 +7,7 @@
 
 <title>
   
-    Building TinyXML2 Static Library for Windows (MinGW &amp; CMake)
+    Building TinyXML2 Static Library for Ubuntu (GCC, CMake &amp; Ninja)
   
   | Ivan Enzhaev
 </title>
@@ -216,21 +216,21 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Building TinyXML2 Static Library for Windows (MinGW &amp; CMake)</span>
-            <span class="data-ru">Сборка статической библиотеки TinyXML2 для Windows (MinGW и CMake)</span>
+            <span class="data-en">Building TinyXML2 Static Library for Ubuntu (GCC, CMake &amp; Ninja)</span>
+            <span class="data-ru">Сборка статической библиотеки TinyXML2 для Ubuntu (GCC, CMake и Ninja)</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to compiling TinyXML2 source code into static libraries for Windows using MinGW and CMake.</span>
-            <span class="data-ru">Руководство по компиляции исходного кода TinyXML2 в статические библиотеки для Windows с помощью MinGW и CMake.</span>
+            <span class="data-en">A guide to compiling TinyXML2 source code into static libraries for Ubuntu using GCC, CMake, and Ninja.</span>
+            <span class="data-ru">Руководство по компиляции исходного кода TinyXML2 в статические библиотеки для Ubuntu с помощью GCC, CMake и Ninja.</span>
         </p>
     </header>
 
     <div class="alert alert-secondary mb-3">
-        <span class="data-en">If you haven't set up MinGW and CMake on your machine, follow the</span>
-        <span class="data-ru">Если вы еще не настроили MinGW и CMake на своем компьютере, следуйте инструкции:</span>
-        <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-            <span class="data-en">MinGW & CMake Setup Guide</span>
-            <span class="data-ru">Руководство по настройке MinGW и CMake</span>
+        <span class="data-en">If you haven't set up C/C++ development tools on your Ubuntu machine, follow the</span>
+        <span class="data-ru">Если вы еще не настроили инструменты разработки C/C++ на вашей системе Ubuntu, следуйте инструкции:</span>
+        <a href="/tutorials/tools/ubuntu/setup-ubuntu-env" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+            <span class="data-en">Ubuntu C/C++ Development Environment Setup Guide</span>
+            <span class="data-ru">Руководство по настройке среды разработки C/C++ на Ubuntu</span>
         </a>
     </div>
 
@@ -240,65 +240,84 @@
             <span class="data-ru">Шаг 1: Скачивание исходного кода TinyXML2</span>
         </h2>
         <p>
-            <span class="data-en">Download the latest TinyXML2 source archive (<code>.zip</code> or <code>.tar.gz</code>) from the official GitHub releases page:</span>
-            <span class="data-ru">Скачайте последний архив с исходным кодом TinyXML2 (<code>.zip</code> или <code>.tar.gz</code>) с официальной страницы релизов GitHub:</span>
+            <span class="data-en">You can browse the official GitHub releases page to check the latest available release assets:</span>
+            <span class="data-ru">Вы можете перейти на страницу релизов GitHub, чтобы посмотреть список доступных версий:</span>
         </p>
         <p>
             <a href="https://github.com/leethomason/tinyxml2/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">Download TinyXML2 Releases</span>
-                <span class="data-ru">Скачать релизы TinyXML2</span>
+                <span class="data-en">View TinyXML2 Releases</span>
+                <span class="data-ru">Смотреть релизы TinyXML2</span>
             </a>
         </p>
         <p>
-            <span class="data-en">Extract the downloaded archive to a convenient directory on your machine.</span>
-            <span class="data-ru">Распакуйте скачанный архив в удобную директорию на вашем компьютере.</span>
+            <span class="data-en">Download and extract the source archive for version 11.0.0 using <code>wget</code>:</span>
+            <span class="data-ru">Скачайте и распакуйте архив с исходным кодом версии 11.0.0 с помощью <code>wget</code>:</span>
         </p>
+        <pre><code class="language-bash">cd ~
+wget https://github.com/leethomason/tinyxml2/archive/refs/tags/11.0.0.tar.gz -O tinyxml2-11.0.0.tar.gz
+tar -xzf tinyxml2-11.0.0.tar.gz
+cd tinyxml2-11.0.0</code></pre>
     </section>
 
-<section class="mb-4">
+    <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 2: Create the Build Script</span>
             <span class="data-ru">Шаг 2: Создание скрипта сборки</span>
         </h2>
         <p>
-            <span class="data-en">In the root directory of the extracted TinyXML2 source folder, create an empty file named <code>build-mingw-static.bat</code> and paste the following content into it:</span>
-            <span class="data-ru">В корневой директории распакованного исходного кода TinyXML2 создайте пустой файл <code>build-mingw-static.bat</code> и вставьте в него следующее содержимое:</span>
+            <span class="data-en">In the root directory of the extracted TinyXML2 source folder, create a script named <code>build-ubuntu-static.sh</code> with the following content:</span>
+            <span class="data-ru">В корневой директории извлеченного исходного кода TinyXML2 создайте файл <code>build-ubuntu-static.sh</code> со следующим содержимым:</span>
         </p>
 
-        <pre><code class="language-bash">@echo off
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
 
-if exist build-mingw-static rmdir /s /q build-mingw-static
-mkdir build-mingw-static
-cd build-mingw-static
+BUILD_DIR="build-ubuntu-static"
 
-cmake .. ^
-  -G "MinGW Makefiles" ^
-  -DCMAKE_BUILD_TYPE=Release ^
-  -DCMAKE_INSTALL_PREFIX="C:/libs/tinyxml2-11.0.0-mingw" ^
-  -DBUILD_SHARED_LIBS=OFF ^
+rm -rf "$BUILD_DIR"
+mkdir -p "$BUILD_DIR"
+cd "$BUILD_DIR"
+
+cmake .. \
+  -GNinja \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX="$HOME/libs/tinyxml2-11.0.0-ubuntu" \
+  -DBUILD_SHARED_LIBS=OFF \
   -DBUILD_TESTING=OFF
 
-cmake --build . --config Release --parallel 8 --target install</code></pre>
+cmake --build . --config Release --parallel $(nproc) --target install</code></pre>
 
-        <div class="alert alert-info mt-3">
+        <!-- <div class="alert alert-info mt-3">
             <strong>
                 <span class="data-en">Note:</span>
                 <span class="data-ru">Примечание:</span>
             </strong>
-            <span class="data-en">Make sure to adjust the <code>CMAKE_INSTALL_PREFIX</code> path according to your target installation directory.</span>
-            <span class="data-ru">Убедитесь, что путь к <code>CMAKE_INSTALL_PREFIX</code> соответствует вашей целевой директории установки.</span>
-        </div>
+            <span class="data-en">We set <code>--parallel 1</code> (or <code>2</code>) to ensure stable compilation on low-RAM VPS instances without hitting Out-Of-Memory limits.</span>
+            <span class="data-ru">Мы используем <code>--parallel 1</code> (или <code>2</code>) для стабильной сборки на VPS с небольшим объемом ОЗУ без риска превышения лимитов памяти.</span>
+        </div> -->
     </section>
 
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 3: Run and Compile</span>
-            <span class="data-ru">Шаг 3: Запуск и сборка</span>
+            <span class="data-en">Step 3: Run, Compile, and Clean Up</span>
+            <span class="data-ru">Шаг 3: Запуск, сборка и очистка</span>
         </h2>
         <p>
-            <span class="data-en">Run <code>build-mingw-static.bat</code> via Command Prompt (CMD) so you can catch any potential compilation errors in the console. Once completed, your compiled static libraries along with header files will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
-            <span class="data-ru">Запустите <code>build-mingw-static.bat</code> через командную строку (CMD), чтобы вы могли увидеть возможные ошибки сборки прямо в консоли. После завершения собранные статические библиотеки вместе с заголовочными файлами будут установлены по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
+            <span class="data-en">Grant execution permissions to the script and run it in your terminal:</span>
+            <span class="data-ru">Сделайте скрипт исполняемым и запустите его в терминале:</span>
         </p>
+        <pre><code class="language-bash">chmod +x build-ubuntu-static.sh
+./build-ubuntu-static.sh</code></pre>
+
+        <p>
+            <span class="data-en">Upon completion, your compiled static library (<code>libtinyxml2.a</code>) along with headers will be installed in your specified <code>CMAKE_INSTALL_PREFIX</code> directory.</span>
+            <span class="data-ru">После успешного завершения собранная статическая библиотека (<code>libtinyxml2.a</code>) вместе с заголовочными файлами будет установлена по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
+        </p>
+        <p>
+            <span class="data-en">Once installed, you can safely remove the temporary source directory and the downloaded archive:</span>
+            <span class="data-ru">После установки вы можете безопасно удалить временную директорию с исходным кодом и скачанный архив:</span>
+        </p>
+        <pre><code class="language-bash">cd ~ &amp;&amp; rm -rf ~/tinyxml2-11.0.0 ~/tinyxml2-11.0.0.tar.gz</code></pre>
     </section>
 
     <!-- <section class="mb-4">

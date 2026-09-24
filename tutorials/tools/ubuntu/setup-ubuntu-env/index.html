@@ -239,7 +239,7 @@
         <span class="data-en">Open your terminal (or connect to your remote VPS via SSH) and update the package index:</span>
         <span class="data-ru">Откройте терминал (или подключитесь к удаленному VPS по SSH) и обновите индекс пакетов:</span>
     </p>
-    <pre><code class="language-bash">sudo apt update && sudo apt upgrade -y</code></pre>
+    <pre><code class="language-bash">sudo apt update &amp;&amp; sudo apt upgrade -y</code></pre>
 
     <!-- Section 2: Core Toolchain -->
     <h3 class="category-header mt-5">
@@ -252,21 +252,43 @@
     </p>
     <pre><code class="language-bash">sudo apt install -y build-essential cmake ninja-build git</code></pre>
 
-    <!-- Section 3: Remote VPS / SSH Tools -->
+    <!-- Section 3: Swap Memory Setup for Low-RAM VPS -->
     <h3 class="category-header mt-5">
-        <span class="data-en">3. Remote &amp; Debugging Utilities (VPS / Remote SSH Only)</span>
-        <span class="data-ru">3. Утилиты для удаленной работы и отладки (Только для VPS / SSH)</span>
+        <span class="data-en">3. Swap Space Configuration (Recommended for VPS with &le; 2GB RAM)</span>
+        <span class="data-ru">3. Настройка файла подкачки Swap (Рекомендуется для VPS с &le; 2ГБ ОЗУ)</span>
     </h3>
     <p>
-        <span class="data-en">If you are setting up a VPS or building remotely via CLion / VS Code over SSH, install <code>gdb</code> for debugging and <code>rsync</code> for file synchronization:</span>
-        <span class="data-ru">Если вы настраиваете VPS или собираете проект удаленно через CLion / VS Code по SSH, установите <code>gdb</code> для отладки и <code>rsync</code> для синхронизации файлов:</span>
+        <span class="data-en">Compiling C++ libraries (e.g., BehaviorTree.CPP) can consume significant RAM. If your VPS has low memory, GCC will crash with <code>c++: fatal error: Killed signal terminated program cc1plus</code>. Create a 2 GB swap file to prevent compiler out-of-memory crashes:</span>
+        <span class="data-ru">Компиляция C++-библиотек (например, BehaviorTree.CPP) может потреблять много ОЗУ. Если у вашего VPS мало памяти, GCC завершится ошибкой <code>c++: fatal error: Killed signal terminated program cc1plus</code>. Создайте файл подкачки на 2 ГБ для предотвращения нехватки памяти:</span>
+    </p>
+    <pre><code class="language-bash"># 1. Create a 2GB swap file
+sudo fallocate -l 2G /swapfile
+
+# 2. Set strict permissions
+sudo chmod 600 /swapfile
+
+# 3. Format as swap and enable
+sudo mkswap /swapfile
+sudo swapon /swapfile
+
+# 4. Verify swap is active
+free -h</code></pre>
+
+    <!-- Section 4: Remote VPS / SSH Tools -->
+    <h3 class="category-header mt-5">
+        <span class="data-en">4. Remote &amp; Debugging Utilities (VPS / Remote SSH Only)</span>
+        <span class="data-ru">4. Утилиты для удаленной работы и отладки (Только для VPS / SSH)</span>
+    </h3>
+    <p>
+        <span class="data-en">If you are setting up a VPS or building remotely via CLion / Sublime Text over SSH, install <code>gdb</code> for debugging and <code>rsync</code> for file synchronization:</span>
+        <span class="data-ru">Если вы настраиваете VPS или собираете проект удаленно через CLion / Sublime Text по SSH, установите <code>gdb</code> для отладки и <code>rsync</code> для синхронизации файлов:</span>
     </p>
     <pre><code class="language-bash">sudo apt install -y gdb rsync</code></pre>
 
-    <!-- Section 4: Verification -->
+    <!-- Section 5: Verification -->
     <h3 class="category-header mt-5">
-        <span class="data-en">4. Verification</span>
-        <span class="data-ru">4. Проверка установки</span>
+        <span class="data-en">5. Verification</span>
+        <span class="data-ru">5. Проверка установки</span>
     </h3>
     <p>
         <span class="data-en">Verify that the primary build tools are correctly installed and available in your system path:</span>
@@ -278,7 +300,7 @@ cmake --version | head -n 1
 ninja --version
 git --version</code></pre>
 
-    <div class="alert alert-success mt-4">
+    <!-- <div class="alert alert-success mt-4">
         <span class="data-en">
             <strong>Next Step:</strong> Your Ubuntu environment is ready to build C and C++ projects!
         </span>
@@ -293,7 +315,7 @@ git --version</code></pre>
                 </a>
             </li>
         </ul>
-    </div>
+    </div> -->
 </div>
 
         

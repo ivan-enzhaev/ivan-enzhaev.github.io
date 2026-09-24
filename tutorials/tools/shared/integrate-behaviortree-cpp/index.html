@@ -236,6 +236,12 @@
                 </a>
             </li>
             <li>
+                <a href="/tutorials/tools/ubuntu/build-tinyxml2-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building TinyXML2 Static Library for Ubuntu (GCC, CMake &amp; Ninja)</span>
+                    <span class="data-ru">Сборка статической библиотеки TinyXML2 для Ubuntu (GCC, CMake и Ninja)</span>
+                </a>
+            </li>
+            <li>
                 <a href="/tutorials/tools/mingw/build-behaviortree-cpp-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
                     <span class="data-en">Building BehaviorTree.CPP Static Library for Windows (MinGW &amp; CMake)</span>
                     <span class="data-ru">Сборка статической библиотеки BehaviorTree.CPP для Windows (MinGW и CMake)</span>
@@ -340,79 +346,93 @@ int main() {
     return 0;
 }</code></pre>
 
-        <!-- Code File 2 - Option 1 -->
+        <!-- Code File 2 -->
         <h3 class="h6 fw-bold mt-4">
-            <span class="data-en">2. File Contents for CMakeLists.txt (Option 1: Direct Paths)</span>
-            <span class="data-ru">2. Содержимое файла CMakeLists.txt (Вариант 1: Явные пути)</span>
+            <span class="data-en">2. File Contents for CMakeLists.txt</span>
+            <span class="data-ru">2. Содержимое файла CMakeLists.txt</span>
         </h3>
-        <p>
-            <span class="data-en">Manually specifies include/lib directories for both BehaviorTree.CPP and TinyXML2:</span>
-            <span class="data-ru">Вручную задает директории include/lib как для BehaviorTree.CPP, так и для TinyXML2:</span>
-        </p>
-        <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+        <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+
+cmake_minimum_required(VERSION 3.21)
 project(bt_test CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(app main.cpp)
+# -----------------------------------------------------------------------------
+# Define Project Source Files
+# -----------------------------------------------------------------------------
+set(PROJECT_SOURCES
+    main.cpp
+)
 
+# -----------------------------------------------------------------------------
+# Declare Target Type based on OS
+# -----------------------------------------------------------------------------
+add_executable(app)
+
+# Attach sources to the target dynamically
+target_sources(app PRIVATE ${PROJECT_SOURCES})
+
+# -----------------------------------------------------------------------------
+# Platform Linking & Dependencies
+# -----------------------------------------------------------------------------
 if(WIN32)
-    set(BTCPP_DIR "C:/libs/behaviortree-4.9.0-mingw")
-    set(TINYXML2_DIR "C:/libs/tinyxml2-11.0.0-mingw")
+    set(BTCPP_PATH "C:/libs/behaviortree-4.9.0-mingw")
+    set(TINYXML2_PATH "C:/libs/tinyxml2-11.0.0-mingw")
 
-    target_include_directories(app PRIVATE 
-        ${BTCPP_DIR}/include 
-        ${TINYXML2_DIR}/include
+    # Core TinyXML2 Static Library
+    add_library(tinyxml2 STATIC IMPORTED)
+    set_target_properties(tinyxml2 PROPERTIES
+        IMPORTED_LOCATION "${TINYXML2_PATH}/lib/libtinyxml2.a"
+        INTERFACE_INCLUDE_DIRECTORIES "${TINYXML2_PATH}/include"
     )
-    
-    target_link_directories(app PRIVATE 
-        ${BTCPP_DIR}/lib 
-        ${TINYXML2_DIR}/lib
+
+    # BehaviorTree.CPP Static Library
+    add_library(behaviortree_cpp STATIC IMPORTED)
+    set_target_properties(behaviortree_cpp PROPERTIES
+        IMPORTED_LOCATION "${BTCPP_PATH}/lib/libbehaviortree_cpp.a"
+        INTERFACE_INCLUDE_DIRECTORIES "${BTCPP_PATH}/include"
+        INTERFACE_LINK_LIBRARIES "tinyxml2"
     )
-    
-    target_link_libraries(app PRIVATE behaviortree_cpp tinyxml2)
+
+    target_link_libraries(app PRIVATE
+        behaviortree_cpp
+        tinyxml2
+    )
+
+    target_compile_options(app PRIVATE -Os)
+    target_link_options(app PRIVATE -static -s -static-libgcc)
+
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_link_options(app PRIVATE -mconsole)
+    else()
+        target_link_options(app PRIVATE -mwindows)
+    endif()
+
 else()
-    find_package(tinyxml2 REQUIRED)
+    set(BTCPP_PATH "$ENV{HOME}/libs/behaviortree-4.9.0-ubuntu")
+    set(TINYXML2_PATH "$ENV{HOME}/libs/tinyxml2-11.0.0-ubuntu")
 
-    set(BTCPP_DIR "$ENV{HOME}/libs/behaviortree-4.9.0-ubuntu")
-    target_include_directories(app PRIVATE ${BTCPP_DIR}/include)
-    target_link_directories(app PRIVATE ${BTCPP_DIR}/lib)
-    target_link_libraries(app PRIVATE behaviortree_cpp tinyxml2::tinyxml2)
-endif()</code></pre>
+    # Core TinyXML2 Static Library
+    add_library(tinyxml2 STATIC IMPORTED)
+    set_target_properties(tinyxml2 PROPERTIES
+        IMPORTED_LOCATION "${TINYXML2_PATH}/lib/libtinyxml2.a"
+        INTERFACE_INCLUDE_DIRECTORIES "${TINYXML2_PATH}/include"
+    )
 
-        <!-- Code File 2 - Option 2 -->
-        <h3 class="h6 fw-bold mt-4">
-            <span class="data-en">Alternative: CMakeLists.txt (Option 2: Modern CMake via find_package)</span>
-            <span class="data-ru">Альтернатива: CMakeLists.txt (Вариант 2: Современный CMake через find_package)</span>
-        </h3>
-        <p>
-            <span class="data-en">Uses <code>CMAKE_PREFIX_PATH</code> to let CMake discover TinyXML2 automatically:</span>
-            <span class="data-ru">Использует <code>CMAKE_PREFIX_PATH</code>, чтобы CMake автоматически обнаружил TinyXML2:</span>
-        </p>
-        <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
-project(bt_test CXX)
+    # BehaviorTree.CPP Static Library
+    add_library(behaviortree_cpp STATIC IMPORTED)
+    set_target_properties(behaviortree_cpp PROPERTIES
+        IMPORTED_LOCATION "${BTCPP_PATH}/lib/libbehaviortree_cpp.a"
+        INTERFACE_INCLUDE_DIRECTORIES "${BTCPP_PATH}/include"
+        INTERFACE_LINK_LIBRARIES "tinyxml2;pthread;dl"
+    )
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-add_executable(app main.cpp)
-
-if(WIN32)
-    list(APPEND CMAKE_PREFIX_PATH "C:/libs/tinyxml2-11.0.0-mingw")
-    find_package(tinyxml2 REQUIRED)
-
-    set(BTCPP_DIR "C:/libs/behaviortree-4.9.0-mingw")
-    target_include_directories(app PRIVATE ${BTCPP_DIR}/include)
-    target_link_directories(app PRIVATE ${BTCPP_DIR}/lib)
-    target_link_libraries(app PRIVATE behaviortree_cpp tinyxml2::tinyxml2)
-else()
-    find_package(tinyxml2 REQUIRED)
-
-    set(BTCPP_DIR "$ENV{HOME}/libs/behaviortree-4.9.0-ubuntu")
-    target_include_directories(app PRIVATE ${BTCPP_DIR}/include)
-    target_link_directories(app PRIVATE ${BTCPP_DIR}/lib)
-    target_link_libraries(app PRIVATE behaviortree_cpp tinyxml2::tinyxml2)
+    target_link_libraries(app PRIVATE
+        behaviortree_cpp
+        tinyxml2
+    )
 endif()</code></pre>
     </section>
 
