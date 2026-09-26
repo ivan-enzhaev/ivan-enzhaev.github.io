@@ -292,10 +292,10 @@ nano CMakeLists.txt</code></pre>
             <span class="data-ru">Вставьте код правой кнопкой мыши (ПКМ) &rarr; Нажмите <kbd>Ctrl</kbd> + <kbd>O</kbd> и <kbd>Enter</kbd> для сохранения &rarr; Нажмите <kbd>Ctrl</kbd> + <kbd>X</kbd> для выхода.</span>
         </div>
 
-        <!-- Code File 1 -->
+        <!-- Code File 1 Option A -->
         <h3 class="h6 fw-bold mt-4">
-            <span class="data-en">1. File Contents for main.cpp</span>
-            <span class="data-ru">1. Содержимое файла main.cpp</span>
+            <span class="data-en">1A. File Contents for main.cpp (Classic Loop)</span>
+            <span class="data-ru">1A. Содержимое файла main.cpp (Классический цикл)</span>
         </h3>
         <pre><code class="language-cpp">#include &lt;SDL3/SDL.h&gt;
 #include &lt;SDL3/SDL_main.h&gt;
@@ -306,7 +306,7 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    SDL_Window* window = SDL_CreateWindow("SDL3 Example Window", 800, 450, 0);
+    SDL_Window* window = SDL_CreateWindow("SDL3 Example Window (Classic)", 800, 450, 0);
     if (!window) {
         SDL_Log("Window creation failed: %s", SDL_GetError());
         SDL_Quit();
@@ -330,7 +330,7 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        SDL_SetRenderDrawColor(renderer, 245, 245, 245, 255);
+        SDL_SetRenderDrawColor(renderer, 230, 245, 235, 255);
         SDL_RenderClear(renderer);
         SDL_RenderPresent(renderer);
     }
@@ -342,6 +342,75 @@ int main(int argc, char* argv[]) {
     return 0;
 }</code></pre>
 
+        <!-- Code File 1 Option B -->
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">1B. File Contents for main.cpp (SDL3 Callbacks API)</span>
+            <span class="data-ru">1B. Содержимое файла main.cpp (SDL3 Callbacks API)</span>
+        </h3>
+        <pre><code class="language-cpp">#define SDL_MAIN_USE_CALLBACKS 1
+#include &lt;SDL3/SDL.h&gt;
+#include &lt;SDL3/SDL_main.h&gt;
+
+struct AppState {
+    SDL_Window* window = nullptr;
+    SDL_Renderer* renderer = nullptr;
+};
+
+SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        SDL_Log("SDL Initialization failed: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    AppState* state = new AppState();
+    *appstate = state;
+
+    state-&gt;window = SDL_CreateWindow("SDL3 Example Window (Callbacks)", 800, 450, 0);
+    if (!state-&gt;window) {
+        SDL_Log("Window creation failed: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    state-&gt;renderer = SDL_CreateRenderer(state-&gt;window, NULL);
+    if (!state-&gt;renderer) {
+        SDL_Log("Renderer creation failed: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
+    if (event-&gt;type == SDL_EVENT_QUIT) {
+        return SDL_APP_SUCCESS;
+    }
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppIterate(void* appstate) {
+    auto* state = static_cast&lt;AppState*&gt;(appstate);
+
+    SDL_SetRenderDrawColor(state-&gt;renderer, 230, 245, 235, 255);
+    SDL_RenderClear(state-&gt;renderer);
+    SDL_RenderPresent(state-&gt;renderer);
+
+    return SDL_APP_CONTINUE;
+}
+
+void SDL_AppQuit(void* appstate, SDL_AppResult result) {
+    if (appstate) {
+        auto* state = static_cast&lt;AppState*&gt;(appstate);
+        if (state-&gt;renderer) {
+            SDL_DestroyRenderer(state-&gt;renderer);
+        }
+        if (state-&gt;window) {
+            SDL_DestroyWindow(state-&gt;window);
+        }
+        delete state;
+    }
+    SDL_Quit();
+}</code></pre>
+
         <!-- Informational Callout Box for Callbacks -->
         <div class="alert alert-warning my-3">
             <strong>
@@ -350,12 +419,10 @@ int main(int argc, char* argv[]) {
             </strong>
             <p class="mb-0 mt-1">
                 <span class="data-en">
-                    This example uses the traditional <code>main()</code> event loop for simplicity on Desktop systems. 
-                    However, SDL3 introduces a new recommended <strong>Callbacks API</strong> (via <code>SDL_MAIN_USE_CALLBACKS</code>). The Callback API gives control of the main loop to the OS, which prevents window rendering freezes during drag/resize events and provides native cross-platform support for WebAssembly, iOS, and Android.
+                    Option 1A uses the traditional <code>main()</code> event loop. Option 1B uses the new SDL3 recommended <strong>Callbacks API</strong> (via <code>SDL_MAIN_USE_CALLBACKS</code>). The Callbacks API hands main loop control over to the OS, preventing window rendering freezes during drag/resize operations and enabling seamless cross-platform support across WebAssembly, iOS, and Android.
                 </span>
                 <span class="data-ru">
-                    В этом примере используется традиционный цикл <code>main()</code> для простоты на настольных системах. 
-                    Однако в SDL3 появился новый рекомендуемый <strong>Callbacks API</strong> (через <code>SDL_MAIN_USE_CALLBACKS</code>). Callback API передаёт управление основным циклом операционной системе, что предотвращает зависание рендеринга при перетаскивании или изменении размера окна и обеспечивает нативную кроссплатформенность для WebAssembly, iOS и Android.
+                    Вариант 1A использует традиционный цикл событий <code>main()</code>. Вариант 1B использует новый рекомендуемый в SDL3 <strong>Callbacks API</strong> (через <code>SDL_MAIN_USE_CALLBACKS</code>). Callbacks API передаёт управление основным циклом операционной системе, что предотвращает зависание рендеринга при перетаскивании или изменении размера окна и обеспечивает нативную кроссплатформенность для WebAssembly, iOS и Android.
                 </span>
             </p>
         </div>
@@ -482,7 +549,12 @@ set -e
             <span class="data-ru">После запуска скриптов сборки и выполнения появится окно с надписью:</span>
         </p>
 
-        <pre><code class="language-text">SDL3 Example Window</code></pre>
+        <pre><code class="language-text">SDL3 Example Window (Classic)</code></pre>
+        <p class="mt-2">
+            <span class="data-en">or (if using the Callbacks API version):</span>
+            <span class="data-ru">или (если используется версия с Callbacks API):</span>
+        </p>
+        <pre><code class="language-text">SDL3 Example Window (Callbacks)</code></pre>
     </section>
 </div>
 
