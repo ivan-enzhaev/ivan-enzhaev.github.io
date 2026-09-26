@@ -7,7 +7,7 @@
 
 <title>
   
-    Building SDL3 Static Library for Ubuntu (GCC, CMake &amp; Ninja)
+    Integrating SDL3 Library with CMake on Windows &amp; Ubuntu
   
   | Ivan Enzhaev
 </title>
@@ -216,152 +216,271 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Building SDL3 Static Library for Ubuntu (GCC, CMake &amp; Ninja)</span>
-            <span class="data-ru">Сборка статической библиотеки SDL3 для Ubuntu (GCC, CMake и Ninja)</span>
+            <span class="data-en">Integrating SDL3 Library with CMake on Windows &amp; Ubuntu</span>
+            <span class="data-ru">Интеграция C++-библиотеки SDL3 с CMake под Windows и Ubuntu</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to compiling SDL3 source code into a static library (libSDL3.a) on Ubuntu using CMake and GCC.</span>
-            <span class="data-ru">Руководство по компиляции исходного кода SDL3 в статическую библиотеку (libSDL3.a) в Ubuntu с помощью CMake и GCC.</span>
+            <span class="data-en">A step-by-step guide to configuring and integrating the SDL3 library in your CMake projects on Windows and Ubuntu.</span>
+            <span class="data-ru">Пошаговое руководство по настройке и интеграции библиотеки SDL3 в проекты CMake под Windows и Ubuntu.</span>
         </p>
     </header>
 
     <div class="alert alert-secondary mb-3">
-        <span class="data-en">If you haven't set up C/C++ development tools on your Ubuntu machine, follow the</span>
-        <span class="data-ru">Если вы еще не настроили инструменты разработки C/C++ на вашей системе Ubuntu, следуйте инструкции:</span>
-        <a href="/tutorials/tools/ubuntu/setup-ubuntu-env" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-            <span class="data-en">Ubuntu C/C++ Development Environment Setup Guide</span>
-            <span class="data-ru">Руководство по настройке среды разработки C/C++ на Ubuntu</span>
-        </a>
+        <span class="data-en">Before proceeding, make sure you have built and installed the static libraries on your system using the appropriate guides:</span>
+        <span class="data-ru">Перед продолжением убедитесь, что вы собрали и установили статические библиотеки в вашей системе, следуя соответствующим инструкциям:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/tools/mingw/build-sdl3-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 Static Library for Windows (MinGW &amp; CMake)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для Windows (MinGW и CMake)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/ubuntu/build-sdl3-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 Static Library for Ubuntu (GCC, CMake &amp; Ninja)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для Ubuntu (GCC, CMake и Ninja)</span>
+                </a>
+            </li>
+        </ul>
     </div>
 
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 1: Install Audio and Display Dependencies</span>
-            <span class="data-ru">Шаг 1: Установка зависимостей аудио и видео</span>
+            <span class="data-en">Step 1: Create Project Directory</span>
+            <span class="data-ru">Шаг 1: Создание директории проекта</span>
         </h2>
         <p>
-            <span class="data-en">If you are compiling on a desktop environment or WSL and need display and audio support, install the development headers required for X11, Wayland, and audio backends:</span>
-            <span class="data-ru">Если вы выполняете сборку в десктопном окружении или WSL и вам нужна поддержка видео и аудио, установите библиотеки разработки для X11, Wayland и аудио систем:</span>
+            <span class="data-en">Create a workspace folder and a new directory for your SDL3 test project:</span>
+            <span class="data-ru">Создайте рабочую папку для проектов и новую директорию для вашего тестового проекта SDL3:</span>
         </p>
-        <pre><code class="language-bash">sudo apt update &amp;&amp; sudo apt install -y \
-  libasound2-dev libpulse-dev libaudio-dev \
-  libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev libxinerama-dev \
-  libxss-dev libxtst-dev libxxf86vm-dev \
-  libwayland-dev libxkbcommon-dev libegl1-mesa-dev libgl1-mesa-dev libgbm-dev libdrm-dev</code></pre>
 
-        <div class="alert alert-info mt-3">
-            <strong>
-                <span class="data-en">Note for Headless VPS Users:</span>
-                <span class="data-ru">Примечание для пользователей серверных VPS:</span>
-            </strong>
-            <span class="data-en">If you are building SDL3 on a headless server/VPS purely for networking or backend processing, you can <strong>skip</strong> installing the X11, Wayland, and Audio development headers above.</span>
-            <span class="data-ru">Если вы собираете SDL3 на сервере/VPS без графической оболочки исключительно для сетевых задач или бэкенда, установку библиотек X11, Wayland и Audio выше можно <strong>пропустить</strong>.</span>
+        <!-- Windows Command -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (Command Prompt / PowerShell)</h3>
+        <pre><code class="language-bash">mkdir C:\projects\sdl3-test
+cd C:\projects\sdl3-test</code></pre>
+
+        <!-- Ubuntu Command -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal)</h3>
+        <pre><code class="language-bash">mkdir -p ~/projects/sdl3-test
+cd ~/projects/sdl3-test</code></pre>
+    </section>
+
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 2: Create Source Files (main.cpp &amp; CMakeLists.txt)</span>
+            <span class="data-ru">Шаг 2: Создание исходных файлов (main.cpp и CMakeLists.txt)</span>
+        </h2>
+
+        <p>
+            <span class="data-en">You can create these files using Notepad / Sublime Text on Windows, or <code>nano</code> in Ubuntu terminal:</span>
+            <span class="data-ru">Вы можете создать эти файлы через Блокнот / Sublime Text в Windows или с помощью <code>nano</code> в терминале Ubuntu:</span>
+        </p>
+
+        <!-- Windows Quick File Creation -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (Terminal / Notepad)</h3>
+        <pre><code class="language-bash">notepad main.cpp
+notepad CMakeLists.txt</code></pre>
+
+        <!-- Ubuntu Quick File Creation -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal / Nano)</h3>
+        <pre><code class="language-bash">nano main.cpp
+nano CMakeLists.txt</code></pre>
+
+        <div class="alert alert-info py-2 my-3">
+            <strong><span class="data-en">Quick Nano Commands (Ubuntu):</span><span class="data-ru">Быстрые команды Nano (Ubuntu):</span></strong>
+            <span class="data-en">Paste code with Right Mouse Button (RMB) &rarr; Press <kbd>Ctrl</kbd> + <kbd>O</kbd> and <kbd>Enter</kbd> to save &rarr; Press <kbd>Ctrl</kbd> + <kbd>X</kbd> to exit.</span>
+            <span class="data-ru">Вставьте код правой кнопкой мыши (ПКМ) &rarr; Нажмите <kbd>Ctrl</kbd> + <kbd>O</kbd> и <kbd>Enter</kbd> для сохранения &rarr; Нажмите <kbd>Ctrl</kbd> + <kbd>X</kbd> для выхода.</span>
         </div>
+
+        <!-- Code File 1 -->
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">1. File Contents for main.cpp</span>
+            <span class="data-ru">1. Содержимое файла main.cpp</span>
+        </h3>
+        <pre><code class="language-cpp">#include &lt;SDL3/SDL.h&gt;
+#include &lt;SDL3/SDL_main.h&gt;
+
+int main(int argc, char* argv[]) {
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        SDL_Log("SDL Initialization failed: %s", SDL_GetError());
+        return -1;
+    }
+
+    SDL_Window* window = SDL_CreateWindow("SDL3 Example Window", 800, 450, 0);
+    if (!window) {
+        SDL_Log("Window creation failed: %s", SDL_GetError());
+        SDL_Quit();
+        return -1;
+    }
+
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, NULL);
+    if (!renderer) {
+        SDL_Log("Renderer creation failed: %s", SDL_GetError());
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return -1;
+    }
+
+    bool running = true;
+    while (running) {
+        SDL_Event event;
+        while (SDL_PollEvent(&amp;event)) {
+            if (event.type == SDL_EVENT_QUIT) {
+                running = false;
+            }
+        }
+
+        SDL_SetRenderDrawColor(renderer, 245, 245, 245, 255);
+        SDL_RenderClear(renderer);
+        SDL_RenderPresent(renderer);
+    }
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
+    return 0;
+}</code></pre>
+
+        <!-- Code File 2 -->
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">2. File Contents for CMakeLists.txt</span>
+            <span class="data-ru">2. Содержимое файла CMakeLists.txt</span>
+        </h3>
+        <pre><code class="language-cmake">set(CMAKE_BUILD_TYPE "Debug")
+
+cmake_minimum_required(VERSION 3.21)
+project(sdl3_test CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# -----------------------------------------------------------------------------
+# Define Project Source Files
+# -----------------------------------------------------------------------------
+set(PROJECT_SOURCES
+    main.cpp
+)
+
+# -----------------------------------------------------------------------------
+# Declare Target Type based on OS
+# -----------------------------------------------------------------------------
+add_executable(app)
+
+# Attach sources to the target dynamically
+target_sources(app PRIVATE ${PROJECT_SOURCES})
+
+# -----------------------------------------------------------------------------
+# Platform Linking &amp; Dependencies
+# -----------------------------------------------------------------------------
+if(WIN32)
+    set(SDL3_PATH "C:/libs/sdl3-mingw")
+
+    # SDL3 Static Library
+    add_library(sdl3 STATIC IMPORTED)
+    set_target_properties(sdl3 PROPERTIES
+        IMPORTED_LOCATION "${SDL3_PATH}/lib/libSDL3.a"
+        INTERFACE_INCLUDE_DIRECTORIES "${SDL3_PATH}/include"
+        INTERFACE_LINK_LIBRARIES "user32;gdi32;winmm;imm32;ole32;oleaut32;version;uuid;advapi32;setupapi;shell32"
+    )
+
+    target_link_libraries(app PRIVATE
+        sdl3
+    )
+
+    target_compile_options(app PRIVATE -Os)
+    target_link_options(app PRIVATE -static -s -static-libgcc)
+
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_link_options(app PRIVATE -mconsole)
+    else()
+        target_link_options(app PRIVATE -mwindows)
+    endif()
+
+else()
+    set(SDL3_PATH "$ENV{HOME}/libs/sdl3-ubuntu")
+
+    # SDL3 Static Library
+    add_library(sdl3 STATIC IMPORTED)
+    set_target_properties(sdl3 PROPERTIES
+        IMPORTED_LOCATION "${SDL3_PATH}/lib/libSDL3.a"
+        INTERFACE_INCLUDE_DIRECTORIES "${SDL3_PATH}/include"
+        INTERFACE_LINK_LIBRARIES "pthread;m;dl;rt"
+    )
+
+    target_link_libraries(app PRIVATE
+        sdl3
+    )
+endif()</code></pre>
     </section>
 
+    <!-- Step 3: Build & Execution Scripts -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 2: Download SDL3 Source Code</span>
-            <span class="data-ru">Шаг 2: Скачивание исходного кода SDL3</span>
+            <span class="data-en">Step 3: Create Build &amp; Execution Scripts</span>
+            <span class="data-ru">Шаг 3: Создание скриптов сборки и запуска</span>
         </h2>
-        <p>
-            <span class="data-en">Go to the official GitHub releases page to check the latest available release assets:</span>
-            <span class="data-ru">Перейдите на официальную страницу релизов GitHub, чтобы посмотреть доступные архивы релизов:</span>
-        </p>
-        <p>
-            <a href="https://github.com/libsdl-org/SDL/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">View the latest SDL3 Release</span>
-                <span class="data-ru">Смотреть последний релиз SDL3</span>
-            </a>
-        </p>
-        <p>
-            <span class="data-en">Download and extract the release archive using <code>wget</code>:</span>
-            <span class="data-ru">Скачайте и распакуйте архив релиза с помощью <code>wget</code>:</span>
-        </p>
-        <pre><code class="language-bash">cd ~
-wget https://github.com/libsdl-org/SDL/releases/download/release-3.4.16/SDL3-3.4.16.tar.gz -O SDL3-3.4.16.tar.gz
-tar -xzf SDL3-3.4.16.tar.gz
-cd SDL3-3.4.16</code></pre>
-    </section>
 
-    <section class="mb-4">
-        <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 3: Create the Build Script</span>
-            <span class="data-ru">Шаг 3: Создание скрипта сборки</span>
-        </h2>
-        <p>
-            <span class="data-en">In the root directory of the extracted SDL3 source folder, create a script named <code>build-ubuntu-static.sh</code> with the following content:</span>
-            <span class="data-ru">В корневой директории извлеченного исходного кода SDL3 создайте файл <code>build-ubuntu-static.sh</code> со следующим содержимым:</span>
-        </p>
+        <!-- Windows Tab/Sub-block -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (MinGW / Batch Scripts)</h3>
+        <p class="fw-bold mb-1">config-exe.bat</p>
+        <pre><code class="language-bash">cmake -G Ninja -S . -B dist/win</code></pre>
 
+        <p class="fw-bold mb-1">build-exe.bat</p>
+        <pre><code class="language-bash">cmake --build dist/win</code></pre>
+
+        <p class="fw-bold mb-1">run-exe.bat</p>
+        <pre><code class="language-bash">@echo off
+.\dist\win\app.exe</code></pre>
+
+        <p class="mt-3">
+            <span class="data-en">Run the scripts sequentially in Command Prompt or PowerShell:</span>
+            <span class="data-ru">Последовательно запустите скрипты в командной строке или PowerShell:</span>
+        </p>
+        <pre><code class="language-bash">config-exe.bat
+build-exe.bat
+run-exe.bat</code></pre>
+
+        <!-- Ubuntu Tab/Sub-block -->
+        <h3 class="h6 fw-bold mt-4 text-primary">Ubuntu (Bash Scripts)</h3>
+        <p class="fw-bold mb-1">config-bin.sh</p>
         <pre><code class="language-bash">#!/usr/bin/env bash
 set -e
+cmake -G Ninja -S . -B dist/linux</code></pre>
 
-BUILD_DIR="build-ubuntu-static"
+        <p class="fw-bold mb-1">build-bin.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+cmake --build dist/linux</code></pre>
 
-rm -rf "$BUILD_DIR"
-mkdir -p "$BUILD_DIR"
-cd "$BUILD_DIR"
+        <p class="fw-bold mb-1">run-bin.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+./dist/linux/app</code></pre>
 
-cmake .. \
-  -GNinja \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_INSTALL_PREFIX="$HOME/libs/sdl3-3.4.16-ubuntu" \
-  -DBUILD_SHARED_LIBS=OFF \
-  -DSDL_SHARED=OFF \
-  -DSDL_STATIC=ON \
-  -DSDL_TESTS=OFF \
-  -DSDL_EXAMPLES=OFF
-
-cmake --build . --config Release --parallel --target install</code></pre>
-
-        <div class="alert alert-info mt-3">
-            <strong>
-                <span class="data-en">Note:</span>
-                <span class="data-ru">Примечание:</span>
-            </strong>
-            <span class="data-en">Ensure that the path variable <code>CMAKE_INSTALL_PREFIX</code> matches your target installation path.</span>
-            <span class="data-ru">Убедитесь, что переменная пути <code>CMAKE_INSTALL_PREFIX</code> соответствует целевой директории установки.</span>
-        </div>
+        <p class="mt-3">
+            <span class="data-en">Grant execute permissions on Ubuntu before running:</span>
+            <span class="data-ru">Предоставьте права на выполнение в Ubuntu перед запуском:</span>
+        </p>
+        <pre><code class="language-bash">chmod +x config-bin.sh build-bin.sh run-bin.sh
+./config-bin.sh
+./build-bin.sh
+./run-bin.sh</code></pre>
     </section>
 
+    <!-- Step 4: Expected Output -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 4: Run, Compile, and Clean Up</span>
-            <span class="data-ru">Шаг 4: Запуск, сборка и очистка</span>
+            <span class="data-en">Step 4: Expected Output</span>
+            <span class="data-ru">Шаг 4: Ожидаемый результат</span>
         </h2>
-        <p>
-            <span class="data-en">Grant execution permissions to the script and run it in your terminal:</span>
-            <span class="data-ru">Сделайте скрипт исполняемым и запустите его в терминале:</span>
-        </p>
-        <pre><code class="language-bash">chmod +x build-ubuntu-static.sh
-./build-ubuntu-static.sh</code></pre>
-        <p>
-            <span class="data-en">Upon completion, your static library (<code>libSDL3.a</code>) along with header files will be installed in your specified <code>CMAKE_INSTALL_PREFIX</code> directory.</span>
-            <span class="data-ru">После успешного завершения собранная статическая библиотека (<code>libSDL3.a</code>) вместе с заголовочными файлами будет установлена по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
-        </p>
-        <p>
-            <span class="data-en">Once installed, you can safely remove the temporary source directory and the downloaded archive:</span>
-            <span class="data-ru">После установки вы можете безопасно удалить временную директорию с исходным кодом и скачанный архив:</span>
-        </p>
-        <pre><code class="language-bash">cd ~ &amp;&amp; rm -rf ~/SDL3-3.4.16 ~/SDL3-3.4.16.tar.gz</code></pre>
-    </section>
 
-    <section class="mb-4">
-        <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 5: Next Steps</span>
-            <span class="data-ru">Шаг 5: Следующие шаги</span>
-        </h2>
         <p>
-            <span class="data-en">Now that you have compiled and installed the SDL3 static library, you can proceed with building companion libraries such as SDL3_net:</span>
-            <span class="data-ru">Теперь, когда вы собрали и установили статическую библиотеку SDL3, вы можете перейти к сборке сопутствующих библиотек, таких как SDL3_net:</span>
+            <span class="data-en">After running the build and execution scripts, a window should appear displaying:</span>
+            <span class="data-ru">После запуска скриптов сборки и выполнения появится окно с надписью:</span>
         </p>
-        <p>
-            <a href="/tutorials/sdl3-renderer/desktop/integrate-sdl3-static-renderer-desktop" class="btn btn-outline-primary fw-bold lang-link-dynamic">
-                <span class="data-en">Integrating SDL3 Library with CMake on Windows &amp; Ubuntu (SDL_Renderer)</span>
-                <span class="data-ru">Интеграция C++-библиотеки SDL3 с CMake под Windows и Ubuntu (SDL_Renderer)</span>
-            </a>
-        </p>
+
+        <pre><code class="language-text">SDL3 Example Window</code></pre>
     </section>
 </div>
 
@@ -502,6 +621,71 @@ function copyToClipboard(text, button) {
 <block>
     <script src="/libs/prism/1.30.0/prism.min.js"></script>
 
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
     
     <block>
         
