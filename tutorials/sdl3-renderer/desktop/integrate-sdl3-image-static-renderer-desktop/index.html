@@ -7,7 +7,7 @@
 
 <title>
   
-    Building SDL3 Static Library for Windows (MinGW &amp; CMake)
+    Integrating SDL3_image Library with CMake on Windows &amp; Ubuntu (SDL_Renderer)
   
   | Ivan Enzhaev
 </title>
@@ -216,119 +216,391 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Building SDL3 Static Library for Windows (MinGW &amp; CMake)</span>
-            <span class="data-ru">Сборка статической библиотеки SDL3 для Windows (MinGW и CMake)</span>
+            <span class="data-en">Integrating SDL3_image Library with CMake on Windows &amp; Ubuntu (SDL_Renderer)</span>
+            <span class="data-ru">Интеграция C++-библиотеки SDL3_image с CMake под Windows и Ubuntu (SDL_Renderer)</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to compiling SDL3 source code into a static library (libSDL3.a) for Windows using MinGW and CMake.</span>
-            <span class="data-ru">Руководство по компиляции исходного кода SDL3 в статическую библиотеку (libSDL3.a) для Windows с помощью MinGW и CMake.</span>
+            <span class="data-en">A step-by-step guide to configuring and integrating the SDL3_image satellite library and SDL_Renderer in your CMake projects on Windows and Ubuntu.</span>
+            <span class="data-ru">Пошаговое руководство по настройке и интеграции вспомогательной библиотеки SDL3_image и SDL_Renderer в проекты CMake под Windows и Ubuntu.</span>
         </p>
     </header>
 
     <div class="alert alert-secondary mb-3">
-        <span class="data-en">If you haven't set up MinGW and CMake on your machine, follow the</span>
-        <span class="data-ru">Если вы еще не настроили MinGW и CMake на своем компьютере, следуйте инструкции:</span>
-        <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-            <span class="data-en">MinGW & CMake Setup Guide</span>
-            <span class="data-ru">Руководство по настройке MinGW и CMake</span>
-        </a>
+        <span class="data-en">Before proceeding, make sure you have built and installed the static libraries on your system using the appropriate guides:</span>
+        <span class="data-ru">Перед продолжением убедитесь, что вы собрали и установили статические библиотеки в вашей системе, следуя соответствующим инструкциям:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/tools/mingw/build-sdl3-image-default-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3_image Static Library for Windows (MinGW &amp; CMake)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3_image для Windows (MinGW и CMake)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/ubuntu/build-sdl3-image-default-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3_image Static Library for Ubuntu (GCC, CMake &amp; Ninja)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3_image для Ubuntu (GCC, CMake и Ninja)</span>
+                </a>
+            </li>
+        </ul>
     </div>
 
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 1: Download SDL3 Source Code</span>
-            <span class="data-ru">Шаг 1: Скачивание исходного кода SDL3</span>
+            <span class="data-en">Step 1: Create Project Directory &amp; Assets Folder</span>
+            <span class="data-ru">Шаг 1: Создание директории проекта и папки ресурсов</span>
         </h2>
         <p>
-            <span class="data-en">Download the latest SDL3 source archive (<code>.zip</code> or <code>.tar.gz</code>) from the official GitHub releases page:</span>
-            <span class="data-ru">Скачайте последний архив с исходным кодом SDL3 (<code>.zip</code> или <code>.tar.gz</code>) с официальной страницы релизов GitHub:</span>
+            <span class="data-en">Create a workspace folder, a new project directory, and an <code>assets</code> folder for your texture assets:</span>
+            <span class="data-ru">Создайте рабочую папку, новую директорию проекта и папку <code>assets</code> для текстур:</span>
         </p>
+
+        <!-- Windows Command -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (Command Prompt / PowerShell)</h3>
+        <pre><code class="language-bash">mkdir C:\projects\sdl3-image-test
+mkdir C:\projects\sdl3-image-test\assets
+cd C:\projects\sdl3-image-test</code></pre>
+
+        <!-- Ubuntu Command -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal)</h3>
+        <pre><code class="language-bash">mkdir -p ~/projects/sdl3-image-test/assets
+cd ~/projects/sdl3-image-test</code></pre>
+
+        <div class="alert alert-info py-2 my-3">
+            <strong><span class="data-en">Asset Download Required:</span><span class="data-ru">Необходимо скачать ресурс:</span></strong>
+            <span class="data-en">Please download <a href="https://opengameart.org/content/crate-5" target="_blank" rel="noopener noreferrer" class="fw-bold">clear_01.png</a> and place it directly inside your <code>assets/</code> directory (path: <code>assets/clear_01.png</code>).</span>
+            <span class="data-ru">Пожалуйста, скачайте <a href="https://opengameart.org/content/crate-5" target="_blank" rel="noopener noreferrer" class="fw-bold">clear_01.png</a> и поместите его непосредственно в папку <code>assets/</code> (путь: <code>assets/clear_01.png</code>).</span>
+        </div>
+    </section>
+
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 2: Create Source Files (main.cpp &amp; CMakeLists.txt)</span>
+            <span class="data-ru">Шаг 2: Создание исходных файлов (main.cpp и CMakeLists.txt)</span>
+        </h2>
+
         <p>
-            <a href="https://github.com/libsdl-org/SDL/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">Download SDL3 Releases</span>
-                <span class="data-ru">Скачать релизы SDL3</span>
-            </a>
+            <span class="data-en">You can create these files using Notepad / Sublime Text on Windows, or <code>nano</code> in Ubuntu terminal:</span>
+            <span class="data-ru">Вы можете создать эти файлы через Блокнот / Sublime Text в Windows или с помощью <code>nano</code> в терминале Ubuntu:</span>
         </p>
+
+        <!-- Windows Quick File Creation -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (Terminal / Notepad)</h3>
+        <pre><code class="language-bash">notepad main.cpp
+notepad CMakeLists.txt</code></pre>
+
+        <!-- Ubuntu Quick File Creation -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal / Nano)</h3>
+        <pre><code class="language-bash">nano main.cpp
+nano CMakeLists.txt</code></pre>
+
+        <div class="alert alert-info py-2 my-3">
+            <strong><span class="data-en">Quick Nano Commands (Ubuntu):</span><span class="data-ru">Быстрые команды Nano (Ubuntu):</span></strong>
+            <span class="data-en">Paste code with Right Mouse Button (RMB) &rarr; Press <kbd>Ctrl</kbd> + <kbd>O</kbd> and <kbd>Enter</kbd> to save &rarr; Press <kbd>Ctrl</kbd> + <kbd>X</kbd> to exit.</span>
+            <span class="data-ru">Вставьте код правой кнопкой мыши (ПКМ) &rarr; Нажмите <kbd>Ctrl</kbd> + <kbd>O</kbd> и <kbd>Enter</kbd> для сохранения &rarr; Нажмите <kbd>Ctrl</kbd> + <kbd>X</kbd> для выхода.</span>
+        </div>
+
+        <!-- Code File 1 Option A -->
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">1A. File Contents for main.cpp (Classic Loop)</span>
+            <span class="data-ru">1A. Содержимое файла main.cpp (Классический цикл)</span>
+        </h3>
+        <pre><code class="language-cpp">#include &lt;SDL3/SDL.h&gt;
+#include &lt;SDL3/SDL_main.h&gt;
+#include &lt;SDL3_image/SDL_image.h&gt;
+
+int main(int argc, char* argv[]) {
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        SDL_Log("SDL Initialization failed: %s", SDL_GetError());
+        return -1;
+    }
+
+    SDL_Window* window = SDL_CreateWindow("SDL3_image Example Window (Classic)", 800, 450, 0);
+    if (!window) {
+        SDL_Log("Window creation failed: %s", SDL_GetError());
+        SDL_Quit();
+        return -1;
+    }
+
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, NULL);
+    if (!renderer) {
+        SDL_Log("Renderer creation failed: %s", SDL_GetError());
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return -1;
+    }
+
+    SDL_Texture* texture = IMG_LoadTexture(renderer, "assets/clear_01.png");
+    if (!texture) {
+        SDL_Log("Failed to load texture: %s", SDL_GetError());
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return -1;
+    }
+
+    bool running = true;
+    while (running) {
+        SDL_Event event;
+        while (SDL_PollEvent(&amp;event)) {
+            if (event.type == SDL_EVENT_QUIT) {
+                running = false;
+            }
+        }
+
+        SDL_SetRenderDrawColor(renderer, 230, 245, 235, 255);
+        SDL_RenderClear(renderer);
+
+        SDL_RenderTexture(renderer, texture, NULL, NULL);
+
+        SDL_RenderPresent(renderer);
+    }
+
+    SDL_DestroyTexture(texture);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
+    return 0;
+}</code></pre>
+
+        <!-- Code File 1 Option B -->
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">1B. File Contents for main.cpp (SDL3 Callbacks API)</span>
+            <span class="data-ru">1B. Содержимое файла main.cpp (SDL3 Callbacks API)</span>
+        </h3>
+        <pre><code class="language-cpp">#define SDL_MAIN_USE_CALLBACKS 1
+#include &lt;SDL3/SDL.h&gt;
+#include &lt;SDL3/SDL_main.h&gt;
+#include &lt;SDL3_image/SDL_image.h&gt;
+
+struct AppState {
+    SDL_Window* window = nullptr;
+    SDL_Renderer* renderer = nullptr;
+    SDL_Texture* texture = nullptr;
+};
+
+SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        SDL_Log("SDL Initialization failed: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    AppState* state = new AppState();
+    *appstate = state;
+
+    state-&gt;window = SDL_CreateWindow("SDL3_image Example Window (Callbacks)", 800, 450, 0);
+    if (!state-&gt;window) {
+        SDL_Log("Window creation failed: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    state-&gt;renderer = SDL_CreateRenderer(state-&gt;window, NULL);
+    if (!state-&gt;renderer) {
+        SDL_Log("Renderer creation failed: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    state-&gt;texture = IMG_LoadTexture(state-&gt;renderer, "assets/clear_01.png");
+    if (!state-&gt;texture) {
+        SDL_Log("Failed to load texture: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
+    if (event-&gt;type == SDL_EVENT_QUIT) {
+        return SDL_APP_SUCCESS;
+    }
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppIterate(void* appstate) {
+    auto* state = static_cast&lt;AppState*&gt;(appstate);
+
+    SDL_SetRenderDrawColor(state-&gt;renderer, 230, 245, 235, 255);
+    SDL_RenderClear(state-&gt;renderer);
+
+    SDL_RenderTexture(state-&gt;renderer, state-&gt;texture, NULL, NULL);
+
+    SDL_RenderPresent(state-&gt;renderer);
+
+    return SDL_APP_CONTINUE;
+}
+
+void SDL_AppQuit(void* appstate, SDL_AppResult result) {
+    if (appstate) {
+        auto* state = static_cast&lt;AppState*&gt;(appstate);
+        if (state-&gt;texture) {
+            SDL_DestroyTexture(state-&gt;texture);
+        }
+        if (state-&gt;renderer) {
+            SDL_DestroyRenderer(state-&gt;renderer);
+        }
+        if (state-&gt;window) {
+            SDL_DestroyWindow(state-&gt;window);
+        }
+        delete state;
+    }
+    SDL_Quit();
+}</code></pre>
+
+        <!-- Informational Callout Box for Callbacks -->
         <div class="alert alert-warning my-3">
             <strong>
-                <span class="data-en">Important:</span>
-                <span class="data-ru">Важно:</span>
+                <span class="data-en">SDL3 Note: Classic Loop vs. Callbacks API</span>
+                <span class="data-ru">Заметка SDL3: Классический цикл vs. Callbacks API</span>
             </strong>
-            <span class="data-en">Make sure to download the main release archive (<code>SDL3-3.4.16.zip</code> or <code>.tar.gz</code>) and <strong>not</strong> the auto-generated <em>"Source code"</em> zip/tar.gz files under Assets.</span>
-            <span class="data-ru">Обязательно скачивайте основной архив релиза (<code>SDL3-3.4.16.zip</code> или <code>.tar.gz</code>), а <strong>не</strong> автоматически сгенерированные файлы <em>"Source code"</em> в разделе Assets.</span>
+            <p class="mb-0 mt-1">
+                <span class="data-en">
+                    Option 1A uses the traditional <code>main()</code> event loop. Option 1B uses the new SDL3 recommended <strong>Callbacks API</strong> (via <code>SDL_MAIN_USE_CALLBACKS</code>). The Callbacks API hands main loop control over to the OS, preventing window rendering freezes during drag/resize operations and enabling seamless cross-platform support across WebAssembly, iOS, and Android.
+                </span>
+                <span class="data-ru">
+                    Вариант 1A использует традиционный цикл событий <code>main()</code>. Вариант 1B использует новый рекомендуемый в SDL3 <strong>Callbacks API</strong> (через <code>SDL_MAIN_USE_CALLBACKS</code>). Callbacks API передаёт управление основным циклом операционной системе, что предотвращает зависание рендеринга при перетаскивании или изменении размера окна и обеспечивает нативную кроссплатформенность для WebAssembly, iOS и Android.
+                </span>
+            </p>
         </div>
-        <p>
-            <span class="data-en">Extract the downloaded archive to a convenient directory on your machine.</span>
-            <span class="data-ru">Распакуйте скачанный архив в удобную директорию на вашем компьютере.</span>
-        </p>
+
+        <!-- Code File 2 -->
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">2. File Contents for CMakeLists.txt</span>
+            <span class="data-ru">2. Содержимое файла CMakeLists.txt</span>
+        </h3>
+        <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+
+# Default to Debug if CMAKE_BUILD_TYPE is not set via command line
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Debug")
+endif()
+
+project(sdl3_image_test CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# -----------------------------------------------------------------------------
+# Locate SDL3 and SDL3_image Packages via Custom Paths
+# -----------------------------------------------------------------------------
+if(WIN32)
+    # Points to the directory containing SDL3Config.cmake and SDL3_imageConfig.cmake
+    set(SDL3_DIR "C:/libs/sdl3-3.4.16-mingw/lib/cmake/SDL3")
+    set(SDL3_image_DIR "C:/libs/sdl3-image-3.4.6-mingw/lib/cmake/SDL3_image")
+else()
+    set(SDL3_DIR "$ENV{HOME}/libs/sdl3-3.4.16-ubuntu/lib/cmake/SDL3")
+    set(SDL3_image_DIR "$ENV{HOME}/libs/sdl3-image-3.4.6-ubuntu/lib/cmake/SDL3_image")
+endif()
+
+find_package(SDL3 REQUIRED CONFIG)
+find_package(SDL3_image REQUIRED CONFIG)
+
+# -----------------------------------------------------------------------------
+# Target Definition
+# -----------------------------------------------------------------------------
+set(PROJECT_SOURCES
+    main.cpp
+)
+
+add_executable(app ${PROJECT_SOURCES})
+
+# Link SDL3 and SDL3_image statically (automatically brings in include dirs and system libraries)
+target_link_libraries(app PRIVATE SDL3::SDL3-static SDL3_image::SDL3_image-static)
+
+# Automatically copy assets directory to output directory post-build
+add_custom_command(
+    TARGET app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_CURRENT_SOURCE_DIR}/assets
+            $&lt;TARGET_FILE_DIR:app&gt;/assets
+)
+
+# -----------------------------------------------------------------------------
+# Platform-Specific Compiler &amp; Linker Flags
+# -----------------------------------------------------------------------------
+if(WIN32)
+    target_compile_options(app PRIVATE -Os)
+    target_link_options(app PRIVATE -static -s -static-libgcc)
+
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_link_options(app PRIVATE -mconsole)
+    else()
+        target_link_options(app PRIVATE -mwindows)
+    endif()
+endif()</code></pre>
     </section>
 
+    <!-- Step 3: Build & Execution Scripts -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 2: Create the Build Script</span>
-            <span class="data-ru">Шаг 2: Создание скрипта сборки</span>
+            <span class="data-en">Step 3: Create Build &amp; Execution Scripts</span>
+            <span class="data-ru">Шаг 3: Создание скриптов сборки и запуска</span>
         </h2>
-        <p>
-            <span class="data-en">In the root directory of the extracted SDL3 source folder, create an empty file named <code>build-mingw-static.bat</code> and paste the following content into it:</span>
-            <span class="data-ru">В корневой директории распакованного исходного кода SDL3 создайте пустой файл <code>build-mingw-static.bat</code> и вставьте в него следующее содержимое:</span>
-        </p>
 
+        <!-- Windows Tab/Sub-block -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (MinGW / Batch Scripts)</h3>
+        <p class="fw-bold mb-1">config-exe.bat</p>
+        <pre><code class="language-bash">cmake -G Ninja -S . -B dist/win</code></pre>
+
+        <p class="fw-bold mb-1">build-exe.bat</p>
+        <pre><code class="language-bash">cmake --build dist/win</code></pre>
+
+        <p class="fw-bold mb-1">run-exe.bat</p>
         <pre><code class="language-bash">@echo off
+.\dist\win\app.exe</code></pre>
 
-set BUILD_DIR=build-mingw-static
+        <p class="mt-3">
+            <span class="data-en">Run the scripts sequentially in Command Prompt or PowerShell:</span>
+            <span class="data-ru">Последовательно запустите скрипты в командной строке или PowerShell:</span>
+        </p>
+        <pre><code class="language-bash">config-exe.bat
+build-exe.bat
+run-exe.bat</code></pre>
 
-if exist %BUILD_DIR% rmdir /s /q %BUILD_DIR%
-mkdir %BUILD_DIR%
-cd %BUILD_DIR%
+        <!-- Ubuntu Tab/Sub-block -->
+        <h3 class="h6 fw-bold mt-4 text-primary">Ubuntu (Bash Scripts)</h3>
+        <p class="fw-bold mb-1">config-bin.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+cmake -G Ninja -S . -B dist/linux</code></pre>
 
-cmake .. ^
-  -G "MinGW Makefiles" ^
-  -DCMAKE_BUILD_TYPE=Release ^
-  -DCMAKE_INSTALL_PREFIX=C:/libs/sdl3-3.4.16-mingw ^
-  -DBUILD_SHARED_LIBS=OFF ^
-  -DSDL_SHARED=OFF ^
-  -DSDL_STATIC=ON ^
-  -DSDL_TESTS=OFF ^
-  -DSDL_EXAMPLES=OFF
+        <p class="fw-bold mb-1">build-bin.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+cmake --build dist/linux</code></pre>
 
-cmake --build . --config Release --parallel 8 --target install</code></pre>
+        <p class="fw-bold mb-1">run-bin.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+./dist/linux/app</code></pre>
 
-        <div class="alert alert-info mt-3">
-            <strong>
-                <span class="data-en">Note:</span>
-                <span class="data-ru">Примечание:</span>
-            </strong>
-            <span class="data-en">Make sure to adjust the <code>CMAKE_INSTALL_PREFIX</code> path according to your target installation directory.</span>
-            <span class="data-ru">Убедитесь, что путь к <code>CMAKE_INSTALL_PREFIX</code> соответствует вашей целевой директории установки.</span>
-        </div>
+        <p class="mt-3">
+            <span class="data-en">Grant execute permissions on Ubuntu before running:</span>
+            <span class="data-ru">Предоставьте права на выполнение в Ubuntu перед запуском:</span>
+        </p>
+        <pre><code class="language-bash">chmod +x config-bin.sh build-bin.sh run-bin.sh
+./config-bin.sh
+./build-bin.sh
+./run-bin.sh</code></pre>
     </section>
 
+    <!-- Step 4: Expected Output -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 3: Run and Compile</span>
-            <span class="data-ru">Шаг 3: Запуск и сборка</span>
+            <span class="data-en">Step 4: Expected Output</span>
+            <span class="data-ru">Шаг 4: Ожидаемый результат</span>
         </h2>
-        <p>
-            <span class="data-en">Run <code>build-mingw-static.bat</code> via Command Prompt (CMD) so you can catch any potential compilation errors in the console. Once completed, your compiled static library <code>libSDL3.a</code> along with header files will be installed in the output path set by <code>CMAKE_INSTALL_PREFIX</code>.</span>
-            <span class="data-ru">Запустите <code>build-mingw-static.bat</code> через командную строку (CMD), чтобы вы могли увидеть возможные ошибки сборки прямо в консоли. После завершения собранная статическая библиотека <code>libSDL3.a</code> вместе с заголовочными файлами будет установлена по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code>.</span>
-        </p>
-    </section>
 
-    <section class="mb-4">
-        <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 4: Next Steps</span>
-            <span class="data-ru">Шаг 4: Следующие шаги</span>
-        </h2>
         <p>
-            <span class="data-en">Now that you have compiled and installed the SDL3 static library, you can integrate it into your C++ projects using CMake:</span>
-            <span class="data-ru">Теперь, когда вы собрали и установили статическую библиотеку SDL3, вы можете интегрировать её в свои C++ проекты с помощью CMake:</span>
+            <span class="data-en">After running the build and execution scripts, a window will appear displaying the <code>clear_01.png</code> image rendered inside it, with the window title:</span>
+            <span class="data-ru">После запуска скриптов сборки и выполнения появится окно, в котором отобразится загруженное изображение <code>clear_01.png</code>, с заголовком:</span>
         </p>
-        <p>
-            <a href="/tutorials/sdl3-renderer/desktop/integrate-sdl3-static-renderer-desktop" class="btn btn-outline-primary fw-bold lang-link-dynamic">
-                <span class="data-en">Integrating SDL3 Library with CMake on Windows &amp; Ubuntu (SDL_Renderer)</span>
-                <span class="data-ru">Интеграция C++-библиотеки SDL3 с CMake под Windows и Ubuntu (SDL_Renderer)</span>
-            </a>
+
+        <pre><code class="language-text">SDL3_image Example Window (Classic)</code></pre>
+        <p class="mt-2">
+            <span class="data-en">or (if using the Callbacks API version):</span>
+            <span class="data-ru">или (если используется версия с Callbacks API):</span>
         </p>
+        <pre><code class="language-text">SDL3_image Example Window (Callbacks)</code></pre>
     </section>
 </div>
 
@@ -469,6 +741,71 @@ function copyToClipboard(text, button) {
 <block>
     <script src="/libs/prism/1.30.0/prism.min.js"></script>
 
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
     
     <block>
         
