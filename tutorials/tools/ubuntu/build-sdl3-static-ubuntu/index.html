@@ -14,6 +14,9 @@
 
 <link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
 
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+<script src="/libs/bootstrap@5.3.3/bootstrap.bundle.min.js"></script>
+
 
 <link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 
@@ -220,8 +223,8 @@
             <span class="data-ru">Сборка статической библиотеки SDL3 для Ubuntu (GCC, CMake и Ninja)</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to compiling SDL3 source code into a static library (libSDL3.a) on Ubuntu using CMake and GCC.</span>
-            <span class="data-ru">Руководство по компиляции исходного кода SDL3 в статическую библиотеку (libSDL3.a) в Ubuntu с помощью CMake и GCC.</span>
+            <span class="data-en">A guide to compiling SDL3 source code into a static library (libSDL3.a) on Ubuntu for Desktop or Headless Server setups using CMake and GCC.</span>
+            <span class="data-ru">Руководство по компиляции исходного кода SDL3 в статическую библиотеку (libSDL3.a) в Ubuntu для десктопа или headless-сервера с помощью CMake и GCC.</span>
         </p>
     </header>
 
@@ -236,26 +239,52 @@
 
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 1: Install Audio and Display Dependencies</span>
-            <span class="data-ru">Шаг 1: Установка зависимостей аудио и видео</span>
+            <span class="data-en">Step 1: Install Dependencies</span>
+            <span class="data-ru">Шаг 1: Установка зависимостей</span>
         </h2>
         <p>
-            <span class="data-en">If you are compiling on a desktop environment or WSL and need display and audio support, install the development headers required for X11, Wayland, and audio backends:</span>
-            <span class="data-ru">Если вы выполняете сборку в десктопном окружении или WSL и вам нужна поддержка видео и аудио, установите библиотеки разработки для X11, Wayland и аудио систем:</span>
+            <span class="data-en">Select your target environment to view the required system packages:</span>
+            <span class="data-ru">Выберите вашу целевую среду для просмотра необходимых системных пакетов:</span>
         </p>
-        <pre><code class="language-bash">sudo apt update &amp;&amp; sudo apt install -y \
+
+        <!-- Tabs for Step 1 -->
+        <ul class="nav nav-tabs mb-3">
+            <li class="nav-item">
+                <button type="button" class="nav-link active fw-bold tab-btn-step1" data-target="deps-desktop-pane">
+                    <span class="data-en">Desktop / GUI Client</span>
+                    <span class="data-ru">Десктоп / GUI-клиент</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button type="button" class="nav-link fw-bold tab-btn-step1" data-target="deps-headless-pane">
+                    <span class="data-en">Headless Server / VPS</span>
+                    <span class="data-ru">Headless-сервер / VPS</span>
+                </button>
+            </li>
+        </ul>
+
+        <div>
+            <!-- Desktop Dependencies -->
+            <div id="deps-desktop-pane" class="tab-pane-step1">
+                <p class="text-muted">
+                    <span class="data-en">If you are compiling for a desktop environment or WSL and need display and audio support, install the development headers required for X11, Wayland, and audio backends:</span>
+                    <span class="data-ru">Если вы выполняете сборку для десктопного окружения или WSL и вам нужна поддержка видео и аудио, установите заголовочные файлы для X11, Wayland и аудиосистем:</span>
+                </p>
+                <pre><code class="language-bash">sudo apt update &amp;&amp; sudo apt install -y \
   libasound2-dev libpulse-dev libaudio-dev \
   libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev libxinerama-dev \
   libxss-dev libxtst-dev libxxf86vm-dev \
   libwayland-dev libxkbcommon-dev libegl1-mesa-dev libgl1-mesa-dev libgbm-dev libdrm-dev</code></pre>
+            </div>
 
-        <div class="alert alert-info mt-3">
-            <strong>
-                <span class="data-en">Note for Headless VPS Users:</span>
-                <span class="data-ru">Примечание для пользователей серверных VPS:</span>
-            </strong>
-            <span class="data-en">If you are building SDL3 on a headless server/VPS purely for networking or backend processing, you can <strong>skip</strong> installing the X11, Wayland, and Audio development headers above.</span>
-            <span class="data-ru">Если вы собираете SDL3 на сервере/VPS без графической оболочки исключительно для сетевых задач или бэкенда, установку библиотек X11, Wayland и Audio выше можно <strong>пропустить</strong>.</span>
+            <!-- Headless Dependencies -->
+            <div id="deps-headless-pane" class="tab-pane-step1 d-none">
+                <p class="text-muted">
+                    <span class="data-en">For a headless server build (e.g. running background workers or dedicated game servers), graphics and audio headers are <strong>not required</strong>. Only essential build tools are needed:</span>
+                    <span class="data-ru">Для сборки на headless-сервере (например, для фоновых сервисов или выделенных игровых серверов) графические и аудио библиотеки <strong>не требуются</strong>. Нужны только базовые инструменты сборки:</span>
+                </p>
+                <pre><code class="language-bash">sudo apt update &amp;&amp; sudo apt install -y build-essential cmake ninja-build wget</code></pre>
+            </div>
         </div>
     </section>
 
@@ -290,11 +319,30 @@ cd SDL3-3.4.16</code></pre>
             <span class="data-ru">Шаг 3: Создание скрипта сборки</span>
         </h2>
         <p>
-            <span class="data-en">In the root directory of the extracted SDL3 source folder, create a script named <code>build-ubuntu-static.sh</code> with the following content:</span>
-            <span class="data-ru">В корневой директории извлеченного исходного кода SDL3 создайте файл <code>build-ubuntu-static.sh</code> со следующим содержимым:</span>
+            <span class="data-en">In the root directory of the extracted SDL3 source folder, create a script named <code>build-ubuntu-static.sh</code> with the flags appropriate for your target deployment:</span>
+            <span class="data-ru">В корневой директории извлеченного исходного кода SDL3 создайте файл <code>build-ubuntu-static.sh</code> с флагами, подходящими для вашей целевой среды:</span>
         </p>
 
-        <pre><code class="language-bash">#!/usr/bin/env bash
+        <!-- Tabs for Step 3 -->
+        <ul class="nav nav-tabs mb-3">
+            <li class="nav-item">
+                <button type="button" class="nav-link active fw-bold tab-btn-step3" data-target="script-desktop-pane">
+                    <span class="data-en">Desktop / GUI Client</span>
+                    <span class="data-ru">Десктоп / GUI-клиент</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button type="button" class="nav-link fw-bold tab-btn-step3" data-target="script-headless-pane">
+                    <span class="data-en">Headless Server</span>
+                    <span class="data-ru">Headless-сервер</span>
+                </button>
+            </li>
+        </ul>
+
+        <div>
+            <!-- Desktop Script -->
+            <div id="script-desktop-pane" class="tab-pane-step3">
+                <pre><code class="language-bash">#!/usr/bin/env bash
 set -e
 
 BUILD_DIR="build-ubuntu-static"
@@ -314,14 +362,44 @@ cmake .. \
   -DSDL_EXAMPLES=OFF
 
 cmake --build . --config Release --parallel --target install</code></pre>
+            </div>
+
+            <!-- Headless Script -->
+            <div id="script-headless-pane" class="tab-pane-step3 d-none">
+                <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+
+BUILD_DIR="build-ubuntu-static"
+
+rm -rf "$BUILD_DIR"
+mkdir -p "$BUILD_DIR"
+cd "$BUILD_DIR"
+
+cmake .. \
+  -GNinja \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX="$HOME/libs/sdl3-3.4.16-ubuntu" \
+  -DBUILD_SHARED_LIBS=OFF \
+  -DSDL_SHARED=OFF \
+  -DSDL_STATIC=ON \
+  -DSDL_TESTS=OFF \
+  -DSDL_EXAMPLES=OFF \
+  -DSDL_X11=OFF \
+  -DSDL_WAYLAND=OFF \
+  -DSDL_OFFSCREEN=ON \
+  -DSDL_UNIX_CONSOLE_BUILD=ON
+
+cmake --build . --config Release --parallel --target install</code></pre>
+            </div>
+        </div>
 
         <div class="alert alert-info mt-3">
             <strong>
                 <span class="data-en">Note:</span>
                 <span class="data-ru">Примечание:</span>
             </strong>
-            <span class="data-en">Ensure that the path variable <code>CMAKE_INSTALL_PREFIX</code> matches your target installation path.</span>
-            <span class="data-ru">Убедитесь, что переменная пути <code>CMAKE_INSTALL_PREFIX</code> соответствует целевой директории установки.</span>
+            <span class="data-en">Ensure that the path variable <code>CMAKE_INSTALL_PREFIX</code> matches your target installation directory. The <code>SDL_UNIX_CONSOLE_BUILD=ON</code> flag tells CMake that a headless setup without X11 or Wayland is intentional.</span>
+            <span class="data-ru">Убедитесь, что переменная пути <code>CMAKE_INSTALL_PREFIX</code> соответствует целевой директории установки. Флаг <code>SDL_UNIX_CONSOLE_BUILD=ON</code> сообщает CMake, что сборка без X11 или Wayland является намеренной.</span>
         </div>
     </section>
 
@@ -353,8 +431,8 @@ cmake --build . --config Release --parallel --target install</code></pre>
             <span class="data-ru">Шаг 5: Следующие шаги</span>
         </h2>
         <p>
-            <span class="data-en">Now that you have compiled and installed the SDL3 static library, you can proceed with building companion libraries such as SDL3_net:</span>
-            <span class="data-ru">Теперь, когда вы собрали и установили статическую библиотеку SDL3, вы можете перейти к сборке сопутствующих библиотек, таких как SDL3_net:</span>
+            <span class="data-en">Now that you have compiled and installed the SDL3 static library, you can proceed with building companion libraries such as SDL3_net or integrating it into your CMake project:</span>
+            <span class="data-ru">Теперь, когда вы собрали и установили статическую библиотеку SDL3, вы можете перейти к сборке сопутствующих библиотек, таких как SDL3_net, или интегрировать ее в ваш CMake-проект:</span>
         </p>
         <p>
             <a href="/tutorials/sdl3-renderer/desktop/integrate-sdl3-static-renderer-desktop" class="btn btn-outline-primary fw-bold lang-link-dynamic">
@@ -364,6 +442,33 @@ cmake --build . --config Release --parallel --target install</code></pre>
         </p>
     </section>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    function setupTabs(btnClass, paneClass) {
+        const buttons = document.querySelectorAll('.' + btnClass);
+        const panes = document.querySelectorAll('.' + paneClass);
+
+        buttons.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const targetId = btn.getAttribute('data-target');
+
+                buttons.forEach(b => b.classList.remove('active'));
+                panes.forEach(p => p.classList.add('d-none'));
+
+                btn.classList.add('active');
+                const activePane = document.getElementById(targetId);
+                if (activePane) {
+                    activePane.classList.remove('d-none');
+                }
+            });
+        });
+    }
+
+    setupTabs('tab-btn-step1', 'tab-pane-step1');
+    setupTabs('tab-btn-step3', 'tab-pane-step3');
+});
+</script>
 
         
         

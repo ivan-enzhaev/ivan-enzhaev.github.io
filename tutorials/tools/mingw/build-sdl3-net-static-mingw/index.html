@@ -14,6 +14,9 @@
 
 <link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
 
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+<script src="/libs/bootstrap@5.3.3/bootstrap.bundle.min.js"></script>
+
 
 <link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 
@@ -293,7 +296,7 @@ call cmake .. ^
   -DCMAKE_INSTALL_PREFIX=C:/libs/sdl3-net-3.2.0-mingw ^
   -G "MinGW Makefiles"
 
-call cmake --build . --config Release --parallel 8 --target install</code></pre>
+call cmake --build . --config Release --parallel --target install</code></pre>
 
         <div class="alert alert-info mt-3">
             <strong>
@@ -327,9 +330,15 @@ call cmake --build . --config Release --parallel 8 --target install</code></pre>
         </p>
         <div class="d-grid gap-2 d-md-flex flex-md-column align-items-start">
             <p class="mb-2">
-                <a href="/tutorials/sdl3-renderer/desktop/integrate-sdl3-net-static-renderer-desktop" class="btn btn-outline-primary fw-bold lang-link-dynamic">
+                <a href="/tutorials/sdl3-renderer/desktop/integrate-sdl3-net-static-server-desktop" class="btn btn-outline-primary fw-bold lang-link-dynamic">
                     <span class="data-en">Integrating SDL3_net Library with CMake on Windows &amp; Ubuntu (Server)</span>
                     <span class="data-ru">Интеграция C++-библиотеки SDL3_net с CMake под Windows и Ubuntu (Сервер)</span>
+                </a>
+            </p>
+            <p class="mb-2">
+                <a href="/tutorials/sdl3-renderer/desktop/integrate-sdl3-net-static-renderer-desktop" class="btn btn-outline-primary fw-bold lang-link-dynamic">
+                    <span class="data-en">Integrating SDL3_net Library with CMake on Windows &amp; Ubuntu (Client, SDL_Renderer)</span>
+                    <span class="data-ru">Интеграция C++-библиотеки SDL3_net с CMake под Windows и Ubuntu (Клиент, SDL_Renderer)</span>
                 </a>
             </p>
             <p class="mb-2">
