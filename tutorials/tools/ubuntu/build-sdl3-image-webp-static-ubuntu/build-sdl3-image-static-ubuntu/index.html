@@ -223,19 +223,25 @@
             <span class="data-ru">Сборка статической библиотеки SDL3_image для Ubuntu (GCC, CMake и Ninja)</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to compiling SDL3_image source code into a static library (libSDL3_image.a) on Ubuntu.</span>
-            <span class="data-ru">Руководство по компиляции исходного кода SDL3_image в статическую библиотеку (libSDL3_image.a) в Ubuntu.</span>
+            <span class="data-en">A guide to compiling SDL3_image source code into a static library (libSDL3_image.a) on Ubuntu with WebP support.</span>
+            <span class="data-ru">Руководство по компиляции исходного кода SDL3_image в статическую библиотеку (libSDL3_image.a) в Ubuntu с поддержкой WebP.</span>
         </p>
     </header>
 
     <div class="alert alert-secondary mb-3">
-        <span class="data-en">Make sure you have already built the core SDL3 library for Ubuntu by following these instructions:</span>
-        <span class="data-ru">Убедитесь, что вы уже собрали основную библиотеку SDL3 для Ubuntu, следуя этим инструкциям:</span>
+        <span class="data-en">Make sure you have already built the core SDL3 and WebP libraries for Ubuntu by following these instructions:</span>
+        <span class="data-ru">Убедитесь, что вы уже собрали основные библиотеки SDL3 и WebP для Ubuntu, следуя этим инструкциям:</span>
         <ul class="mb-0 mt-2">
             <li>
                 <a href="/tutorials/tools/ubuntu/build-sdl3-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
                     <span class="data-en">Building SDL3 Static Library for Ubuntu</span>
                     <span class="data-ru">Сборка статической библиотеки SDL3 для Ubuntu</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/ubuntu/build-webp-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building WebP Static Library for Ubuntu</span>
+                    <span class="data-ru">Сборка статической библиотеки WebP для Ubuntu</span>
                 </a>
             </li>
         </ul>
@@ -291,32 +297,41 @@ cd SDL3_image-3.4.6</code></pre>
         <pre><code class="language-bash">#!/usr/bin/env bash
 set -e
 
+WEBP_PATH="$HOME/libs/webp-1.6.0-ubuntu"
 BUILD_DIR="build-ubuntu-static"
 
-rm -rf "$BUILD_DIR"
 mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR"
+
+# Clean old CMake cache if it exists
+rm -f CMakeCache.txt
+rm -rf CMakeFiles
 
 cmake .. \
   -GNinja \
   -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_INSTALL_PREFIX="$HOME/libs/sdl3-image-3.4.6-ubuntu" \
+  -DCMAKE_INSTALL_PREFIX="$HOME/libs/sdl3_image-3.4.6-ubuntu" \
   -DSDL3_DIR="$HOME/libs/sdl3-3.4.16-ubuntu/lib/cmake/SDL3" \
+  -DCMAKE_PREFIX_PATH="$WEBP_PATH" \
+  -Dwebp_DIR="$WEBP_PATH/share/WebP/cmake" \
+  -Dwebp_ROOT="$WEBP_PATH" \
   -DBUILD_SHARED_LIBS=OFF \
   -DSDLIMAGE_SAMPLES=OFF \
   -DSDLIMAGE_TESTS=OFF \
+  -DSDLIMAGE_WEBP=ON \
+  -DSDLIMAGE_WEBP_SHARED=OFF \
   -DSDLIMAGE_VENDORED=OFF \
   -DSDLIMAGE_BACKEND_IMAGEIO=OFF
 
-cmake --build . --config Release --parallel --target install</code></pre>
+cmake --build . --config Release --parallel $(nproc) --target install</code></pre>
 
         <div class="alert alert-info mt-3">
             <strong>
                 <span class="data-en">Note:</span>
                 <span class="data-ru">Примечание:</span>
             </strong>
-            <span class="data-en">Ensure that the path variables (<code>SDL3_DIR</code> and <code>CMAKE_INSTALL_PREFIX</code>) match the paths to your locally compiled static libraries.</span>
-            <span class="data-ru">Убедитесь, что переменные путей (<code>SDL3_DIR</code> и <code>CMAKE_INSTALL_PREFIX</code>) соответствуют путям к вашим локально собранным статическим библиотекам.</span>
+            <span class="data-en">Ensure that the path variables (<code>WEBP_PATH</code>, <code>SDL3_DIR</code>, and <code>CMAKE_INSTALL_PREFIX</code>) match the paths to your locally compiled static libraries.</span>
+            <span class="data-ru">Убедитесь, что переменные путей (<code>WEBP_PATH</code>, <code>SDL3_DIR</code> и <code>CMAKE_INSTALL_PREFIX</code>) соответствуют путям к вашим локально собранным статическим библиотекам.</span>
         </div>
     </section>
 
@@ -348,13 +363,13 @@ cmake --build . --config Release --parallel --target install</code></pre>
             <span class="data-ru">Шаг 5: Следующие шаги</span>
         </h2>
         <p>
-            <span class="data-en">Now that you have compiled and installed the SDL3_image static library, you can proceed with integrating SDL3 and SDL3_image in your CMake project:</span>
-            <span class="data-ru">Теперь, когда вы собрали и установили статическую библиотеку SDL3_image, вы можете перейти к интеграции SDL3 и SDL3_image в ваш проект CMake:</span>
+            <span class="data-en">Now that you have compiled and installed the SDL3_image static library, you can proceed with integrating WebGPU-Native, SDL3, and SDL3_image:</span>
+            <span class="data-ru">Теперь, когда вы собрали и установили статическую библиотеку SDL3_image, вы можете перейти к интеграции WebGPU-Native, SDL3 и SDL3_image:</span>
         </p>
         <p>
-            <a href="/tutorials/sdl3-renderer/desktop/integrate-sdl3-image-static-renderer-desktop" class="btn btn-outline-primary fw-bold lang-link-dynamic">
-                <span class="data-en">Integrating SDL3_image Library with CMake on Windows &amp; Ubuntu (SDL_Renderer)</span>
-                <span class="data-ru">Интеграция C++-библиотеки SDL3_image с CMake под Windows и Ubuntu (SDL_Renderer)</span>
+            <a href="/tutorials/tools/shared/integrate-webgpu-sdl3-image" class="btn btn-outline-primary fw-bold lang-link-dynamic">
+                <span class="data-en">Integrating WebGPU-Native, SDL3, and SDL3_image on Windows and Ubuntu</span>
+                <span class="data-ru">Интеграция WebGPU-Native, SDL3 и SDL3_image под Windows и Ubuntu</span>
             </a>
         </p>
     </section>
