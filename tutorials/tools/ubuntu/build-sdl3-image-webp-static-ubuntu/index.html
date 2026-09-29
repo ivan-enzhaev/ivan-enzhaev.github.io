@@ -234,14 +234,14 @@
         <ul class="mb-0 mt-2">
             <li>
                 <a href="/tutorials/tools/ubuntu/build-sdl3-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-                    <span class="data-en">Building SDL3 Static Library for Ubuntu</span>
-                    <span class="data-ru">Сборка статической библиотеки SDL3 для Ubuntu</span>
+                    <span class="data-en">Building SDL3 Static Library for Ubuntu (GCC, CMake &amp; Ninja)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для Ubuntu (GCC, CMake и Ninja)</span>
                 </a>
             </li>
             <li>
                 <a href="/tutorials/tools/ubuntu/build-webp-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-                    <span class="data-en">Building WebP Static Library for Ubuntu</span>
-                    <span class="data-ru">Сборка статической библиотеки WebP для Ubuntu</span>
+                    <span class="data-en">Building WebP Static Library for Ubuntu (GCC, CMake &amp; Ninja)</span>
+                    <span class="data-ru">Сборка статической библиотеки WebP для Ubuntu (GCC, CMake и Ninja)</span>
                 </a>
             </li>
         </ul>
@@ -310,7 +310,7 @@ rm -rf CMakeFiles
 cmake .. \
   -GNinja \
   -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_INSTALL_PREFIX="$HOME/libs/sdl3_image-3.4.6-ubuntu" \
+  -DCMAKE_INSTALL_PREFIX="$HOME/libs/sdl3_image-3.4.6-webp-ubuntu" \
   -DSDL3_DIR="$HOME/libs/sdl3-3.4.16-ubuntu/lib/cmake/SDL3" \
   -DCMAKE_PREFIX_PATH="$WEBP_PATH" \
   -Dwebp_DIR="$WEBP_PATH/share/WebP/cmake" \

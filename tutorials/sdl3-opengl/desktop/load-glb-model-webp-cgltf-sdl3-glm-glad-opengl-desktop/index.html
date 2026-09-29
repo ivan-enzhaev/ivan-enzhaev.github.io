@@ -7,7 +7,7 @@
 
 <title>
   
-    Loading 3D GLB Model with cgltf, WebP Texture, GLM, GLAD, and OpenGL 3.3
+    Loading 3D GLB Model with WebP Texture, cgltf, GLM, GLAD, and OpenGL 3.3
   
   | Ivan Enzhaev
 </title>
@@ -219,14 +219,25 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Loading 3D GLB Model with cgltf, WebP Texture, GLM, GLAD, and OpenGL 3.3</span>
-            <span class="data-ru">Загрузка 3D-модели GLB с помощью cgltf, текстурой WebP, GLM, GLAD и OpenGL 3.3</span>
+            <span class="data-en">Loading 3D GLB Model with WebP Texture, cgltf, GLM, GLAD, and OpenGL 3.3</span>
+            <span class="data-ru">Загрузка 3D-модели GLB с текстурой WebP, cgltf, GLM, GLAD и OpenGL 3.3</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A step-by-step guide to parsing a binary 3D model (.glb) using cgltf, loading a WebP texture using SDL3_image 3.4.6, and rendering a 3D Y-Bot model rotating around its Y-axis using GLM perspective projection on Windows and Ubuntu.</span>
-            <span class="data-ru">Пошаговое руководство по разбору бинарной 3D-модели (.glb) с помощью cgltf, загрузке текстуры WebP через SDL3_image 3.4.6 и отрисовке 3D-модели Y-Bot с вращением вокруг оси Y с использованием перспективной проекции GLM под Windows и Ubuntu.</span>
+            <span class="data-en">A step-by-step guide to parsing a binary 3D model (.glb) using cgltf, leveraging <strong>WebP texture compression</strong> via SDL3_image with static WebP libraries for efficient asset size, and rendering a 3D Y-Bot model rotating around its Y-axis using GLM perspective projection on Windows and Ubuntu.</span>
+            <span class="data-ru">Пошаговое руководство по разбору бинарной 3D-модели (.glb) с помощью cgltf, использованию <strong>сжатия текстур WebP</strong> через SDL3_image со статическими библиотеками WebP для уменьшения размера активов и отрисовке 3D-модели Y-Bot с вращением вокруг оси Y с использованием перспективной проекции GLM под Windows и Ubuntu.</span>
         </p>
     </header>
+
+    <div class="alert alert-info mb-4">
+        <h5 class="alert-heading fw-bold">
+            <span class="data-en">Note on WebP Integration</span>
+            <span class="data-ru">Примечание об интеграции WebP</span>
+        </h5>
+        <p class="mb-0">
+            <span class="data-en">This guide utilizes <strong>WebP texture format support</strong> through statically linked WebP libraries (`libwebp`, `libwebpdemux`, `libwebpmux`, and `libsharpyuv`) alongside `SDL3_image`.</span>
+            <span class="data-ru">В этом руководстве используется <strong>поддержка формата текстур WebP</strong> через статический линкуемые библиотеки WebP (`libwebp`, `libwebpdemux`, `libwebpmux` и `libsharpyuv`) в сочетании с `SDL3_image`.</span>
+        </p>
+    </div>
 
     <div class="alert alert-secondary mb-3">
         <span class="data-en">Before proceeding, make sure you have installed all required libraries on your system using the appropriate guides:</span>
@@ -236,18 +247,6 @@
                 <a href="/tutorials/tools/shared/setup-cgltf" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
                     <span class="data-en">Installing cgltf C glTF Loading Library</span>
                     <span class="data-ru">Установка C-библиотеки загрузки glTF cgltf</span>
-                </a>
-            </li>
-            <li>
-                <a href="/tutorials/tools/mingw/build-sdl3-image-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-                    <span class="data-en">Building SDL3_image Static Library for Windows (MinGW &amp; CMake)</span>
-                    <span class="data-ru">Сборка статической библиотеки SDL3_image для Windows (MinGW и CMake)</span>
-                </a>
-            </li>
-            <li>
-                <a href="/tutorials/tools/ubuntu/build-sdl3-image-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-                    <span class="data-en">Building SDL3_image Static Library for Ubuntu (GCC, CMake &amp; Ninja)</span>
-                    <span class="data-ru">Сборка статической библиотеки SDL3_image для Ubuntu (GCC, CMake и Ninja)</span>
                 </a>
             </li>
             <li>
@@ -274,6 +273,18 @@
                     <span class="data-ru">Сборка статической библиотеки SDL3 для Ubuntu (GCC, CMake и Ninja)</span>
                 </a>
             </li>
+            <li>
+                <a href="/tutorials/tools/mingw/build-sdl3-image-webp-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3_image with WebP Support for Windows (MinGW &amp; CMake)</span>
+                    <span class="data-ru">Сборка SDL3_image с поддержкой WebP для Windows (MinGW и CMake)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/ubuntu/build-sdl3-image-webp-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3_image with WebP Support for Ubuntu (GCC, CMake &amp; Ninja)</span>
+                    <span class="data-ru">Сборка SDL3_image с поддержкой WebP для Ubuntu (GCC, CMake и Ninja)</span>
+                </a>
+            </li>
         </ul>
     </div>
 
@@ -290,25 +301,25 @@
 
         <!-- Windows Command -->
         <h3 class="h6 fw-bold mt-3 text-primary">Windows (Command Prompt / PowerShell)</h3>
-        <pre><code class="language-bash">mkdir C:\projects\load-glb-model-cgltf-sdl3-glm-glad-opengl-desktop
-mkdir C:\projects\load-glb-model-cgltf-sdl3-glm-glad-opengl-desktop\assets\models\y-bot
-cd C:\projects\load-glb-model-cgltf-sdl3-glm-glad-opengl-desktop</code></pre>
+        <pre><code class="language-bash">mkdir C:\projects\load-glb-model-webp-cgltf-sdl3-glm-glad-opengl-desktop
+mkdir C:\projects\load-glb-model-webp-cgltf-sdl3-glm-glad-opengl-desktop\assets\models\y-bot
+cd C:\projects\load-glb-model-webp-cgltf-sdl3-glm-glad-opengl-desktop</code></pre>
 
         <!-- Ubuntu Command -->
         <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu / WSL (Terminal)</h3>
-        <pre><code class="language-bash">mkdir -p ~/projects/load-glb-model-cgltf-sdl3-glm-glad-opengl-desktop/assets/models/y-bot
-cd ~/projects/load-glb-model-cgltf-sdl3-glm-glad-opengl-desktop</code></pre>
+        <pre><code class="language-bash">mkdir -p ~/projects/load-glb-model-webp-cgltf-sdl3-glm-glad-opengl-desktop/assets/models/y-bot
+cd ~/projects/load-glb-model-webp-cgltf-sdl3-glm-glad-opengl-desktop</code></pre>
     </section>
 
     <!-- Step 2: Download & Copy Asset -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 2: Download &amp; Place Model &amp; Texture Assets</span>
-            <span class="data-ru">Шаг 2: Скачивание и размещение файлов модели и текстуры</span>
+            <span class="data-en">Step 2: Download &amp; Place Model &amp; WebP Texture Assets</span>
+            <span class="data-ru">Шаг 2: Скачивание и размещение модели и текстуры WebP</span>
         </h2>
         <p>
-            <span class="data-en">Download the Y-Bot 3D binary glTF model file and its WebP texture:</span>
-            <span class="data-ru">Скачайте бинарный файл 3D-модели glTF Y-Bot и её текстуру WebP:</span>
+            <span class="data-en">Download the Y-Bot 3D binary glTF model file and its compressed WebP texture:</span>
+            <span class="data-ru">Скачайте бинарный файл 3D-модели glTF Y-Bot и её сжатую текстуру WebP:</span>
         </p>
         <p class="mb-2">
             <a href="/assets/models/y-bot/y-bot.glb" download target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm me-2">
@@ -316,8 +327,8 @@ cd ~/projects/load-glb-model-cgltf-sdl3-glm-glad-opengl-desktop</code></pre>
                 <span class="data-ru">Скачать y-bot.glb</span>
             </a>
             <a href="/assets/models/y-bot/y-bot.webp" download target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">Download y-bot.webp</span>
-                <span class="data-ru">Скачать y-bot.webp</span>
+                <span class="data-en">Download y-bot.webp (WebP Texture)</span>
+                <span class="data-ru">Скачать y-bot.webp (Текстура WebP)</span>
             </a>
         </p>
         <p>
@@ -326,16 +337,16 @@ cd ~/projects/load-glb-model-cgltf-sdl3-glm-glad-opengl-desktop</code></pre>
         </p>
 
         <h3 class="h6 fw-bold mt-3 text-primary">Windows Path</h3>
-        <pre><code>C:\projects\load-glb-model-cgltf-sdl3-glm-glad-opengl-desktop\assets\models\y-bot\y-bot.glb
-C:\projects\load-glb-model-cgltf-sdl3-glm-glad-opengl-desktop\assets\models\y-bot\y-bot.webp</code></pre>
+        <pre><code>C:\projects\load-glb-model-webp-cgltf-sdl3-glm-glad-opengl-desktop\assets\models\y-bot\y-bot.glb
+C:\projects\load-glb-model-webp-cgltf-sdl3-glm-glad-opengl-desktop\assets\models\y-bot\y-bot.webp</code></pre>
 
         <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu / WSL Command (Copying from Windows to WSL)</h3>
         <p>
             <span class="data-en">If you downloaded and placed the assets inside your Windows project directory, copy them directly to your WSL Linux directory using the Windows mount path (<code>/mnt/c/</code>):</span>
             <span class="data-ru">Если вы скачали и поместили ассеты в Windows-папку проекта, скопируйте их напрямую в Linux-папку WSL через монтированный путь Windows (<code>/mnt/c/</code>):</span>
         </p>
-        <pre><code class="language-bash">cp /mnt/c/projects/load-glb-model-cgltf-sdl3-glm-glad-opengl-desktop/assets/models/y-bot/y-bot.* \
-   ~/projects/load-glb-model-cgltf-sdl3-glm-glad-opengl-desktop/assets/models/y-bot/</code></pre>
+        <pre><code class="language-bash">cp /mnt/c/projects/load-glb-model-webp-cgltf-sdl3-glm-glad-opengl-desktop/assets/models/y-bot/y-bot.* \
+   ~/projects/load-glb-model-webp-cgltf-sdl3-glm-glad-opengl-desktop/assets/models/y-bot/</code></pre>
     </section>
 
     <!-- Step 3: Source Files -->
@@ -458,7 +469,7 @@ GLuint createTexture(const char* path) {
 
     SDL_Surface* surface = IMG_Load_IO(io, true);
     if (!surface) {
-        SDL_Log("Image loading failed: %s", SDL_GetError());
+        SDL_Log("WebP Image loading failed: %s", SDL_GetError());
         return 0;
     }
 
@@ -501,7 +512,7 @@ int main(int argc, char* argv[]) {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-    SDL_Window* window = SDL_CreateWindow("SDL3 GLM GLAD Y-Bot Model (Classic)", 800, 450, SDL_WINDOW_OPENGL);
+    SDL_Window* window = SDL_CreateWindow("SDL3 GLM GLAD Y-Bot WebP Model (Classic)", 800, 450, SDL_WINDOW_OPENGL);
     if (!window) {
         SDL_Log("Window creation failed: %s", SDL_GetError());
         SDL_Quit();
@@ -533,7 +544,6 @@ int main(int argc, char* argv[]) {
 
     GLuint shaderProgram = createShaderProgram(vertexShaderSource, fragmentShaderSource);
 
-    // Parse and load Y-Bot 3D GLB model using cgltf
     const char* modelPath = "assets/models/y-bot/y-bot.glb";
     size_t glbSize = 0;
     void* glbData = SDL_LoadFile(modelPath, &amp;glbSize);
@@ -574,7 +584,6 @@ int main(int argc, char* argv[]) {
         glGenVertexArrays(1, &amp;VAO);
         glBindVertexArray(VAO);
 
-        // Position attribute (Location 0)
         if (posAccessor) {
             float* positions = (float*)((uint8_t*)posAccessor-&gt;buffer_view-&gt;buffer-&gt;data +
                                          posAccessor-&gt;buffer_view-&gt;offset +
@@ -592,7 +601,6 @@ int main(int argc, char* argv[]) {
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
         }
 
-        // Texture Coordinate attribute (Location 1)
         if (uvAccessor) {
             float* uvs = (float*)((uint8_t*)uvAccessor-&gt;buffer_view-&gt;buffer-&gt;data +
                                    uvAccessor-&gt;buffer_view-&gt;offset +
@@ -610,7 +618,6 @@ int main(int argc, char* argv[]) {
             glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
         }
 
-        // Index Buffer (EBO)
         if (indexAccessor) {
             void* indices = (void*)((uint8_t*)indexAccessor-&gt;buffer_view-&gt;buffer-&gt;data +
                                     indexAccessor-&gt;buffer_view-&gt;offset +
@@ -822,7 +829,7 @@ GLuint createTexture(const char* path) {
 
     SDL_Surface* surface = IMG_Load_IO(io, true);
     if (!surface) {
-        SDL_Log("Image loading failed: %s", SDL_GetError());
+        SDL_Log("WebP Image loading failed: %s", SDL_GetError());
         return 0;
     }
 
@@ -877,10 +884,6 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
         return SDL_APP_FAILURE;
     }
 
-    // Window-level MSAA is intentionally omitted to ensure compatibility with WSL2/GLX
-    // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
-
     SDL_SetHint(SDL_HINT_MAIN_CALLBACK_RATE, "60");
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -891,7 +894,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
     AppState* state = new AppState();
     *appstate = state;
 
-    state-&gt;window = SDL_CreateWindow("SDL3 GLM GLAD Y-Bot Model (Callbacks)", 800, 450, SDL_WINDOW_OPENGL);
+    state-&gt;window = SDL_CreateWindow("SDL3 GLM GLAD Y-Bot WebP Model (Callbacks)", 800, 450, SDL_WINDOW_OPENGL);
     if (!state-&gt;window) {
         SDL_Log("Window creation failed: %s", SDL_GetError());
         return SDL_APP_FAILURE;
@@ -917,7 +920,6 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
 
     state-&gt;shaderProgram = createShaderProgram(vertexShaderSource, fragmentShaderSource);
 
-    // Load Y-Bot GLB model using cgltf
     const char* modelPath = "assets/models/y-bot/y-bot.glb";
     size_t glbSize = 0;
     void* glbData = SDL_LoadFile(modelPath, &amp;glbSize);
@@ -1116,7 +1118,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
-project(load-glb-model-cgltf-sdl3-glm-glad-opengl-desktop CXX C)
+project(load-glb-model-webp-cgltf-sdl3-glm-glad-opengl-desktop CXX C)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -1127,58 +1129,47 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(OpenGL REQUIRED)
 
 # -----------------------------------------------------------------------------
-# Locate SDL3 and SDL3_image Packages
+# Locate SDL3, SDL3_image, and WebP Packages
 # -----------------------------------------------------------------------------
 if(WIN32)
     set(SDL3_DIR "C:/libs/sdl3-3.4.16-mingw/lib/cmake/SDL3")
-    set(SDL3_image_DIR "C:/libs/sdl3_image-3.4.6-mingw/lib/cmake/SDL3_image")
+    set(SDL3_image_DIR "C:/libs/sdl3_image-3.4.6-webp-mingw/lib/cmake/SDL3_image")
+    set(webp_ROOT "C:/libs/webp-1.6.0-mingw")
+    set(webp_INCLUDE_DIR "C:/libs/webp-1.6.0-mingw/include")
+    set(webp_LIBRARY "C:/libs/webp-1.6.0-mingw/lib/libwebp.a")
 else()
     set(SDL3_DIR "$ENV{HOME}/libs/sdl3-3.4.16-ubuntu/lib/cmake/SDL3")
-    set(SDL3_image_DIR "$ENV{HOME}/libs/sdl3_image-3.4.6-ubuntu/lib/cmake/SDL3_image")
+    set(SDL3_image_DIR "$ENV{HOME}/libs/sdl3_image-3.4.6-webp-ubuntu/lib/cmake/SDL3_image")
+    set(webp_ROOT "$ENV{HOME}/libs/webp-1.6.0-ubuntu")
+    set(webp_INCLUDE_DIR "$ENV{HOME}/libs/webp-1.6.0-ubuntu/include")
+    set(webp_LIBRARY "$ENV{HOME}/libs/webp-1.6.0-ubuntu/lib/libwebp.a")
 endif()
 
 find_package(SDL3 REQUIRED CONFIG)
 find_package(SDL3_image REQUIRED CONFIG)
 
 # -----------------------------------------------------------------------------
-# Set Include Path for Header-Only GLM Library
+# Set Include Paths for Header-Only and Source Libraries
 # -----------------------------------------------------------------------------
 if(WIN32)
     set(GLM_INCLUDE_DIR "C:/libs/glm-1.0.3/glm")
+    set(CGLTF_INCLUDE_DIR "C:/libs/cgltf-1.15")
+    set(GLAD_INCLUDE_DIR "C:/libs/glad-0.1.36/opengl-3.3/include")
+    set(GLAD_SOURCE "C:/libs/glad-0.1.36/opengl-3.3/src/glad.c")
 else()
     set(GLM_INCLUDE_DIR "$ENV{HOME}/libs/glm-1.0.3")
-endif()
-
-# -----------------------------------------------------------------------------
-# Set Include Path for Header-Only cgltf Library
-# -----------------------------------------------------------------------------
-if(WIN32)
-    set(CGLTF_INCLUDE_DIR "C:/libs/cgltf-1.15")
-else()
     set(CGLTF_INCLUDE_DIR "$ENV{HOME}/libs/cgltf-1.15")
+    set(GLAD_INCLUDE_DIR "$ENV{HOME}/libs/glad-0.1.36/opengl-3.3/include")
+    set(GLAD_SOURCE "$ENV{HOME}/libs/glad-0.1.36/opengl-3.3/src/glad.c")
 endif()
 
 # -----------------------------------------------------------------------------
-# Set Path and Source for GLAD Loader
+# Target Definition & Sources
 # -----------------------------------------------------------------------------
-if(WIN32)
-    set(GLAD_DIR "C:/libs/glad-0.1.36/opengl-3.3")
-else()
-    set(GLAD_DIR "$ENV{HOME}/libs/glad-0.1.36/opengl-3.3")
-endif()
-
-set(GLAD_INCLUDE_DIR "${GLAD_DIR}/include")
-set(GLAD_SOURCE "${GLAD_DIR}/src/glad.c")
-
-# -----------------------------------------------------------------------------
-# Target Definition
-# -----------------------------------------------------------------------------
-set(PROJECT_SOURCES
+add_executable(app
     main.cpp
     ${GLAD_SOURCE}
 )
-
-add_executable(app ${PROJECT_SOURCES})
 
 target_include_directories(app PRIVATE 
     ${GLM_INCLUDE_DIR}
@@ -1187,44 +1178,21 @@ target_include_directories(app PRIVATE
 )
 
 # -----------------------------------------------------------------------------
-# Link Libraries
+# Copy Assets Directory to Build Output
 # -----------------------------------------------------------------------------
-if(WIN32)
-    target_link_libraries(app PRIVATE 
-        SDL3_image::SDL3_image-static
-        SDL3::SDL3-static
-        OpenGL::GL
-        # Static WebP libraries (order matters for MinGW/GCC)
-        C:/libs/webp-1.6.0-mingw/lib/libwebpdemux.a
-        C:/libs/webp-1.6.0-mingw/lib/libwebpmux.a
-        C:/libs/webp-1.6.0-mingw/lib/libwebp.a
-        C:/libs/webp-1.6.0-mingw/lib/libsharpyuv.a
-    )
-else()
-    target_link_libraries(app PRIVATE 
-        SDL3_image::SDL3_image-static
-        SDL3::SDL3-static
-        OpenGL::GL
-        # Static WebP libraries for Ubuntu
-        $ENV{HOME}/libs/webp-1.6.0-ubuntu/lib/libwebpdemux.a
-        $ENV{HOME}/libs/webp-1.6.0-ubuntu/lib/libwebpmux.a
-        $ENV{HOME}/libs/webp-1.6.0-ubuntu/lib/libwebp.a
-        $ENV{HOME}/libs/webp-1.6.0-ubuntu/lib/libsharpyuv.a
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/assets")
+    add_custom_command(
+        TARGET app POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E remove_directory "$&lt;TARGET_FILE_DIR:app&gt;/assets"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+                "$&lt;TARGET_FILE_DIR:app&gt;/assets"
+        COMMENT "Copying assets directory"
     )
 endif()
 
 # -----------------------------------------------------------------------------
-# Copy Assets Directory to Build Output
-# -----------------------------------------------------------------------------
-add_custom_command(
-    TARGET app POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-            "${CMAKE_CURRENT_SOURCE_DIR}/assets"
-            "$<TARGET_FILE_DIR:app>/assets"
-)
-
-# -----------------------------------------------------------------------------
-# Platform-Specific Compiler & Linker Flags
+# Link Libraries & Flags
 # -----------------------------------------------------------------------------
 if(WIN32)
     target_compile_options(app PRIVATE -Os)
@@ -1235,6 +1203,26 @@ if(WIN32)
     else()
         target_link_options(app PRIVATE -mwindows)
     endif()
+
+    target_link_libraries(app PRIVATE 
+        SDL3_image::SDL3_image-static
+        SDL3::SDL3-static
+        OpenGL::GL
+        C:/libs/webp-1.6.0-mingw/lib/libwebpdemux.a
+        C:/libs/webp-1.6.0-mingw/lib/libwebpmux.a
+        C:/libs/webp-1.6.0-mingw/lib/libwebp.a
+        C:/libs/webp-1.6.0-mingw/lib/libsharpyuv.a
+    )
+else()
+    target_link_libraries(app PRIVATE 
+        SDL3_image::SDL3_image-static
+        SDL3::SDL3-static
+        OpenGL::GL
+        $ENV{HOME}/libs/webp-1.6.0-ubuntu/lib/libwebpdemux.a
+        $ENV{HOME}/libs/webp-1.6.0-ubuntu/lib/libwebpmux.a
+        $ENV{HOME}/libs/webp-1.6.0-ubuntu/lib/libwebp.a
+        $ENV{HOME}/libs/webp-1.6.0-ubuntu/lib/libsharpyuv.a
+    )
 endif()</code></pre>
     </section>
 
@@ -1283,8 +1271,8 @@ set -e
 ./dist/linux/app</code></pre>
 
         <p class="mt-3">
-            <span class="data-en">Grant execute permissions on Ubuntu before running:</span>
-            <span class="data-ru">Предоставьте права на выполнение в Ubuntu перед запуском:</span>
+            <span class="data-en">Test permissions and execute on Ubuntu:</span>
+            <span class="data-ru">Настройте права и запустите под Ubuntu:</span>
         </p>
         <pre><code class="language-bash">chmod +x config-bin.sh build-bin.sh run-bin.sh
 ./config-bin.sh
@@ -1300,16 +1288,16 @@ set -e
         </h2>
 
         <p>
-            <span class="data-en">Upon running the application, a window will open displaying the textured Y-Bot 3D model rotating around its vertical Y-axis smoothly using frame-rate independent delta time.</span>
-            <span class="data-ru">После запуска приложения откроется окно с текстурированной 3D-моделью Y-Bot, плавно вращающейся вокруг вертикальной оси Y с использованием дельта-тайма.</span>
+            <span class="data-en">Upon running the application, a window will open displaying the textured Y-Bot 3D model with WebP texture compression loaded via cgltf, rotating around its vertical Y-axis smoothly using delta time.</span>
+            <span class="data-ru">После запуска приложения откроется окно с 3D-моделью Y-Bot с текстурой WebP, загруженной через cgltf, плавно вращающейся вокруг вертикальной оси Y с использованием дельта-тайма.</span>
         </p>
 
-        <pre><code class="language-text">SDL3 GLM GLAD Y-Bot Model (Classic)</code></pre>
+        <pre><code class="language-text">SDL3 GLM GLAD Y-Bot WebP Model (Classic)</code></pre>
         <p class="mt-2">
             <span class="data-en">or (if using the Callbacks API version):</span>
             <span class="data-ru">или (если используется версия с Callbacks API):</span>
         </p>
-        <pre><code class="language-text">SDL3 GLM GLAD Y-Bot Model (Callbacks)</code></pre>
+        <pre><code class="language-text">SDL3 GLM GLAD Y-Bot WebP Model (Callbacks)</code></pre>
     </section>
 </div>
 
