@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    Drawing 3D Textured Rotating Cube with Offscreen MSAA FBO using SDL3_image, GLM, GLAD, and OpenGL 3.3
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+<script src="/libs/bootstrap@5.3.3/bootstrap.bundle.min.js"></script>
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
+
+    /* How to hide non-active language blocks without collapsing iframe dimensions */
+    .data-en.d-none, 
+    .data-ru.d-none {
+        display: none !important;
+    }
+
+    /* Add this to prevent resolution drops during language toggles */
+    .ratio iframe {
+        width: 100%;
+        height: 100%;
+        content-visibility: visible;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold">
+            <span class="data-en">Drawing 3D Textured Rotating Cube with Offscreen MSAA FBO using SDL3_image, GLM, GLAD, and OpenGL 3.3</span>
+            <span class="data-ru">Отрисовка 3D-куба с текстурой, вращением и закадровым MSAA FBO с использованием SDL3_image, GLM, GLAD и OpenGL 3.3</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">A step-by-step guide to implementing robust 4x Anti-Aliasing (MSAA) using offscreen Framebuffer Objects (FBOs). This technique bypasses platform-specific GLX display visual limitations (such as inside WSL2) while providing hardware-accelerated smooth edges on Windows and Ubuntu.</span>
+            <span class="data-ru">Пошаговое руководство по реализации надёжного 4x сглаживания (MSAA) с использованием закадровых буферов кадра (FBO). Эта техника обходит ограничения визуала GLX (например, в WSL2) и обеспечивает аппаратное сглаживание краев под Windows и Ubuntu.</span>
+        </p>
+    </header>
+
+    <div class="alert alert-secondary mb-3">
+        <span class="data-en">Before proceeding, make sure you have installed all required libraries on your system using the appropriate guides:</span>
+        <span class="data-ru">Перед продолжением убедитесь, что вы установили все необходимые библиотеки в вашей системе, следуя соответствующим инструкциям:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/tools/mingw/build-sdl3-image-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3_image Static Library for Windows (MinGW &amp; CMake)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3_image для Windows (MinGW и CMake)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/ubuntu/build-sdl3-image-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3_image Static Library for Ubuntu (GCC, CMake &amp; Ninja)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3_image для Ubuntu (GCC, CMake и Ninja)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/sdl3-opengl/desktop/setup-glad-desktop" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Installing GLAD OpenGL Loader Library</span>
+                    <span class="data-ru">Установка библиотеки-загрузчика OpenGL GLAD</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/sdl3-opengl/shared/setup-glm" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Installing GLM Library</span>
+                    <span class="data-ru">Установка библиотеки GLM</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/mingw/build-sdl3-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 Static Library for Windows (MinGW &amp; CMake)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для Windows (MinGW и CMake)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/ubuntu/build-sdl3-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 Static Library for Ubuntu (GCC, CMake &amp; Ninja)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для Ubuntu (GCC, CMake и Ninja)</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Step 1: Create Project Directory Structure -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 1: Create Project Directory Structure</span>
+            <span class="data-ru">Шаг 1: Создание структуры директории проекта</span>
+        </h2>
+        <p>
+            <span class="data-en">Create the project workspace and asset subfolder first:</span>
+            <span class="data-ru">Сначала создайте рабочую папку проекта и подпапку для ассетов:</span>
+        </p>
+
+        <!-- Windows Command -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (Command Prompt / PowerShell)</h3>
+        <pre><code class="language-bash">mkdir C:\projects\draw-texture-cube-msaa-fbo-sdl3-glm-glad-opengl-desktop
+mkdir C:\projects\draw-texture-cube-msaa-fbo-sdl3-glm-glad-opengl-desktop\assets\textures
+cd C:\projects\draw-texture-cube-msaa-fbo-sdl3-glm-glad-opengl-desktop</code></pre>
+
+        <!-- Ubuntu Command -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu / WSL (Terminal)</h3>
+        <pre><code class="language-bash">mkdir -p ~/projects/draw-texture-cube-msaa-fbo-sdl3-glm-glad-opengl-desktop/assets/textures
+cd ~/projects/draw-texture-cube-msaa-fbo-sdl3-glm-glad-opengl-desktop</code></pre>
+    </section>
+
+    <!-- Step 2: Download & Copy Asset -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 2: Download &amp; Place Texture Asset</span>
+            <span class="data-ru">Шаг 2: Скачивание и размещение текстурного ассета</span>
+        </h2>
+        <p>
+            <span class="data-en">Download the wooden crate texture set from OpenGameArt:</span>
+            <span class="data-ru">Скачайте набор текстур деревянного ящика с сайта OpenGameArt:</span>
+        </p>
+        <p>
+            <a href="https://opengameart.org/content/crate-5" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
+                <span class="data-en">OpenGameArt - Crate #5 (crate.7z)</span>
+                <span class="data-ru">OpenGameArt - Crate #5 (crate.7z)</span>
+            </a>
+        </p>
+        <p>
+            <span class="data-en">Extract <code>crate.7z</code> and place the texture file <code>clear_01.png</code> into the project's texture subfolder.</span>
+            <span class="data-ru">Распакуйте архив <code>crate.7z</code> и поместите файл текстуры <code>clear_01.png</code> в подпапку текстур проекта.</span>
+        </p>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows Path</h3>
+        <pre><code>C:\projects\draw-texture-cube-msaa-fbo-sdl3-glm-glad-opengl-desktop\assets\textures\clear_01.png</code></pre>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu / WSL Command (Copying from Windows to WSL)</h3>
+        <p>
+            <span class="data-en">If you downloaded and placed <code>clear_01.png</code> inside your Windows project directory, copy it directly to your WSL Linux directory using the Windows mount path (<code>/mnt/c/</code>):</span>
+            <span class="data-ru">Если вы скачали и поместили <code>clear_01.png</code> в Windows-папку проекта, скопируйте его напрямую в Linux-папку WSL через монтированный путь Windows (<code>/mnt/c/</code>):</span>
+        </p>
+        <pre><code class="language-bash">cp /mnt/c/projects/draw-texture-cube-msaa-fbo-sdl3-glm-glad-opengl-desktop/assets/textures/clear_01.png \
+   ~/projects/draw-texture-cube-msaa-fbo-sdl3-glm-glad-opengl-desktop/assets/textures/</code></pre>
+    </section>
+
+    <!-- Step 3: Source Files -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 3: Create Source Files (main.cpp &amp; CMakeLists.txt)</span>
+            <span class="data-ru">Шаг 3: Создание исходных файлов (main.cpp и CMakeLists.txt)</span>
+        </h2>
+
+        <p>
+            <span class="data-en">Create these files using your preferred editor:</span>
+            <span class="data-ru">Создайте эти файлы в любом удобном редакторе:</span>
+        </p>
+
+        <!-- Windows Quick File Creation -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (Terminal / Notepad)</h3>
+        <pre><code class="language-bash">notepad main.cpp
+notepad CMakeLists.txt</code></pre>
+
+        <!-- Ubuntu Quick File Creation -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal / Nano)</h3>
+        <pre><code class="language-bash">nano main.cpp
+nano CMakeLists.txt</code></pre>
+
+        <div class="alert alert-info py-2 my-3">
+            <strong><span class="data-en">Quick Nano Commands (Ubuntu):</span><span class="data-ru">Быстрые команды Nano (Ubuntu):</span></strong>
+            <span class="data-en">Paste code with Right Mouse Button (RMB) &rarr; Press <kbd>Ctrl</kbd> + <kbd>O</kbd> and <kbd>Enter</kbd> to save &rarr; Press <kbd>Ctrl</kbd> + <kbd>X</kbd> to exit.</span>
+            <span class="data-ru">Вставьте код правой кнопкой мыши (ПКМ) &rarr; Нажмите <kbd>Ctrl</kbd> + <kbd>O</kbd> и <kbd>Enter</kbd> для сохранения &rarr; Нажмите <kbd>Ctrl</kbd> + <kbd>X</kbd> для выхода.</span>
+        </div>
+
+        <!-- Code File 1 Option A -->
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">1A. File Contents for main.cpp (Classic Loop)</span>
+            <span class="data-ru">1A. Содержимое файла main.cpp (Классический цикл)</span>
+        </h3>
+        <pre><code class="language-cpp">#include &lt;glad/glad.h&gt;
+#include &lt;SDL3/SDL.h&gt;
+#include &lt;SDL3/SDL_main.h&gt;
+#include &lt;SDL3_image/SDL_image.h&gt;
+
+#include &lt;glm/glm.hpp&gt;
+#include &lt;glm/gtc/matrix_transform.hpp&gt;
+#include &lt;glm/gtc/type_ptr.hpp&gt;
+
+const char* vertexShaderSource = R"(
+#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec2 aTexCoord;
+
+out vec2 TexCoord;
+uniform mat4 uMVP;
+
+void main() {
+    gl_Position = uMVP * vec4(aPos, 1.0);
+    TexCoord = aTexCoord;
+}
+)";
+
+const char* fragmentShaderSource = R"(
+#version 330 core
+out vec4 FragColor;
+
+in vec2 TexCoord;
+uniform sampler2D ourTexture;
+
+void main() {
+    FragColor = texture(ourTexture, TexCoord);
+}
+)";
+
+GLuint createShaderProgram(const char* vertexSrc, const char* fragmentSrc) {
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &amp;vertexSrc, nullptr);
+    glCompileShader(vertexShader);
+
+    GLint success;
+    char infoLog[512];
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &amp;success);
+    if (!success) {
+        glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
+        SDL_Log("Vertex Shader Compilation Failed: %s", infoLog);
+    }
+
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &amp;fragmentSrc, nullptr);
+    glCompileShader(fragmentShader);
+
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &amp;success);
+    if (!success) {
+        glGetShaderInfoLog(fragmentShader, 512, nullptr, infoLog);
+        SDL_Log("Fragment Shader Compilation Failed: %s", infoLog);
+    }
+
+    GLuint shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &amp;success);
+    if (!success) {
+        glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
+        SDL_Log("Shader Program Link Failed: %s", infoLog);
+    }
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    return shaderProgram;
+}
+
+GLuint createTexture(const char* path, int* outW, int* outH) {
+    SDL_IOStream* io = SDL_IOFromFile(path, "rb");
+    if (!io) {
+        SDL_Log("Failed to open file stream for %s: %s", path, SDL_GetError());
+        return 0;
+    }
+
+    SDL_Surface* surface = IMG_Load_IO(io, true);
+    if (!surface) {
+        SDL_Log("Image loading failed: %s", SDL_GetError());
+        return 0;
+    }
+
+    SDL_Surface* optimizedSurface = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_ABGR8888);
+    SDL_DestroySurface(surface);
+
+    if (!optimizedSurface) {
+        SDL_Log("Surface conversion failed: %s", SDL_GetError());
+        return 0;
+    }
+
+    if (outW) *outW = optimizedSurface-&gt;w;
+    if (outH) *outH = optimizedSurface-&gt;h;
+
+    GLuint textureID;
+    glGenTextures(1, &amp;textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, optimizedSurface-&gt;w, optimizedSurface-&gt;h,
+                 0, GL_RGBA, GL_UNSIGNED_BYTE, optimizedSurface-&gt;pixels);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    SDL_DestroySurface(optimizedSurface);
+
+    return textureID;
+}
+
+struct MSAAFBO {
+    GLuint fbo = 0;
+    GLuint colorRBO = 0;
+    GLuint depthRBO = 0;
+    int width = 0;
+    int height = 0;
+    const int samples = 4;
+};
+
+void setupMSAAFramebuffer(MSAAFBO&amp; msaa, int width, int height) {
+    if (msaa.width == width &amp;&amp; msaa.height == height) return;
+
+    msaa.width = width;
+    msaa.height = height;
+
+    if (msaa.fbo == 0) glGenFramebuffers(1, &amp;msaa.fbo);
+    if (msaa.colorRBO == 0) glGenRenderbuffers(1, &amp;msaa.colorRBO);
+    if (msaa.depthRBO == 0) glGenRenderbuffers(1, &amp;msaa.depthRBO);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, msaa.fbo);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, msaa.colorRBO);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, msaa.samples, GL_RGBA8, width, height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, msaa.colorRBO);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, msaa.depthRBO);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, msaa.samples, GL_DEPTH24_STENCIL8, width, height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, msaa.depthRBO);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        SDL_Log("MSAA Framebuffer is incomplete!");
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+int main(int argc, char* argv[]) {
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        SDL_Log("SDL Initialization failed: %s", SDL_GetError());
+        return -1;
+    }
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+
+    SDL_Window* window = SDL_CreateWindow("SDL3 GLM GLAD 3D Textured Cube (Classic MSAA FBO)", 800, 450, SDL_WINDOW_OPENGL);
+    if (!window) {
+        SDL_Log("Window creation failed: %s", SDL_GetError());
+        SDL_Quit();
+        return -1;
+    }
+
+    SDL_GLContext glContext = SDL_GL_CreateContext(window);
+    if (!glContext) {
+        SDL_Log("OpenGL context creation failed: %s", SDL_GetError());
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return -1;
+    }
+
+    SDL_GL_MakeCurrent(window, glContext);
+    SDL_GL_SetSwapInterval(1);
+
+    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+        SDL_Log("Failed to initialize GLAD");
+        SDL_GL_DestroyContext(glContext);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return -1;
+    }
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    GLuint shaderProgram = createShaderProgram(vertexShaderSource, fragmentShaderSource);
+
+    float vertices[] = {
+        // Front face
+        -0.5f, -0.5f,  0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 1.0f,
+
+        // Back face
+        -0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+
+        // Left face
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        // Right face
+         0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+
+        // Top face
+        -0.5f,  0.5f, -0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 0.0f,
+
+        // Bottom face
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f
+    };
+
+    GLuint VAO, VBO;
+    glGenVertexArrays(1, &amp;VAO);
+    glGenBuffers(1, &amp;VBO);
+
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    GLsizei stride = 5 * sizeof(float);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glBindVertexArray(0);
+
+    int texW = 0, texH = 0;
+    GLuint textureID = createTexture("assets/textures/clear_01.png", &amp;texW, &amp;texH);
+    if (textureID == 0) {
+        SDL_Log("Failed to load texture.");
+        glDeleteVertexArrays(1, &amp;VAO);
+        glDeleteBuffers(1, &amp;VBO);
+        glDeleteProgram(shaderProgram);
+        SDL_GL_DestroyContext(glContext);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return -1;
+    }
+
+    GLint mvpLoc = glGetUniformLocation(shaderProgram, "uMVP");
+    GLint texLoc = glGetUniformLocation(shaderProgram, "ourTexture");
+
+    MSAAFBO msaa;
+    float rotationAngle = 0.0f;
+    Uint64 lastTicks = SDL_GetTicksNS();
+
+    bool running = true;
+    while (running) {
+        SDL_Event event;
+        while (SDL_PollEvent(&amp;event)) {
+            if (event.type == SDL_EVENT_QUIT) {
+                running = false;
+            }
+        }
+
+        Uint64 currentTicks = SDL_GetTicksNS();
+        float deltaTime = static_cast&lt;float&gt;(currentTicks - lastTicks) / 1e9f;
+        lastTicks = currentTicks;
+
+        rotationAngle += 60.0f * deltaTime;
+        if (rotationAngle &gt;= 360.0f) {
+            rotationAngle -= 360.0f;
+        }
+
+        int winW = 800, winH = 450;
+        SDL_GetWindowSizeInPixels(window, &amp;winW, &amp;winH);
+        if (winH == 0) winH = 1;
+
+        setupMSAAFramebuffer(msaa, winW, winH);
+
+        // Pass 1: Render scene into MSAA FBO
+        glBindFramebuffer(GL_FRAMEBUFFER, msaa.fbo);
+        glViewport(0, 0, winW, winH);
+
+        glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        float aspect = (float)winW / (float)winH;
+        glm::mat4 proj = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
+        glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 1.5f, 3.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate(model, glm::radians(rotationAngle), glm::vec3(0.5f, 1.0f, 0.0f));
+
+        glm::mat4 mvp = proj * view * model;
+
+        glUseProgram(shaderProgram);
+        glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glUniform1i(texLoc, 0);
+
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        // Pass 2: Blit MSAA FBO to Window Framebuffer
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, msaa.fbo);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glBlitFramebuffer(0, 0, winW, winH, 0, 0, winW, winH, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+        SDL_GL_SwapWindow(window);
+    }
+
+    if (msaa.fbo) glDeleteFramebuffers(1, &amp;msaa.fbo);
+    if (msaa.colorRBO) glDeleteRenderbuffers(1, &amp;msaa.colorRBO);
+    if (msaa.depthRBO) glDeleteRenderbuffers(1, &amp;msaa.depthRBO);
+
+    glDeleteTextures(1, &amp;textureID);
+    glDeleteVertexArrays(1, &amp;VAO);
+    glDeleteBuffers(1, &amp;VBO);
+    glDeleteProgram(shaderProgram);
+
+    SDL_GL_DestroyContext(glContext);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
+    return 0;
+}</code></pre>
+
+        <!-- Code File 1 Option B -->
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">1B. File Contents for main.cpp (SDL3 Callbacks API)</span>
+            <span class="data-ru">1B. Содержимое файла main.cpp (SDL3 Callbacks API)</span>
+        </h3>
+        <pre><code class="language-cpp">#define SDL_MAIN_USE_CALLBACKS 1
+#include &lt;glad/glad.h&gt;
+#include &lt;SDL3/SDL.h&gt;
+#include &lt;SDL3/SDL_main.h&gt;
+#include &lt;SDL3_image/SDL_image.h&gt;
+
+#include &lt;glm/glm.hpp&gt;
+#include &lt;glm/gtc/matrix_transform.hpp&gt;
+#include &lt;glm/gtc/type_ptr.hpp&gt;
+
+const char* vertexShaderSource = R"(
+#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec2 aTexCoord;
+
+out vec2 TexCoord;
+uniform mat4 uMVP;
+
+void main() {
+    gl_Position = uMVP * vec4(aPos, 1.0);
+    TexCoord = aTexCoord;
+}
+)";
+
+const char* fragmentShaderSource = R"(
+#version 330 core
+out vec4 FragColor;
+
+in vec2 TexCoord;
+uniform sampler2D ourTexture;
+
+void main() {
+    FragColor = texture(ourTexture, TexCoord);
+}
+)";
+
+GLuint createShaderProgram(const char* vertexSrc, const char* fragmentSrc) {
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &amp;vertexSrc, nullptr);
+    glCompileShader(vertexShader);
+
+    GLint success;
+    char infoLog[512];
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &amp;success);
+    if (!success) {
+        glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
+        SDL_Log("Vertex Shader Compilation Failed: %s", infoLog);
+    }
+
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &amp;fragmentSrc, nullptr);
+    glCompileShader(fragmentShader);
+
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &amp;success);
+    if (!success) {
+        glGetShaderInfoLog(fragmentShader, 512, nullptr, infoLog);
+        SDL_Log("Fragment Shader Compilation Failed: %s", infoLog);
+    }
+
+    GLuint shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &amp;success);
+    if (!success) {
+        glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
+        SDL_Log("Shader Program Link Failed: %s", infoLog);
+    }
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    return shaderProgram;
+}
+
+GLuint createTexture(const char* path, int* outW, int* outH) {
+    SDL_IOStream* io = SDL_IOFromFile(path, "rb");
+    if (!io) {
+        SDL_Log("Failed to open file stream for %s: %s", path, SDL_GetError());
+        return 0;
+    }
+
+    SDL_Surface* surface = IMG_Load_IO(io, true);
+    if (!surface) {
+        SDL_Log("Image loading failed: %s", SDL_GetError());
+        return 0;
+    }
+
+    SDL_Surface* optimizedSurface = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_ABGR8888);
+    SDL_DestroySurface(surface);
+
+    if (!optimizedSurface) {
+        SDL_Log("Surface conversion failed: %s", SDL_GetError());
+        return 0;
+    }
+
+    if (outW) *outW = optimizedSurface-&gt;w;
+    if (outH) *outH = optimizedSurface-&gt;h;
+
+    GLuint textureID;
+    glGenTextures(1, &amp;textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, optimizedSurface-&gt;w, optimizedSurface-&gt;h,
+                 0, GL_RGBA, GL_UNSIGNED_BYTE, optimizedSurface-&gt;pixels);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    SDL_DestroySurface(optimizedSurface);
+
+    return textureID;
+}
+
+struct AppState {
+    SDL_Window* window = nullptr;
+    SDL_GLContext glContext = nullptr;
+    GLuint shaderProgram = 0;
+    GLuint VAO = 0;
+    GLuint VBO = 0;
+    GLuint textureID = 0;
+    int texW = 0;
+    int texH = 0;
+    GLint mvpLoc = -1;
+    GLint texLoc = -1;
+    float rotationAngle = 0.0f;
+    Uint64 lastTicks = 0;
+
+    GLuint msaaFBO = 0;
+    GLuint msaaColorRBO = 0;
+    GLuint msaaDepthRBO = 0;
+    int fboWidth = 0;
+    int fboHeight = 0;
+    const int msaaSamples = 4;
+};
+
+void setupMSAAFramebuffer(AppState* state, int width, int height) {
+    if (state-&gt;fboWidth == width &amp;&amp; state-&gt;fboHeight == height) return;
+
+    state-&gt;fboWidth = width;
+    state-&gt;fboHeight = height;
+
+    if (state-&gt;msaaFBO == 0) glGenFramebuffers(1, &amp;state-&gt;msaaFBO);
+    if (state-&gt;msaaColorRBO == 0) glGenRenderbuffers(1, &amp;state-&gt;msaaColorRBO);
+    if (state-&gt;msaaDepthRBO == 0) glGenRenderbuffers(1, &amp;state-&gt;msaaDepthRBO);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, state-&gt;msaaFBO);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, state-&gt;msaaColorRBO);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, state-&gt;msaaSamples, GL_RGBA8, width, height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, state-&gt;msaaColorRBO);
+
+    glBindRenderbuffer(GL_RENDERBUFFER, state-&gt;msaaDepthRBO);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, state-&gt;msaaSamples, GL_DEPTH24_STENCIL8, width, height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, state-&gt;msaaDepthRBO);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        SDL_Log("MSAA Framebuffer is incomplete!");
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        SDL_Log("SDL Initialization failed: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    SDL_SetHint(SDL_HINT_MAIN_CALLBACK_RATE, "60");
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+
+    AppState* state = new AppState();
+    *appstate = state;
+
+    state-&gt;window = SDL_CreateWindow("SDL3 GLM GLAD 3D Textured Cube (Callbacks MSAA FBO)", 800, 450, SDL_WINDOW_OPENGL);
+    if (!state-&gt;window) {
+        SDL_Log("Window creation failed: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    state-&gt;glContext = SDL_GL_CreateContext(state-&gt;window);
+    if (!state-&gt;glContext) {
+        SDL_Log("OpenGL context creation failed: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    SDL_GL_MakeCurrent(state-&gt;window, state-&gt;glContext);
+    SDL_GL_SetSwapInterval(1);
+
+    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+        SDL_Log("Failed to initialize GLAD");
+        return SDL_APP_FAILURE;
+    }
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    state-&gt;shaderProgram = createShaderProgram(vertexShaderSource, fragmentShaderSource);
+
+    float vertices[] = {
+        // Front face
+        -0.5f, -0.5f,  0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 1.0f,
+
+        // Back face
+        -0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+
+        // Left face
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        // Right face
+         0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+
+        // Top face
+        -0.5f,  0.5f, -0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 0.0f,
+
+        // Bottom face
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f
+    };
+
+    glGenVertexArrays(1, &amp;state-&gt;VAO);
+    glGenBuffers(1, &amp;state-&gt;VBO);
+
+    glBindVertexArray(state-&gt;VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, state-&gt;VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    GLsizei stride = 5 * sizeof(float);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glBindVertexArray(0);
+
+    state-&gt;textureID = createTexture("assets/textures/clear_01.png", &amp;state-&gt;texW, &amp;state-&gt;texH);
+    if (state-&gt;textureID == 0) {
+        return SDL_APP_FAILURE;
+    }
+
+    state-&gt;mvpLoc = glGetUniformLocation(state-&gt;shaderProgram, "uMVP");
+    state-&gt;texLoc = glGetUniformLocation(state-&gt;shaderProgram, "ourTexture");
+    state-&gt;lastTicks = SDL_GetTicksNS();
+
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
+    if (event-&gt;type == SDL_EVENT_QUIT) {
+        return SDL_APP_SUCCESS;
+    }
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppIterate(void* appstate) {
+    auto* state = static_cast&lt;AppState*&gt;(appstate);
+
+    Uint64 currentTicks = SDL_GetTicksNS();
+    float deltaTime = static_cast&lt;float&gt;(currentTicks - state-&gt;lastTicks) / 1e9f;
+    state-&gt;lastTicks = currentTicks;
+
+    state-&gt;rotationAngle += 60.0f * deltaTime;
+    if (state-&gt;rotationAngle &gt;= 360.0f) {
+        state-&gt;rotationAngle -= 360.0f;
+    }
+
+    int winW = 800, winH = 450;
+    SDL_GetWindowSizeInPixels(state-&gt;window, &amp;winW, &amp;winH);
+    if (winH == 0) winH = 1;
+
+    setupMSAAFramebuffer(state, winW, winH);
+
+    // Pass 1: Render 3D scene into offscreen MSAA Framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, state-&gt;msaaFBO);
+    glViewport(0, 0, winW, winH);
+
+    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    float aspect = (float)winW / (float)winH;
+    glm::mat4 proj = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
+    glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 1.5f, 3.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::rotate(model, glm::radians(state-&gt;rotationAngle), glm::vec3(0.5f, 1.0f, 0.0f));
+
+    glm::mat4 mvp = proj * view * model;
+
+    glUseProgram(state-&gt;shaderProgram);
+    glUniformMatrix4fv(state-&gt;mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, state-&gt;textureID);
+    glUniform1i(state-&gt;texLoc, 0);
+
+    glBindVertexArray(state-&gt;VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    // Pass 2: Blit (resolve) MSAA FBO to Default Window Framebuffer
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, state-&gt;msaaFBO);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    glBlitFramebuffer(0, 0, winW, winH, 0, 0, winW, winH, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+    SDL_GL_SwapWindow(state-&gt;window);
+
+    return SDL_APP_CONTINUE;
+}
+
+void SDL_AppQuit(void* appstate, SDL_AppResult result) {
+    if (appstate) {
+        auto* state = static_cast&lt;AppState*&gt;(appstate);
+
+        if (state-&gt;msaaFBO) glDeleteFramebuffers(1, &amp;state-&gt;msaaFBO);
+        if (state-&gt;msaaColorRBO) glDeleteRenderbuffers(1, &amp;state-&gt;msaaColorRBO);
+        if (state-&gt;msaaDepthRBO) glDeleteRenderbuffers(1, &amp;state-&gt;msaaDepthRBO);
+
+        if (state-&gt;textureID) glDeleteTextures(1, &amp;state-&gt;textureID);
+        if (state-&gt;VAO) glDeleteVertexArrays(1, &amp;state-&gt;VAO);
+        if (state-&gt;VBO) glDeleteBuffers(1, &amp;state-&gt;VBO);
+        if (state-&gt;shaderProgram) glDeleteProgram(state-&gt;shaderProgram);
+
+        if (state-&gt;glContext) {
+            SDL_GL_DestroyContext(state-&gt;glContext);
+        }
+        if (state-&gt;window) {
+            SDL_DestroyWindow(state-&gt;window);
+        }
+        delete state;
+    }
+    SDL_Quit();
+}</code></pre>
+
+        <!-- Code File 2 -->
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">2. File Contents for CMakeLists.txt</span>
+            <span class="data-ru">2. Содержимое файла CMakeLists.txt</span>
+        </h3>
+        <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Debug")
+endif()
+
+project(draw-texture-cube-msaa-fbo-sdl3-glm-glad-opengl-desktop CXX C)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# -----------------------------------------------------------------------------
+# Locate System OpenGL Package
+# -----------------------------------------------------------------------------
+find_package(OpenGL REQUIRED)
+
+# -----------------------------------------------------------------------------
+# Locate SDL3 and SDL3_image Packages
+# -----------------------------------------------------------------------------
+if(WIN32)
+    set(SDL3_DIR "C:/libs/sdl3-3.4.16-mingw/lib/cmake/SDL3")
+    set(SDL3_image_DIR "C:/libs/sdl3_image-3.4.6-mingw/lib/cmake/SDL3_image")
+else()
+    set(SDL3_DIR "$ENV{HOME}/libs/sdl3-3.4.16-ubuntu/lib/cmake/SDL3")
+    set(SDL3_image_DIR "$ENV{HOME}/libs/sdl3_image-3.4.6-ubuntu/lib/cmake/SDL3_image")
+endif()
+
+find_package(SDL3 REQUIRED CONFIG)
+find_package(SDL3_image REQUIRED CONFIG)
+
+# -----------------------------------------------------------------------------
+# Set Include Path for Header-Only GLM Library
+# -----------------------------------------------------------------------------
+if(WIN32)
+    set(GLM_INCLUDE_DIR "C:/libs/glm-1.0.3/glm")
+else()
+    set(GLM_INCLUDE_DIR "$ENV{HOME}/libs/glm-1.0.3")
+endif()
+
+# -----------------------------------------------------------------------------
+# Set Path and Source for GLAD Loader
+# -----------------------------------------------------------------------------
+if(WIN32)
+    set(GLAD_DIR "C:/libs/glad-0.1.36/opengl-3.3")
+else()
+    set(GLAD_DIR "$ENV{HOME}/libs/glad-0.1.36/opengl-3.3")
+endif()
+
+set(GLAD_INCLUDE_DIR "${GLAD_DIR}/include")
+set(GLAD_SOURCE "${GLAD_DIR}/src/glad.c")
+
+# -----------------------------------------------------------------------------
+# Target Definition
+# -----------------------------------------------------------------------------
+set(PROJECT_SOURCES
+    main.cpp
+    ${GLAD_SOURCE}
+)
+
+add_executable(app ${PROJECT_SOURCES})
+
+target_include_directories(app PRIVATE 
+    ${GLM_INCLUDE_DIR}
+    ${GLAD_INCLUDE_DIR}
+)
+
+target_link_libraries(app PRIVATE 
+    SDL3::SDL3-static 
+    SDL3_image::SDL3_image-static 
+    OpenGL::GL
+)
+
+# -----------------------------------------------------------------------------
+# Copy Assets Directory to Build Output
+# -----------------------------------------------------------------------------
+add_custom_command(
+    TARGET app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+            "$&lt;TARGET_FILE_DIR:app&gt;/assets"
+)
+
+# -----------------------------------------------------------------------------
+# Platform-Specific Compiler &amp; Linker Flags
+# -----------------------------------------------------------------------------
+if(WIN32)
+    target_compile_options(app PRIVATE -Os)
+    target_link_options(app PRIVATE -static -s -static-libgcc)
+
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_link_options(app PRIVATE -mconsole)
+    else()
+        target_link_options(app PRIVATE -mwindows)
+    endif()
+endif()</code></pre>
+    </section>
+
+    <!-- Step 4: Build & Execution Scripts -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 4: Create Build &amp; Execution Scripts</span>
+            <span class="data-ru">Шаг 4: Создание скриптов сборки и запуска</span>
+        </h2>
+
+        <!-- Windows Tab/Sub-block -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (MinGW / Batch Scripts)</h3>
+        <p class="fw-bold mb-1">config-exe.bat</p>
+        <pre><code class="language-bash">cmake -G Ninja -S . -B dist/win</code></pre>
+
+        <p class="fw-bold mb-1">build-exe.bat</p>
+        <pre><code class="language-bash">cmake --build dist/win</code></pre>
+
+        <p class="fw-bold mb-1">run-exe.bat</p>
+        <pre><code class="language-bash">@echo off
+.\dist\win\app.exe</code></pre>
+
+        <p class="mt-3">
+            <span class="data-en">Run the scripts sequentially in Command Prompt or PowerShell:</span>
+            <span class="data-ru">Последовательно запустите скрипты в командной строке или PowerShell:</span>
+        </p>
+        <pre><code class="language-bash">config-exe.bat
+build-exe.bat
+run-exe.bat</code></pre>
+
+        <!-- Ubuntu Tab/Sub-block -->
+        <h3 class="h6 fw-bold mt-4 text-primary">Ubuntu (Bash Scripts)</h3>
+        <p class="fw-bold mb-1">config-bin.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+cmake -G Ninja -S . -B dist/linux</code></pre>
+
+        <p class="fw-bold mb-1">build-bin.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+cmake --build dist/linux</code></pre>
+
+        <p class="fw-bold mb-1">run-bin.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+./dist/linux/app</code></pre>
+
+        <p class="mt-3">
+            <span class="data-en">Grant execute permissions on Ubuntu before running:</span>
+            <span class="data-ru">Предоставьте права на выполнение в Ubuntu перед запуском:</span>
+        </p>
+        <pre><code class="language-bash">chmod +x config-bin.sh build-bin.sh run-bin.sh
+./config-bin.sh
+./build-bin.sh
+./run-bin.sh</code></pre>
+    </section>
+
+    <!-- Step 5: Expected Output -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 5: Expected Output</span>
+            <span class="data-ru">Шаг 5: Ожидаемый результат</span>
+        </h2>
+
+        <p>
+            <span class="data-en">Upon running the application, a window will open displaying a smoothly rotating 3D wooden crate cube with crisp, hardware-accelerated 4x anti-aliased edges powered by an offscreen MSAA Framebuffer Object (FBO).</span>
+            <span class="data-ru">После запуска приложения откроется окно с плавно вращающимся 3D-деревянным ящиком с гладкими краями с 4x MSAA сглаживанием, работающим через закадровый буфер кадра (FBO).</span>
+        </p>
+
+        <pre><code class="language-text">SDL3 GLM GLAD 3D Textured Cube (Classic MSAA FBO)</code></pre>
+        <p class="mt-2">
+            <span class="data-en">or (if using the Callbacks API version):</span>
+            <span class="data-ru">или (если используется версия с Callbacks API):</span>
+        </p>
+        <pre><code class="language-text">SDL3 GLM GLAD 3D Textured Cube (Callbacks MSAA FBO)</code></pre>
+    </section>
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">
+                        <span class="data-en">Sberbank (Russia only)</span>
+                        <span class="data-ru">Сбербанк (только для РФ)</span>
+                    </h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number (Russia only)</span>
+                        <span class="data-ru">Перевод по номеру телефона (только для РФ)</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">USDT TRC20</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+    //     if (link) {
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // Logic for dynamic links (persisting language across pages)
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        
+        if (link) {
+            // Check if the link is intended to open in a new tab
+            if (link.target === "_blank") {
+                // Allow the browser to handle the click naturally, 
+                // but we still want to append the language param.
+                const currentLang = document.documentElement.getAttribute("lang") || "en";
+                const targetUrl = new URL(link.href);
+                targetUrl.searchParams.set("lang", currentLang);
+                
+                // Update the href right before the browser follows it
+                link.href = targetUrl.toString();
+                return; // Exit the function so e.preventDefault() isn't called
+            }
+
+            // Existing logic for same-tab navigation
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(
+                link.href,
+                window.location.origin + window.location.pathname,
+            );
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    document.querySelectorAll('pre').forEach((pre) => {
+        // Create container and header
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        // Wrap the pre tag
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        // Copy Logic
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                
+                // Set the content
+                block.textContent = code;
+                
+                // Re-run Prism highlight if available
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
+        });
+    });
+
+    function updateVideoPlayerLanguage(lang) {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        const targetSrc = lang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = lang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        // Only update if the URL actually changed to prevent unneeded reloads
+        if (player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // Example listener: Call this function inside your existing language-switcher click handler:
+    document.querySelectorAll('.lang-link').forEach(link => {
+        link.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+            updateVideoPlayerLanguage(lang);
+        });
+    });
+
+    function initVideoPlayer() {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        // Detect language from URL query string (?lang=ru), or <html lang="..."> attribute
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentLang = urlParams.get('lang') || document.documentElement.lang || 'en';
+
+        // Set correct video source on page load
+        const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        if (player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // Run immediately when DOM is ready
+    // document.addEventListener('DOMContentLoaded', initVideoPlayer);
+</script>
+</body>
+
+</html>
