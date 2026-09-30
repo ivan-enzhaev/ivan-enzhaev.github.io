@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    Playing Skeletal Animations with ozz-animation, cgltf, SDL3, GLM, GLAD, and OpenGL 3.3
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+<script src="/libs/bootstrap@5.3.3/bootstrap.bundle.min.js"></script>
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
+
+    /* How to hide non-active language blocks without collapsing iframe dimensions */
+    .data-en.d-none, 
+    .data-ru.d-none {
+        display: none !important;
+    }
+
+    /* Add this to prevent resolution drops during language toggles */
+    .ratio iframe {
+        width: 100%;
+        height: 100%;
+        content-visibility: visible;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold">
+            <span class="data-en">Playing Skeletal Animations with ozz-animation, cgltf, SDL3, GLM, GLAD, and OpenGL 3.3</span>
+            <span class="data-ru">Воспроизведение скелетной анимации с ozz-animation, cgltf, SDL3, GLM, GLAD и OpenGL 3.3</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">Learn how to combine <code>ozz-animation</code> runtime libraries with <code>SDL3</code>, <code>SDL3_image</code>, and <code>cgltf</code> to load skeletal definitions, sample animation tracks using custom stream wrappers, and render skeletal-skinned 3D characters smoothly on Windows and Ubuntu.</span>
+            <span class="data-ru">Узнайте, как объединить библиотеки выполнения <code>ozz-animation</code> с <code>SDL3</code>, <code>SDL3_image</code> и <code>cgltf</code> для загрузки определений скелета, семплирования анимационных треков с использованием пользовательских оберток потоков и плавной отрисовки скелетных 3D-персонажей под Windows и Ubuntu.</span>
+        </p>
+    </header>
+
+    <div class="alert alert-secondary mb-3">
+        <span class="data-en">Before proceeding, make sure you have installed all required libraries on your system using the appropriate guides:</span>
+        <span class="data-ru">Перед продолжением убедитесь, что вы установили все необходимые библиотеки в вашей системе, следуя соответствующим инструкциям:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/tools/mingw/build-ozz-animation-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building ozz-animation Static Library for Windows (MinGW &amp; CMake)</span>
+                    <span class="data-ru">Сборка статической библиотеки ozz-animation для Windows (MinGW и CMake)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/ubuntu/build-ozz-animation-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building ozz-animation Static Library for Ubuntu (GCC, CMake &amp; Ninja)</span>
+                    <span class="data-ru">Сборка статической библиотеки ozz-animation для Ubuntu (GCC, CMake и Ninja)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/shared/setup-cgltf" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Installing cgltf C glTF Loading Library</span>
+                    <span class="data-ru">Установка C-библиотеки загрузки glTF cgltf</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/mingw/build-sdl3-image-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3_image Static Library for Windows (MinGW &amp; CMake)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3_image для Windows (MinGW и CMake)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/ubuntu/build-sdl3-image-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3_image Static Library for Ubuntu (GCC, CMake &amp; Ninja)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3_image для Ubuntu (GCC, CMake и Ninja)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/sdl3-opengl/desktop/setup-glad-desktop" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Installing GLAD OpenGL Loader Library</span>
+                    <span class="data-ru">Установка библиотеки-загрузчика OpenGL GLAD</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/sdl3-opengl/shared/setup-glm" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Installing GLM Library</span>
+                    <span class="data-ru">Установка библиотеки GLM</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Step 1: Create Project Directory Structure -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 1: Create Project Directory Structure</span>
+            <span class="data-ru">Шаг 1: Создание структуры директории проекта</span>
+        </h2>
+        <p>
+            <span class="data-en">Create the workspace and asset directories for your animated character:</span>
+            <span class="data-ru">Создайте рабочее пространство и папки ресурсов для вашего анимированного персонажа:</span>
+        </p>
+
+        <!-- Windows Command -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (Command Prompt / PowerShell)</h3>
+        <pre><code class="language-bash">mkdir C:\projects\y-bot-ozz-animation-opengl-sdl3-cpp
+mkdir C:\projects\y-bot-ozz-animation-opengl-sdl3-cpp\assets\models\y-bot
+cd C:\projects\y-bot-ozz-animation-opengl-sdl3-cpp</code></pre>
+
+        <!-- Ubuntu Command -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu / WSL (Terminal)</h3>
+        <pre><code class="language-bash">mkdir -p ~/projects/y-bot-ozz-animation-opengl-sdl3-cpp/assets/models/y-bot
+cd ~/projects/y-bot-ozz-animation-opengl-sdl3-cpp</code></pre>
+    </section>
+
+    <!-- Step 2: Download & Copy Assets -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 2: Download &amp; Place Model, Texture, Skeleton, and Animation Assets</span>
+            <span class="data-ru">Шаг 2: Скачивание и размещение модели, текстуры, скелета и файлов анимации</span>
+        </h2>
+        <p>
+            <span class="data-en">Download the model, JPEG texture, ozz skeleton, and ozz animation files:</span>
+            <span class="data-ru">Скачайте модель, текстуру JPEG, скелет ozz и файлы анимации ozz:</span>
+        </p>
+        <p class="mb-2">
+            <a href="/assets/models/y-bot/y-bot.glb" download target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm me-2 mb-2">
+                <span class="data-en">Download y-bot.glb</span>
+                <span class="data-ru">Скачать y-bot.glb</span>
+            </a>
+            <a href="/assets/models/y-bot/y-bot.jpg" download target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm me-2 mb-2">
+                <span class="data-en">Download y-bot.jpg</span>
+                <span class="data-ru">Скачать y-bot.jpg</span>
+            </a>
+            <a href="/assets/models/y-bot/skeleton.ozz" download target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm me-2 mb-2">
+                <span class="data-en">Download skeleton.ozz</span>
+                <span class="data-ru">Скачать skeleton.ozz</span>
+            </a>
+            <a href="/assets/models/y-bot/animation.ozz" download target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm mb-2">
+                <span class="data-en">Download animation.ozz</span>
+                <span class="data-ru">Скачать animation.ozz</span>
+            </a>
+        </p>
+        <p>
+            <span class="data-en">Place all files (<code>y-bot.glb</code>, <code>y-bot.jpg</code>, <code>skeleton.ozz</code>, and <code>animation.ozz</code>) inside your project's <code>assets/models/y-bot/</code> folder.</span>
+            <span class="data-ru">Поместите все файлы (<code>y-bot.glb</code>, <code>y-bot.jpg</code>, <code>skeleton.ozz</code> и <code>animation.ozz</code>) в папку <code>assets/models/y-bot/</code> вашего проекта.</span>
+        </p>
+    </section>
+
+    <!-- Step 3: Stream Wrapper Header -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 3: Create ozz Stream Wrapper (src/ozz_sdl_stream.h)</span>
+            <span class="data-ru">Шаг 3: Создание обертки потока ozz (src/ozz_sdl_stream.h)</span>
+        </h2>
+        <p>
+            <span class="data-en">To let ozz-animation load binary archives via SDL3 file streams, create <code>src/ozz_sdl_stream.h</code>:</span>
+            <span class="data-ru">Чтобы разрешить ozz-animation загружать бинарные архивы через файловые потоки SDL3, создайте <code>src/ozz_sdl_stream.h</code>:</span>
+        </p>
+        <pre><code class="language-cpp">#pragma once
+
+#include &lt;SDL3/SDL.h&gt;
+#include &lt;ozz/base/io/stream.h&gt;
+
+class OzzSDLStream : public ozz::io::Stream
+{
+public:
+    OzzSDLStream(SDL_IOStream *io)
+        : io_(io)
+        , opened_(io != nullptr)
+    {
+        if (io_)
+            SDL_SeekIO(io_, 0, SDL_IO_SEEK_SET);
+    }
+
+    ~OzzSDLStream()
+    {
+        if (io_)
+            SDL_CloseIO(io_);
+    }
+
+    bool opened() const override { return opened_; }
+
+    size_t Read(void *buffer, size_t size) override
+    {
+        size_t total = 0;
+        while (total &lt; size)
+        {
+            size_t read = SDL_ReadIO(io_, (uint8_t *)buffer + total, size - total);
+            if (read == 0)
+                break;
+            total += read;
+        }
+        return total;
+    }
+
+    size_t Write(const void *, size_t) override { return 0; }
+
+    int Seek(int offset, Origin origin) override
+    {
+        SDL_IOWhence whence = SDL_IO_SEEK_SET;
+        if (origin == kCurrent)
+            whence = SDL_IO_SEEK_CUR;
+        else if (origin == kEnd)
+            whence = SDL_IO_SEEK_END;
+
+        Sint64 pos = SDL_SeekIO(io_, offset, whence);
+        return pos &gt;= 0 ? 0 : -1;
+    }
+
+    int Tell() const override
+    {
+        Sint64 pos = SDL_TellIO(io_);
+        return pos &gt;= 0 ? (int)pos : -1;
+    }
+
+    size_t Size() const override
+    {
+        Sint64 size = SDL_GetIOSize(io_);
+        return size &gt;= 0 ? (size_t)size : 0;
+    }
+
+private:
+    SDL_IOStream *io_;
+    bool opened_;
+};</code></pre>
+    </section>
+
+    <!-- Step 4: CMakeLists.txt Configuration -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 4: Configure CMakeLists.txt</span>
+            <span class="data-ru">Шаг 4: Настройка CMakeLists.txt</span>
+        </h2>
+        <p>
+            <span class="data-en">Configure your project script to incorporate <code>ozz-animation</code> include directories and static libraries alongside SDL3, SDL3_image, GLM, cgltf, and GLAD:</span>
+            <span class="data-ru">Настройте скрипт проекта для подключения директорий включения и статических библиотек <code>ozz-animation</code> вместе с SDL3, SDL3_image, GLM, cgltf и GLAD:</span>
+        </p>
+        <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Debug")
+endif()
+
+project(y-bot-ozz-animation-opengl-sdl3-cpp CXX C)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(OpenGL REQUIRED)
+
+if(WIN32)
+    set(SDL3_DIR "C:/libs/sdl3-3.4.16-mingw/lib/cmake/SDL3")
+    set(SDL3_image_DIR "C:/libs/sdl3_image-3.4.6-mingw/lib/cmake/SDL3_image")
+else()
+    set(SDL3_DIR "$ENV{HOME}/libs/sdl3-3.4.16-ubuntu/lib/cmake/SDL3")
+    set(SDL3_image_DIR "$ENV{HOME}/libs/sdl3_image-3.4.6-ubuntu/lib/cmake/SDL3_image")
+endif()
+
+find_package(SDL3 REQUIRED CONFIG)
+find_package(SDL3_image REQUIRED CONFIG)
+
+if(WIN32)
+    set(GLM_INCLUDE_DIR "C:/libs/glm-1.0.3/glm")
+    set(CGLTF_INCLUDE_DIR "C:/libs/cgltf-1.15")
+    set(GLAD_INCLUDE_DIR "C:/libs/glad-0.1.36/opengl-3.3/include")
+    set(GLAD_SOURCE "C:/libs/glad-0.1.36/opengl-3.3/src/glad.c")
+    set(OZZ_INCLUDE_DIR "C:/libs/ozz-animation-0.17.0-mingw/include")
+else()
+    set(GLM_INCLUDE_DIR "$ENV{HOME}/libs/glm-1.0.3")
+    set(CGLTF_INCLUDE_DIR "$ENV{HOME}/libs/cgltf-1.15")
+    set(GLAD_INCLUDE_DIR "$ENV{HOME}/libs/glad-0.1.36/opengl-3.3/include")
+    set(GLAD_SOURCE "$ENV{HOME}/libs/glad-0.1.36/opengl-3.3/src/glad.c")
+    set(OZZ_INCLUDE_DIR "$ENV{HOME}/libs/ozz-animation-0.17.0-ubuntu/include")
+endif()
+
+add_executable(app
+    src/main.cpp
+    ${GLAD_SOURCE}
+)
+
+target_include_directories(app PRIVATE 
+    ${GLM_INCLUDE_DIR}
+    ${CGLTF_INCLUDE_DIR}
+    ${GLAD_INCLUDE_DIR}
+    ${OZZ_INCLUDE_DIR}
+)
+
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/assets")
+    add_custom_command(
+        TARGET app POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E remove_directory "$&lt;TARGET_FILE_DIR:app&gt;/assets"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+                "$&lt;TARGET_FILE_DIR:app&gt;/assets"
+        COMMENT "Copying assets directory"
+    )
+endif()
+
+if(WIN32)
+    target_compile_options(app PRIVATE -Os)
+    target_link_options(app PRIVATE -static -s -static-libgcc)
+
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_link_options(app PRIVATE -mconsole)
+    else()
+        target_link_options(app PRIVATE -mwindows)
+    endif()
+
+    target_link_libraries(app PRIVATE 
+        SDL3_image::SDL3_image-static
+        SDL3::SDL3-static
+        OpenGL::GL
+        C:/libs/ozz-animation-0.17.0-mingw/lib/libozz_animation_offline_r.a
+        C:/libs/ozz-animation-0.17.0-mingw/lib/libozz_animation_r.a
+        C:/libs/ozz-animation-0.17.0-mingw/lib/libozz_geometry_r.a
+        C:/libs/ozz-animation-0.17.0-mingw/lib/libozz_options_r.a
+        C:/libs/ozz-animation-0.17.0-mingw/lib/libozz_base_r.a
+    )
+else()
+    target_link_libraries(app PRIVATE 
+        SDL3_image::SDL3_image-static
+        SDL3::SDL3-static
+        OpenGL::GL
+        $ENV{HOME}/libs/ozz-animation-0.17.0-ubuntu/lib/libozz_animation_offline_r.a
+        $ENV{HOME}/libs/ozz-animation-0.17.0-ubuntu/lib/libozz_animation_r.a
+        $ENV{HOME}/libs/ozz-animation-0.17.0-ubuntu/lib/libozz_geometry_r.a
+        $ENV{HOME}/libs/ozz-animation-0.17.0-ubuntu/lib/libozz_options_r.a
+        $ENV{HOME}/libs/ozz-animation-0.17.0-ubuntu/lib/libozz_base_r.a
+    )
+endif()</code></pre>
+    </section>
+
+    <!-- Step 5: Animation Loading and Sampling Logic -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 5: Core Animation Loading &amp; Sampling Snippet</span>
+            <span class="data-ru">Шаг 5: Основной фрагмент загрузки и семплирования анимации</span>
+        </h2>
+        <p>
+            <span class="data-en">Inside your application initialization and iteration loop, load and sample your ozz files as follows:</span>
+            <span class="data-ru">Внутри инициализации приложения и цикла итерации загружайте и семплируйте файлы ozz следующим образом:</span>
+        </p>
+        <pre><code class="language-cpp">// Load Ozz Skeleton
+const char *skeletonPath = "assets/models/y-bot/skeleton.ozz";
+SDL_IOStream *skeletonIo = SDL_IOFromFile(skeletonPath, "rb");
+if (skeletonIo)
+{
+    OzzSDLStream stream(skeletonIo);
+    ozz::io::IArchive archive(&amp;stream);
+    if (archive.TestTag&lt;ozz::animation::Skeleton&gt;())
+    {
+        ozz::animation::Skeleton tempSkeleton;
+        archive &gt;&gt; tempSkeleton;
+        app-&gt;ozzSkeleton = std::move(tempSkeleton);
+    }
+    else
+    {
+        SDL_Log("CRITICAL: Archive tag mismatch for Skeleton!");
+    }
+}
+else
+{
+    SDL_Log("Failed to open ozz skeleton: %s", skeletonPath);
+    return SDL_APP_FAILURE;
+}
+
+// Load Ozz Animation
+const char *animationPath = "assets/models/y-bot/animation.ozz";
+SDL_IOStream *animIo = SDL_IOFromFile(animationPath, "rb");
+if (animIo)
+{
+    OzzSDLStream stream(animIo);
+    ozz::io::IArchive archive(&amp;stream);
+    archive &gt;&gt; app-&gt;ozzAnimation;
+}
+else
+{
+    SDL_Log("Failed to open ozz animation: %s", animationPath);
+    return SDL_APP_FAILURE;
+}
+
+// Initialize sampling context and timer
+app-&gt;ozzSamplingContext.Resize(app-&gt;ozzSkeleton.num_joints());
+app-&gt;ozzAnimationTime = 0.0f;
+app-&gt;ozzModelMatrices.resize(app-&gt;ozzSkeleton.num_joints());
+
+// Inside frame update loop:
+app-&gt;ozzAnimationTime += delta_time;
+if (app-&gt;ozzAnimationTime &gt; app-&gt;ozzAnimation.duration())
+{
+    app-&gt;ozzAnimationTime = fmod(app-&gt;ozzAnimationTime, app-&gt;ozzAnimation.duration());
+}
+
+// Setup sampling job
+ozz::animation::SamplingJob sampling_job;
+sampling_job.animation = &amp;app-&gt;ozzAnimation;
+sampling_job.ratio = app-&gt;ozzAnimation.duration() &gt; 0.0f ? (app-&gt;ozzAnimationTime / app-&gt;ozzAnimation.duration()) : 0.0f;
+sampling_job.context = &amp;app-&gt;ozzSamplingContext;
+
+ozz::vector&lt;ozz::math::SoaTransform&gt; locals;
+locals.resize(app-&gt;ozzSkeleton.num_soa_joints());
+sampling_job.output = make_span(locals);
+
+if (!sampling_job.Run())
+{
+    SDL_Log("Failed to sample ozz animation at ratio: %f", sampling_job.ratio);
+}
+
+// Convert local transforms to model-space matrices
+ozz::animation::LocalToModelJob conv_job;
+conv_job.skeleton = &amp;app-&gt;ozzSkeleton;
+conv_job.input = make_span(locals);
+conv_job.output = make_span(app-&gt;ozzModelMatrices);
+
+if (!conv_job.Run())
+{
+    SDL_Log("Failed to run local-to-model animation job.");
+}</code></pre>
+    </section>
+
+    <!-- Step 6: Build & Run Scripts -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 6: Build &amp; Execution Scripts</span>
+            <span class="data-ru">Шаг 6: Скрипты сборки и запуска</span>
+        </h2>
+        
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (MinGW / Batch Scripts)</h3>
+        <p class="fw-bold mb-1">config-exe.bat</p>
+        <pre><code class="language-bash">cmake -G Ninja -S . -B dist/win</code></pre>
+        <p class="fw-bold mb-1">build-exe.bat</p>
+        <pre><code class="language-bash">cmake --build dist/win</code></pre>
+        <p class="fw-bold mb-1">run-exe.bat</p>
+        <pre><code class="language-bash">@echo off
+.\dist\win\app.exe</code></pre>
+
+        <h3 class="h6 fw-bold mt-4 text-primary">Ubuntu (Bash Scripts)</h3>
+        <p class="fw-bold mb-1">config-bin.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+cmake -G Ninja -S . -B dist/linux</code></pre>
+        <p class="fw-bold mb-1">build-bin.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+cmake --build dist/linux</code></pre>
+        <p class="fw-bold mb-1">run-bin.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+./dist/linux/app</code></pre>
+    </section>
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">
+                        <span class="data-en">Sberbank (Russia only)</span>
+                        <span class="data-ru">Сбербанк (только для РФ)</span>
+                    </h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number (Russia only)</span>
+                        <span class="data-ru">Перевод по номеру телефона (только для РФ)</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">USDT TRC20</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+    //     if (link) {
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // Logic for dynamic links (persisting language across pages)
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        
+        if (link) {
+            // Check if the link is intended to open in a new tab
+            if (link.target === "_blank") {
+                // Allow the browser to handle the click naturally, 
+                // but we still want to append the language param.
+                const currentLang = document.documentElement.getAttribute("lang") || "en";
+                const targetUrl = new URL(link.href);
+                targetUrl.searchParams.set("lang", currentLang);
+                
+                // Update the href right before the browser follows it
+                link.href = targetUrl.toString();
+                return; // Exit the function so e.preventDefault() isn't called
+            }
+
+            // Existing logic for same-tab navigation
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(
+                link.href,
+                window.location.origin + window.location.pathname,
+            );
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    document.querySelectorAll('pre').forEach((pre) => {
+        // Create container and header
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        // Wrap the pre tag
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        // Copy Logic
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                
+                // Set the content
+                block.textContent = code;
+                
+                // Re-run Prism highlight if available
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
+        });
+    });
+
+    function updateVideoPlayerLanguage(lang) {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        const targetSrc = lang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = lang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        // Only update if the URL actually changed to prevent unneeded reloads
+        if (player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // Example listener: Call this function inside your existing language-switcher click handler:
+    document.querySelectorAll('.lang-link').forEach(link => {
+        link.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+            updateVideoPlayerLanguage(lang);
+        });
+    });
+
+    function initVideoPlayer() {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        // Detect language from URL query string (?lang=ru), or <html lang="..."> attribute
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentLang = urlParams.get('lang') || document.documentElement.lang || 'en';
+
+        // Set correct video source on page load
+        const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        if (player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // Run immediately when DOM is ready
+    // document.addEventListener('DOMContentLoaded', initVideoPlayer);
+</script>
+</body>
+
+</html>
