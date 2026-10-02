@@ -407,6 +407,26 @@ set -e
         <pre><code class="language-text">C:\projects\ozz-test>run-exe
 Result vector: [5, 7, 9]</code></pre>
     </section>
+
+    <!-- Step 5: Convert glTF/GLB to ozz Format -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 5: Convert glTF / GLB to .ozz Format (gltf2ozz)</span>
+            <span class="data-ru">Шаг 5: Конвертация glTF / GLB в формат .ozz (gltf2ozz)</span>
+        </h2>
+
+        <p>
+            <span class="data-en">To convert a 3D model (glTF / GLB) containing a skeleton and animations into runtime-ready binary <code>.ozz</code> files, run the <code>gltf2ozz</code> command-line tool with a JSON configuration:</span>
+            <span class="data-ru">Чтобы преобразовать 3D-модель (glTF / GLB), содержащую скелет и анимации, в готовые к загрузке бинарные файлы <code>.ozz</code>, выполните утилиту <code>gltf2ozz</code> с JSON-конфигурацией:</span>
+        </p>
+
+        <pre><code class="language-bash">gltf2ozz --file="scene.glb" --config="{\"skeleton\":{\"filename\":\"skeleton.ozz\"},\"animations\":[{\"clip\":\"*\",\"filename\":\"animation.ozz\"}]}"</code></pre>
+
+        <p>
+            <span class="data-en">This exports the model hierarchy into <code>skeleton.ozz</code> and all matching animation clips into <code>animation.ozz</code>.</span>
+            <span class="data-ru">Эта команда экспортирует иерархию костей в <code>skeleton.ozz</code>, а все подходящие анимационные клипы &mdash; в <code>animation.ozz</code>.</span>
+        </p>
+    </section>
 </div>
 
         
