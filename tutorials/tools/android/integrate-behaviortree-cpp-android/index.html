@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    Integrating BehaviorTree.CPP Shared Library for Android (NDK &amp; CMake)
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+<script src="/libs/bootstrap@5.3.3/bootstrap.bundle.min.js"></script>
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
+
+    /* How to hide non-active language blocks without collapsing iframe dimensions */
+    .data-en.d-none, 
+    .data-ru.d-none {
+        display: none !important;
+    }
+
+    /* Add this to prevent resolution drops during language toggles */
+    .ratio iframe {
+        width: 100%;
+        height: 100%;
+        content-visibility: visible;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold">
+            <span class="data-en">Integrating BehaviorTree.CPP Shared Library for Android (NDK &amp; CMake)</span>
+            <span class="data-ru">Интеграция динамической библиотеки BehaviorTree.CPP для Android (NDK и CMake)</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">A step-by-step guide to configuring and integrating the BehaviorTree.CPP shared library (<code>libbehaviortree_cpp.so</code>) in your CMake projects for Android using NDK.</span>
+            <span class="data-ru">Пошаговое руководство по настройке и интеграции динамической библиотеки BehaviorTree.CPP (<code>libbehaviortree_cpp.so</code>) в проекты CMake для Android с использованием NDK.</span>
+        </p>
+    </header>
+
+    <div class="alert alert-secondary mb-3">
+        <span class="data-en">Before proceeding, make sure you have configured your environment and compiled the shared library using the previous guides:</span>
+        <span class="data-ru">Перед продолжением убедитесь, что вы настроили рабочее окружение и собрали динамическую библиотеку, следуя предыдущим инструкциям:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">MinGW &amp; CMake Setup Guide</span>
+                    <span class="data-ru">Руководство по настройке MinGW и CMake</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/android/android-env/" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Android Environment Setup Guide (SDK, NDK, JDK)</span>
+                    <span class="data-ru">Руководство по настройке окружения Android (SDK, NDK, JDK)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/android/build-behaviortree-cpp-so-android" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building BehaviorTree.CPP Shared Library for Android (NDK &amp; CMake)</span>
+                    <span class="data-ru">Сборка динамической библиотеки BehaviorTree.CPP для Android (NDK и CMake)</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Step 1: Create Project Directory -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 1: Create Project Directory</span>
+            <span class="data-ru">Шаг 1: Создание директории проекта</span>
+        </h2>
+        <p>
+            <span class="data-en">Create a workspace folder and a new directory for your BehaviorTree.CPP Android test project:</span>
+            <span class="data-ru">Создайте рабочую папку для проектов и новую директорию для вашего тестового Android-проекта BehaviorTree.CPP:</span>
+        </p>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (Command Prompt / PowerShell)</h3>
+        <pre><code class="language-bash">mkdir C:\projects\bt-android-test
+cd C:\projects\bt-android-test</code></pre>
+    </section>
+
+    <!-- Step 2: Create Source Files -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 2: Create Source Files (main.cpp &amp; CMakeLists.txt)</span>
+            <span class="data-ru">Шаг 2: Создание исходных файлов (main.cpp и CMakeLists.txt)</span>
+        </h2>
+
+        <p>
+            <span class="data-en">Create the source files in your project directory:</span>
+            <span class="data-ru">Создайте исходные файлы в папке проекта:</span>
+        </p>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (Terminal / Notepad)</h3>
+        <pre><code class="language-bash">notepad main.cpp
+notepad CMakeLists.txt</code></pre>
+
+        <!-- Code File 1: main.cpp -->
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">1. File Contents for main.cpp</span>
+            <span class="data-ru">1. Содержимое файла main.cpp</span>
+        </h3>
+        <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;behaviortree_cpp/bt_factory.h&gt;
+
+// Custom action node
+class SayHello : public BT::SyncActionNode {
+public:
+    SayHello(const std::string&amp; name, const BT::NodeConfig&amp; config)
+        : BT::SyncActionNode(name, config) {}
+
+    static BT::PortsList providedPorts() {
+        return {};
+    }
+
+    BT::NodeStatus tick() override {
+        std::cout &lt;&lt; "Hello, BehaviorTree.CPP from Android!" &lt;&lt; std::endl;
+        return BT::NodeStatus::SUCCESS;
+    }
+};
+
+int main() {
+    BT::BehaviorTreeFactory factory;
+    factory.registerNodeType&lt;SayHello&gt;("SayHello");
+
+    static const char* xml_text = R"(
+     &lt;root BTCPP_format="4"&gt;
+         &lt;BehaviorTree ID="MainTree"&gt;
+             &lt;SayHello/&gt;
+         &lt;/BehaviorTree&gt;
+     &lt;/root&gt;
+    )";
+
+    BT::Tree tree = factory.createTreeFromText(xml_text);
+
+    // Tick the behavior tree once
+    tree.tickOnce();
+
+    return 0;
+}</code></pre>
+
+        <!-- Code File 2: CMakeLists.txt -->
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">2. File Contents for CMakeLists.txt</span>
+            <span class="data-ru">2. Содержимое файла CMakeLists.txt</span>
+        </h3>
+        <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Debug")
+endif()
+
+project(bt_android_test CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# -----------------------------------------------------------------------------
+# Define Project Source Files
+# -----------------------------------------------------------------------------
+set(PROJECT_SOURCES
+    main.cpp
+)
+
+# -----------------------------------------------------------------------------
+# Declare Target Type
+# -----------------------------------------------------------------------------
+add_executable(app ${PROJECT_SOURCES})
+
+# -----------------------------------------------------------------------------
+# Library Paths for Android
+# -----------------------------------------------------------------------------
+set(BTCPP_PATH "C:/libs/behaviortree-4.9.0-android/arm64-v8a")
+
+# BehaviorTree.CPP Shared Library
+add_library(behaviortree_cpp SHARED IMPORTED)
+set_target_properties(behaviortree_cpp PROPERTIES
+    IMPORTED_LOCATION "${BTCPP_PATH}/lib/libbehaviortree_cpp.so"
+    INTERFACE_INCLUDE_DIRECTORIES "${BTCPP_PATH}/include"
+)
+
+target_link_libraries(app PRIVATE
+    behaviortree_cpp
+    log
+)</code></pre>
+    </section>
+
+    <!-- Step 3: Build & Execution Scripts -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 3: Create Build &amp; Execution Scripts</span>
+            <span class="data-ru">Шаг 3: Создание скриптов сборки и запуска</span>
+        </h2>
+
+        <p>
+            <span class="data-en">Create batch scripts to configure, compile, and run the binary on an Android device or emulator via ADB:</span>
+            <span class="data-ru">Создайте пакетные bat-скрипты для конфигурации, компиляции и запуска исполняемого файла на Android-устройстве или эмуляторе через ADB:</span>
+        </p>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (Batch Scripts)</h3>
+
+        <p class="fw-bold mb-1">config-android.bat</p>
+        <pre><code class="language-bash">@echo off
+set NDK=H:/AndroidSDK/ndk/28.2.13676358
+
+cmake -G "MinGW Makefiles" ^
+  -DCMAKE_TOOLCHAIN_FILE=%NDK%/build/cmake/android.toolchain.cmake ^
+  -DANDROID_ABI=arm64-v8a ^
+  -DANDROID_PLATFORM=android-21 ^
+  -DCMAKE_BUILD_TYPE=Release ^
+  -S . -B build-android-64</code></pre>
+
+        <p class="fw-bold mb-1">build-android.bat</p>
+        <pre><code class="language-bash">@echo off
+cmake --build build-android-64 --config Release --parallel</code></pre>
+
+        <p class="fw-bold mb-1">run-android.bat</p>
+        <pre><code class="language-bash">@echo off
+set ADB=H:/AndroidSDK/platform-tools/adb.exe
+set DEVICE_DIR=/data/local/tmp/bt-test
+set BTCPP_LIB_DIR=C:/libs/behaviortree-4.9.0-android/arm64-v8a/lib
+
+echo [*] Creating target directory on device...
+%ADB% shell "mkdir -p %DEVICE_DIR%"
+
+echo [*] Pushing executable and shared library...
+%ADB% push build-android-64/app %DEVICE_DIR%/
+%ADB% push %BTCPP_LIB_DIR%/libbehaviortree_cpp.so %DEVICE_DIR%/
+
+echo [*] Setting permissions and executing...
+%ADB% shell "chmod +x %DEVICE_DIR%/app"
+%ADB% shell "export LD_LIBRARY_PATH=%DEVICE_DIR%:$LD_LIBRARY_PATH &amp;&amp; %DEVICE_DIR%/app"</code></pre>
+
+        <p class="mt-3">
+            <span class="data-en">Make sure an Android device or emulator is connected (check with <code>adb devices</code>), then run the scripts sequentially in Command Prompt:</span>
+            <span class="data-ru">Убедитесь, что Android-устройство или эмулятор подключены (проверьте командой <code>adb devices</code>), затем последовательно запустите скрипты в командной строке:</span>
+        </p>
+        <pre><code class="language-bash">config-android.bat
+build-android.bat
+run-android.bat</code></pre>
+    </section>
+
+    <!-- Step 4: Expected Output -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 4: Expected Output</span>
+            <span class="data-ru">Шаг 4: Ожидаемый результат</span>
+        </h2>
+
+        <p>
+            <span class="data-en">After running <code>run-android.bat</code>, the executable will run inside <code>/data/local/tmp</code> using the shared library, and you should see the following output in your terminal:</span>
+            <span class="data-ru">После запуска <code>run-android.bat</code> исполняемый файл выполнится внутри <code>/data/local/tmp</code> с использованием динамической библиотеки, и вы увидите следующий вывод в терминале:</span>
+        </p>
+
+        <pre><code class="language-text">Hello, BehaviorTree.CPP from Android!</code></pre>
+    </section>
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">
+                        <span class="data-en">Sberbank (Russia only)</span>
+                        <span class="data-ru">Сбербанк (только для РФ)</span>
+                    </h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number (Russia only)</span>
+                        <span class="data-ru">Перевод по номеру телефона (только для РФ)</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">USDT TRC20</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+    //     if (link) {
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // Logic for dynamic links (persisting language across pages)
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        
+        if (link) {
+            // Check if the link is intended to open in a new tab
+            if (link.target === "_blank") {
+                // Allow the browser to handle the click naturally, 
+                // but we still want to append the language param.
+                const currentLang = document.documentElement.getAttribute("lang") || "en";
+                const targetUrl = new URL(link.href);
+                targetUrl.searchParams.set("lang", currentLang);
+                
+                // Update the href right before the browser follows it
+                link.href = targetUrl.toString();
+                return; // Exit the function so e.preventDefault() isn't called
+            }
+
+            // Existing logic for same-tab navigation
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(
+                link.href,
+                window.location.origin + window.location.pathname,
+            );
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    document.querySelectorAll('pre').forEach((pre) => {
+        // Create container and header
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        // Wrap the pre tag
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        // Copy Logic
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                
+                // Set the content
+                block.textContent = code;
+                
+                // Re-run Prism highlight if available
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
+        });
+    });
+
+    function updateVideoPlayerLanguage(lang) {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        const targetSrc = lang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = lang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        // Only update if the URL actually changed to prevent unneeded reloads
+        if (player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // Example listener: Call this function inside your existing language-switcher click handler:
+    document.querySelectorAll('.lang-link').forEach(link => {
+        link.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+            updateVideoPlayerLanguage(lang);
+        });
+    });
+
+    function initVideoPlayer() {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        // Detect language from URL query string (?lang=ru), or <html lang="..."> attribute
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentLang = urlParams.get('lang') || document.documentElement.lang || 'en';
+
+        // Set correct video source on page load
+        const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        if (player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // Run immediately when DOM is ready
+    // document.addEventListener('DOMContentLoaded', initVideoPlayer);
+</script>
+</body>
+
+</html>
