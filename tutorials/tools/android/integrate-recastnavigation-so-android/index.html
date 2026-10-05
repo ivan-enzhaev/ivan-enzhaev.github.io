@@ -391,11 +391,11 @@ cmake -G "MinGW Makefiles" ^
   -DANDROID_ABI=arm64-v8a ^
   -DANDROID_PLATFORM=android-21 ^
   -DCMAKE_BUILD_TYPE=Release ^
-  -S . -B build-android-64</code></pre>
+  -S . -B dist/android</code></pre>
 
         <p class="fw-bold mb-1">build-android.bat</p>
         <pre><code class="language-bash">@echo off
-cmake --build build-android-64 --config Release --parallel</code></pre>
+cmake --build dist/android --config Release --parallel</code></pre>
 
         <p class="fw-bold mb-1">run-android.bat</p>
         <pre><code class="language-bash">@echo off
@@ -407,7 +407,7 @@ echo [*] Creating target directory on device...
 %ADB% shell "mkdir -p %DEVICE_DIR%"
 
 echo [*] Pushing executable and shared libraries...
-%ADB% push build-android-64/app %DEVICE_DIR%/
+%ADB% push dist/android/app %DEVICE_DIR%/
 %ADB% push %RECAST_LIB_DIR%/libRecast.so %DEVICE_DIR%/
 %ADB% push %RECAST_LIB_DIR%/libDetour.so %DEVICE_DIR%/
 %ADB% push %RECAST_LIB_DIR%/libDebugUtils.so %DEVICE_DIR%/

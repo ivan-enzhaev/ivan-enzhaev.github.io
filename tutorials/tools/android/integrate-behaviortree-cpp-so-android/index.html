@@ -334,16 +334,25 @@ int main() {
             <span class="data-en">2. File Contents for CMakeLists.txt</span>
             <span class="data-ru">2. Содержимое файла CMakeLists.txt</span>
         </h3>
+        <p>
+            <span class="data-en">Directly links the compiled shared library (<code>libbehaviortree_cpp.so</code>) and the Android log library:</span>
+            <span class="data-ru">Напрямую подключает скомпилированную динамическую библиотеку (<code>libbehaviortree_cpp.so</code>) и системную библиотеку логирования Android:</span>
+        </p>
         <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
 
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Debug")
+    set(CMAKE_BUILD_TYPE "Release")
 endif()
 
-project(bt_android_test CXX)
+project(bt-android-test CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# -----------------------------------------------------------------------------
+# Library Paths for Android
+# -----------------------------------------------------------------------------
+set(BTCPP_PATH "C:/libs/behaviortree-4.9.0-android/arm64-v8a")
 
 # -----------------------------------------------------------------------------
 # Define Project Source Files
@@ -353,24 +362,21 @@ set(PROJECT_SOURCES
 )
 
 # -----------------------------------------------------------------------------
-# Declare Target Type
+# Declare Target Type & Sources
 # -----------------------------------------------------------------------------
-add_executable(app ${PROJECT_SOURCES})
+add_executable(app)
+target_sources(app PRIVATE ${PROJECT_SOURCES})
 
-# -----------------------------------------------------------------------------
-# Library Paths for Android
-# -----------------------------------------------------------------------------
-set(BTCPP_PATH "C:/libs/behaviortree-4.9.0-android/arm64-v8a")
-
-# BehaviorTree.CPP Shared Library
-add_library(behaviortree_cpp SHARED IMPORTED)
-set_target_properties(behaviortree_cpp PROPERTIES
-    IMPORTED_LOCATION "${BTCPP_PATH}/lib/libbehaviortree_cpp.so"
-    INTERFACE_INCLUDE_DIRECTORIES "${BTCPP_PATH}/include"
+target_include_directories(app PRIVATE
+    ${BTCPP_PATH}/include
 )
 
+# -----------------------------------------------------------------------------
+# Link Libraries
+# -----------------------------------------------------------------------------
 target_link_libraries(app PRIVATE
-    behaviortree_cpp
+    # BehaviorTree.CPP shared library (.so)
+    ${BTCPP_PATH}/lib/libbehaviortree_cpp.so
     log
 )</code></pre>
     </section>
@@ -398,11 +404,11 @@ cmake -G "MinGW Makefiles" ^
   -DANDROID_ABI=arm64-v8a ^
   -DANDROID_PLATFORM=android-21 ^
   -DCMAKE_BUILD_TYPE=Release ^
-  -S . -B build-android-64</code></pre>
+  -S . -B dist/android</code></pre>
 
         <p class="fw-bold mb-1">build-android.bat</p>
         <pre><code class="language-bash">@echo off
-cmake --build build-android-64 --config Release --parallel</code></pre>
+cmake --build dist/android --config Release --parallel</code></pre>
 
         <p class="fw-bold mb-1">run-android.bat</p>
         <pre><code class="language-bash">@echo off
@@ -414,7 +420,7 @@ echo [*] Creating target directory on device...
 %ADB% shell "mkdir -p %DEVICE_DIR%"
 
 echo [*] Pushing executable and shared library...
-%ADB% push build-android-64/app %DEVICE_DIR%/
+%ADB% push dist/android/app %DEVICE_DIR%/
 %ADB% push %BTCPP_LIB_DIR%/libbehaviortree_cpp.so %DEVICE_DIR%/
 
 echo [*] Setting permissions and executing...
