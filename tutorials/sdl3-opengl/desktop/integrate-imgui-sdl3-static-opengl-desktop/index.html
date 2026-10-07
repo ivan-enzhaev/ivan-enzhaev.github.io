@@ -7,7 +7,7 @@
 
 <title>
   
-    Integrating GLM with SDL3 and CMake on Windows &amp; Ubuntu (OpenGL 3.3)
+    Integrating Dear ImGui with SDL3 on Windows &amp; Ubuntu (OpenGL 3.3)
   
   | Ivan Enzhaev
 </title>
@@ -219,25 +219,19 @@
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
-            <span class="data-en">Integrating GLM with SDL3 and CMake on Windows &amp; Ubuntu (OpenGL 3.3)</span>
-            <span class="data-ru">Интеграция C++-библиотеки GLM с SDL3 и CMake под Windows и Ubuntu (OpenGL 3.3)</span>
+            <span class="data-en">Integrating Dear ImGui with SDL3 on Windows &amp; Ubuntu (OpenGL 3.3)</span>
+            <span class="data-ru">Интеграция C++-библиотеки Dear ImGui с SDL3 под Windows и Ubuntu (OpenGL 3.3)</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A step-by-step guide to configuring and integrating the GLM math library with SDL3 and an OpenGL 3.3 context in your CMake projects on Windows and Ubuntu.</span>
-            <span class="data-ru">Пошаговое руководство по настройке и интеграции математической библиотеки GLM с SDL3 и контекстом OpenGL 3.3 в проекты CMake под Windows и Ubuntu.</span>
+            <span class="data-en">A step-by-step guide to configuring and integrating Dear ImGui with SDL3 and an OpenGL 3.3 context using CMake on Windows and Ubuntu.</span>
+            <span class="data-ru">Пошаговое руководство по настройке и интеграции библиотеки Dear ImGui с SDL3 и контекстом OpenGL 3.3 с использованием CMake под Windows и Ubuntu.</span>
         </p>
     </header>
 
     <div class="alert alert-secondary mb-3">
-        <span class="data-en">Before proceeding, make sure you have built and installed the static libraries on your system using the appropriate guides:</span>
-        <span class="data-ru">Перед продолжением убедитесь, что вы собрали и установили статические библиотеки в вашей системе, следуя соответствующим инструкциям:</span>
+        <span class="data-en">Before proceeding, make sure you have installed SDL3, GLAD, and Dear ImGui on your system using the prerequisite guides:</span>
+        <span class="data-ru">Перед продолжением убедитесь, что вы установили SDL3, GLAD и Dear ImGui в вашей системе, следуя предварительным инструкциям:</span>
         <ul class="mb-0 mt-2">
-            <li>
-                <a href="/tutorials/sdl3-opengl/desktop/setup-glm" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-                    <span class="data-en">Installing GLM Library</span>
-                    <span class="data-ru">Установка библиотеки GLM</span>
-                </a>
-            </li>
             <li>
                 <a href="/tutorials/tools/mingw/build-sdl3-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
                     <span class="data-en">Building SDL3 Static Library for Windows (MinGW &amp; CMake)</span>
@@ -250,30 +244,44 @@
                     <span class="data-ru">Сборка статической библиотеки SDL3 для Ubuntu (GCC, CMake и Ninja)</span>
                 </a>
             </li>
+            <li>
+                <a href="/tutorials/sdl3-opengl/desktop/setup-glad-desktop" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Installing GLAD OpenGL Loader Library on Windows &amp; Ubuntu (OpenGL 3.3)</span>
+                    <span class="data-ru">Установка библиотеки-загрузчика OpenGL GLAD под Windows и Ubuntu (OpenGL 3.3)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/sdl3-opengl/desktop/setup-imgui-opengl-desktop" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Installing Dear ImGui Library on Windows &amp; Ubuntu (OpenGL 3.3)</span>
+                    <span class="data-ru">Установка C++-библиотеки Dear ImGui под Windows и Ubuntu (OpenGL 3.3)</span>
+                </a>
+            </li>
         </ul>
     </div>
 
+    <!-- Step 1: Create Project Directory -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 1: Create Project Directory</span>
             <span class="data-ru">Шаг 1: Создание директории проекта</span>
         </h2>
         <p>
-            <span class="data-en">Create a workspace folder and a new directory for your SDL3 GLM OpenGL test project:</span>
-            <span class="data-ru">Создайте рабочую папку для проектов и новую директорию для вашего тестового проекта SDL3 GLM OpenGL:</span>
+            <span class="data-en">Create a workspace folder and a new directory for your ImGui + SDL3 test project:</span>
+            <span class="data-ru">Создайте рабочую папку для проектов и новую директорию для вашего тестового проекта ImGui + SDL3:</span>
         </p>
 
         <!-- Windows Command -->
         <h3 class="h6 fw-bold mt-3 text-primary">Windows (Command Prompt / PowerShell)</h3>
-        <pre><code class="language-bash">mkdir C:\projects\sdl3-glm-opengl-test
-cd C:\projects\sdl3-glm-opengl-test</code></pre>
+        <pre><code class="language-bash">mkdir C:\projects\imgui-sdl3-opengl-test
+cd C:\projects\imgui-sdl3-opengl-test</code></pre>
 
         <!-- Ubuntu Command -->
         <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal)</h3>
-        <pre><code class="language-bash">mkdir -p ~/projects/sdl3-glm-opengl-test
-cd ~/projects/sdl3-glm-opengl-test</code></pre>
+        <pre><code class="language-bash">mkdir -p ~/projects/imgui-sdl3-opengl-test
+cd ~/projects/imgui-sdl3-opengl-test</code></pre>
     </section>
 
+    <!-- Step 2: Create Source Files -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 2: Create Source Files (main.cpp &amp; CMakeLists.txt)</span>
@@ -281,7 +289,7 @@ cd ~/projects/sdl3-glm-opengl-test</code></pre>
         </h2>
 
         <p>
-            <span class="data-en">You can create these files using Notepad / Sublime Text on Windows, or <code>nano</code> in Ubuntu terminal:</span>
+            <span class="data-en">You can create these files using Notepad / Sublime Text on Windows, or <code>nano</code> in the Ubuntu terminal:</span>
             <span class="data-ru">Вы можете создать эти файлы через Блокнот / Sublime Text в Windows или с помощью <code>nano</code> в терминале Ubuntu:</span>
         </p>
 
@@ -306,35 +314,39 @@ nano CMakeLists.txt</code></pre>
             <span class="data-en">1A. File Contents for main.cpp (Classic Loop)</span>
             <span class="data-ru">1A. Содержимое файла main.cpp (Классический цикл)</span>
         </h3>
-        <pre><code class="language-cpp">#include &lt;SDL3/SDL.h&gt;
+        <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;glad/glad.h&gt;
+#include &lt;SDL3/SDL.h&gt;
 #include &lt;SDL3/SDL_main.h&gt;
-#include &lt;SDL3/SDL_opengl.h&gt;
 
-#include &lt;glm/glm.hpp&gt;
-#include &lt;glm/gtc/matrix_transform.hpp&gt;
-#include &lt;glm/gtc/type_ptr.hpp&gt;
+#include "imgui.h"
+#include "imgui_impl_sdl3.h"
+#include "imgui_impl_opengl3.h"
 
 int main(int argc, char* argv[]) {
+    // 1. Initialize SDL3
     if (!SDL_Init(SDL_INIT_VIDEO)) {
-        SDL_Log("SDL Initialization failed: %s", SDL_GetError());
+        std::cerr &lt;&lt; "SDL Initialization failed: " &lt;&lt; SDL_GetError() &lt;&lt; std::endl;
         return -1;
     }
 
-    // Configure OpenGL 3.3 Core Profile attributes
+    // 2. Set OpenGL 3.3 Core Profile attributes
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-    SDL_Window* window = SDL_CreateWindow("SDL3 GLM OpenGL 3.3 Window (Classic)", 800, 450, SDL_WINDOW_OPENGL);
+    // 3. Create SDL3 Window
+    SDL_Window* window = SDL_CreateWindow("Dear ImGui + SDL3 (OpenGL 3.3) - Classic", 1280, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     if (!window) {
-        SDL_Log("Window creation failed: %s", SDL_GetError());
+        std::cerr &lt;&lt; "Window creation failed: " &lt;&lt; SDL_GetError() &lt;&lt; std::endl;
         SDL_Quit();
         return -1;
     }
 
+    // 4. Create OpenGL Context
     SDL_GLContext glContext = SDL_GL_CreateContext(window);
     if (!glContext) {
-        SDL_Log("OpenGL context creation failed: %s", SDL_GetError());
+        std::cerr &lt;&lt; "OpenGL context creation failed: " &lt;&lt; SDL_GetError() &lt;&lt; std::endl;
         SDL_DestroyWindow(window);
         SDL_Quit();
         return -1;
@@ -343,29 +355,74 @@ int main(int argc, char* argv[]) {
     SDL_GL_MakeCurrent(window, glContext);
     SDL_GL_SetSwapInterval(1); // Enable VSync
 
-    // Demonstrate GLM usage: vector operations and matrix transformations
-    glm::vec3 clearColorVec(0.9f, 0.96f, 0.92f);
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 450.0f, 0.1f, 100.0f);
-    glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::mat4 mvp = projection * view;
+    // 5. Initialize GLAD loader
+    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+        std::cerr &lt;&lt; "Failed to initialize GLAD!" &lt;&lt; std::endl;
+        SDL_GL_DestroyContext(glContext);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return -1;
+    }
 
-    SDL_Log("GLM Matrix elements check: MVP[0][0] = %f", mvp[0][0]);
+    // 6. Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO&amp; io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+    ImGui::StyleColorsDark();
+
+    // 7. Setup Platform/Renderer backends
+    ImGui_ImplSDL3_InitForOpenGL(window, glContext);
+    ImGui_ImplOpenGL3_Init("#version 330");
 
     bool running = true;
+    bool showDemoWindow = true;
+
+    // 8. Main Event Loop
     while (running) {
         SDL_Event event;
         while (SDL_PollEvent(&amp;event)) {
+            // Forward events to Dear ImGui
+            ImGui_ImplSDL3_ProcessEvent(&amp;event);
+
             if (event.type == SDL_EVENT_QUIT) {
                 running = false;
             }
         }
 
-        // Clear screen with OpenGL 3.3 clear color from GLM vector
-        glClearColor(clearColorVec.r, clearColorVec.g, clearColorVec.b, 1.0f);
+        // Start Dear ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplSDL3_NewFrame();
+        ImGui::NewFrame();
+
+        // UI Definition
+        {
+            ImGui::Begin("ImGui + SDL3 Integration");
+            ImGui::Text("Dear ImGui version: %s", IMGUI_VERSION);
+            ImGui::Text("Application average: %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+            ImGui::Checkbox("Show Demo Window", &amp;showDemoWindow);
+            ImGui::End();
+        }
+
+        if (showDemoWindow) {
+            ImGui::ShowDemoWindow(&amp;showDemoWindow);
+        }
+
+        // Rendering
+        ImGui::Render();
+        glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+        glClearColor(0.25f, 0.35f, 0.45f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         SDL_GL_SwapWindow(window);
     }
+
+    // 9. Cleanup
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
+    ImGui::DestroyContext();
 
     SDL_GL_DestroyContext(glContext);
     SDL_DestroyWindow(window);
@@ -380,27 +437,31 @@ int main(int argc, char* argv[]) {
             <span class="data-ru">1B. Содержимое файла main.cpp (SDL3 Callbacks API)</span>
         </h3>
         <pre><code class="language-cpp">#define SDL_MAIN_USE_CALLBACKS 1
+#include &lt;iostream&gt;
+#include &lt;glad/glad.h&gt;
 #include &lt;SDL3/SDL.h&gt;
 #include &lt;SDL3/SDL_main.h&gt;
-#include &lt;SDL3/SDL_opengl.h&gt;
 
-#include &lt;glm/glm.hpp&gt;
-#include &lt;glm/gtc/matrix_transform.hpp&gt;
-#include &lt;glm/gtc/type_ptr.hpp&gt;
+#include "imgui.h"
+#include "imgui_impl_sdl3.h"
+#include "imgui_impl_opengl3.h"
 
 struct AppState {
     SDL_Window* window = nullptr;
     SDL_GLContext glContext = nullptr;
-    glm::vec3 clearColorVec = glm::vec3(0.9f, 0.96f, 0.92f);
+    bool showDemoWindow = true;
 };
 
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
-    if (!SDL_Init(SDL_INIT_VIDEO)) {
-        SDL_Log("SDL Initialization failed: %s", SDL_GetError());
+    if (!SDL_SetHint(SDL_HINT_MAIN_CALLBACK_RATE, "60")) {
         return SDL_APP_FAILURE;
     }
 
-    // Configure OpenGL 3.3 Core Profile attributes
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        std::cerr &lt;&lt; "SDL Initialization failed: " &lt;&lt; SDL_GetError() &lt;&lt; std::endl;
+        return SDL_APP_FAILURE;
+    }
+
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -408,32 +469,38 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
     AppState* state = new AppState();
     *appstate = state;
 
-    state-&gt;window = SDL_CreateWindow("SDL3 GLM OpenGL 3.3 Window (Callbacks)", 800, 450, SDL_WINDOW_OPENGL);
+    state-&gt;window = SDL_CreateWindow("Dear ImGui + SDL3 (OpenGL 3.3) - Callbacks", 1280, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     if (!state-&gt;window) {
-        SDL_Log("Window creation failed: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
 
     state-&gt;glContext = SDL_GL_CreateContext(state-&gt;window);
     if (!state-&gt;glContext) {
-        SDL_Log("OpenGL context creation failed: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
 
     SDL_GL_MakeCurrent(state-&gt;window, state-&gt;glContext);
-    SDL_GL_SetSwapInterval(1); // Enable VSync
 
-    // Demonstrate GLM usage: vector operations and matrix transformations
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 450.0f, 0.1f, 100.0f);
-    glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    glm::mat4 mvp = projection * view;
+    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+        std::cerr &lt;&lt; "Failed to initialize GLAD!" &lt;&lt; std::endl;
+        return SDL_APP_FAILURE;
+    }
 
-    SDL_Log("GLM Matrix elements check: MVP[0][0] = %f", mvp[0][0]);
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO&amp; io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplSDL3_InitForOpenGL(state-&gt;window, state-&gt;glContext);
+    ImGui_ImplOpenGL3_Init("#version 330");
 
     return SDL_APP_CONTINUE;
 }
 
 SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
+    ImGui_ImplSDL3_ProcessEvent(event);
+
     if (event-&gt;type == SDL_EVENT_QUIT) {
         return SDL_APP_SUCCESS;
     }
@@ -442,10 +509,29 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
 
 SDL_AppResult SDL_AppIterate(void* appstate) {
     auto* state = static_cast&lt;AppState*&gt;(appstate);
+    ImGuiIO&amp; io = ImGui::GetIO();
 
-    // Clear screen with OpenGL 3.3 clear color from GLM vector
-    glClearColor(state-&gt;clearColorVec.r, state-&gt;clearColorVec.g, state-&gt;clearColorVec.b, 1.0f);
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL3_NewFrame();
+    ImGui::NewFrame();
+
+    {
+        ImGui::Begin("ImGui + SDL3 Callbacks API");
+        ImGui::Text("Dear ImGui version: %s", IMGUI_VERSION);
+        ImGui::Text("Application average: %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+        ImGui::Checkbox("Show Demo Window", &amp;state-&gt;showDemoWindow);
+        ImGui::End();
+    }
+
+    if (state-&gt;showDemoWindow) {
+        ImGui::ShowDemoWindow(&amp;state-&gt;showDemoWindow);
+    }
+
+    ImGui::Render();
+    glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+    glClearColor(0.25f, 0.35f, 0.45f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     SDL_GL_SwapWindow(state-&gt;window);
 
@@ -455,6 +541,11 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
 void SDL_AppQuit(void* appstate, SDL_AppResult result) {
     if (appstate) {
         auto* state = static_cast&lt;AppState*&gt;(appstate);
+
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplSDL3_Shutdown();
+        ImGui::DestroyContext();
+
         if (state-&gt;glContext) {
             SDL_GL_DestroyContext(state-&gt;glContext);
         }
@@ -482,7 +573,7 @@ void SDL_AppQuit(void* appstate, SDL_AppResult result) {
             </p>
         </div>
 
-        <!-- Code File 2 -->
+        <!-- Code File 2: CMakeLists.txt -->
         <h3 class="h6 fw-bold mt-4">
             <span class="data-en">2. File Contents for CMakeLists.txt</span>
             <span class="data-ru">2. Содержимое файла CMakeLists.txt</span>
@@ -494,7 +585,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
-project(sdl3_glm_opengl_test CXX)
+project(imgui_sdl3_opengl_test CXX C)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -505,54 +596,85 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(OpenGL REQUIRED)
 
 # -----------------------------------------------------------------------------
-# Locate SDL3 Package via Custom Paths
+# Library Path Definitions
 # -----------------------------------------------------------------------------
 if(WIN32)
-    # Points to the directory containing SDL3Config.cmake
+    set(IMGUI_DIR "C:/libs/imgui-1.92.9b")
+    set(GLAD_DIR "C:/libs/glad-0.1.36/opengl-3.3")
     set(SDL3_DIR "C:/libs/sdl3-3.4.16-mingw/lib/cmake/SDL3")
 else()
+    set(IMGUI_DIR "$ENV{HOME}/libs/imgui-1.92.9b")
+    set(GLAD_DIR "$ENV{HOME}/libs/glad-0.1.36/opengl-3.3")
     set(SDL3_DIR "$ENV{HOME}/libs/sdl3-3.4.16-ubuntu/lib/cmake/SDL3")
 endif()
 
 find_package(SDL3 REQUIRED CONFIG)
 
 # -----------------------------------------------------------------------------
-# Set Include Path for Header-Only GLM Library
+# Source Definitions
 # -----------------------------------------------------------------------------
-if(WIN32)
-    # Points to C:/libs/glm-1.0.3/glm where the inner 'glm' directory is located
-    set(GLM_INCLUDE_DIR "C:/libs/glm-1.0.3/glm")
-else()
-    set(GLM_INCLUDE_DIR "$ENV{HOME}/libs/glm-1.0.3")
-endif()
-
-# -----------------------------------------------------------------------------
-# Target Definition
-# -----------------------------------------------------------------------------
-set(PROJECT_SOURCES
-    main.cpp
+set(IMGUI_SOURCES
+    ${IMGUI_DIR}/imgui.cpp
+    ${IMGUI_DIR}/imgui_demo.cpp
+    ${IMGUI_DIR}/imgui_draw.cpp
+    ${IMGUI_DIR}/imgui_tables.cpp
+    ${IMGUI_DIR}/imgui_widgets.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_sdl3.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
 )
 
+set(PROJECT_SOURCES
+    main.cpp
+    ${IMGUI_SOURCES}
+    ${GLAD_DIR}/src/glad.c
+)
+
+# -----------------------------------------------------------------------------
+# Declare Target Type &amp; Attach Sources
+# -----------------------------------------------------------------------------
 add_executable(app ${PROJECT_SOURCES})
 
-# Include GLM headers directory
-target_include_directories(app PRIVATE ${GLM_INCLUDE_DIR})
+# -----------------------------------------------------------------------------
+# Include Header Directories
+# -----------------------------------------------------------------------------
+target_include_directories(app PRIVATE
+    ${IMGUI_DIR}
+    ${IMGUI_DIR}/backends
+    ${GLAD_DIR}/include
+)
 
-# Link SDL3 statically and system OpenGL library
-target_link_libraries(app PRIVATE SDL3::SDL3-static OpenGL::GL)
+# Tell ImGui OpenGL backend to use GLAD loader headers
+target_compile_definitions(app PRIVATE
+    IMGUI_IMPL_OPENGL_LOADER_GLAD
+)
 
 # -----------------------------------------------------------------------------
-# Platform-Specific Compiler &amp; Linker Flags
+# Link SDL3 &amp; OpenGL Libraries
+# -----------------------------------------------------------------------------
+target_link_libraries(app PRIVATE
+    SDL3::SDL3-static
+    OpenGL::GL
+)
+
+# -----------------------------------------------------------------------------
+# Platform-Specific Linker Settings
 # -----------------------------------------------------------------------------
 if(WIN32)
+    target_link_libraries(app PRIVATE opengl32)
     target_compile_options(app PRIVATE -Os)
-    target_link_options(app PRIVATE -static -s -static-libgcc)
+    target_link_options(app PRIVATE -static -s -static-libgcc -static-libstdc++)
 
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         target_link_options(app PRIVATE -mconsole)
     else()
         target_link_options(app PRIVATE -mwindows)
     endif()
+else()
+    target_link_libraries(app PRIVATE
+        GL
+        dl
+        pthread
+    )
 endif()</code></pre>
     </section>
 
@@ -565,13 +687,13 @@ endif()</code></pre>
 
         <!-- Windows Tab/Sub-block -->
         <h3 class="h6 fw-bold mt-3 text-primary">Windows (MinGW / Batch Scripts)</h3>
-        <p class="fw-bold mb-1">config-exe.bat</p>
+        <p class="fw-bold mb-1">config-win.bat</p>
         <pre><code class="language-bash">cmake -G Ninja -S . -B dist/win</code></pre>
 
-        <p class="fw-bold mb-1">build-exe.bat</p>
+        <p class="fw-bold mb-1">build-win.bat</p>
         <pre><code class="language-bash">cmake --build dist/win</code></pre>
 
-        <p class="fw-bold mb-1">run-exe.bat</p>
+        <p class="fw-bold mb-1">run-win.bat</p>
         <pre><code class="language-bash">@echo off
 .\dist\win\app.exe</code></pre>
 
@@ -579,23 +701,23 @@ endif()</code></pre>
             <span class="data-en">Run the scripts sequentially in Command Prompt or PowerShell:</span>
             <span class="data-ru">Последовательно запустите скрипты в командной строке или PowerShell:</span>
         </p>
-        <pre><code class="language-bash">config-exe.bat
-build-exe.bat
-run-exe.bat</code></pre>
+        <pre><code class="language-bash">config-win.bat
+build-win.bat
+run-win.bat</code></pre>
 
         <!-- Ubuntu Tab/Sub-block -->
         <h3 class="h6 fw-bold mt-4 text-primary">Ubuntu (Bash Scripts)</h3>
-        <p class="fw-bold mb-1">config-bin.sh</p>
+        <p class="fw-bold mb-1">config-linux.sh</p>
         <pre><code class="language-bash">#!/usr/bin/env bash
 set -e
 cmake -G Ninja -S . -B dist/linux</code></pre>
 
-        <p class="fw-bold mb-1">build-bin.sh</p>
+        <p class="fw-bold mb-1">build-linux.sh</p>
         <pre><code class="language-bash">#!/usr/bin/env bash
 set -e
 cmake --build dist/linux</code></pre>
 
-        <p class="fw-bold mb-1">run-bin.sh</p>
+        <p class="fw-bold mb-1">run-linux.sh</p>
         <pre><code class="language-bash">#!/usr/bin/env bash
 set -e
 ./dist/linux/app</code></pre>
@@ -604,10 +726,10 @@ set -e
             <span class="data-en">Grant execute permissions on Ubuntu before running:</span>
             <span class="data-ru">Предоставьте права на выполнение в Ubuntu перед запуском:</span>
         </p>
-        <pre><code class="language-bash">chmod +x config-bin.sh build-bin.sh run-bin.sh
-./config-bin.sh
-./build-bin.sh
-./run-bin.sh</code></pre>
+        <pre><code class="language-bash">chmod +x config-linux.sh build-linux.sh run-linux.sh
+./config-linux.sh
+./build-linux.sh
+./run-linux.sh</code></pre>
     </section>
 
     <!-- Step 4: Expected Output -->
@@ -618,23 +740,16 @@ set -e
         </h2>
 
         <p>
-            <span class="data-en">After running the build and execution scripts, a window should appear, and the console will log the calculated GLM matrix element:</span>
-            <span class="data-ru">После запуска скриптов сборки и выполнения появится окно, а в консоли отобразится рассчитанный элемент матрицы GLM:</span>
+            <span class="data-en">After running the build and execution scripts, a native desktop window will appear displaying Dear ImGui with the dark style, responsive widgets, and the interactive demo window:</span>
+            <span class="data-ru">После запуска скриптов сборки и выполнения откроется нативное окно приложения с интерфейсом Dear ImGui в темной теме, интерактивными элементами управления и окном Demo:</span>
         </p>
 
-        <pre><code class="language-text">INFO: GLM Matrix elements check: MVP[0][0] = 1.357995</code></pre>
-
-        <p class="mt-3">
-            <span class="data-en">Additionally, an OpenGL window title will be displayed as:</span>
-            <span class="data-ru">Кроме того, заголовок окна OpenGL будет отображаться как:</span>
-        </p>
-
-        <pre><code class="language-text">SDL3 GLM OpenGL 3.3 Window (Classic)</code></pre>
+        <pre><code class="language-text">Dear ImGui + SDL3 (OpenGL 3.3) - Classic</code></pre>
         <p class="mt-2">
             <span class="data-en">or (if using the Callbacks API version):</span>
             <span class="data-ru">или (если используется версия с Callbacks API):</span>
         </p>
-        <pre><code class="language-text">SDL3 GLM OpenGL 3.3 Window (Callbacks)</code></pre>
+        <pre><code class="language-text">Dear ImGui + SDL3 (OpenGL 3.3) - Callbacks</code></pre>
     </section>
 </div>
 
