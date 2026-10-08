@@ -1235,13 +1235,13 @@ endif()</code></pre>
 
         <!-- Windows Tab/Sub-block -->
         <h3 class="h6 fw-bold mt-3 text-primary">Windows (MinGW / Batch Scripts)</h3>
-        <p class="fw-bold mb-1">config-exe.bat</p>
+        <p class="fw-bold mb-1">config-win.bat</p>
         <pre><code class="language-bash">cmake -G Ninja -S . -B dist/win</code></pre>
 
-        <p class="fw-bold mb-1">build-exe.bat</p>
+        <p class="fw-bold mb-1">build-win.bat</p>
         <pre><code class="language-bash">cmake --build dist/win</code></pre>
 
-        <p class="fw-bold mb-1">run-exe.bat</p>
+        <p class="fw-bold mb-1">run-win.bat</p>
         <pre><code class="language-bash">@echo off
 .\dist\win\app.exe</code></pre>
 
@@ -1249,23 +1249,23 @@ endif()</code></pre>
             <span class="data-en">Run the scripts sequentially in Command Prompt or PowerShell:</span>
             <span class="data-ru">Последовательно запустите скрипты в командной строке или PowerShell:</span>
         </p>
-        <pre><code class="language-bash">config-exe.bat
-build-exe.bat
-run-exe.bat</code></pre>
+        <pre><code class="language-bash">config-win.bat
+build-win.bat
+run-win.bat</code></pre>
 
         <!-- Ubuntu Tab/Sub-block -->
         <h3 class="h6 fw-bold mt-4 text-primary">Ubuntu (Bash Scripts)</h3>
-        <p class="fw-bold mb-1">config-bin.sh</p>
+        <p class="fw-bold mb-1">config-linux.sh</p>
         <pre><code class="language-bash">#!/usr/bin/env bash
 set -e
 cmake -G Ninja -S . -B dist/linux</code></pre>
 
-        <p class="fw-bold mb-1">build-bin.sh</p>
+        <p class="fw-bold mb-1">build-linux.sh</p>
         <pre><code class="language-bash">#!/usr/bin/env bash
 set -e
 cmake --build dist/linux</code></pre>
 
-        <p class="fw-bold mb-1">run-bin.sh</p>
+        <p class="fw-bold mb-1">run-linux.sh</p>
         <pre><code class="language-bash">#!/usr/bin/env bash
 set -e
 ./dist/linux/app</code></pre>
@@ -1274,10 +1274,10 @@ set -e
             <span class="data-en">Test permissions and execute on Ubuntu:</span>
             <span class="data-ru">Настройте права и запустите под Ubuntu:</span>
         </p>
-        <pre><code class="language-bash">chmod +x config-bin.sh build-bin.sh run-bin.sh
-./config-bin.sh
-./build-bin.sh
-./run-bin.sh</code></pre>
+        <pre><code class="language-bash">chmod +x config-linux.sh build-linux.sh run-linux.sh
+./config-linux.sh
+./build-linux.sh
+./run-linux.sh</code></pre>
     </section>
 
     <!-- Step 5: Expected Output -->
