@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    FPS Controller with Animated Y-Bots, Box3D, Recast, BehaviorTree.CPP, and ozz-animation on Desktop, Android, and Web
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+<script src="/libs/bootstrap@5.3.3/bootstrap.bundle.min.js"></script>
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
+
+    /* How to hide non-active language blocks without collapsing iframe dimensions */
+    .data-en.d-none, 
+    .data-ru.d-none {
+        display: none !important;
+    }
+
+    /* Add this to prevent resolution drops during language toggles */
+    .ratio iframe {
+        width: 100%;
+        height: 100%;
+        content-visibility: visible;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold">
+            <span class="data-en">FPS Controller with Animated Y-Bots (Box3D, Recast, BT.CPP, ozz-animation &amp; SDL3)</span>
+            <span class="data-ru">FPS контроллер с анимированными Y-Bot (Box3D, Recast, BT.CPP, ozz-animation и SDL3)</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">A complete multiplatform starter guide featuring a First-Person capsule controller, animated follower Y-Bot robots with 4-layer blend trees, Box3D 3D physics, Detour Crowd pathfinding, BehaviorTree.CPP logic, and dual mobile touch controls for Windows, Ubuntu, Android, and WebAssembly (Emscripten).</span>
+            <span class="data-ru">Полное мультиплатформенное руководство по стартовому проекту с FPS-контроллером игрока, анимированными роботами Y-Bot с 4-слойным блендингом, 3D-физикой Box3D, навигацией толпы Detour Crowd, логикой BehaviorTree.CPP и мобильным сенсорным управлением для Windows, Ubuntu, Android и WebAssembly (Emscripten).</span>
+        </p>
+    </header>
+
+    <!-- Prerequisites Accordion / Grouped Links -->
+    <div class="alert alert-secondary mb-5">
+        <h2 class="h5 fw-bold text-dark mb-2">
+            <span class="data-en">Prerequisites: Required Libraries Setup</span>
+            <span class="data-ru">Предварительные требования: Установка библиотек</span>
+        </h2>
+        <p class="small text-muted mb-3">
+            <span class="data-en">Before proceeding, ensure you have built and installed the necessary static and shared libraries for your target platform:</span>
+            <span class="data-ru">Перед началом работы убедитесь, что вы собрали и установили необходимые библиотеки для вашей целевой платформы:</span>
+        </p>
+
+<div class="row g-3">
+            <!-- Windows (MinGW) -->
+            <div class="col-md-6 col-lg-3">
+                <div class="bg-white p-3 rounded border h-100 shadow-sm">
+                    <h3 class="h6 fw-bold text-primary border-bottom pb-2 mb-2">
+                        <span class="data-en">Windows (MinGW)</span>
+                        <span class="data-ru">Windows (MinGW)</span>
+                    </h3>
+                    <ul class="list-unstyled small mb-0 lh-lg">
+                        <li><a href="/tutorials/tools/mingw/build-box3d-static-mingw" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">Box3D</a></li>
+                        <li><a href="/tutorials/tools/mingw/build-recastnavigation-static-mingw" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">Recast &amp; Detour</a></li>
+                        <li><a href="/tutorials/tools/mingw/build-tinyxml2-static-mingw" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">TinyXML2</a></li>
+                        <li><a href="/tutorials/tools/mingw/build-behaviortree-cpp-static-mingw" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">BehaviorTree.CPP</a></li>
+                        <li><a href="/tutorials/tools/mingw/build-ozz-animation-static-mingw" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">ozz-animation</a></li>
+                        <li><a href="/tutorials/tools/mingw/build-sdl3-static-mingw" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">SDL3</a></li>
+                        <li><a href="/tutorials/tools/mingw/build-sdl3-image-static-mingw" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">SDL3_image</a></li>
+                        <li><a href="/tutorials/tools/mingw/build-sdl3-ttf-static-mingw" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">SDL3_ttf</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Ubuntu (GCC / Ninja) -->
+            <div class="col-md-6 col-lg-3">
+                <div class="bg-white p-3 rounded border h-100 shadow-sm">
+                    <h3 class="h6 fw-bold text-success border-bottom pb-2 mb-2">
+                        <span class="data-en">Ubuntu (GCC)</span>
+                        <span class="data-ru">Ubuntu (GCC)</span>
+                    </h3>
+                    <ul class="list-unstyled small mb-0 lh-lg">
+                        <li><a href="/tutorials/tools/ubuntu/build-box3d-static-ubuntu" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">Box3D</a></li>
+                        <li><a href="/tutorials/tools/ubuntu/build-recastnavigation-static-ubuntu" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">Recast &amp; Detour</a></li>
+                        <li><a href="/tutorials/tools/ubuntu/build-tinyxml2-static-ubuntu" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">TinyXML2</a></li>
+                        <li><a href="/tutorials/tools/ubuntu/build-behaviortree-cpp-static-ubuntu" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">BehaviorTree.CPP</a></li>
+                        <li><a href="/tutorials/tools/ubuntu/build-ozz-animation-static-ubuntu" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">ozz-animation</a></li>
+                        <li><a href="/tutorials/tools/ubuntu/build-sdl3-static-ubuntu" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">SDL3</a></li>
+                        <li><a href="/tutorials/tools/ubuntu/build-sdl3-image-static-ubuntu" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">SDL3_image</a></li>
+                        <li><a href="/tutorials/tools/ubuntu/build-sdl3-ttf-static-ubuntu" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">SDL3_ttf</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Android (NDK) -->
+            <div class="col-md-6 col-lg-3">
+                <div class="bg-white p-3 rounded border h-100 shadow-sm">
+                    <h3 class="h6 fw-bold text-warning border-bottom pb-2 mb-2">
+                        <span class="data-en">Android (NDK)</span>
+                        <span class="data-ru">Android (NDK)</span>
+                    </h3>
+                    <ul class="list-unstyled small mb-0 lh-lg">
+                        <li><a href="/tutorials/tools/android/build-box3d-so-android" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">Box3D</a></li>
+                        <li><a href="/tutorials/tools/android/build-recastnavigation-so-android" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">Recast &amp; Detour</a></li>
+                        <li><a href="/tutorials/tools/android/build-tinyxml2-so-android" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">TinyXML2</a></li>
+                        <li><a href="/tutorials/tools/android/build-behaviortree-cpp-so-android" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">BehaviorTree.CPP</a></li>
+                        <li><a href="/tutorials/tools/android/build-ozz-animation-so-android" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">ozz-animation</a></li>
+                        <li><a href="/tutorials/tools/android/build-sdl3-so-android" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">SDL3</a></li>
+                        <li><a href="/tutorials/tools/android/build-sdl3-image-so-android" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">SDL3_image</a></li>
+                        <li><a href="/tutorials/tools/android/build-sdl3-ttf-so-android" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">SDL3_ttf</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- WebAssembly (Emscripten) -->
+            <div class="col-md-6 col-lg-3">
+                <div class="bg-white p-3 rounded border h-100 shadow-sm">
+                    <h3 class="h6 fw-bold text-info border-bottom pb-2 mb-2">
+                        <span class="data-en">WebAssembly</span>
+                        <span class="data-ru">WebAssembly</span>
+                    </h3>
+                    <ul class="list-unstyled small mb-0 lh-lg">
+                        <li><a href="/tutorials/tools/wasm/build-box3d-static-wasm" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">Box3D</a></li>
+                        <li><a href="/tutorials/tools/wasm/build-recastnavigation-static-wasm" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">Recast &amp; Detour</a></li>
+                        <li><a href="/tutorials/tools/wasm/build-tinyxml2-static-wasm" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">TinyXML2</a></li>
+                        <li><a href="/tutorials/tools/wasm/build-behaviortree-cpp-static-wasm" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">BehaviorTree.CPP</a></li>
+                        <li><a href="/tutorials/tools/wasm/build-ozz-animation-static-wasm" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">ozz-animation</a></li>
+                        <li><a href="/tutorials/tools/wasm/build-sdl3-static-wasm" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">SDL3</a></li>
+                        <li><a href="/tutorials/tools/wasm/build-sdl3-image-static-wasm" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">SDL3_image</a></li>
+                        <li><a href="/tutorials/tools/wasm/build-sdl3-ttf-static-wasm" class="lang-link-dynamic text-decoration-none" target="_blank" rel="noopener noreferrer">SDL3_ttf</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shared Headers Row -->
+        <div class="mt-3 pt-2 border-top">
+            <span class="fw-bold me-2 small">
+                <span class="data-en">Shared Libraries (All Platforms):</span>
+                <span class="data-ru">Общие библиотеки (все платформы):</span>
+            </span>
+            <a href="/tutorials/tools/shared/setup-cglm" class="badge bg-light text-dark border text-decoration-none me-1" target="_blank" rel="noopener noreferrer">cglm</a>
+            <a href="/tutorials/tools/shared/setup-cgltf" class="badge bg-light text-dark border text-decoration-none me-1" target="_blank" rel="noopener noreferrer">cgltf</a>
+            <a href="/tutorials/sdl3-opengl/desktop/setup-glad-desktop" class="badge bg-light text-dark border text-decoration-none" target="_blank" rel="noopener noreferrer">GLAD (Desktop)</a>
+        </div>
+    </div>
+
+    <!-- Step 1: Download Archive -->
+    <section class="mb-5">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 1: Download Repository Archive</span>
+            <span class="data-ru">Шаг 1: Скачивание архива репозитория</span>
+        </h2>
+        <p>
+            <span class="data-en">Download the complete source code containing 3D skeletal assets, shaders, and cross-platform build scripts:</span>
+            <span class="data-ru">Скачайте полный архив исходного кода, содержащий 3D-модели скелетной анимации, шейдеры и мультиплатформенные скрипты сборки:</span>
+        </p>
+        <p class="mb-3">
+            <a href="https://github.com/ivan-enzhaev/fps-ybots-follow-box3d-sdl3/archive/refs/heads/main.zip" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
+                <span class="data-en">Download Repository (.zip)</span>
+                <span class="data-ru">Скачать репозиторий (.zip)</span>
+            </a>
+            <a href="https://github.com/ivan-enzhaev/fps-ybots-follow-box3d-sdl3" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm ms-2">
+                <span class="data-en">View on GitHub</span>
+                <span class="data-ru">Открыть на GitHub</span>
+            </a>
+        </p>
+    </section>
+
+    <!-- Step 2: Project Structure -->
+    <section class="mb-5">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 2: Project Architecture</span>
+            <span class="data-ru">Шаг 2: Архитектура проекта</span>
+        </h2>
+        <pre><code class="language-text">fps-ybots-follow-box3d-sdl3/
+├── assets/
+│   ├── fonts/LiberationSans-Regular.ttf
+│   ├── models/
+│   │   ├── cube/
+│   │   └── y-bot/             # Skinned mesh &amp; ozz binary animation tracks
+│   │       ├── skeleton.ozz
+│   │       ├── animation-idle-crouching.ozz
+│   │       ├── animation-walk-crouching.ozz
+│   │       ├── animation-turn-rifle.ozz
+│   │       ├── y-bot.glb
+│   │       └── y-bot.webp
+│   └── shaders/               # Skinning, line &amp; texture shaders (GLSL &amp; GLES)
+├── src/
+│   ├── app.h                  # Central engine state, cglm matrices &amp; touch state
+│   ├── enemy_ai.h / .cpp      # Recast NavMesh crowd &amp; BehaviorTree 4.x
+│   ├── fps_controller.h / .cpp# First-person WASD &amp; multi-touch shooter controls
+│   ├── anim_player.h          # ozz 4-layer animation blending runtime
+│   ├── model_loader.h         # cgltf skinned character &amp; inverse bind matrices
+│   ├── msaa_fbo.h             # 4x Multisample anti-aliasing render pass
+│   ├── physics_debug.h / .cpp # Box3D debug callbacks
+│   ├── physics_setup.h        # Rigid body capsule &amp; ground definitions
+│   ├── ui_overlay.h           # ImGui virtual joystick, jump button &amp; crosshair
+│   └── main.cpp               # SDL3 multiplatform loop &amp; GLES/Desktop pipeline
+├── CMakeLists.txt
+├── build-exe.bat / run-exe.bat       # Windows (MinGW)
+├── build-bin.sh / run-bin.sh         # Ubuntu (GCC / Ninja)
+├── build-apk.bat / install-apk.bat   # Android (NDK arm64-v8a)
+└── build-wasm.bat / run-wasm.bat     # WebAssembly (Emscripten)</code></pre>
+    </section>
+
+    <!-- Step 3: Platform Setup Instructions (4 Platforms) -->
+    <section class="mb-5">
+        <h2 class="h4 fw-bold mb-4">
+            <span class="data-en">Step 3: Setup &amp; Build by Platform</span>
+            <span class="data-ru">Шаг 3: Настройка и сборка по платформам</span>
+        </h2>
+
+        <!-- Section 3.1: Windows -->
+        <div class="card mb-4 border-primary">
+            <div class="card-header bg-primary text-white fw-bold">
+                <span class="data-en">Platform 1: Windows (MinGW &amp; CMake)</span>
+                <span class="data-ru">Платформа 1: Windows (MinGW и CMake)</span>
+            </div>
+            <div class="card-body">
+                <p>
+                    <span class="data-en">Extract the downloaded archive to <code>C:\projects\fps-ybots-follow-box3d-sdl3</code>. Run the preconfigured batch scripts in Command Prompt:</span>
+                    <span class="data-ru">Распакуйте архив в <code>C:\projects\fps-ybots-follow-box3d-sdl3</code>. Запустите готовые пакетные файлы в командной строке:</span>
+                </p>
+                <pre><code class="language-bash">cd C:\projects\fps-ybots-follow-box3d-sdl3
+
+config-exe.bat
+build-exe.bat
+run-exe.bat</code></pre>
+                <small class="text-muted">
+                    <span class="data-en">Note: The executable statically links SDL3, Box3D, Recast, and BehaviorTree.CPP. The assets directory is automatically copied into the output folder.</span>
+                    <span class="data-ru">Примечание: Исполняемый файл статически линкует SDL3, Box3D, Recast и BehaviorTree.CPP. Директория assets автоматически копируется в папку сборки.</span>
+                </small>
+            </div>
+        </div>
+
+        <!-- Section 3.2: Ubuntu -->
+        <div class="card mb-4 border-success">
+            <div class="card-header bg-success text-white fw-bold">
+                <span class="data-en">Platform 2: Ubuntu Linux (GCC / Clang &amp; Ninja)</span>
+                <span class="data-ru">Платформа 2: Ubuntu Linux (GCC / Clang и Ninja)</span>
+            </div>
+            <div class="card-body">
+                <p>
+                    <span class="data-en">Download and extract the repository in your terminal, make the scripts executable, and build:</span>
+                    <span class="data-ru">Скачайте и распакуйте репозиторий в терминале, сделайте скрипты исполняемыми и соберите проект:</span>
+                </p>
+                <pre><code class="language-bash">mkdir -p ~/projects &amp;&amp; cd ~/projects
+wget https://github.com/ivan-enzhaev/fps-ybots-follow-box3d-sdl3/archive/refs/heads/main.zip -O fps-ybots-follow-box3d-sdl3.zip
+unzip -o fps-ybots-follow-box3d-sdl3.zip
+mv fps-ybots-follow-box3d-sdl3-main fps-ybots-follow-box3d-sdl3
+cd fps-ybots-follow-box3d-sdl3
+
+chmod +x config-bin.sh build-bin.sh run-bin.sh
+./config-bin.sh
+./build-bin.sh
+./run-bin.sh</code></pre>
+            </div>
+        </div>
+
+        <!-- Section 3.3: Android -->
+        <div class="card mb-4 border-warning">
+            <div class="card-header bg-warning text-dark fw-bold">
+                <span class="data-en">Platform 3: Android (Android NDK &amp; CMake)</span>
+                <span class="data-ru">Платформа 3: Android (Android NDK и CMake)</span>
+            </div>
+            <div class="card-body">
+                <p>
+                    <span class="data-en">The Android build produces an <code>arm64-v8a</code> shared library and packages it into an APK using the SDL3 Android Java wrapper. Assets are bundled directly into the APK's asset manager:</span>
+                    <span class="data-ru">Сборка для Android компилирует библиотеку <code>.so</code> для <code>arm64-v8a</code> и упаковывает её в APK через обертку SDL3. Все ресурсы автоматически включаются в ассеты APK:</span>
+                </p>
+                <pre><code class="language-bash"># Configure and compile native arm64-v8a shared libraries &amp; APK
+config-apk.bat
+build-apk.bat
+
+# Install to connected Android device or emulator via ADB
+install-apk.bat</code></pre>
+                <small class="text-muted">
+                    <span class="data-en">OpenGL ES 3.0 is automatically used. The dual-zone virtual joystick and on-screen jump button appear automatically on Android touchscreens.</span>
+                    <span class="data-ru">Автоматически используется OpenGL ES 3.0. Двухзонный виртуальный джойстик и экранная кнопка прыжка активны по умолчанию на сенсорных экранах Android.</span>
+                </small>
+            </div>
+        </div>
+
+        <!-- Section 3.4: WebAssembly -->
+        <div class="card mb-4 border-info">
+            <div class="card-header bg-info text-dark fw-bold">
+                <span class="data-en">Platform 4: WebAssembly (Emscripten &amp; WebGL 2.0)</span>
+                <span class="data-ru">Платформа 4: WebAssembly (Emscripten и WebGL 2.0)</span>
+            </div>
+            <div class="card-body">
+                <p>
+                    <span class="data-en">Compile to WebAssembly using the Emscripten SDK (<code>emcmake</code>). Assets are packed using <code>--embed-file assets@/assets</code>:</span>
+                    <span class="data-ru">Скомпилируйте проект в WebAssembly с помощью Emscripten SDK (<code>emcmake</code>). Ресурсы упаковываются с ключом <code>--embed-file assets@/assets</code>:</span>
+                </p>
+                <pre><code class="language-bash"># Activate Emscripten environment
+call C:\emsdk\emsdk_env.bat
+
+# Configure and compile WASM build
+config-wasm.bat
+build-wasm.bat
+
+# Start local server and open in browser
+run-wasm.bat</code></pre>
+                <small class="text-muted">
+                    <span class="data-en">The mouse cursor arrow remains visible when loading. Click into the canvas to engage first-person pointer lock; press <kbd>ESC</kbd> once to release the cursor.</span>
+                    <span class="data-ru">Курсор мыши виден при первой загрузке. Кликните в область игры для захвата мыши; нажмите <kbd>ESC</kbd> один раз для освобождения курсора.</span>
+                </small>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step 4: Controls & Features -->
+    <section class="mb-5">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 4: Controls &amp; Input Methods</span>
+            <span class="data-ru">Шаг 4: Управление и ввод</span>
+        </h2>
+
+        <div class="table-responsive my-3">
+            <table class="table table-bordered table-sm align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 25%;"><span class="data-en">Platform / Input</span><span class="data-ru">Платформа / Ввод</span></th>
+                        <th><span class="data-en">Control</span><span class="data-ru">Управление</span></th>
+                        <th><span class="data-en">Action</span><span class="data-ru">Действие</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="4"><strong>Desktop &amp; Web</strong></td>
+                        <td><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></td>
+                        <td><span class="data-en">Move forward, backward, strafe left and right</span><span class="data-ru">Движение вперед, назад, стрейф влево и вправо</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="data-en">Mouse Look</span><span class="data-ru">Движение мыши</span></td>
+                        <td><span class="data-en">Rotate camera (Yaw &amp; Pitch) with smoothed sensitivity</span><span class="data-ru">Вращение камеры (рыскание и тангаж)</span></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>Space</kbd></td>
+                        <td><span class="data-en">Jump via Box3D impulse</span><span class="data-ru">Прыжок через импульс Box3D</span></td>
+                    </tr>
+                    <tr>
+                        <td><kbd>Esc</kbd></td>
+                        <td><span class="data-en">Release mouse cursor (click canvas to recapture)</span><span class="data-ru">Освободить курсор (кликните в экран для возврата)</span></td>
+                    </tr>
+                    <tr class="table-warning">
+                        <td rowspan="3"><strong>Android Touch</strong></td>
+                        <td><span class="data-en">Left Screen Touch</span><span class="data-ru">Касание левой части</span></td>
+                        <td><span class="data-en">Floating virtual joystick for movement &amp; strafing</span><span class="data-ru">Плавающий виртуальный джойстик для перемещения и стрейфа</span></td>
+                    </tr>
+                    <tr class="table-warning">
+                        <td><span class="data-en">Right Screen Swipe</span><span class="data-ru">Свайп правой части</span></td>
+                        <td><span class="data-en">Independent camera aiming &amp; rotation (Multi-Touch)</span><span class="data-ru">Независимый поворот и прицеливание (Multi-Touch)</span></td>
+                    </tr>
+                    <tr class="table-warning">
+                        <td><span class="data-en">JUMP Button</span><span class="data-ru">Кнопка JUMP</span></td>
+                        <td><span class="data-en">Dedicated bottom-right button for jumping</span><span class="data-ru">Кнопка в правом нижнем углу для прыжка</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>All Platforms</strong></td>
+                        <td><kbd>P</kbd> / UI Checkbox</td>
+                        <td><span class="data-en">Toggle Box3D physics shapes &amp; Recast AI debug lines</span><span class="data-ru">Включение/выключение отладочной графики физики и AI</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Step 5: Visual Debug Legend -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 5: Visual Debug Legend</span>
+            <span class="data-ru">Шаг 5: Легенда отладочной визуализации</span>
+        </h2>
+
+        <div class="table-responsive my-3">
+            <table class="table table-bordered table-sm align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 25%;"><span class="data-en">Indicator</span><span class="data-ru">Индикатор</span></th>
+                        <th><span class="data-en">Subsystem</span><span class="data-ru">Подсистема</span></th>
+                        <th><span class="data-en">Description</span><span class="data-ru">Описание</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge bg-info text-dark"><span class="data-en">🔷 Cyan Wireframe</span><span class="data-ru">🔷 Голубая сетка</span></span></td>
+                        <td>Recast Navigation</td>
+                        <td><span class="data-en">Walkable NavMesh polygon geometry on the arena floor</span><span class="data-ru">Проходимые полигоны NavMesh на поверхности арены</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge bg-warning text-dark"><span class="data-en">🟡 Yellow Lines</span><span class="data-ru">🟡 Желтые линии</span></span></td>
+                        <td>BehaviorTree.CPP</td>
+                        <td><span class="data-en">Active chase vectors pointing from enemies to the player</span><span class="data-ru">Векторы активного преследования от врагов к игроку</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge bg-light text-dark border"><span class="data-en">⚪ White Capsules &amp; Boxes</span><span class="data-ru">⚪ Белые капсулы и боксы</span></span></td>
+                        <td>Box3D Physics</td>
+                        <td><span class="data-en">Player and enemy rigid body collision capsules and floor bounds</span><span class="data-ru">Коллизионные капсулы тел игрока, врагов и границы арены</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge bg-danger"><span class="data-en">🔴 Crosshair Dot</span><span class="data-ru">🔴 Точка прицела</span></span></td>
+                        <td>Dear ImGui HUD</td>
+                        <td><span class="data-en">Central FPS targeting crosshair with dynamic scaling</span><span class="data-ru">Центральное перекрестие прицела с масштабированием под DPI</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">
+                        <span class="data-en">Sberbank (Russia only)</span>
+                        <span class="data-ru">Сбербанк (только для РФ)</span>
+                    </h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number (Russia only)</span>
+                        <span class="data-ru">Перевод по номеру телефона (только для РФ)</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">USDT TRC20</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+    //     if (link) {
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // Logic for dynamic links (persisting language across pages)
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        
+        if (link) {
+            // Check if the link is intended to open in a new tab
+            if (link.target === "_blank") {
+                // Allow the browser to handle the click naturally, 
+                // but we still want to append the language param.
+                const currentLang = document.documentElement.getAttribute("lang") || "en";
+                const targetUrl = new URL(link.href);
+                targetUrl.searchParams.set("lang", currentLang);
+                
+                // Update the href right before the browser follows it
+                link.href = targetUrl.toString();
+                return; // Exit the function so e.preventDefault() isn't called
+            }
+
+            // Existing logic for same-tab navigation
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(
+                link.href,
+                window.location.origin + window.location.pathname,
+            );
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    document.querySelectorAll('pre').forEach((pre) => {
+        // Create container and header
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        // Wrap the pre tag
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        // Copy Logic
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                
+                // Set the content
+                block.textContent = code;
+                
+                // Re-run Prism highlight if available
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
+        });
+    });
+
+    function updateVideoPlayerLanguage(lang) {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        const targetSrc = lang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = lang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        // Only update if the URL actually changed to prevent unneeded reloads
+        if (player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // Example listener: Call this function inside your existing language-switcher click handler:
+    document.querySelectorAll('.lang-link').forEach(link => {
+        link.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+            updateVideoPlayerLanguage(lang);
+        });
+    });
+
+    function initVideoPlayer() {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        // Detect language from URL query string (?lang=ru), or <html lang="..."> attribute
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentLang = urlParams.get('lang') || document.documentElement.lang || 'en';
+
+        // Set correct video source on page load
+        const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        if (player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // Run immediately when DOM is ready
+    // document.addEventListener('DOMContentLoaded', initVideoPlayer);
+</script>
+</body>
+
+</html>
