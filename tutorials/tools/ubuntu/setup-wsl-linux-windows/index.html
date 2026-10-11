@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    Installing and Managing Linux Distributions on Windows using WSL
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+<script src="/libs/bootstrap@5.3.3/bootstrap.bundle.min.js"></script>
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
+
+    /* How to hide non-active language blocks without collapsing iframe dimensions */
+    .data-en.d-none, 
+    .data-ru.d-none {
+        display: none !important;
+    }
+
+    /* Add this to prevent resolution drops during language toggles */
+    .ratio iframe {
+        width: 100%;
+        height: 100%;
+        content-visibility: visible;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold">
+            <span class="data-en">Installing and Managing Linux Distributions on Windows using WSL</span>
+            <span class="data-ru">Установка и управление дистрибутивами Linux на Windows через WSL</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">A beginner-friendly guide to installing Ubuntu and Fedora directly from the catalog, configuring user accounts and package managers, and managing WSL 2 instances via Command Prompt (CMD) or PowerShell.</span>
+            <span class="data-ru">Пошаговое руководство для начинающих по установке Ubuntu и Fedora напрямую из каталога, созданию пользователя, обновлению пакетов и управлению WSL 2 через Командную строку (CMD) или PowerShell.</span>
+        </p>
+    </header>
+
+    <div class="alert alert-secondary mb-4">
+        <span class="data-en"><strong>Prerequisites:</strong> Windows 10 (version 2004+, Build 19041+) or Windows 11. Hardware virtualization (VT-x / AMD-V) must be enabled (verify in <em>Task Manager &rarr; Performance &rarr; CPU &rarr; Virtualization: Enabled</em>).</span>
+        <span class="data-ru"><strong>Предварительные требования:</strong> Windows 10 (версия 2004+, сборка 19041+) или Windows 11. Должна быть включена аппаратная виртуализация (VT-x / AMD-V) — проверьте в <em>Диспетчере задач &rarr; Производительность &rarr; ЦП &rarr; Виртуализация: Включено</em>.</span>
+    </div>
+
+    <!-- Step 1: Installing Distros -->
+    <section class="mb-5">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 1: Install a Linux Distribution</span>
+            <span class="data-ru">Шаг 1: Установка дистрибутива Linux</span>
+        </h2>
+        <p>
+            <span class="data-en">Open <strong>Command Prompt (CMD)</strong> as <strong>Administrator</strong> (or PowerShell) and install your preferred Linux distribution:</span>
+            <span class="data-ru">Откройте <strong>Командную строку (CMD)</strong> от имени <strong>Администратора</strong> (или PowerShell) и установите нужный дистрибутив:</span>
+        </p>
+
+        <!-- Option A: Ubuntu -->
+        <div class="card mb-3 border-success">
+            <div class="card-header bg-success text-white fw-bold">
+                <span class="data-en">Option A: Installing Ubuntu</span>
+                <span class="data-ru">Вариант A: Установка Ubuntu</span>
+            </div>
+            <div class="card-body">
+                <p>
+                    <span class="data-en">Installs the latest LTS release of Ubuntu from the catalog:</span>
+                    <span class="data-ru">Устанавливает актуальный LTS-релиз Ubuntu из каталога:</span>
+                </p>
+                <pre><code class="language-cmd">wsl --install -d Ubuntu</code></pre>
+                <small class="text-muted">
+                    <span class="data-en">You can also specify an exact LTS version like <code>wsl --install -d Ubuntu-24.04</code>.</span>
+                    <span class="data-ru">Также можно указать конкретную версию, например <code>wsl --install -d Ubuntu-24.04</code>.</span>
+                </small>
+            </div>
+        </div>
+
+        <!-- Option B: Fedora -->
+        <div class="card mb-3 border-primary">
+            <div class="card-header bg-primary text-white fw-bold">
+                <span class="data-en">Option B: Installing Fedora</span>
+                <span class="data-ru">Вариант B: Установка Fedora</span>
+            </div>
+            <div class="card-body">
+                <p>
+                    <span class="data-en">Installs the official Fedora Linux distribution directly from the catalog:</span>
+                    <span class="data-ru">Устанавливает официальный дистрибутив Fedora Linux напрямую из каталога:</span>
+                </p>
+                <pre><code class="language-cmd">wsl --install -d FedoraLinux-44</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step 2: Initial Setup & Package Updates -->
+    <section class="mb-5">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 2: Initial User Setup &amp; Package Updates</span>
+            <span class="data-ru">Шаг 2: Первоначальная настройка пользователя и обновление пакетов</span>
+        </h2>
+        <p>
+            <span class="data-en">Upon first launch, you will be prompted to create a new <strong>UNIX username</strong> and <strong>password</strong>. Once logged in, update the package manager:</span>
+            <span class="data-ru">При первом запуске вам будет предложено создать <strong>UNIX-пользователя</strong> и <strong>пароль</strong>. После входа в систему обновите пакетный менеджер:</span>
+        </p>
+
+        <h3 class="h6 fw-bold mt-3 text-success">
+            <span class="data-en">For Ubuntu (APT):</span>
+            <span class="data-ru">Для Ubuntu (APT):</span>
+        </h3>
+        <pre><code class="language-bash">sudo apt update &amp;&amp; sudo apt upgrade -y</code></pre>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">
+            <span class="data-en">For Fedora (DNF):</span>
+            <span class="data-ru">Для Fedora (DNF):</span>
+        </h3>
+        <pre><code class="language-bash">sudo dnf upgrade --refresh -y</code></pre>
+    </section>
+
+    <!-- Step 3: Listing Distributions -->
+    <section class="mb-5">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 3: Check and List Installed Distributions</span>
+            <span class="data-ru">Шаг 3: Проверка и список установленных дистрибутивов</span>
+        </h2>
+        <p>
+            <span class="data-en">Open Command Prompt (CMD) to verify that your new Linux distribution is installed and running on WSL 2:</span>
+            <span class="data-ru">Откройте Командную строку (CMD), чтобы убедиться, что ваш дистрибутив Linux установлен и работает на WSL 2:</span>
+        </p>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">
+            <span class="data-en">1. View Installed Distributions with Details</span>
+            <span class="data-ru">1. Просмотр установленных дистрибутивов с подробностями</span>
+        </h3>
+        <p class="small text-muted mb-2">
+            <span class="data-en">Displays distro name, current state (Running / Stopped), and engine version (WSL 1 or WSL 2):</span>
+            <span class="data-ru">Отображает имя дистрибутива, статус (Running / Stopped) и версию подсистемы (WSL 1 или WSL 2):</span>
+        </p>
+        <pre><code class="language-cmd">wsl --list --verbose
+:: Shortcut:
+wsl -l -v</code></pre>
+
+        <h3 class="h6 fw-bold mt-4 text-primary">
+            <span class="data-en">2. View Only Running Distributions</span>
+            <span class="data-ru">2. Просмотр только запущенных в данный момент дистрибутивов</span>
+        </h3>
+        <pre><code class="language-cmd">wsl --list --running</code></pre>
+
+        <h3 class="h6 fw-bold mt-4 text-primary">
+            <span class="data-en">3. View Other Distributions Available for Install</span>
+            <span class="data-ru">3. Просмотр других доступных для установки дистрибутивов</span>
+        </h3>
+        <pre><code class="language-cmd">wsl --list --online
+:: Shortcut:
+wsl -l -o</code></pre>
+    </section>
+
+    <!-- Step 4: Management Cheatsheet -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 4: Useful WSL Management Commands</span>
+            <span class="data-ru">Шаг 4: Полезные команды управления WSL</span>
+        </h2>
+
+        <div class="table-responsive my-3">
+            <table class="table table-bordered table-sm align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 45%;"><span class="data-en">Command (CMD / PowerShell)</span><span class="data-ru">Команда (CMD / PowerShell)</span></th>
+                        <th><span class="data-en">Description</span><span class="data-ru">Описание</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>wsl -d &lt;DistroName&gt;</code></td>
+                        <td><span class="data-en">Launch a specific distribution (e.g. <code>wsl -d Ubuntu</code>)</span><span class="data-ru">Запустить определенный дистрибутив (например, <code>wsl -d Ubuntu</code>)</span></td>
+                    </tr>
+                    <tr>
+                        <td><code>wsl --set-default &lt;DistroName&gt;</code></td>
+                        <td><span class="data-en">Set the default distribution for typing <code>wsl</code></span><span class="data-ru">Сделать дистрибутив основным по умолчанию при вводе <code>wsl</code></span></td>
+                    </tr>
+                    <tr>
+                        <td><code>wsl --set-default-version 2</code></td>
+                        <td><span class="data-en">Configure all future installs to use WSL 2 engine</span><span class="data-ru">Задать WSL 2 версией по умолчанию для будущих установок</span></td>
+                    </tr>
+                    <tr>
+                        <td><code>wsl --terminate &lt;DistroName&gt;</code></td>
+                        <td><span class="data-en">Immediately stop a specific running distro</span><span class="data-ru">Принудительно остановить конкретный дистрибутив</span></td>
+                    </tr>
+                    <tr>
+                        <td><code>wsl --shutdown</code></td>
+                        <td><span class="data-en">Completely shut down all running WSL 2 Linux instances &amp; free RAM</span><span class="data-ru">Полностью завершить все работающие дистрибутивы WSL 2 и освободить ОЗУ</span></td>
+                    </tr>
+                    <tr class="table-danger">
+                        <td><code>wsl --unregister &lt;DistroName&gt;</code></td>
+                        <td><span class="data-en">Permanently delete a distro and its virtual disk (irreversible)</span><span class="data-ru">Безвозвратно удалить дистрибутив и его виртуальный диск</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">
+                        <span class="data-en">Sberbank (Russia only)</span>
+                        <span class="data-ru">Сбербанк (только для РФ)</span>
+                    </h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number (Russia only)</span>
+                        <span class="data-ru">Перевод по номеру телефона (только для РФ)</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">USDT TRC20</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+    //     if (link) {
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // Logic for dynamic links (persisting language across pages)
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        
+        if (link) {
+            // Check if the link is intended to open in a new tab
+            if (link.target === "_blank") {
+                // Allow the browser to handle the click naturally, 
+                // but we still want to append the language param.
+                const currentLang = document.documentElement.getAttribute("lang") || "en";
+                const targetUrl = new URL(link.href);
+                targetUrl.searchParams.set("lang", currentLang);
+                
+                // Update the href right before the browser follows it
+                link.href = targetUrl.toString();
+                return; // Exit the function so e.preventDefault() isn't called
+            }
+
+            // Existing logic for same-tab navigation
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(
+                link.href,
+                window.location.origin + window.location.pathname,
+            );
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    document.querySelectorAll('pre').forEach((pre) => {
+        // Create container and header
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        // Wrap the pre tag
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        // Copy Logic
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                
+                // Set the content
+                block.textContent = code;
+                
+                // Re-run Prism highlight if available
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
+        });
+    });
+
+    function updateVideoPlayerLanguage(lang) {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        const targetSrc = lang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = lang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        // Only update if the URL actually changed to prevent unneeded reloads
+        if (player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // Example listener: Call this function inside your existing language-switcher click handler:
+    document.querySelectorAll('.lang-link').forEach(link => {
+        link.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+            updateVideoPlayerLanguage(lang);
+        });
+    });
+
+    function initVideoPlayer() {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        // Detect language from URL query string (?lang=ru), or <html lang="..."> attribute
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentLang = urlParams.get('lang') || document.documentElement.lang || 'en';
+
+        // Set correct video source on page load
+        const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        if (player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // Run immediately when DOM is ready
+    // document.addEventListener('DOMContentLoaded', initVideoPlayer);
+</script>
+</body>
+
+</html>
