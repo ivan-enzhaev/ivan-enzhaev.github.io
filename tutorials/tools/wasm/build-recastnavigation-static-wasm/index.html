@@ -718,7 +718,7 @@ function copyToClipboard(text, button) {
         const btn = document.getElementById("btn-" + lang);
         if (btn) btn.classList.add("active");
 
-        // Only update player immediately IF the tab is currently visible
+        // When manually switching languages on an active tab, update immediately
         if (!document.hidden) {
             applyVideoPlayerSrc(lang);
         }
@@ -746,15 +746,25 @@ function copyToClipboard(text, button) {
         }
     }
 
-    // 3. Deferred loader: waits for tab focus if opened in background (middle-click)
+    // 3. Deferred loader: waits for tab focus and real layout dimensions
     function initVideoPlayer() {
-        if (document.hidden) {
-            document.addEventListener('visibilitychange', function onVisible() {
-                if (!document.hidden) {
-                    document.removeEventListener('visibilitychange', onVisible);
-                    applyVideoPlayerSrc();
-                }
-            });
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        // Wait one render frame to guarantee full container width is computed
+                        requestAnimationFrame(() => {
+                            applyVideoPlayerSrc();
+                        });
+                        observer.disconnect();
+                    }
+                });
+            }, { threshold: 0.05 });
+
+            observer.observe(player);
         } else {
             applyVideoPlayerSrc();
         }
@@ -799,7 +809,7 @@ function copyToClipboard(text, button) {
         setLanguage(langParam || savedLang || "en");
     })();
 
-    // 8. Initialize video player (respecting background tabs)
+    // 8. Initialize video player (runs once when DOM is ready)
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initVideoPlayer);
     } else {
