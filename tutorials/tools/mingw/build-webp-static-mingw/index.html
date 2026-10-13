@@ -521,6 +521,8 @@ function copyToClipboard(text, button) {
             .forEach((el) => el.classList.remove("active"));
         const btn = document.getElementById("btn-" + lang);
         if (btn) btn.classList.add("active");
+
+        updateVideoPlayerLanguage(lang);
     }
 
     function changeLanguage(lang) {
