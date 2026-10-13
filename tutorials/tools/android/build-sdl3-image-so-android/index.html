@@ -504,30 +504,45 @@ function copyToClipboard(text, button) {
 
 
 <script>
-    function setLanguage(lang) {
-        if (lang !== "en" && lang !== "ru") lang = "en";
-        document.documentElement.setAttribute("lang", lang);
-        localStorage.setItem("preferred-lang", lang);
-        document
-            .querySelectorAll(".lang-link")
-            .forEach((el) => el.classList.remove("active"));
-        const btn = document.getElementById("btn-" + lang);
-        if (btn) btn.classList.add("active");
+    // function setLanguage(lang) {
+    //     if (lang !== "en" && lang !== "ru") lang = "en";
+    //     document.documentElement.setAttribute("lang", lang);
+    //     localStorage.setItem("preferred-lang", lang);
+    //     document
+    //         .querySelectorAll(".lang-link")
+    //         .forEach((el) => el.classList.remove("active"));
+    //     const btn = document.getElementById("btn-" + lang);
+    //     if (btn) btn.classList.add("active");
 
-        updateVideoPlayerLanguage(lang);
-    }
+    //     updateVideoPlayerLanguage(lang);
+    // }
 
-    function changeLanguage(lang) {
-        setLanguage(lang);
-        const url = new URL(window.location);
-        url.searchParams.set("lang", lang);
-        window.history.pushState({}, "", url);
-    }
+    // function changeLanguage(lang) {
+    //     setLanguage(lang);
+    //     const url = new URL(window.location);
+    //     url.searchParams.set("lang", lang);
+    //     window.history.pushState({}, "", url);
+    // }
 
-    // Logic for dynamic links (persisting language across pages)
+    // // Logic for dynamic links (persisting language across pages)
     // document.addEventListener("click", function(e) {
     //     const link = e.target.closest(".lang-link-dynamic");
+        
     //     if (link) {
+    //         // Check if the link is intended to open in a new tab
+    //         if (link.target === "_blank") {
+    //             // Allow the browser to handle the click naturally, 
+    //             // but we still want to append the language param.
+    //             const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //             const targetUrl = new URL(link.href);
+    //             targetUrl.searchParams.set("lang", currentLang);
+                
+    //             // Update the href right before the browser follows it
+    //             link.href = targetUrl.toString();
+    //             return; // Exit the function so e.preventDefault() isn't called
+    //         }
+
+    //         // Existing logic for same-tab navigation
     //         e.preventDefault();
     //         const currentLang = document.documentElement.getAttribute("lang") || "en";
     //         const targetUrl = new URL(
@@ -539,36 +554,246 @@ function copyToClipboard(text, button) {
     //     }
     // });
 
-    // Logic for dynamic links (persisting language across pages)
+    // (function init() {
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     const langParam = urlParams.get("lang");
+    //     const savedLang = localStorage.getItem("preferred-lang");
+    //     setLanguage(langParam || savedLang || "en");
+    // })();
+
+    // window.onpopstate = function() {
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     setLanguage(urlParams.get("lang") || "en");
+    // };
+
+    // document.querySelectorAll('pre').forEach((pre) => {
+    //     // Create container and header
+    //     const container = document.createElement('div');
+    //     container.className = 'code-container';
+        
+    //     const header = document.createElement('div');
+    //     header.className = 'code-header';
+        
+    //     const button = document.createElement('button');
+    //     button.className = 'copy-button';
+    //     button.innerText = 'Copy';
+
+    //     // Wrap the pre tag
+    //     pre.parentNode.insertBefore(container, pre);
+    //     header.appendChild(button);
+    //     container.appendChild(header);
+    //     container.appendChild(pre);
+
+    //     // Copy Logic
+    //     button.addEventListener('click', () => {
+    //         const code = pre.querySelector('code').innerText;
+    //         navigator.clipboard.writeText(code).then(() => {
+    //             button.innerText = 'Copied!';
+    //             button.classList.add('copied');
+
+    //             setTimeout(() => {
+    //                 button.innerText = 'Copy';
+    //                 button.classList.remove('copied');
+    //             }, 2000);
+    //         });
+    //     });
+    // });
+
+    // document.addEventListener("DOMContentLoaded", () => {
+    //     const codeBlocks = document.querySelectorAll('code[data-url]');
+
+    //     codeBlocks.forEach(async (block) => {
+    //         const url = block.getAttribute('data-url');
+    //         if (!url) return;
+
+    //         try {
+    //             const response = await fetch(url);
+    //             if (!response.ok) throw new Error('Fetch failed');
+    //             const code = await response.text();
+                
+    //             // Set the content
+    //             block.textContent = code;
+                
+    //             // Re-run Prism highlight if available
+    //             if (typeof Prism !== 'undefined') {
+    //                 Prism.highlightElement(block);
+    //             }
+    //         } catch (err) {
+    //             console.error("Could not load code:", err);
+    //             block.textContent = "// Error: Could not load code from GitHub.";
+    //         }
+    //     });
+    // });
+
+    // function updateVideoPlayerLanguage(lang) {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     const targetSrc = lang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+    //     const targetTitle = lang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+    //     // Only update if the URL actually changed to prevent unneeded reloads
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // // Example listener: Call this function inside your existing language-switcher click handler:
+    // document.querySelectorAll('.lang-link').forEach(link => {
+    //     link.addEventListener('click', function() {
+    //         const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+    //         updateVideoPlayerLanguage(lang);
+    //     });
+    // });
+
+    // function initVideoPlayer() {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     // Detect language from URL query string (?lang=ru), or <html lang="..."> attribute
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     const currentLang = urlParams.get('lang') || document.documentElement.lang || 'en';
+
+    //     // Set correct video source on page load
+    //     const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+    //     const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // function loadVideoPlayer() {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     // Determine current language
+    //     const lang = document.documentElement.getAttribute('lang') || 
+    //                  localStorage.getItem('preferred-lang') || 
+    //                  'en';
+
+    //     const targetSrc = lang === 'ru' 
+    //         ? player.getAttribute('data-src-ru') 
+    //         : player.getAttribute('data-src-en');
+    //     const targetTitle = lang === 'ru' 
+    //         ? player.getAttribute('data-title-ru') 
+    //         : player.getAttribute('data-title-en');
+
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // function initVideoPlayerWhenVisible() {
+    //     // If opened in a background tab (middle click), wait until the user switches to this tab
+    //     if (document.hidden) {
+    //         document.addEventListener('visibilitychange', function onVisible() {
+    //             if (!document.hidden) {
+    //                 document.removeEventListener('visibilitychange', onVisible);
+    //                 loadVideoPlayer();
+    //             }
+    //         });
+    //     } else {
+    //         // Tab is active (normal left click) -> load immediately
+    //         loadVideoPlayer();
+    //     }
+    // }
+
+    // // Call on load
+    // if (document.readyState === 'loading') {
+    //     document.addEventListener('DOMContentLoaded', initVideoPlayerWhenVisible);
+    // } else {
+    //     initVideoPlayerWhenVisible();
+    // }
+
+    // 1. Language setting
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+
+        // Only update player immediately IF the tab is currently visible
+        if (!document.hidden) {
+            applyVideoPlayerSrc(lang);
+        }
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // 2. Core video updater
+    function applyVideoPlayerSrc(lang) {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        const currentLang = lang || document.documentElement.getAttribute("lang") || localStorage.getItem("preferred-lang") || "en";
+        const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        if (targetSrc && player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // 3. Deferred loader: waits for tab focus if opened in background (middle-click)
+    function initVideoPlayer() {
+        if (document.hidden) {
+            document.addEventListener('visibilitychange', function onVisible() {
+                if (!document.hidden) {
+                    document.removeEventListener('visibilitychange', onVisible);
+                    applyVideoPlayerSrc();
+                }
+            });
+        } else {
+            applyVideoPlayerSrc();
+        }
+    }
+
+    // 4. Update language links on mousedown so middle-click gets ?lang= correctly
+    document.addEventListener("mousedown", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (!link) return;
+
+        const currentLang = document.documentElement.getAttribute("lang") || localStorage.getItem("preferred-lang") || "en";
+        const targetUrl = new URL(link.href, window.location.origin);
+        targetUrl.searchParams.set("lang", currentLang);
+        link.href = targetUrl.toString();
+    });
+
+    // 5. Normal click navigation
     document.addEventListener("click", function(e) {
         const link = e.target.closest(".lang-link-dynamic");
-        
-        if (link) {
-            // Check if the link is intended to open in a new tab
-            if (link.target === "_blank") {
-                // Allow the browser to handle the click naturally, 
-                // but we still want to append the language param.
-                const currentLang = document.documentElement.getAttribute("lang") || "en";
-                const targetUrl = new URL(link.href);
-                targetUrl.searchParams.set("lang", currentLang);
-                
-                // Update the href right before the browser follows it
-                link.href = targetUrl.toString();
-                return; // Exit the function so e.preventDefault() isn't called
-            }
-
-            // Existing logic for same-tab navigation
+        if (link && link.target !== "_blank") {
             e.preventDefault();
             const currentLang = document.documentElement.getAttribute("lang") || "en";
-            const targetUrl = new URL(
-                link.href,
-                window.location.origin + window.location.pathname,
-            );
+            const targetUrl = new URL(link.href, window.location.origin + window.location.pathname);
             targetUrl.searchParams.set("lang", currentLang);
             window.location.href = targetUrl.toString();
         }
     });
 
+    // 6. Language Switcher Buttons
+    document.querySelectorAll('.lang-link').forEach(link => {
+        link.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+            changeLanguage(lang);
+        });
+    });
+
+    // 7. Initialize language on page load
     (function init() {
         const urlParams = new URLSearchParams(window.location.search);
         const langParam = urlParams.get("lang");
@@ -576,36 +801,38 @@ function copyToClipboard(text, button) {
         setLanguage(langParam || savedLang || "en");
     })();
 
+    // 8. Initialize video player (respecting background tabs)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initVideoPlayer);
+    } else {
+        initVideoPlayer();
+    }
+
     window.onpopstate = function() {
         const urlParams = new URLSearchParams(window.location.search);
         setLanguage(urlParams.get("lang") || "en");
     };
 
+    // Code copy buttons
     document.querySelectorAll('pre').forEach((pre) => {
-        // Create container and header
         const container = document.createElement('div');
         container.className = 'code-container';
-        
         const header = document.createElement('div');
         header.className = 'code-header';
-        
         const button = document.createElement('button');
         button.className = 'copy-button';
         button.innerText = 'Copy';
 
-        // Wrap the pre tag
         pre.parentNode.insertBefore(container, pre);
         header.appendChild(button);
         container.appendChild(header);
         container.appendChild(pre);
 
-        // Copy Logic
         button.addEventListener('click', () => {
             const code = pre.querySelector('code').innerText;
             navigator.clipboard.writeText(code).then(() => {
                 button.innerText = 'Copied!';
                 button.classList.add('copied');
-
                 setTimeout(() => {
                     button.innerText = 'Copy';
                     button.classList.remove('copied');
@@ -614,22 +841,17 @@ function copyToClipboard(text, button) {
         });
     });
 
+    // External code blocks loader
     document.addEventListener("DOMContentLoaded", () => {
         const codeBlocks = document.querySelectorAll('code[data-url]');
-
         codeBlocks.forEach(async (block) => {
             const url = block.getAttribute('data-url');
             if (!url) return;
-
             try {
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Fetch failed');
                 const code = await response.text();
-                
-                // Set the content
                 block.textContent = code;
-                
-                // Re-run Prism highlight if available
                 if (typeof Prism !== 'undefined') {
                     Prism.highlightElement(block);
                 }
@@ -639,49 +861,6 @@ function copyToClipboard(text, button) {
             }
         });
     });
-
-    function updateVideoPlayerLanguage(lang) {
-        const player = document.getElementById('main-video-player');
-        if (!player) return;
-
-        const targetSrc = lang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
-        const targetTitle = lang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
-
-        // Only update if the URL actually changed to prevent unneeded reloads
-        if (player.src !== targetSrc) {
-            player.src = targetSrc;
-            player.title = targetTitle;
-        }
-    }
-
-    // Example listener: Call this function inside your existing language-switcher click handler:
-    document.querySelectorAll('.lang-link').forEach(link => {
-        link.addEventListener('click', function() {
-            const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
-            updateVideoPlayerLanguage(lang);
-        });
-    });
-
-    function initVideoPlayer() {
-        const player = document.getElementById('main-video-player');
-        if (!player) return;
-
-        // Detect language from URL query string (?lang=ru), or <html lang="..."> attribute
-        const urlParams = new URLSearchParams(window.location.search);
-        const currentLang = urlParams.get('lang') || document.documentElement.lang || 'en';
-
-        // Set correct video source on page load
-        const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
-        const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
-
-        if (player.src !== targetSrc) {
-            player.src = targetSrc;
-            player.title = targetTitle;
-        }
-    }
-
-    // Run immediately when DOM is ready
-    // document.addEventListener('DOMContentLoaded', initVideoPlayer);
 </script>
 </body>
 
