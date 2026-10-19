@@ -251,27 +251,31 @@
 
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 2: Download Box2D Source Code Archive</span>
-            <span class="data-ru">Шаг 2: Скачивание архива исходного кода Box2D</span>
+            <span class="data-en">Step 2: Download Source Code</span>
+            <span class="data-ru">Шаг 2: Скачивание исходного кода</span>
         </h2>
         <p>
-            <span class="data-en">You can browse the official GitHub releases page to check the latest available release assets:</span>
-            <span class="data-ru">Вы можете перейти на страницу релизов GitHub, чтобы посмотреть список доступных версий:</span>
+            <span class="data-en">Check and download the latest release (<code>v3.2.0</code>) directly from the official Box2D repository on GitHub:</span>
+            <span class="data-ru">Проверьте и скачайте последнюю версию (<code>v3.2.0</code>) напрямую со страницы релизов Box2D на GitHub:</span>
         </p>
         <p>
             <a href="https://github.com/erincatto/box2d/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">View Box2D Releases</span>
-                <span class="data-ru">Смотреть релизы Box2D</span>
+                <span class="data-en">Open Box2D Releases (GitHub)</span>
+                <span class="data-ru">Открыть релизы Box2D (GitHub)</span>
+            </a>
+            <a href="https://github.com/erincatto/box2d/archive/refs/tags/v3.2.0.tar.gz" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+                <span class="data-en">Download v3.2.0 (.tar.gz)</span>
+                <span class="data-ru">Скачать v3.2.0 (.tar.gz)</span>
             </a>
         </p>
         <p>
-            <span class="data-en">Download and extract the Box2D source archive using <code>wget</code> and <code>tar</code>:</span>
-            <span class="data-ru">Скачайте и распакуйте архив с исходным кодом Box2D с помощью <code>wget</code> и <code>tar</code>:</span>
+            <span class="data-en">Download and extract the source archive using <code>wget</code> and <code>tar</code>:</span>
+            <span class="data-ru">Скачайте и распакуйте архив с исходным кодом с помощью <code>wget</code> и <code>tar</code>:</span>
         </p>
         <pre><code class="language-bash">cd ~
-wget https://github.com/erincatto/box2d/archive/refs/tags/v3.1.1.tar.gz -O box2d-3.1.1.tar.gz
-tar -xzf box2d-3.1.1.tar.gz
-cd box2d-3.1.1</code></pre>
+wget https://github.com/erincatto/box2d/archive/refs/tags/v3.2.0.tar.gz -O box2d-3.2.0.tar.gz
+tar -xzf box2d-3.2.0.tar.gz
+cd box2d-3.2.0</code></pre>
     </section>
 
     <section class="mb-4">
@@ -296,7 +300,7 @@ cd "$BUILD_DIR"
 cmake .. \
   -GNinja \
   -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_INSTALL_PREFIX="$HOME/libs/box2d-3.1.1-ubuntu" \
+  -DCMAKE_INSTALL_PREFIX="$HOME/libs/box2d-3.2.0-ubuntu" \
   -DBUILD_SHARED_LIBS=OFF \
   -DBOX2D_SAMPLES=OFF \
   -DBOX2D_UNIT_TESTS=OFF
@@ -332,7 +336,7 @@ cmake --build . --config Release --parallel --target install</code></pre>
             <span class="data-en">Once installed, you can safely remove the temporary source directory and the downloaded archive:</span>
             <span class="data-ru">После установки вы можете безопасно удалить временную директорию с исходным кодом и скачанный архив:</span>
         </p>
-        <pre><code class="language-bash">cd ~ &amp;&amp; rm -rf ~/box2d-3.1.1 ~/box2d-3.1.1.tar.gz</code></pre>
+        <pre><code class="language-bash">cd ~ &amp;&amp; rm -rf ~/box2d-3.2.0 ~/box2d-3.2.0.tar.gz</code></pre>
     </section>
 
     <section class="mb-4">

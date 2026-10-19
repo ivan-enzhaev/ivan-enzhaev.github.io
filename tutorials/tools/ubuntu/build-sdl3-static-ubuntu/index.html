@@ -237,6 +237,7 @@
         </a>
     </div>
 
+    <!-- Step 1: Install Dependencies -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 1: Install Dependencies</span>
@@ -288,24 +289,29 @@
         </div>
     </section>
 
+    <!-- Step 2: Download Source Code -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 2: Download SDL3 Source Code</span>
             <span class="data-ru">Шаг 2: Скачивание исходного кода SDL3</span>
         </h2>
         <p>
-            <span class="data-en">Go to the official GitHub releases page to check the latest available release assets:</span>
-            <span class="data-ru">Перейдите на официальную страницу релизов GitHub, чтобы посмотреть доступные архивы релизов:</span>
+            <span class="data-en">Check and download the latest release (<code>3.4.18</code>) directly from the official SDL repository on GitHub:</span>
+            <span class="data-ru">Проверьте и скачайте последнюю версию (<code>3.4.18</code>) напрямую со страницы релизов SDL на GitHub:</span>
         </p>
         <p>
             <a href="https://github.com/libsdl-org/SDL/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">View the latest SDL3 Release</span>
-                <span class="data-ru">Смотреть последний релиз SDL3</span>
+                <span class="data-en">Open SDL3 Releases (GitHub)</span>
+                <span class="data-ru">Открыть релизы SDL3 (GitHub)</span>
+            </a>
+            <a href="https://github.com/libsdl-org/SDL/releases/download/release-3.4.18/SDL3-3.4.18.tar.gz" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm ms-2">
+                <span class="data-en">Direct Download SDL3-3.4.18 (.tar.gz)</span>
+                <span class="data-ru">Прямое скачивание SDL3-3.4.18 (.tar.gz)</span>
             </a>
         </p>
         <p>
-            <span class="data-en">Download and extract the release archive using <code>wget</code>:</span>
-            <span class="data-ru">Скачайте и распакуйте архив релиза с помощью <code>wget</code>:</span>
+            <span class="data-en">For Ubuntu, you can download and extract it directly via <code>wget</code> in the terminal:</span>
+            <span class="data-ru">В Ubuntu вы можете скачать и распаковать архив напрямую с помощью <code>wget</code> в терминале:</span>
         </p>
         <pre><code class="language-bash">cd ~
 wget https://github.com/libsdl-org/SDL/releases/download/release-3.4.18/SDL3-3.4.18.tar.gz -O SDL3-3.4.18.tar.gz
@@ -313,6 +319,7 @@ tar -xzf SDL3-3.4.18.tar.gz
 cd SDL3-3.4.18</code></pre>
     </section>
 
+    <!-- Step 3: Create Build Script -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 3: Create the Build Script</span>
@@ -403,6 +410,7 @@ cmake --build . --config Release --parallel --target install</code></pre>
         </div>
     </section>
 
+    <!-- Step 4: Run, Compile, and Clean Up -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 4: Run, Compile, and Clean Up</span>
@@ -425,6 +433,7 @@ cmake --build . --config Release --parallel --target install</code></pre>
         <pre><code class="language-bash">cd ~ &amp;&amp; rm -rf ~/SDL3-3.4.18 ~/SDL3-3.4.18.tar.gz</code></pre>
     </section>
 
+    <!-- Step 5: Next Steps -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 5: Next Steps</span>

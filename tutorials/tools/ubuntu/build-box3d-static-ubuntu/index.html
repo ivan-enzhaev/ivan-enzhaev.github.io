@@ -237,6 +237,7 @@
         </a>
     </div>
 
+    <!-- Step 1: Install Dependencies -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 1: Install Build Dependencies</span>
@@ -249,19 +250,24 @@
         <pre><code class="language-bash">sudo apt update &amp;&amp; sudo apt install -y wget</code></pre>
     </section>
 
+    <!-- Step 2: Download Source Code -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 2: Download Box3D Source Code Archive</span>
             <span class="data-ru">Шаг 2: Скачивание архива исходного кода Box3D</span>
         </h2>
         <p>
-            <span class="data-en">You can browse the official GitHub releases page to check the latest available release assets:</span>
-            <span class="data-ru">Вы можете перейти на страницу релизов GitHub, чтобы посмотреть список доступных версий:</span>
+            <span class="data-en">Check and download the latest release (<code>v0.1.0</code>) directly from the official Box3D repository on GitHub:</span>
+            <span class="data-ru">Проверьте и скачайте последнюю версию (<code>v0.1.0</code>) напрямую со страницы релизов Box3D на GitHub:</span>
         </p>
         <p>
             <a href="https://github.com/erincatto/box3d/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">View Box3D Releases</span>
-                <span class="data-ru">Смотреть релизы Box3D</span>
+                <span class="data-en">Open Box3D Releases (GitHub)</span>
+                <span class="data-ru">Открыть релизы Box3D (GitHub)</span>
+            </a>
+            <a href="https://github.com/erincatto/box3d/archive/refs/tags/v0.1.0.tar.gz" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm ms-2">
+                <span class="data-en">Direct Download v0.1.0 (.tar.gz)</span>
+                <span class="data-ru">Прямое скачивание v0.1.0 (.tar.gz)</span>
             </a>
         </p>
         <p>
@@ -274,6 +280,7 @@ tar -xzf box3d-0.1.0.tar.gz
 cd box3d-0.1.0</code></pre>
     </section>
 
+    <!-- Step 3: Create Build Script -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 3: Create the Build Script</span>
@@ -302,17 +309,9 @@ cmake .. \
   -DBOX3D_UNIT_TESTS=OFF
 
 cmake --build . --config Release --parallel --target install</code></pre>
-
-        <!-- <div class="alert alert-info mt-3">
-            <strong>
-                <span class="data-en">Note:</span>
-                <span class="data-ru">Примечание:</span>
-            </strong>
-            <span class="data-en">Make sure to adjust the <code>CMAKE_INSTALL_PREFIX</code> path according to your target installation directory. Setting <code>BOX3D_SAMPLES=OFF</code> and <code>BOX3D_UNIT_TESTS=OFF</code> ensures only the core static library is built.</span>
-            <span class="data-ru">Убедитесь, что путь к <code>CMAKE_INSTALL_PREFIX</code> соответствует вашей целевой директории установки. Флаги <code>BOX3D_SAMPLES=OFF</code> и <code>BOX3D_UNIT_TESTS=OFF</code> гарантируют сборку только основной статической библиотеки.</span>
-        </div> -->
     </section>
 
+    <!-- Step 4: Run, Compile, and Clean Up -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 4: Run, Compile, and Clean Up</span>
@@ -335,6 +334,7 @@ cmake --build . --config Release --parallel --target install</code></pre>
         <pre><code class="language-bash">cd ~ &amp;&amp; rm -rf ~/box3d-0.1.0 ~/box3d-0.1.0.tar.gz</code></pre>
     </section>
 
+    <!-- Step 5: Next Steps -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 5: Next Steps</span>

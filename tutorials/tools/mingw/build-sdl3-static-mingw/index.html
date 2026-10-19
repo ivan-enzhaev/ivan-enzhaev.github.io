@@ -237,19 +237,24 @@
         </a>
     </div>
 
+    <!-- Step 1: Download Source Code -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 1: Download SDL3 Source Code</span>
             <span class="data-ru">Шаг 1: Скачивание исходного кода SDL3</span>
         </h2>
         <p>
-            <span class="data-en">Download the latest SDL3 source archive (<code>.zip</code> or <code>.tar.gz</code>) from the official GitHub releases page:</span>
-            <span class="data-ru">Скачайте последний архив с исходным кодом SDL3 (<code>.zip</code> или <code>.tar.gz</code>) с официальной страницы релизов GitHub:</span>
+            <span class="data-en">Check and download the latest release (<code>3.4.18</code>) directly from the official SDL repository on GitHub:</span>
+            <span class="data-ru">Проверьте и скачайте последнюю версию (<code>3.4.18</code>) напрямую со страницы релизов SDL на GitHub:</span>
         </p>
         <p>
             <a href="https://github.com/libsdl-org/SDL/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">Download SDL3 Releases</span>
-                <span class="data-ru">Скачать релизы SDL3</span>
+                <span class="data-en">Open SDL3 Releases (GitHub)</span>
+                <span class="data-ru">Открыть релизы SDL3 (GitHub)</span>
+            </a>
+            <a href="https://github.com/libsdl-org/SDL/releases/download/release-3.4.18/SDL3-3.4.18.zip" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm ms-2">
+                <span class="data-en">Direct Download SDL3-3.4.18 (.zip)</span>
+                <span class="data-ru">Прямое скачивание SDL3-3.4.18 (.zip)</span>
             </a>
         </p>
         <div class="alert alert-warning my-3">
@@ -257,8 +262,8 @@
                 <span class="data-en">Important:</span>
                 <span class="data-ru">Важно:</span>
             </strong>
-            <span class="data-en">Make sure to download the main release archive (<code>SDL3-3.4.18.zip</code> or <code>.tar.gz</code>) and <strong>not</strong> the auto-generated <em>"Source code"</em> zip/tar.gz files under Assets.</span>
-            <span class="data-ru">Обязательно скачивайте основной архив релиза (<code>SDL3-3.4.18.zip</code> или <code>.tar.gz</code>), а <strong>не</strong> автоматически сгенерированные файлы <em>"Source code"</em> в разделе Assets.</span>
+            <span class="data-en">Make sure to download the main release archive (<code>SDL3-3.4.18.zip</code>) and <strong>not</strong> the auto-generated <em>"Source code"</em> zip/tar.gz files under Assets.</span>
+            <span class="data-ru">Обязательно скачивайте основной архив релиза (<code>SDL3-3.4.18.zip</code>), а <strong>не</strong> автоматически сгенерированные файлы <em>"Source code"</em> в разделе Assets.</span>
         </div>
         <p>
             <span class="data-en">Extract the downloaded archive to a convenient directory on your machine.</span>
@@ -266,6 +271,7 @@
         </p>
     </section>
 
+    <!-- Step 2: Create Build Script -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 2: Create the Build Script</span>
@@ -306,6 +312,7 @@ cmake --build . --config Release --parallel --target install</code></pre>
         </div>
     </section>
 
+    <!-- Step 3: Run and Compile -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 3: Run and Compile</span>
@@ -317,6 +324,7 @@ cmake --build . --config Release --parallel --target install</code></pre>
         </p>
     </section>
 
+    <!-- Step 4: Next Steps -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 4: Next Steps</span>

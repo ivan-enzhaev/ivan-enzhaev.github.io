@@ -239,17 +239,21 @@
 
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 1: Download Box2D Source Code</span>
-            <span class="data-ru">Шаг 1: Скачивание исходного кода Box2D</span>
+            <span class="data-en">Step 1: Download Source Code</span>
+            <span class="data-ru">Шаг 1: Скачивание исходного кода</span>
         </h2>
         <p>
-            <span class="data-en">Download the latest source archive from the official GitHub releases page:</span>
-            <span class="data-ru">Скачайте архив с последней версией исходного кода с официальной страницы релизов GitHub:</span>
+            <span class="data-en">Check and download the latest release (<code>v3.2.0</code>) directly from the official Box2D repository on GitHub:</span>
+            <span class="data-ru">Проверьте и скачайте последнюю версию (<code>v3.2.0</code>) напрямую со страницы релизов Box2D на GitHub:</span>
         </p>
         <p>
             <a href="https://github.com/erincatto/box2d/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">Download Latest Box2D Release</span>
-                <span class="data-ru">Скачать последний релиз Box2D</span>
+                <span class="data-en">Open Box2D Releases (GitHub)</span>
+                <span class="data-ru">Открыть релизы Box2D (GitHub)</span>
+            </a>
+            <a href="https://github.com/erincatto/box2d/archive/refs/tags/v3.2.0.zip" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+                <span class="data-en">Download v3.2.0 (.zip)</span>
+                <span class="data-ru">Скачать v3.2.0 (.zip)</span>
             </a>
         </p>
         <p>
@@ -279,7 +283,7 @@ cd %BUILD_DIR%
 cmake .. ^
   -G "MinGW Makefiles" ^
   -DCMAKE_BUILD_TYPE=Release ^
-  -DCMAKE_INSTALL_PREFIX="C:/libs/box2d-3.1.1-mingw" ^
+  -DCMAKE_INSTALL_PREFIX="C:/libs/box2d-3.2.0-mingw" ^
   -DBUILD_SHARED_LIBS=OFF ^
   -DBOX2D_SAMPLES=OFF ^
   -DBOX2D_UNIT_TESTS=OFF
