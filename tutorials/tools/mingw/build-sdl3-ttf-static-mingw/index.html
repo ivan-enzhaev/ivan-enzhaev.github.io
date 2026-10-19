@@ -282,11 +282,11 @@
 
 set FREETYPE_PATH=C:/libs/freetype-2.14.3-mingw
 
-if not exist build-mingw-static mkdir build-mingw-static
-cd build-mingw-static
+set BUILD_DIR=build-mingw-static
 
-if exist CMakeCache.txt del CMakeCache.txt
-if exist CMakeFiles rmdir /s /q CMakeFiles
+if exist %BUILD_DIR% rmdir /s /q %BUILD_DIR%
+mkdir %BUILD_DIR%
+cd %BUILD_DIR%
 
 call cmake .. ^
   -DSDL3_DIR="C:/libs/sdl3-3.4.16-mingw/lib/cmake/SDL3" ^
@@ -302,7 +302,7 @@ call cmake .. ^
   -DCMAKE_INSTALL_PREFIX=C:/libs/sdl3-ttf-3.2.2-mingw ^
   -G "MinGW Makefiles"
 
-call cmake --build . --config Release --parallel 8 --target install</code></pre>
+call cmake --build . --config Release --parallel --target install</code></pre>
 
         <!-- <div class="alert alert-info mt-3">
             <strong>

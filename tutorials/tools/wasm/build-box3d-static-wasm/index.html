@@ -280,9 +280,11 @@
 
         <pre><code class="language-bash">@echo off
 
-if exist build-wasm-static rmdir /s /q build-wasm-static
-mkdir build-wasm-static
-cd build-wasm-static
+set BUILD_DIR=build-wasm-static
+
+if exist %BUILD_DIR% rmdir /s /q %BUILD_DIR%
+mkdir %BUILD_DIR%
+cd %BUILD_DIR%
 
 call emcmake cmake .. ^
   -G "MinGW Makefiles" ^

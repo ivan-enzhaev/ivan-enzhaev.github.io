@@ -289,12 +289,9 @@ set -e
 
 BUILD_DIR="build-ubuntu-static"
 
+rm -rf "$BUILD_DIR"
 mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR"
-
-# Clean old CMake cache if it exists
-rm -f CMakeCache.txt
-rm -rf CMakeFiles
 
 cmake .. \
   -GNinja \
@@ -314,7 +311,7 @@ cmake .. \
   -DWEBP_NEAR_LOSSLESS=ON \
   -DWEBP_ENABLE_SIMD=ON
 
-cmake --build . --config Release --parallel $(nproc) --target install</code></pre>
+cmake --build . --config Release --parallel --target install</code></pre>
 
         <div class="alert alert-info mt-3">
             <strong>

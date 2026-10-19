@@ -270,12 +270,11 @@
 
         <pre><code class="language-bash">@echo off
 
-if not exist build-mingw-static mkdir build-mingw-static
-cd build-mingw-static
+set BUILD_DIR=build-mingw-static
 
-:: Clean old cache if it exists
-if exist CMakeCache.txt del CMakeCache.txt
-if exist CMakeFiles rmdir /s /q CMakeFiles
+if exist %BUILD_DIR% rmdir /s /q %BUILD_DIR%
+mkdir %BUILD_DIR%
+cd %BUILD_DIR%
 
 cmake .. ^
   -G "MinGW Makefiles" ^
@@ -287,7 +286,7 @@ cmake .. ^
   -Dozz_build_tests=OFF ^
   -Dozz_build_howtos=OFF
 
-cmake --build . --config Release --parallel 8 --target install</code></pre>
+cmake --build . --config Release --parallel --target install</code></pre>
 
         <div class="alert alert-info mt-3">
             <strong>

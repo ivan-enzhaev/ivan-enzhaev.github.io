@@ -282,7 +282,7 @@
         <pre><code class="language-bash">@echo off
 set NDK=H:/AndroidSDK/ndk/28.2.13676358
 
-set BUILD_DIR=build-android-arm64
+set BUILD_DIR=build-android-64
 
 if exist %BUILD_DIR% rmdir /s /q %BUILD_DIR%
 mkdir %BUILD_DIR%
@@ -299,7 +299,7 @@ cmake .. ^
   -DCMAKE_INSTALL_PREFIX="C:/libs/tinyxml2-11.0.0-android/arm64-v8a" ^
   -G "MinGW Makefiles"
 
-cmake --build . --config Release --parallel 8 --target install</code></pre>
+cmake --build . --config Release --parallel --target install</code></pre>
 
         <div class="alert alert-info mt-3">
             <strong>

@@ -281,11 +281,11 @@
 set NDK=H:/AndroidSDK/ndk/28.2.13676358
 set FREETYPE_PATH=C:/libs/freetype-2.14.3-android/arm64-v8a
 
-if not exist build-android-64 mkdir build-android-64
-cd build-android-64
+set BUILD_DIR=build-android-64
 
-if exist CMakeCache.txt del CMakeCache.txt
-if exist CMakeFiles rmdir /s /q CMakeFiles
+if exist %BUILD_DIR% rmdir /s /q %BUILD_DIR%
+mkdir %BUILD_DIR%
+cd %BUILD_DIR%
 
 cmake .. ^
   -DCMAKE_TOOLCHAIN_FILE="%NDK%/build/cmake/android.toolchain.cmake" ^
@@ -305,7 +305,7 @@ cmake .. ^
   -DCMAKE_INSTALL_PREFIX="C:/libs/sdl3-ttf-3.2.2-android/arm64-v8a" ^
   -G "MinGW Makefiles"
 
-cmake --build . --config Release --parallel 8 --target install</code></pre>
+cmake --build . --config Release --parallel --target install</code></pre>
 
         <div class="alert alert-info mt-3">
             <strong>

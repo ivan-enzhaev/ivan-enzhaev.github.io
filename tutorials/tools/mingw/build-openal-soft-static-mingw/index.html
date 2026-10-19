@@ -291,9 +291,11 @@ call cmake --build . --config Release --parallel 8 --target install</code></pre>
 
         <pre><code class="language-bash">@echo off
 
-if exist build-mingw-static rmdir /s /q build-mingw-static
-mkdir build-mingw-static
-cd build-mingw-static
+set BUILD_DIR=build-mingw-static
+
+if exist %BUILD_DIR% rmdir /s /q %BUILD_DIR%
+mkdir %BUILD_DIR%
+cd %BUILD_DIR%
 
 call cmake .. ^
   -DCMAKE_BUILD_TYPE=Release ^
@@ -304,7 +306,7 @@ call cmake .. ^
   -DCMAKE_INSTALL_PREFIX="C:/libs/openal-soft-1.25.2-mingw" ^
   -G "MinGW Makefiles"
 
-call cmake --build . --config Release --parallel 8 --target install</code></pre>
+call cmake --build . --config Release --parallel --target install</code></pre>
 
         <!-- <div class="alert alert-info mt-3">
             <strong>
