@@ -7,7 +7,7 @@
 
 <title>
   
-    Building SDL3_image static library for Windows (MinGW &amp; CMake)
+    Building SDL3_image Static Library for Windows (MinGW &amp; CMake)
   
   | Ivan Enzhaev
 </title>
@@ -241,19 +241,24 @@
         </ul>
     </div>
 
+    <!-- Step 1: Download SDL3_image Source Code -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 1: Download SDL3_image Source Code</span>
             <span class="data-ru">Шаг 1: Скачивание исходного кода SDL3_image</span>
         </h2>
         <p>
-            <span class="data-en">Download the latest SDL3_image source archive (<code>.zip</code> or <code>.tar.gz</code>) from the official GitHub releases page:</span>
-            <span class="data-ru">Скачайте последний архив с исходным кодом SDL3_image (<code>.zip</code> или <code>.tar.gz</code>) с официальной страницы релизов GitHub:</span>
+            <span class="data-en">Check and download the latest release (<code>3.4.8</code>) directly from the official SDL_image repository on GitHub:</span>
+            <span class="data-ru">Проверьте и скачайте последнюю версию (<code>3.4.8</code>) напрямую со страницы релизов SDL_image на GitHub:</span>
         </p>
         <p>
             <a href="https://github.com/libsdl-org/SDL_image/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">Download the latest SDL3_image Release</span>
-                <span class="data-ru">Скачать последний релиз SDL3_image</span>
+                <span class="data-en">Open SDL3_image Releases (GitHub)</span>
+                <span class="data-ru">Открыть релизы SDL3_image (GitHub)</span>
+            </a>
+            <a href="https://github.com/libsdl-org/SDL_image/releases/download/release-3.4.8/SDL3_image-3.4.8.zip" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm ms-2">
+                <span class="data-en">Direct Download SDL3_image-3.4.8 (.zip)</span>
+                <span class="data-ru">Прямое скачивание SDL3_image-3.4.8 (.zip)</span>
             </a>
         </p>
         <div class="alert alert-warning my-3">
@@ -261,8 +266,8 @@
                 <span class="data-en">Important:</span>
                 <span class="data-ru">Важно:</span>
             </strong>
-            <span class="data-en">Make sure to download the main release archive (<code>SDL3_image-3.4.6.zip</code> or <code>.tar.gz</code>) and <strong>not</strong> the auto-generated <em>"Source code"</em> zip/tar.gz files under Assets.</span>
-            <span class="data-ru">Обязательно скачивайте основной архив релиза (<code>SDL3_image-3.4.6.zip</code> или <code>.tar.gz</code>), а <strong>не</strong> автоматически сгенерированные файлы <em>"Source code"</em> в разделе Assets.</span>
+            <span class="data-en">Make sure to download the main release archive (<code>SDL3_image-3.4.8.zip</code>) and <strong>not</strong> the auto-generated <em>"Source code"</em> zip/tar.gz files under Assets.</span>
+            <span class="data-ru">Обязательно скачивайте основной архив релиза (<code>SDL3_image-3.4.8.zip</code>), а <strong>не</strong> автоматически сгенерированные файлы <em>"Source code"</em> в разделе Assets.</span>
         </div>
         <p>
             <span class="data-en">Extract the downloaded archive to a convenient directory on your machine.</span>
@@ -270,6 +275,7 @@
         </p>
     </section>
 
+    <!-- Step 2: Create the Build Script -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 2: Create the Build Script</span>
@@ -289,14 +295,14 @@ mkdir %BUILD_DIR%
 cd %BUILD_DIR%
 
 call cmake .. ^
-  -DSDL3_DIR="C:/libs/sdl3-3.4.16-mingw/lib/cmake/SDL3" ^
+  -DSDL3_DIR="C:/libs/sdl3-3.4.18-mingw/lib/cmake/SDL3" ^
   -DBUILD_SHARED_LIBS=OFF ^
   -DSDLIMAGE_SAMPLES=OFF ^
   -DSDLIMAGE_TESTS=OFF ^
   -DSDLIMAGE_VENDORED=OFF ^
   -DSDLIMAGE_BACKEND_IMAGEIO=OFF ^
   -DCMAKE_BUILD_TYPE=Release ^
-  -DCMAKE_INSTALL_PREFIX=C:/libs/sdl3-image-3.4.6-mingw ^
+  -DCMAKE_INSTALL_PREFIX=C:/libs/sdl3_image-3.4.8-mingw ^
   -G "MinGW Makefiles"
 
 call cmake --build . --config Release --parallel --target install</code></pre>
@@ -311,6 +317,7 @@ call cmake --build . --config Release --parallel --target install</code></pre>
         </div>
     </section>
 
+    <!-- Step 3: Run and Compile -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 3: Run and Compile</span>
@@ -322,6 +329,7 @@ call cmake --build . --config Release --parallel --target install</code></pre>
         </p>
     </section>
 
+    <!-- Step 4: Next Steps -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 4: Next Steps</span>

@@ -247,6 +247,7 @@
         </ul>
     </div>
 
+    <!-- Step 1: Install Build Dependencies -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 1: Install Build Dependencies</span>
@@ -259,31 +260,45 @@
         <pre><code class="language-bash">sudo apt update &amp;&amp; sudo apt install -y wget</code></pre>
     </section>
 
+    <!-- Step 2: Download SDL3_image Source Code Archive -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 2: Download SDL3_image Source Code Archive</span>
             <span class="data-ru">Шаг 2: Скачивание архива исходного кода SDL3_image</span>
         </h2>
         <p>
-            <span class="data-en">You can browse the official GitHub releases page to check the latest available release assets:</span>
-            <span class="data-ru">Вы можете перейти на страницу релизов GitHub, чтобы посмотреть список доступных версий:</span>
+            <span class="data-en">Check and download the latest release (<code>3.4.8</code>) directly from the official SDL_image repository on GitHub:</span>
+            <span class="data-ru">Проверьте и скачайте последнюю версию (<code>3.4.8</code>) напрямую со страницы релизов SDL_image на GitHub:</span>
         </p>
         <p>
             <a href="https://github.com/libsdl-org/SDL_image/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">View SDL3_image Releases</span>
-                <span class="data-ru">Смотреть релизы SDL3_image</span>
+                <span class="data-en">Open SDL3_image Releases (GitHub)</span>
+                <span class="data-ru">Открыть релизы SDL3_image (GitHub)</span>
+            </a>
+            <a href="https://github.com/libsdl-org/SDL_image/releases/download/release-3.4.8/SDL3_image-3.4.8.tar.gz" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm ms-2">
+                <span class="data-en">Direct Download SDL3_image-3.4.8 (.tar.gz)</span>
+                <span class="data-ru">Прямое скачивание SDL3_image-3.4.8 (.tar.gz)</span>
             </a>
         </p>
+        <div class="alert alert-warning my-3">
+            <strong>
+                <span class="data-en">Important:</span>
+                <span class="data-ru">Важно:</span>
+            </strong>
+            <span class="data-en">Make sure to download the main release archive (<code>SDL3_image-3.4.8.tar.gz</code>) and <strong>not</strong> the auto-generated <em>"Source code"</em> zip/tar.gz files under Assets.</span>
+            <span class="data-ru">Обязательно скачивайте основной архив релиза (<code>SDL3_image-3.4.8.tar.gz</code>), а <strong>не</strong> автоматически сгенерированные файлы <em>"Source code"</em> в разделе Assets.</span>
+        </div>
         <p>
-            <span class="data-en">Download and extract the source archive for your desired version release using <code>wget</code>:</span>
-            <span class="data-ru">Скачайте и распакуйте архив с исходным кодом для нужного релиза с помощью <code>wget</code>:</span>
+            <span class="data-en">Download and extract the source archive using <code>wget</code> and <code>tar</code>:</span>
+            <span class="data-ru">Скачайте и распакуйте архив с исходным кодом с помощью <code>wget</code> и <code>tar</code>:</span>
         </p>
         <pre><code class="language-bash">cd ~
-wget https://github.com/libsdl-org/SDL_image/releases/download/release-3.4.6/SDL3_image-3.4.6.tar.gz -O SDL3_image-3.4.6.tar.gz
-tar -xzf SDL3_image-3.4.6.tar.gz
-cd SDL3_image-3.4.6</code></pre>
+wget https://github.com/libsdl-org/SDL_image/releases/download/release-3.4.8/SDL3_image-3.4.8.tar.gz -O SDL3_image-3.4.8.tar.gz
+tar -xzf SDL3_image-3.4.8.tar.gz
+cd SDL3_image-3.4.8</code></pre>
     </section>
 
+    <!-- Step 3: Create the Build Script -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 3: Create the Build Script</span>
@@ -307,8 +322,8 @@ cd "$BUILD_DIR"
 cmake .. \
   -GNinja \
   -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_INSTALL_PREFIX="$HOME/libs/sdl3_image-3.4.6-webp-ubuntu" \
-  -DSDL3_DIR="$HOME/libs/sdl3-3.4.16-ubuntu/lib/cmake/SDL3" \
+  -DCMAKE_INSTALL_PREFIX="$HOME/libs/sdl3_image-3.4.8-webp-ubuntu" \
+  -DSDL3_DIR="$HOME/libs/sdl3-3.4.18-ubuntu/lib/cmake/SDL3" \
   -DCMAKE_PREFIX_PATH="$WEBP_PATH" \
   -Dwebp_DIR="$WEBP_PATH/share/WebP/cmake" \
   -Dwebp_ROOT="$WEBP_PATH" \
@@ -332,6 +347,7 @@ cmake --build . --config Release --parallel --target install</code></pre>
         </div>
     </section>
 
+    <!-- Step 4: Run, Compile, and Clean Up -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 4: Run, Compile, and Clean Up</span>
@@ -351,9 +367,10 @@ cmake --build . --config Release --parallel --target install</code></pre>
             <span class="data-en">Once installed, you can safely remove the temporary source directory and the downloaded archive:</span>
             <span class="data-ru">После установки вы можете безопасно удалить временную директорию с исходным кодом и скачанный архив:</span>
         </p>
-        <pre><code class="language-bash">cd ~ &amp;&amp; rm -rf ~/SDL3_image-3.4.6 ~/SDL3_image-3.4.6.tar.gz</code></pre>
+        <pre><code class="language-bash">cd ~ &amp;&amp; rm -rf ~/SDL3_image-3.4.8 ~/SDL3_image-3.4.8.tar.gz</code></pre>
     </section>
 
+    <!-- Step 5: Next Steps -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 5: Next Steps</span>

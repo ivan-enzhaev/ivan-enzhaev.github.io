@@ -223,51 +223,55 @@
             <span class="data-ru">Сборка динамической библиотеки SDL3_image для Android (NDK и CMake)</span>
         </h1>
         <p class="lead text-muted">
-            <span class="data-en">A guide to compiling SDL3_image source code into a shared library (libSDL3_image.so) for Android using CMake and NDK with WebP support.</span>
-            <span class="data-ru">Руководство по компиляции исходного кода SDL3_image в динамическую библиотеку (libSDL3_image.so) для Android с помощью CMake и NDK с поддержкой WebP.</span>
+            <span class="data-en">A guide to compiling SDL3_image source code into a shared library (libSDL3_image.so) for Android using CMake and NDK.</span>
+            <span class="data-ru">Руководство по компиляции исходного кода SDL3_image в динамическую библиотеку (libSDL3_image.so) для Android с помощью CMake и NDK.</span>
         </p>
     </header>
 
     <div class="alert alert-secondary mb-3">
-        <span class="data-en">Make sure you have already built the core SDL3 and WebP libraries for Android by following these instructions:</span>
-        <span class="data-ru">Убедитесь, что вы уже собрали основные библиотеки SDL3 и WebP для Android, следуя этим инструкциям:</span>
-        <ul class="mb-0 mt-2">
-            <li>
-                <a href="/tutorials/tools/android/build-sdl3-so-android" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-                    <span class="data-en">Building SDL3 shared library for Android</span>
-                    <span class="data-ru">Сборка динамической библиотеки SDL3 для Android</span>
-                </a>
-            </li>
-            <li>
-                <a href="/tutorials/tools/android/build-webp-so-android" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-                    <span class="data-en">Building WebP shared library for Android</span>
-                    <span class="data-ru">Сборка динамической библиотеки WebP для Android</span>
-                </a>
-            </li>
-        </ul>
+        <span class="data-en">If you haven't built the core SDL3 library yet, follow the</span>
+        <span class="data-ru">Если вы еще не собрали основную библиотеку SDL3, следуйте инструкции:</span>
+        <a href="/tutorials/tools/android/build-sdl3-so-android" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+            <span class="data-en">Building SDL3 shared library for Android</span>
+            <span class="data-ru">Сборка динамической библиотеки SDL3 для Android</span>
+        </a>
     </div>
 
+    <!-- Step 1: Download SDL3_image Source Code -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 1: Download SDL3_image Source Code</span>
             <span class="data-ru">Шаг 1: Скачивание исходного кода SDL3_image</span>
         </h2>
         <p>
-            <span class="data-en">Download the latest SDL3_image source archive (<code>.zip</code> or <code>.tar.gz</code>) from the official GitHub releases page:</span>
-            <span class="data-ru">Скачайте последний архив с исходным кодом SDL3_image (<code>.zip</code> или <code>.tar.gz</code>) с официальной страницы релизов GitHub:</span>
+            <span class="data-en">Check and download the latest release (<code>3.4.8</code>) directly from the official SDL_image repository on GitHub:</span>
+            <span class="data-ru">Проверьте и скачайте последнюю версию (<code>3.4.8</code>) напрямую со страницы релизов SDL_image на GitHub:</span>
         </p>
         <p>
             <a href="https://github.com/libsdl-org/SDL_image/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">Download SDL3_image Releases</span>
-                <span class="data-ru">Скачать релизы SDL3_image</span>
+                <span class="data-en">Open SDL3_image Releases (GitHub)</span>
+                <span class="data-ru">Открыть релизы SDL3_image (GitHub)</span>
+            </a>
+            <a href="https://github.com/libsdl-org/SDL_image/releases/download/release-3.4.8/SDL3_image-3.4.8.zip" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm ms-2">
+                <span class="data-en">Direct Download SDL3_image-3.4.8 (.zip)</span>
+                <span class="data-ru">Прямое скачивание SDL3_image-3.4.8 (.zip)</span>
             </a>
         </p>
+        <div class="alert alert-warning my-3">
+            <strong>
+                <span class="data-en">Important:</span>
+                <span class="data-ru">Важно:</span>
+            </strong>
+            <span class="data-en">Make sure to download the main release archive (<code>SDL3_image-3.4.8.zip</code>) and <strong>not</strong> the auto-generated <em>"Source code"</em> zip/tar.gz files under Assets.</span>
+            <span class="data-ru">Обязательно скачивайте основной архив релиза (<code>SDL3_image-3.4.8.zip</code>), а <strong>не</strong> автоматически сгенерированные файлы <em>"Source code"</em> в разделе Assets.</span>
+        </div>
         <p>
             <span class="data-en">Extract the downloaded archive to a convenient directory on your machine.</span>
             <span class="data-ru">Распакуйте скачанный архив в удобную директорию на вашем компьютере.</span>
         </p>
     </section>
 
+    <!-- Step 2: Create the Build Script -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 2: Create the Build Script</span>
@@ -280,7 +284,6 @@
 
         <pre><code class="language-bash">@echo off
 set NDK=H:/AndroidSDK/ndk/28.2.13676358
-set WEBP_PATH=C:/libs/webp-1.6.0-android/arm64-v8a
 
 set BUILD_DIR=build-android-64
 
@@ -290,20 +293,16 @@ cd %BUILD_DIR%
 
 cmake .. ^
   -DCMAKE_TOOLCHAIN_FILE=%NDK%/build/cmake/android.toolchain.cmake ^
-  -DSDL3_DIR="C:/libs/sdl3-3.4.16-android/arm64-v8a/lib/cmake/SDL3" ^
-  -DCMAKE_PREFIX_PATH="%WEBP_PATH%" ^
-  -Dwebp_DIR="%WEBP_PATH%/share/WebP/cmake" ^
-  -Dwebp_ROOT="%WEBP_PATH%" ^
+  -DSDL3_DIR="C:/libs/sdl3-3.4.18-android/arm64-v8a/lib/cmake/SDL3" ^
   -DANDROID_ABI=arm64-v8a ^
   -DANDROID_PLATFORM=android-21 ^
   -DBUILD_SHARED_LIBS=ON ^
   -DSDLIMAGE_SAMPLES=OFF ^
   -DSDLIMAGE_TESTS=OFF ^
-  -DSDLIMAGE_WEBP=ON ^
   -DSDLIMAGE_VENDORED=OFF ^
   -DSDLIMAGE_BACKEND_IMAGEIO=OFF ^
   -DCMAKE_BUILD_TYPE=Release ^
-  -DCMAKE_INSTALL_PREFIX=C:/libs/sdl3-image-3.4.6-android/arm64-v8a ^
+  -DCMAKE_INSTALL_PREFIX=C:/libs/sdl3_image-3.4.8-android/arm64-v8a ^
   -G "MinGW Makefiles"
 
 cmake --build . --config Release --parallel --target install</code></pre>
@@ -313,11 +312,12 @@ cmake --build . --config Release --parallel --target install</code></pre>
                 <span class="data-en">Note:</span>
                 <span class="data-ru">Примечание:</span>
             </strong>
-            <span class="data-en">Ensure that the path variables (<code>NDK</code>, <code>WEBP_PATH</code>, <code>SDL3_DIR</code>, and <code>CMAKE_INSTALL_PREFIX</code>) match your local directory structure.</span>
-            <span class="data-ru">Убедитесь, что переменные путей (<code>NDK</code>, <code>WEBP_PATH</code>, <code>SDL3_DIR</code> и <code>CMAKE_INSTALL_PREFIX</code>) соответствуют вашей локальной структуре каталогов.</span>
+            <span class="data-en">Ensure that the path variables (<code>NDK</code>, <code>SDL3_DIR</code>, and <code>CMAKE_INSTALL_PREFIX</code>) match your local directory structure.</span>
+            <span class="data-ru">Убедитесь, что переменные путей (<code>NDK</code>, <code>SDL3_DIR</code> и <code>CMAKE_INSTALL_PREFIX</code>) соответствуют вашей локальной структуре каталогов.</span>
         </div>
     </section>
 
+    <!-- Step 3: Run and Compile -->
     <section class="mb-4">
         <h2 class="h4 fw-bold mb-3">
             <span class="data-en">Step 3: Run and Compile</span>
