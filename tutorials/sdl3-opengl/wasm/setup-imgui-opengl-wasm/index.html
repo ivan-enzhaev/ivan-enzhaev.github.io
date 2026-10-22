@@ -220,11 +220,11 @@
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
             <span class="data-en">Installing Dear ImGui Library (OpenGL) for WebAssembly (Emscripten &amp; CMake)</span>
-            <span class="data-ru">Установка C++-библиотеки Dear ImGui (OpenGL) для WebAssembly (Emscripten и CMake)</span>
+            <span class="data-ru">Установка библиотеки Dear ImGui (OpenGL) для WebAssembly (Emscripten и CMake)</span>
         </h1>
         <p class="lead text-muted">
             <span class="data-en">A step-by-step guide to downloading, extracting, and configuring the latest release of Dear ImGui with OpenGL (WebGL 2.0) in your CMake projects for WebAssembly on Windows using Emscripten.</span>
-            <span class="data-ru">Пошаговое руководство по скачиванию, распаковке и настройке последней версии C++-библиотеки Dear ImGui с OpenGL (WebGL 2.0) в проектах CMake для WebAssembly в Windows с использованием Emscripten.</span>
+            <span class="data-ru">Пошаговое руководство по скачиванию, распаковке и настройке последней версии библиотеки Dear ImGui с OpenGL (WebGL 2.0) в проектах CMake для WebAssembly в Windows с использованием Emscripten.</span>
         </p>
     </header>
 
@@ -248,17 +248,17 @@
             <span class="data-ru">Шаг 1: Скачивание исходного кода</span>
         </h2>
         <p>
-            <span class="data-en">Check and download the latest release (such as <code>v1.92.9b</code>) directly from the official Dear ImGui repository on GitHub:</span>
-            <span class="data-ru">Проверьте и скачайте последнюю версию (например, <code>v1.92.9b</code>) напрямую со страницы релизов Dear ImGui на GitHub:</span>
+            <span class="data-en">Check and download the latest release (such as <code>v1.93.0</code>) directly from the official Dear ImGui repository on GitHub:</span>
+            <span class="data-ru">Проверьте и скачайте последнюю версию (например, <code>v1.93.0</code>) напрямую со страницы релизов Dear ImGui на GitHub:</span>
         </p>
-        <p>
-            <a href="https://github.com/ocornut/imgui/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
+        <p class="d-flex flex-wrap gap-2">
+            <a href="https://github.com/ocornut/imgui/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary fw-bold">
                 <span class="data-en">Open Dear ImGui Releases (GitHub)</span>
                 <span class="data-ru">Открыть релизы Dear ImGui (GitHub)</span>
             </a>
-            <a href="https://github.com/ocornut/imgui/archive/refs/tags/v1.92.9b.zip" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm ms-2">
-                <span class="data-en">Direct Download v1.92.9b (.zip)</span>
-                <span class="data-ru">Прямое скачивание v1.92.9b (.zip)</span>
+            <a href="https://github.com/ocornut/imgui/archive/refs/tags/v1.93.0.zip" target="_blank" rel="noopener noreferrer" class="btn btn-primary fw-bold">
+                <span class="data-en">Download v1.93.0 (.zip)</span>
+                <span class="data-ru">Скачать v1.93.0 (.zip)</span>
             </a>
         </p>
     </section>
@@ -270,8 +270,8 @@
             <span class="data-ru">Шаг 2: Распаковка библиотеки</span>
         </h2>
         <p>
-            <span class="data-en">Unzip the downloaded archive so that the source files are located in <code>C:\libs\imgui-1.92.9b</code>:</span>
-            <span class="data-ru">Распакуйте скачанный архив так, чтобы исходные файлы находились в папке <code>C:\libs\imgui-1.92.9b</code>:</span>
+            <span class="data-en">Unzip the downloaded archive so that the source files are located in <code>C:\libs\imgui-1.93.0</code>:</span>
+            <span class="data-ru">Распакуйте скачанный архив так, чтобы исходные файлы находились в папке <code>C:\libs\imgui-1.93.0</code>:</span>
         </p>
     </section>
 
@@ -366,7 +366,7 @@ int main(int argc, char** argv) {
         <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
 
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Debug")
+    set(CMAKE_BUILD_TYPE "Release")
 endif()
 
 project(imgui_opengl_wasm_test CXX)
@@ -375,12 +375,12 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # -----------------------------------------------------------------------------
-# Library Path Definitions
+# Paths
 # -----------------------------------------------------------------------------
-set(IMGUI_DIR "C:/libs/imgui-1.92.9b")
+set(IMGUI_DIR "C:/libs/imgui-1.93.0")
 
 # -----------------------------------------------------------------------------
-# Source Definitions
+# Sources
 # -----------------------------------------------------------------------------
 set(IMGUI_SOURCES
     ${IMGUI_DIR}/imgui.cpp
@@ -391,7 +391,7 @@ set(IMGUI_SOURCES
 )
 
 # -----------------------------------------------------------------------------
-# Declare Target Type &amp; Attach Sources
+# Executable Target
 # -----------------------------------------------------------------------------
 add_executable(app
     main.cpp
@@ -399,7 +399,7 @@ add_executable(app
 )
 
 # -----------------------------------------------------------------------------
-# Include Header Directories
+# Include Directories
 # -----------------------------------------------------------------------------
 target_include_directories(app PRIVATE
     ${IMGUI_DIR}
@@ -407,12 +407,15 @@ target_include_directories(app PRIVATE
 )
 
 # -----------------------------------------------------------------------------
-# Emscripten Compiler &amp; Linker Flags (WebGL 2.0 / GLES3)
+# Backend Selection &amp; Definitions
 # -----------------------------------------------------------------------------
 target_compile_definitions(app PRIVATE
     IMGUI_IMPL_OPENGL_ES3
 )
 
+# -----------------------------------------------------------------------------
+# Emscripten Linker Flags (WebGL 2.0 / GLES3)
+# -----------------------------------------------------------------------------
 target_link_options(app PRIVATE
     "-sMAX_WEBGL_VERSION=2"
     "-sMIN_WEBGL_VERSION=2"
@@ -460,7 +463,7 @@ run-web.bat</code></pre>
             <span class="data-ru">После запуска скриптов сборки и выполнения приложение инициализирует Dear ImGui с бэкендом OpenGL (WebGL 2.0) и выведет следующие строки в терминал:</span>
         </p>
 
-        <pre><code class="language-text">Dear ImGui version: 1.92.9b
+        <pre><code class="language-text">Dear ImGui version: 1.93.0
 ImGui OpenGL (WebGL 2.0) Backend configured successfully!</code></pre>
 
         <div class="alert alert-info mt-3">
@@ -471,6 +474,24 @@ ImGui OpenGL (WebGL 2.0) Backend configured successfully!</code></pre>
                 <strong>Совет:</strong> Локальный веб-сервер будет продолжать работать в терминале. Чтобы остановить его в любой момент, нажмите <kbd>Ctrl</kbd> + <kbd>C</kbd> в консоли (и введите <code>Y</code> при запросе) или просто закройте окно командной строки.
             </span>
         </div>
+    </section>
+
+    <!-- Step 7: Next Steps -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 7: Next Steps</span>
+            <span class="data-ru">Шаг 7: Следующие шаги</span>
+        </h2>
+        <p>
+            <span class="data-en">Now that you have configured and verified Dear ImGui with WebGL 2.0, you can integrate it into your SDL3 WebAssembly projects:</span>
+            <span class="data-ru">Теперь, когда вы настроили и проверили Dear ImGui с WebGL 2.0, вы можете перейти к интеграции библиотеки в свои WebAssembly-проекты на SDL3:</span>
+        </p>
+        <p>
+            <a href="/tutorials/sdl3-opengl/web/integrate-imgui-sdl3-web-gles3" class="btn btn-outline-primary fw-bold lang-link-dynamic">
+                <span class="data-en">Integrating Dear ImGui with SDL3 for WebAssembly (WebGL 2.0)</span>
+                <span class="data-ru">Интеграция Dear ImGui с SDL3 для WebAssembly (WebGL 2.0)</span>
+            </a>
+        </p>
     </section>
 </div>
 

@@ -220,7 +220,7 @@
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
             <span class="data-en">Integrating Dear ImGui with SDL3 on Windows &amp; Ubuntu (OpenGL 3.3)</span>
-            <span class="data-ru">Интеграция C++-библиотеки Dear ImGui с SDL3 под Windows и Ubuntu (OpenGL 3.3)</span>
+            <span class="data-ru">Интеграция Dear ImGui с SDL3 под Windows и Ubuntu (OpenGL 3.3)</span>
         </h1>
         <p class="lead text-muted">
             <span class="data-en">A step-by-step guide to configuring and integrating Dear ImGui with SDL3 and an OpenGL 3.3 context using CMake on Windows and Ubuntu.</span>
@@ -233,15 +233,27 @@
         <span class="data-ru">Перед продолжением убедитесь, что вы установили SDL3, GLAD и Dear ImGui в вашей системе, следуя предварительным инструкциям:</span>
         <ul class="mb-0 mt-2">
             <li>
+                <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Windows (MinGW, CMake &amp; Ninja) Setup Guide</span>
+                    <span class="data-ru">Руководство по настройке Windows (MinGW, CMake и Ninja)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/ubuntu/setup-ubuntu-env" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Ubuntu C/C++ Development Environment Setup Guide</span>
+                    <span class="data-ru">Руководство по настройке среды разработки C/C++ на Ubuntu</span>
+                </a>
+            </li>
+            <li>
                 <a href="/tutorials/tools/mingw/build-sdl3-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-                    <span class="data-en">Building SDL3 Static Library for Windows (MinGW &amp; CMake)</span>
-                    <span class="data-ru">Сборка статической библиотеки SDL3 для Windows (MinGW и CMake)</span>
+                    <span class="data-en">Building SDL3 Static Library for Windows</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для Windows</span>
                 </a>
             </li>
             <li>
                 <a href="/tutorials/tools/ubuntu/build-sdl3-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-                    <span class="data-en">Building SDL3 Static Library for Ubuntu (GCC, CMake &amp; Ninja)</span>
-                    <span class="data-ru">Сборка статической библиотеки SDL3 для Ubuntu (GCC, CMake и Ninja)</span>
+                    <span class="data-en">Building SDL3 Static Library for Ubuntu</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для Ubuntu</span>
                 </a>
             </li>
             <li>
@@ -253,7 +265,7 @@
             <li>
                 <a href="/tutorials/sdl3-opengl/desktop/setup-imgui-opengl-desktop" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
                     <span class="data-en">Installing Dear ImGui Library on Windows &amp; Ubuntu (OpenGL 3.3)</span>
-                    <span class="data-ru">Установка C++-библиотеки Dear ImGui под Windows и Ubuntu (OpenGL 3.3)</span>
+                    <span class="data-ru">Установка библиотеки Dear ImGui под Windows и Ubuntu (OpenGL 3.3)</span>
                 </a>
             </li>
         </ul>
@@ -290,7 +302,7 @@ cd ~/projects/imgui-sdl3-opengl-test</code></pre>
 
         <p>
             <span class="data-en">You can create these files using Notepad / Sublime Text on Windows, or <code>nano</code> in the Ubuntu terminal:</span>
-            <span class="data-ru">Вы можете создать эти файлы через Блокнот / Sublime Text в Windows или с помощью <code>nano</code> в терминале Ubuntu:</span>
+            <span class="data-ru">Вы можете создать эти файлы через Notepad / Sublime Text в Windows или с помощью <code>nano</code> в терминале Ubuntu:</span>
         </p>
 
         <!-- Windows Quick File Creation -->
@@ -580,7 +592,6 @@ void SDL_AppQuit(void* appstate, SDL_AppResult result) {
         </h3>
         <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
 
-# Default to Debug if CMAKE_BUILD_TYPE is not set via command line
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")
 endif()
@@ -591,27 +602,25 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # -----------------------------------------------------------------------------
-# Locate System OpenGL Package
-# -----------------------------------------------------------------------------
-find_package(OpenGL REQUIRED)
-
-# -----------------------------------------------------------------------------
-# Library Path Definitions
+# Paths
 # -----------------------------------------------------------------------------
 if(WIN32)
-    set(IMGUI_DIR "C:/libs/imgui-1.92.9b")
-    set(GLAD_DIR "C:/libs/glad-0.1.36/opengl-3.3")
-    set(SDL3_DIR "C:/libs/sdl3-3.4.16-mingw/lib/cmake/SDL3")
+    set(IMGUI_DIR "C:/libs/imgui-1.93.0")
+    set(GLAD_DIR  "C:/libs/glad-0.1.36/opengl-3.3")
+    set(SDL3_DIR  "C:/libs/sdl3-3.4.18-mingw/lib/cmake/SDL3")
 else()
-    set(IMGUI_DIR "$ENV{HOME}/libs/imgui-1.92.9b")
-    set(GLAD_DIR "$ENV{HOME}/libs/glad-0.1.36/opengl-3.3")
-    set(SDL3_DIR "$ENV{HOME}/libs/sdl3-3.4.16-ubuntu/lib/cmake/SDL3")
+    set(IMGUI_DIR "$ENV{HOME}/libs/imgui-1.93.0")
+    set(GLAD_DIR  "$ENV{HOME}/libs/glad-0.1.36/opengl-3.3")
+    set(SDL3_DIR  "$ENV{HOME}/libs/sdl3-3.4.18-ubuntu/lib/cmake/SDL3")
 endif()
 
+# -----------------------------------------------------------------------------
+# Locate Official SDL3 CMake Package
+# -----------------------------------------------------------------------------
 find_package(SDL3 REQUIRED CONFIG)
 
 # -----------------------------------------------------------------------------
-# Source Definitions
+# ImGui Sources (including Demo Window and SDL3/OpenGL3 Backends)
 # -----------------------------------------------------------------------------
 set(IMGUI_SOURCES
     ${IMGUI_DIR}/imgui.cpp
@@ -623,19 +632,17 @@ set(IMGUI_SOURCES
     ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
 )
 
-set(PROJECT_SOURCES
+# -----------------------------------------------------------------------------
+# Executable Target
+# -----------------------------------------------------------------------------
+add_executable(app
     main.cpp
     ${IMGUI_SOURCES}
     ${GLAD_DIR}/src/glad.c
 )
 
 # -----------------------------------------------------------------------------
-# Declare Target Type &amp; Attach Sources
-# -----------------------------------------------------------------------------
-add_executable(app ${PROJECT_SOURCES})
-
-# -----------------------------------------------------------------------------
-# Include Header Directories
+# Include Directories
 # -----------------------------------------------------------------------------
 target_include_directories(app PRIVATE
     ${IMGUI_DIR}
@@ -643,26 +650,37 @@ target_include_directories(app PRIVATE
     ${GLAD_DIR}/include
 )
 
-# Tell ImGui OpenGL backend to use GLAD loader headers
+# -----------------------------------------------------------------------------
+# Backend Selection Definition
+# -----------------------------------------------------------------------------
 target_compile_definitions(app PRIVATE
     IMGUI_IMPL_OPENGL_LOADER_GLAD
 )
 
 # -----------------------------------------------------------------------------
-# Link SDL3 &amp; OpenGL Libraries
+# Static C++ Runtime (Applied to BOTH Windows &amp; Ubuntu)
 # -----------------------------------------------------------------------------
-target_link_libraries(app PRIVATE
-    SDL3::SDL3-static
-    OpenGL::GL
-)
+target_link_options(app PRIVATE -static-libgcc -static-libstdc++)
 
 # -----------------------------------------------------------------------------
-# Platform-Specific Linker Settings
+# Optimization &amp; Symbol Stripping (Release Builds Only)
+# -----------------------------------------------------------------------------
+if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+    target_compile_options(app PRIVATE -Os)
+    target_link_options(app PRIVATE -s)
+endif()
+
+# -----------------------------------------------------------------------------
+# Platform Linking &amp; Dependencies
 # -----------------------------------------------------------------------------
 if(WIN32)
-    target_link_libraries(app PRIVATE opengl32)
-    target_compile_options(app PRIVATE -Os)
-    target_link_options(app PRIVATE -static -s -static-libgcc -static-libstdc++)
+    target_link_libraries(app PRIVATE
+        SDL3::SDL3-static
+        opengl32
+    )
+
+    # Windows static linking &amp; subsystem selection
+    target_link_options(app PRIVATE -static)
 
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         target_link_options(app PRIVATE -mconsole)
@@ -671,9 +689,11 @@ if(WIN32)
     endif()
 else()
     target_link_libraries(app PRIVATE
+        SDL3::SDL3-static
         GL
         dl
         pthread
+        m
     )
 endif()</code></pre>
     </section>

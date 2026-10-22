@@ -220,11 +220,11 @@
     <header class="mb-5 border-bottom pb-3">
         <h1 class="fw-bold">
             <span class="data-en">Installing Dear ImGui Library on Windows &amp; Ubuntu (OpenGL 3.3)</span>
-            <span class="data-ru">Установка C++-библиотеки Dear ImGui под Windows и Ubuntu (OpenGL 3.3)</span>
+            <span class="data-ru">Установка библиотеки Dear ImGui под Windows и Ubuntu (OpenGL 3.3)</span>
         </h1>
         <p class="lead text-muted">
             <span class="data-en">A step-by-step guide to downloading, extracting, and configuring the latest release of Dear ImGui with OpenGL 3.3 and GLAD in your CMake projects on Windows and Ubuntu.</span>
-            <span class="data-ru">Пошаговое руководство по скачиванию, распаковке и настройке последней версии C++-библиотеки Dear ImGui с OpenGL 3.3 и GLAD в проектах CMake под Windows и Ubuntu.</span>
+            <span class="data-ru">Пошаговое руководство по скачиванию, распаковке и настройке последней версии библиотеки Dear ImGui с OpenGL 3.3 и GLAD в проектах CMake под Windows и Ubuntu.</span>
         </p>
     </header>
 
@@ -234,8 +234,8 @@
         <ul class="mb-0 mt-2">
             <li>
                 <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-                    <span class="data-en">Windows (MinGW, CMake &amp; IDEs) Setup Guide</span>
-                    <span class="data-ru">Руководство по настройке Windows (MinGW, CMake и IDE)</span>
+                    <span class="data-en">Windows (MinGW, CMake &amp; Ninja) Setup Guide</span>
+                    <span class="data-ru">Руководство по настройке Windows (MinGW, CMake и Ninja)</span>
                 </a>
             </li>
             <li>
@@ -260,17 +260,17 @@
             <span class="data-ru">Шаг 1: Скачивание исходного кода</span>
         </h2>
         <p>
-            <span class="data-en">Check and download the latest release (such as <code>v1.92.9b</code>) directly from the official Dear ImGui repository on GitHub:</span>
-            <span class="data-ru">Проверьте и скачайте последнюю версию (например, <code>v1.92.9b</code>) напрямую со страницы релизов Dear ImGui на GitHub:</span>
+            <span class="data-en">Check and download the latest release (such as <code>v1.93.0</code>) directly from the official Dear ImGui repository on GitHub:</span>
+            <span class="data-ru">Проверьте и скачайте последнюю версию (например, <code>v1.93.0</code>) напрямую со страницы релизов Dear ImGui на GitHub:</span>
         </p>
-        <p>
-            <a href="https://github.com/ocornut/imgui/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
+        <p class="d-flex flex-wrap gap-2">
+            <a href="https://github.com/ocornut/imgui/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">
                 <span class="data-en">Open Dear ImGui Releases (GitHub)</span>
                 <span class="data-ru">Открыть релизы Dear ImGui (GitHub)</span>
             </a>
-            <a href="https://github.com/ocornut/imgui/archive/refs/tags/v1.92.9b.zip" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm ms-2">
-                <span class="data-en">Direct Download v1.92.9b (.zip)</span>
-                <span class="data-ru">Прямое скачивание v1.92.9b (.zip)</span>
+            <a href="https://github.com/ocornut/imgui/archive/refs/tags/v1.93.0.zip" class="btn btn-primary">
+                <span class="data-en">Download Dear ImGui 1.93.0 (.zip)</span>
+                <span class="data-ru">Скачать Dear ImGui 1.93.0 (.zip)</span>
             </a>
         </p>
         <p>
@@ -280,7 +280,7 @@
         <pre><code class="language-bash">sudo apt update &amp;&amp; sudo apt install -y wget unzip git
 
 cd ~
-wget https://github.com/ocornut/imgui/archive/refs/tags/v1.92.9b.zip -O imgui-1.92.9b.zip</code></pre>
+wget https://github.com/ocornut/imgui/archive/refs/tags/v1.93.0.zip -O imgui-1.93.0.zip</code></pre>
     </section>
 
     <!-- Step 2: Extract the Library -->
@@ -295,8 +295,8 @@ wget https://github.com/ocornut/imgui/archive/refs/tags/v1.92.9b.zip -O imgui-1.
             <span class="data-ru">Вариант A: Windows</span>
         </h3>
         <p>
-            <span class="data-en">Unzip the downloaded archive so that the source files are located in <code>C:\libs\imgui-1.92.9b</code>.</span>
-            <span class="data-ru">Распакуйте скачанный архив так, чтобы исходные файлы находились в папке <code>C:\libs\imgui-1.92.9b</code>.</span>
+            <span class="data-en">Unzip the downloaded archive so that the source files are located in <code>C:\libs\imgui-1.93.0</code>.</span>
+            <span class="data-ru">Распакуйте скачанный архив так, чтобы исходные файлы находились в папке <code>C:\libs\imgui-1.93.0</code>.</span>
         </p>
 
         <h3 class="h6 fw-bold mt-3">
@@ -308,11 +308,11 @@ wget https://github.com/ocornut/imgui/archive/refs/tags/v1.92.9b.zip -O imgui-1.
             <span class="data-ru">Распакуйте архив в директорию <code>~/libs</code>:</span>
         </p>
         <pre><code class="language-bash">mkdir -p ~/libs
-unzip -o imgui-1.92.9b.zip -d ~/libs/
-rm -f imgui-1.92.9b.zip</code></pre>
+unzip -o imgui-1.93.0.zip -d ~/libs/
+rm -f imgui-1.93.0.zip</code></pre>
         <p>
-            <span class="data-en">This will place the library files into <code>~/libs/imgui-1.92.9b</code>.</span>
-            <span class="data-ru">Исходные файлы библиотеки будут распакованы по пути <code>~/libs/imgui-1.92.9b</code>.</span>
+            <span class="data-en">This will place the library files into <code>~/libs/imgui-1.93.0</code>.</span>
+            <span class="data-ru">Исходные файлы библиотеки будут распакованы по пути <code>~/libs/imgui-1.93.0</code>.</span>
         </p>
     </section>
 
@@ -417,7 +417,6 @@ int main(int argc, char** argv) {
         </h3>
         <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
 
-# Default to Debug if CMAKE_BUILD_TYPE is not set via command line
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")
 endif()
@@ -428,21 +427,22 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # -----------------------------------------------------------------------------
-# Library Path Definitions
+# Paths
 # -----------------------------------------------------------------------------
 if(WIN32)
-    set(IMGUI_DIR "C:/libs/imgui-1.92.9b")
-    set(GLAD_DIR "C:/libs/glad-0.1.36/opengl-3.3")
+    set(IMGUI_DIR "C:/libs/imgui-1.93.0")
+    set(GLAD_DIR  "C:/libs/glad-0.1.36/opengl-3.3")
 else()
-    set(IMGUI_DIR "$ENV{HOME}/libs/imgui-1.92.9b")
-    set(GLAD_DIR "$ENV{HOME}/libs/glad-0.1.36/opengl-3.3")
+    set(IMGUI_DIR "$ENV{HOME}/libs/imgui-1.93.0")
+    set(GLAD_DIR  "$ENV{HOME}/libs/glad-0.1.36/opengl-3.3")
 endif()
 
 # -----------------------------------------------------------------------------
-# Source Definitions
+# ImGui Sources (including OpenGL3 Backend)
 # -----------------------------------------------------------------------------
 set(IMGUI_SOURCES
     ${IMGUI_DIR}/imgui.cpp
+    ${IMGUI_DIR}/imgui_demo.cpp
     ${IMGUI_DIR}/imgui_draw.cpp
     ${IMGUI_DIR}/imgui_tables.cpp
     ${IMGUI_DIR}/imgui_widgets.cpp
@@ -450,7 +450,7 @@ set(IMGUI_SOURCES
 )
 
 # -----------------------------------------------------------------------------
-# Declare Target Type &amp; Attach Sources
+# Executable Target
 # -----------------------------------------------------------------------------
 add_executable(app
     main.cpp
@@ -459,13 +459,33 @@ add_executable(app
 )
 
 # -----------------------------------------------------------------------------
-# Include Header Directories
+# Include Directories
 # -----------------------------------------------------------------------------
 target_include_directories(app PRIVATE
     ${IMGUI_DIR}
     ${IMGUI_DIR}/backends
     ${GLAD_DIR}/include
 )
+
+# -----------------------------------------------------------------------------
+# Backend Selection Definition
+# -----------------------------------------------------------------------------
+target_compile_definitions(app PRIVATE
+    IMGUI_IMPL_OPENGL_LOADER_GLAD
+)
+
+# -----------------------------------------------------------------------------
+# Static C++ Runtime (Applied to BOTH Windows &amp; Ubuntu)
+# -----------------------------------------------------------------------------
+target_link_options(app PRIVATE -static-libgcc -static-libstdc++)
+
+# -----------------------------------------------------------------------------
+# Optimization &amp; Symbol Stripping (Release Builds Only)
+# -----------------------------------------------------------------------------
+if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+    target_compile_options(app PRIVATE -Os)
+    target_link_options(app PRIVATE -s)
+endif()
 
 # -----------------------------------------------------------------------------
 # Platform Linking &amp; Dependencies
@@ -475,8 +495,8 @@ if(WIN32)
         opengl32
     )
 
-    # MinGW Static Build Settings for Windows
-    target_link_options(app PRIVATE -static -s -static-libgcc -static-libstdc++)
+    # Windows static linking &amp; subsystem selection
+    target_link_options(app PRIVATE -static)
 
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         target_link_options(app PRIVATE -mconsole)
@@ -488,6 +508,7 @@ else()
         GL
         dl
         pthread
+        m
     )
 endif()</code></pre>
     </section>
@@ -558,8 +579,26 @@ set -e
             <span class="data-ru">После запуска скриптов сборки и выполнения приложение инициализирует Dear ImGui с бэкендом OpenGL 3.3 и выведет следующие строки в терминал:</span>
         </p>
 
-        <pre><code class="language-text">Dear ImGui version: 1.92.9b
+        <pre><code class="language-text">Dear ImGui version: 1.93.0
 ImGui OpenGL 3.3 Backend configured successfully!</code></pre>
+    </section>
+
+    <!-- Step 7: Next Steps -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 7: Next Steps</span>
+            <span class="data-ru">Шаг 7: Следующие шаги</span>
+        </h2>
+        <p>
+            <span class="data-en">Now that you have configured Dear ImGui with the OpenGL 3.3 backend, you can integrate it with SDL3:</span>
+            <span class="data-ru">Теперь, когда вы настроили Dear ImGui с бэкендом OpenGL 3.3, вы можете перейти к интеграции с SDL3:</span>
+        </p>
+        <p>
+            <a href="/tutorials/sdl3-opengl/desktop/integrate-imgui-sdl3-static-opengl-desktop" class="btn btn-outline-primary fw-bold lang-link-dynamic">
+                <span class="data-en">Integrating Dear ImGui with SDL3 on Windows &amp; Ubuntu (OpenGL 3.3)</span>
+                <span class="data-ru">Интеграция Dear ImGui с SDL3 под Windows и Ubuntu (OpenGL 3.3)</span>
+            </a>
+        </p>
     </section>
 </div>
 
