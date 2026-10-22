@@ -229,12 +229,16 @@
     </header>
 
     <div class="alert alert-secondary mb-3">
-        <span class="data-en">If you haven't set up MinGW and CMake on your machine, follow the</span>
-        <span class="data-ru">Если вы еще не настроили MinGW и CMake на своем компьютере, следуйте инструкции:</span>
-        <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-            <span class="data-en">MinGW & CMake Setup Guide</span>
-            <span class="data-ru">Руководство по настройке MinGW и CMake</span>
-        </a>
+        <span class="data-en">If you haven't set up MinGW and CMake on your machine, follow this guide:</span>
+        <span class="data-ru">Если вы еще не настроили MinGW и CMake на своем компьютере, следуйте этой инструкции:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">MinGW &amp; CMake Setup Guide</span>
+                    <span class="data-ru">Руководство по настройке MinGW и CMake</span>
+                </a>
+            </li>
+        </ul>
     </div>
 
     <section class="mb-4">
@@ -246,10 +250,14 @@
             <span class="data-en">Download the latest WebP source archive (<code>.zip</code> or <code>.tar.gz</code>) from the official GitHub tags page:</span>
             <span class="data-ru">Скачайте последний архив с исходным кодом WebP (<code>.zip</code> или <code>.tar.gz</code>) с официальной страницы тегов GitHub:</span>
         </p>
-        <p>
-            <a href="https://github.com/webmproject/libwebp/tags" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <span class="data-en">Download WebP Releases</span>
-                <span class="data-ru">Скачать релизы WebP</span>
+        <p class="d-flex flex-wrap gap-2">
+            <a href="https://github.com/webmproject/libwebp/tags" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">
+                <span class="data-en">Open WebP Tags (GitHub)</span>
+                <span class="data-ru">Открыть теги WebP (GitHub)</span>
+            </a>
+            <a href="https://github.com/webmproject/libwebp/archive/refs/tags/v1.6.0.zip" class="btn btn-primary">
+                <span class="data-en">Download WebP 1.6.0 (.zip)</span>
+                <span class="data-ru">Скачать WebP 1.6.0 (.zip)</span>
             </a>
         </p>
         <p>
@@ -301,8 +309,6 @@ call cmake --build . --config Release --parallel --target install</code></pre>
                 <span class="data-en">Note:</span>
                 <span class="data-ru">Примечание:</span>
             </strong>
-            <!-- <span class="data-en">Make sure to adjust the <code>CMAKE_INSTALL_PREFIX</code> path according to your target library directory structure. Setting <code>BUILD_SHARED_LIBS=OFF</code> ensures static libraries (<code>.a</code>) are compiled instead of dynamic ones (<code>.dll</code>).</span>
-            <span class="data-ru">Убедитесь, что путь в <code>CMAKE_INSTALL_PREFIX</code> соответствует вашей структуре директорий для библиотек. Флаг <code>BUILD_SHARED_LIBS=OFF</code> гарантирует сборку статических библиотек (<code>.a</code>) вместо динамических (<code>.dll</code>).</span> -->
             <span class="data-en">Adjust the <code>CMAKE_INSTALL_PREFIX</code> path to point to your preferred target installation folder.</span>
             <span class="data-ru">Убедитесь, что путь <code>CMAKE_INSTALL_PREFIX</code> указывает на удобную для вас директорию установки.</span>
         </div>
@@ -330,8 +336,8 @@ call cmake --build . --config Release --parallel --target install</code></pre>
         </p>
         <p>
             <a href="/tutorials/tools/mingw/build-sdl3-image-static-mingw" class="btn btn-outline-primary fw-bold lang-link-dynamic">
-                <span class="data-en">Building SDL3_image Static Library for Windows (MinGW &amp; CMake)</span>
-                <span class="data-ru">Сборка статической библиотеки SDL3_image для Windows (MinGW и CMake)</span>
+                <span class="data-en">Building SDL3_image Static Library with WebP Support for Windows (MinGW &amp; CMake)</span>
+                <span class="data-ru">Сборка статической библиотеки SDL3_image с поддержкой WebP для Windows (MinGW и CMake)</span>
             </a>
         </p>
     </section>

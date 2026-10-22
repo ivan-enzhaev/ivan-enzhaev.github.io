@@ -229,21 +229,22 @@
     </header>
 
     <div class="alert alert-secondary mb-3">
-        <span class="data-en">If you haven't set up MinGW and CMake on your machine, follow the</span>
-        <span class="data-ru">Если вы еще не настроили MinGW и CMake на своем компьютере, следуйте инструкции:</span>
-        <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-            <span class="data-en">MinGW &amp; CMake Setup Guide</span>
-            <span class="data-ru">Руководство по настройке MinGW и CMake</span>
-        </a>
-    </div>
-
-    <div class="alert alert-secondary">
-        <span class="data-en">If you haven't set up your environment (Android SDK, NDK, JDK), follow the</span>
-        <span class="data-ru">Если вы еще не настроили окружение (Android SDK, NDK, JDK), следуйте инструкции:</span>
-        <a href="/tutorials/tools/android/android-env/" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
-            <span class="data-en">Environment Setup Guide</span>
-            <span class="data-ru">Руководство по настройке окружения</span>
-        </a>
+        <span class="data-en">Make sure you have set up the required tools and environment by following these instructions:</span>
+        <span class="data-ru">Убедитесь, что вы настроили необходимые инструменты и окружение, следуя этим инструкциям:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">MinGW &amp; CMake Setup Guide</span>
+                    <span class="data-ru">Руководство по настройке MinGW и CMake</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/android/android-env/" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Android Environment Setup Guide (SDK, NDK, JDK)</span>
+                    <span class="data-ru">Руководство по настройке окружения Android (SDK, NDK, JDK)</span>
+                </a>
+            </li>
+        </ul>
     </div>
 
     <!-- Step 1: Download Source Code -->
@@ -266,6 +267,14 @@
                 <span class="data-ru">Прямое скачивание SDL3-3.4.18 (.zip)</span>
             </a>
         </p>
+        <div class="alert alert-warning my-3">
+            <strong>
+                <span class="data-en">Warning:</span>
+                <span class="data-ru">Внимание:</span>
+            </strong>
+            <span class="data-en">Download the official release archive <code>SDL3-3.4.18.zip</code> attached under "Assets", <strong>not</strong> the auto-generated GitHub "Source code" (.zip/.tar.gz) archives, as they lack necessary generated files and dependencies.</span>
+            <span class="data-ru">Скачивайте официальный архив релиза <code>SDL3-3.4.18.zip</code>, прикреплённый в блоке «Assets», а <strong>не</strong> автоматически сгенерированные исходные коды GitHub «Source code» (.zip/.tar.gz), так как в них отсутствуют необходимые сгенерированные файлы и зависимости.</span>
+        </div>
         <p>
             <span class="data-en">Extract the downloaded archive to a convenient directory on your machine.</span>
             <span class="data-ru">Распакуйте скачанный архив в удобную директорию на вашем компьютере.</span>
