@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    Integrating compiled libSDL3.so on Android (OpenGL ES 3.0)
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+<script src="/libs/bootstrap@5.3.3/bootstrap.bundle.min.js"></script>
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
+
+    /* How to hide non-active language blocks without collapsing iframe dimensions */
+    .data-en.d-none, 
+    .data-ru.d-none {
+        display: none !important;
+    }
+
+    /* Add this to prevent resolution drops during language toggles */
+    .ratio iframe {
+        width: 100%;
+        height: 100%;
+        content-visibility: visible;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold">
+            <span class="data-en">Integrating compiled libSDL3.so on Android (OpenGL ES 3.0)</span>
+            <span class="data-ru">Интеграция собранной библиотеки libSDL3.so на Android (OpenGL ES 3.0)</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">A step-by-step guide to creating a test application, linking your compiled libSDL3.so, rendering a colored triangle using modern OpenGL ES 3.0 in C++, building an APK, and running it on an Android device.</span>
+            <span class="data-ru">Пошаговое руководство по созданию тестового приложения, связыванию собранной библиотеки libSDL3.so, рендерингу цветного треугольника с помощью современного OpenGL ES 3.0 на C++, сборке APK и запуску на Android-устройстве.</span>
+        </p>
+    </header>
+
+    <div class="alert alert-secondary mb-3">
+        <span class="data-en">Before proceeding, make sure you have configured your MinGW and Android NDK build environment on Windows using the following guides:</span>
+        <span class="data-ru">Перед продолжением убедитесь, что вы настроили рабочее окружение MinGW и Android NDK в Windows, следуя соответствующим инструкциям:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">MinGW &amp; CMake Setup Guide</span>
+                    <span class="data-ru">Руководство по настройке MinGW и CMake</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/android/setup-android-env" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Android Environment Setup Guide (SDK, NDK, JDK)</span>
+                    <span class="data-ru">Руководство по настройке окружения Android (SDK, NDK, JDK)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/android/build-sdl3-so-android" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 Shared Library for Android (NDK &amp; CMake)</span>
+                    <span class="data-ru">Сборка динамической библиотеки SDL3 для Android (NDK и CMake)</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Step 1: Download Source Code -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 1: Download SDL3 Source Code</span>
+            <span class="data-ru">Шаг 1: Скачивание исходного кода SDL3</span>
+        </h2>
+        <p>
+            <span class="data-en">Check and download the latest release (<code>3.4.18</code>) directly from the official SDL repository on GitHub:</span>
+            <span class="data-ru">Проверьте и скачайте последнюю версию (<code>3.4.18</code>) напрямую со страницы релизов SDL на GitHub:</span>
+        </p>
+        <p class="d-flex flex-wrap gap-2">
+            <a href="https://github.com/libsdl-org/SDL/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">
+                <span class="data-en">Open SDL3 Releases (GitHub)</span>
+                <span class="data-ru">Открыть релизы SDL3 (GitHub)</span>
+            </a>
+            <a href="https://github.com/libsdl-org/SDL/releases/download/release-3.4.18/SDL3-3.4.18.zip" class="btn btn-primary">
+                <span class="data-en">Download SDL3 3.4.18 (.zip)</span>
+                <span class="data-ru">Скачать SDL3 3.4.18 (.zip)</span>
+            </a>
+        </p>
+        <div class="alert alert-warning my-3">
+            <strong>
+                <span class="data-en">Important:</span>
+                <span class="data-ru">Важно:</span>
+            </strong>
+            <span class="data-en">Make sure to download the main release archive (e.g. <code>SDL3-3.4.18.zip</code>) from the release assets, not the auto-generated "Source code (zip)" link at the bottom, which lacks pre-generated configuration files.</span>
+            <span class="data-ru">Обязательно скачивайте основной архив релиза (например, <code>SDL3-3.4.18.zip</code>) из файлов релиза, а не автоматически сгенерированный архив «Source code (zip)», в котором отсутствуют предварительно созданные файлы конфигурации.</span>
+        </div>
+    </section>
+
+    <!-- Step 2: Copy the Android Template Project -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 2: Copy the Android Template Project</span>
+            <span class="data-ru">Шаг 2: Копирование шаблонного проекта Android</span>
+        </h2>
+        <p>
+            <span class="data-en">Extract <code>SDL3-3.4.18.zip</code> and locate the ready-to-use Gradle template project in:</span>
+            <span class="data-ru">Распакуйте <code>SDL3-3.4.18.zip</code> и найдите готовый шаблонный проект Gradle по пути:</span>
+        </p>
+        <pre><code class="language-bash">SDL3-3.4.18/build-scripts/android-project</code></pre>
+        <p>
+            <span class="data-en">Create your new application directory <code>C:\projects\android-app-sdl3-opengl-cpp</code> and copy the <code>android-project</code> folder into it.</span>
+            <span class="data-ru">Создайте новую директорию приложения <code>C:\projects\android-app-sdl3-opengl-cpp</code> и скопируйте в неё папку <code>android-project</code>.</span>
+        </p>
+    </section>
+
+    <!-- Step 3: Project Directory Structure -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 3: Project Directory Structure</span>
+            <span class="data-ru">Шаг 3: Структура директории проекта</span>
+        </h2>
+        <p>
+            <span class="data-en">Set up your workspace so it mirrors the following structure:</span>
+            <span class="data-ru">Организуйте рабочую область в соответствии со следующей структурой:</span>
+        </p>
+        <pre><code class="language-bash">C:\projects\android-app-sdl3-opengl-cpp\
+├── android-project\
+│   ├── app\
+│   │   ├── build.gradle
+│   │   └── src\
+│   │       └── main\
+│   │           ├── AndroidManifest.xml
+│   │           └── java\
+│   │               └── com\
+│   │                   └── example\
+│   │                       └── myapp\
+│   │                           └── MyActivity.java
+│   ├── build.gradle
+│   ├── settings.gradle
+│   └── gradlew.bat
+├── src\
+│   └── main.cpp
+├── CMakeLists.txt
+├── build-android.bat
+└── install-android.bat</code></pre>
+    </section>
+
+    <!-- Step 4: Configure Gradle -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 4: Configure Gradle (app/build.gradle)</span>
+            <span class="data-ru">Шаг 4: Настройка Gradle (app/build.gradle)</span>
+        </h2>
+        <p>
+            <span class="data-en">Open <code>android-project/app/build.gradle</code> and update it with the following configuration:</span>
+            <span class="data-ru">Откройте <code>android-project/app/build.gradle</code> и примените следующую конфигурацию:</span>
+        </p>
+        <pre><code class="language-gradle">plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace "com.example.myapp"
+    compileSdkVersion 35
+
+    defaultConfig {
+        applicationId 'com.example.myapp'
+        minSdkVersion 21
+        targetSdkVersion 35
+        versionCode 1
+        versionName '1.0'
+
+        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_STL=c++_shared'
+                abiFilters 'arm64-v8a'
+            }
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path '../../CMakeLists.txt'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildFeatures {
+        prefab false
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+}</code></pre>
+    </section>
+
+    <!-- Step 5: Android Manifest -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 5: Configure AndroidManifest.xml</span>
+            <span class="data-ru">Шаг 5: Настройка AndroidManifest.xml</span>
+        </h2>
+        <p>
+            <span class="data-en">Open <code>android-project/app/src/main/AndroidManifest.xml</code> and make the following two modifications:</span>
+            <span class="data-ru">Откройте <code>android-project/app/src/main/AndroidManifest.xml</code> и внесите следующие два изменения:</span>
+        </p>
+
+        <p class="mb-2">
+            <strong>1. </strong>
+            <span class="data-en">Change the OpenGL ES version from 2.0 to 3.0:</span>
+            <span class="data-ru">Измените версию OpenGL ES с 2.0 на 3.0:</span>
+        </p>
+        <pre><code class="language-markup">&lt;!-- OpenGL ES 3.0 --&gt;
+&lt;uses-feature android:glEsVersion="0x00030000" android:required="true" /&gt;</code></pre>
+
+        <p class="mt-3 mb-2">
+            <strong>2. </strong>
+            <span class="data-en">Update <code>android:name</code> inside the <code>&lt;activity&gt;</code> tag from <code>"SDLActivity"</code> to your custom activity:</span>
+            <span class="data-ru">Замените значение <code>android:name</code> внутри тега <code>&lt;activity&gt;</code> с <code>"SDLActivity"</code> на вашу активность:</span>
+        </p>
+        <pre><code class="language-markup">&lt;activity
+    android:name="com.example.myapp.MyActivity"</code></pre>
+    </section>
+
+    <!-- Step 6: Custom Activity -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 6: Create MyActivity.java</span>
+            <span class="data-ru">Шаг 6: Создание MyActivity.java</span>
+        </h2>
+        <p>
+            <span class="data-en">Create <code>android-project/app/src/main/java/com/example/myapp/MyActivity.java</code>. SDL requires loading libraries in dependency order: <code>c++_shared</code>, then <code>SDL3</code>, and finally your native application library <code>main</code>:</span>
+            <span class="data-ru">Создайте файл <code>android-project/app/src/main/java/com/example/myapp/MyActivity.java</code>. SDL требует загрузки библиотек в порядке зависимостей: сначала <code>c++_shared</code>, затем <code>SDL3</code>, и в конце библиотека приложения <code>main</code>:</span>
+        </p>
+        <pre><code class="language-java">package com.example.myapp;
+
+import org.libsdl.app.SDLActivity;
+
+public class MyActivity extends SDLActivity {
+    @Override
+    protected String[] getLibraries() {
+        return new String[] {
+            "c++_shared",
+            "SDL3",
+            "main"
+        };
+    }
+}</code></pre>
+    </section>
+
+    <!-- Step 7: CMakeLists.txt -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 7: Configure CMakeLists.txt</span>
+            <span class="data-ru">Шаг 7: Настройка CMakeLists.txt</span>
+        </h2>
+        <p>
+            <span class="data-en">Create <code>CMakeLists.txt</code> in the project root directory. It sets the C++20 standard, specifies the ABI-specific include directory and compiled <code>libSDL3.so</code> path, and links OpenGL ES 3.0 (<code>GLESv3</code>) and <code>EGL</code>:</span>
+            <span class="data-ru">Создайте файл <code>CMakeLists.txt</code> в корневой папке проекта. Он задаёт стандарт C++20, указывает путь к заголовочным файлам для текущего ABI и собранной библиотеке <code>libSDL3.so</code>, а также связывает OpenGL ES 3.0 (<code>GLESv3</code>) и <code>EGL</code>:</span>
+        </p>
+        <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release")
+endif()
+
+project(myapp CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# -----------------------------------------------------------------------------
+# Paths
+# -----------------------------------------------------------------------------
+set(SDL3_DIR "C:/libs/sdl3-3.4.18-android")
+
+# -----------------------------------------------------------------------------
+# Native Shared Library Target
+# -----------------------------------------------------------------------------
+add_library(main SHARED
+    src/main.cpp
+)
+
+# -----------------------------------------------------------------------------
+# Include Directories
+# -----------------------------------------------------------------------------
+target_include_directories(main PRIVATE
+    ${SDL3_DIR}/${ANDROID_ABI}/include
+)
+
+# -----------------------------------------------------------------------------
+# Link SDL3 & Android System Libraries
+# -----------------------------------------------------------------------------
+target_link_libraries(main PRIVATE
+    ${SDL3_DIR}/${ANDROID_ABI}/lib/libSDL3.so
+    GLESv3
+    EGL
+    android
+    log
+)</code></pre>
+    </section>
+
+    <!-- Step 8: Source Code -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 8: OpenGL ES 3.0 Source Code (src/main.cpp)</span>
+            <span class="data-ru">Шаг 8: Исходный код OpenGL ES 3.0 (src/main.cpp)</span>
+        </h2>
+        <p>
+            <span class="data-en">Create <code>src/main.cpp</code>. This modern C++ program requests an OpenGL ES 3.0 context, compiles vertex and fragment shaders using <code>#version 300 es</code>, uploads a colored triangle to a VAO/VBO, and renders it in the main loop:</span>
+            <span class="data-ru">Создайте файл <code>src/main.cpp</code>. Эта программа на современном C++ инициализирует контекст OpenGL ES 3.0, компилирует вершинный и фрагментный шейдеры с <code>#version 300 es</code>, загружает цветной треугольник в VAO/VBO и отрисовывает его в основном цикле:</span>
+        </p>
+        <pre><code class="language-cpp">#include &lt;SDL3/SDL.h&gt;
+#include &lt;SDL3/SDL_main.h&gt;
+#include &lt;GLES3/gl3.h&gt;
+
+const char* vertexShaderSource = 
+    "#version 300 es\n"
+    "layout (location = 0) in vec2 aPos;\n"
+    "layout (location = 1) in vec3 aColor;\n"
+    "out vec3 vColor;\n"
+    "void main() {\n"
+    "    gl_Position = vec4(aPos, 0.0, 1.0);\n"
+    "    vColor = aColor;\n"
+    "}\0";
+
+const char* fragmentShaderSource = 
+    "#version 300 es\n"
+    "precision mediump float;\n"
+    "in vec3 vColor;\n"
+    "out vec4 FragColor;\n"
+    "void main() {\n"
+    "    FragColor = vec4(vColor, 1.0);\n"
+    "}\0";
+
+GLuint compileShader(GLenum type, const char* source) {
+    GLuint shader = glCreateShader(type);
+    glShaderSource(shader, 1, &amp;source, nullptr);
+    glCompileShader(shader);
+
+    GLint success;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &amp;success);
+    if (!success) {
+        char infoLog[512];
+        glGetShaderInfoLog(shader, 512, nullptr, infoLog);
+        SDL_Log("Shader compilation error: %s", infoLog);
+    }
+    return shader;
+}
+
+int main(int argc, char* argv[]) {
+    (void)argc;
+    (void)argv;
+
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+        return 1;
+    }
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+
+    SDL_Window* window = SDL_CreateWindow(
+        "SDL3 OpenGL ES 3.0",
+        800, 600,
+        SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
+    );
+
+    if (!window) {
+        SDL_Log("Failed to create window: %s", SDL_GetError());
+        SDL_Quit();
+        return 1;
+    }
+
+    SDL_GLContext glContext = SDL_GL_CreateContext(window);
+    if (!glContext) {
+        SDL_Log("Failed to create OpenGL context: %s", SDL_GetError());
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 1;
+    }
+
+    SDL_GL_SetSwapInterval(1);
+
+    GLuint vertexShader = compileShader(GL_VERTEX_SHADER, vertexShaderSource);
+    GLuint fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
+
+    GLuint shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    float vertices[] = {
+        // positions    // colors
+         0.0f,  0.5f,   1.0f, 0.0f, 0.0f, // top (red)
+        -0.5f, -0.5f,   0.0f, 1.0f, 0.0f, // bottom left (green)
+         0.5f, -0.5f,   0.0f, 0.0f, 1.0f  // bottom right (blue)
+    };
+
+    GLuint VAO, VBO;
+    glGenVertexArrays(1, &amp;VAO);
+    glGenBuffers(1, &amp;VBO);
+
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // Position attribute
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    // Color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    bool running = true;
+    SDL_Event event;
+
+    while (running) {
+        while (SDL_PollEvent(&amp;event)) {
+            if (event.type == SDL_EVENT_QUIT) {
+                running = false;
+            }
+        }
+
+        int w, h;
+        SDL_GetWindowSizeInPixels(window, &amp;w, &amp;h);
+        glViewport(0, 0, w, h);
+
+        glClearColor(0.12f, 0.12f, 0.15f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        SDL_GL_SwapWindow(window);
+    }
+
+    glDeleteVertexArrays(1, &amp;VAO);
+    glDeleteBuffers(1, &amp;VBO);
+    glDeleteProgram(shaderProgram);
+
+    SDL_GL_DestroyContext(glContext);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
+    return 0;
+}</code></pre>
+    </section>
+
+    <!-- Step 9: Build and Install Scripts -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 9: Build and Installation Scripts</span>
+            <span class="data-ru">Шаг 9: Скрипты сборки и установки</span>
+        </h2>
+        <p>
+            <span class="data-en">Create <code>build-android.bat</code> in the root folder to compile the project and build the debug APK. Using <code>pushd</code> and <code>popd</code> ensures your command prompt returns to the root directory after building:</span>
+            <span class="data-ru">Создайте файл <code>build-android.bat</code> в корневой папке для компиляции проекта и сборки debug APK. Использование <code>pushd</code> и <code>popd</code> гарантирует возврат командной строки в корневую папку после сборки:</span>
+        </p>
+        <pre><code class="language-bash">@echo off
+pushd "%~dp0android-project"
+call gradlew.bat assembleDebug
+popd</code></pre>
+
+        <p class="mt-3">
+            <span class="data-en">Create <code>install-android.bat</code> to install the generated APK on your device or emulator and automatically start the activity:</span>
+            <span class="data-ru">Создайте файл <code>install-android.bat</code> для установки сгенерированного APK на устройство или эмулятор и автоматического запуска активности:</span>
+        </p>
+        <pre><code class="language-bash">@echo off
+set APK_PATH=%~dp0android-project\app\build\outputs\apk\debug\app-debug.apk
+
+echo [*] Installing APK to device...
+adb install -r "%APK_PATH%"
+if errorlevel 1 (
+    echo [!] Installation failed.
+    exit /b 1
+)
+
+echo [*] Launching application...
+adb shell am start -n com.example.myapp/com.example.myapp.MyActivity</code></pre>
+    </section>
+
+    <!-- Step 10: Run the Project -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 10: Build and Run</span>
+            <span class="data-ru">Шаг 10: Сборка и запуск</span>
+        </h2>
+        <p>
+            <span class="data-en">Run the build script from your project root:</span>
+            <span class="data-ru">Запустите скрипт сборки из корня проекта:</span>
+        </p>
+        <pre><code class="language-bash">build-android.bat</code></pre>
+
+        <p class="mt-3">
+            <span class="data-en">Connect your Android device with USB debugging enabled, then run the installer directly from the same terminal:</span>
+            <span class="data-ru">Подключите Android-устройство с включённой отладкой по USB и запустите установку прямо из этого же окна:</span>
+        </p>
+        <pre><code class="language-bash">install-android.bat</code></pre>
+        <p>
+            <span class="data-en">You should see the application start in landscape mode, rendering a smooth colored triangle on top of an OpenGL ES 3.0 context.</span>
+            <span class="data-ru">Приложение запустится в альбомной ориентации, отображая цветной треугольник на базе контекста OpenGL ES 3.0.</span>
+        </p>
+    </section>
+
+    <!-- GitHub Repository Link -->
+    <section class="mt-5 pt-3 border-top text-center">
+        <p class="lead">
+            <span class="data-en">Complete source code for this project is available on GitHub:</span>
+            <span class="data-ru">Полный исходный код проекта доступен на GitHub:</span>
+        </p>
+        <a href="https://github.com/ivan-enzhaev/android-app-sdl3-opengl-cpp" target="_blank" rel="noopener noreferrer" class="btn btn-dark btn-lg">
+            <span class="data-en">View on GitHub</span>
+            <span class="data-ru">Смотреть на GitHub</span>
+        </a>
+    </section>
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">
+                        <span class="data-en">Sberbank (Russia only)</span>
+                        <span class="data-ru">Сбербанк (только для РФ)</span>
+                    </h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number (Russia only)</span>
+                        <span class="data-ru">Перевод по номеру телефона (только для РФ)</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">USDT TRC20</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-gradle.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-java.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-markup.min.js"></script>
+        </block>
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    // function setLanguage(lang) {
+    //     if (lang !== "en" && lang !== "ru") lang = "en";
+    //     document.documentElement.setAttribute("lang", lang);
+    //     localStorage.setItem("preferred-lang", lang);
+    //     document
+    //         .querySelectorAll(".lang-link")
+    //         .forEach((el) => el.classList.remove("active"));
+    //     const btn = document.getElementById("btn-" + lang);
+    //     if (btn) btn.classList.add("active");
+
+    //     updateVideoPlayerLanguage(lang);
+    // }
+
+    // function changeLanguage(lang) {
+    //     setLanguage(lang);
+    //     const url = new URL(window.location);
+    //     url.searchParams.set("lang", lang);
+    //     window.history.pushState({}, "", url);
+    // }
+
+    // // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+        
+    //     if (link) {
+    //         // Check if the link is intended to open in a new tab
+    //         if (link.target === "_blank") {
+    //             // Allow the browser to handle the click naturally, 
+    //             // but we still want to append the language param.
+    //             const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //             const targetUrl = new URL(link.href);
+    //             targetUrl.searchParams.set("lang", currentLang);
+                
+    //             // Update the href right before the browser follows it
+    //             link.href = targetUrl.toString();
+    //             return; // Exit the function so e.preventDefault() isn't called
+    //         }
+
+    //         // Existing logic for same-tab navigation
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // (function init() {
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     const langParam = urlParams.get("lang");
+    //     const savedLang = localStorage.getItem("preferred-lang");
+    //     setLanguage(langParam || savedLang || "en");
+    // })();
+
+    // window.onpopstate = function() {
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     setLanguage(urlParams.get("lang") || "en");
+    // };
+
+    // document.querySelectorAll('pre').forEach((pre) => {
+    //     // Create container and header
+    //     const container = document.createElement('div');
+    //     container.className = 'code-container';
+        
+    //     const header = document.createElement('div');
+    //     header.className = 'code-header';
+        
+    //     const button = document.createElement('button');
+    //     button.className = 'copy-button';
+    //     button.innerText = 'Copy';
+
+    //     // Wrap the pre tag
+    //     pre.parentNode.insertBefore(container, pre);
+    //     header.appendChild(button);
+    //     container.appendChild(header);
+    //     container.appendChild(pre);
+
+    //     // Copy Logic
+    //     button.addEventListener('click', () => {
+    //         const code = pre.querySelector('code').innerText;
+    //         navigator.clipboard.writeText(code).then(() => {
+    //             button.innerText = 'Copied!';
+    //             button.classList.add('copied');
+
+    //             setTimeout(() => {
+    //                 button.innerText = 'Copy';
+    //                 button.classList.remove('copied');
+    //             }, 2000);
+    //         });
+    //     });
+    // });
+
+    // document.addEventListener("DOMContentLoaded", () => {
+    //     const codeBlocks = document.querySelectorAll('code[data-url]');
+
+    //     codeBlocks.forEach(async (block) => {
+    //         const url = block.getAttribute('data-url');
+    //         if (!url) return;
+
+    //         try {
+    //             const response = await fetch(url);
+    //             if (!response.ok) throw new Error('Fetch failed');
+    //             const code = await response.text();
+                
+    //             // Set the content
+    //             block.textContent = code;
+                
+    //             // Re-run Prism highlight if available
+    //             if (typeof Prism !== 'undefined') {
+    //                 Prism.highlightElement(block);
+    //             }
+    //         } catch (err) {
+    //             console.error("Could not load code:", err);
+    //             block.textContent = "// Error: Could not load code from GitHub.";
+    //         }
+    //     });
+    // });
+
+    // function updateVideoPlayerLanguage(lang) {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     const targetSrc = lang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+    //     const targetTitle = lang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+    //     // Only update if the URL actually changed to prevent unneeded reloads
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // // Example listener: Call this function inside your existing language-switcher click handler:
+    // document.querySelectorAll('.lang-link').forEach(link => {
+    //     link.addEventListener('click', function() {
+    //         const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+    //         updateVideoPlayerLanguage(lang);
+    //     });
+    // });
+
+    // function initVideoPlayer() {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     // Detect language from URL query string (?lang=ru), or <html lang="..."> attribute
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     const currentLang = urlParams.get('lang') || document.documentElement.lang || 'en';
+
+    //     // Set correct video source on page load
+    //     const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+    //     const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // function loadVideoPlayer() {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     // Determine current language
+    //     const lang = document.documentElement.getAttribute('lang') || 
+    //                  localStorage.getItem('preferred-lang') || 
+    //                  'en';
+
+    //     const targetSrc = lang === 'ru' 
+    //         ? player.getAttribute('data-src-ru') 
+    //         : player.getAttribute('data-src-en');
+    //     const targetTitle = lang === 'ru' 
+    //         ? player.getAttribute('data-title-ru') 
+    //         : player.getAttribute('data-title-en');
+
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // function initVideoPlayerWhenVisible() {
+    //     // If opened in a background tab (middle click), wait until the user switches to this tab
+    //     if (document.hidden) {
+    //         document.addEventListener('visibilitychange', function onVisible() {
+    //             if (!document.hidden) {
+    //                 document.removeEventListener('visibilitychange', onVisible);
+    //                 loadVideoPlayer();
+    //             }
+    //         });
+    //     } else {
+    //         // Tab is active (normal left click) -> load immediately
+    //         loadVideoPlayer();
+    //     }
+    // }
+
+    // // Call on load
+    // if (document.readyState === 'loading') {
+    //     document.addEventListener('DOMContentLoaded', initVideoPlayerWhenVisible);
+    // } else {
+    //     initVideoPlayerWhenVisible();
+    // }
+
+    // 1. Language setting
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+
+        // When manually switching languages on an active tab, update immediately
+        if (!document.hidden) {
+            applyVideoPlayerSrc(lang);
+        }
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // 2. Core video updater
+    function applyVideoPlayerSrc(lang) {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        const currentLang = lang || document.documentElement.getAttribute("lang") || localStorage.getItem("preferred-lang") || "en";
+        const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        if (targetSrc && player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // 3. Deferred loader: waits for tab focus and real layout dimensions
+    function initVideoPlayer() {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        // Wait one render frame to guarantee full container width is computed
+                        requestAnimationFrame(() => {
+                            applyVideoPlayerSrc();
+                        });
+                        observer.disconnect();
+                    }
+                });
+            }, { threshold: 0.05 });
+
+            observer.observe(player);
+        } else {
+            applyVideoPlayerSrc();
+        }
+    }
+
+    // 4. Update language links on mousedown so middle-click gets ?lang= correctly
+    document.addEventListener("mousedown", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (!link) return;
+
+        const currentLang = document.documentElement.getAttribute("lang") || localStorage.getItem("preferred-lang") || "en";
+        const targetUrl = new URL(link.href, window.location.origin);
+        targetUrl.searchParams.set("lang", currentLang);
+        link.href = targetUrl.toString();
+    });
+
+    // 5. Normal click navigation
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (link && link.target !== "_blank") {
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(link.href, window.location.origin + window.location.pathname);
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    // 6. Language Switcher Buttons
+    document.querySelectorAll('.lang-link').forEach(link => {
+        link.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+            changeLanguage(lang);
+        });
+    });
+
+    // 7. Initialize language on page load
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    // 8. Initialize video player (runs once when DOM is ready)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initVideoPlayer);
+    } else {
+        initVideoPlayer();
+    }
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    // Code copy buttons
+    document.querySelectorAll('pre').forEach((pre) => {
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+
+    // External code blocks loader
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                block.textContent = code;
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
+        });
+    });
+</script>
+</body>
+
+</html>
