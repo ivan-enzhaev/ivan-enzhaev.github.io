@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    Loading WebP Textures with SDL3_image on Windows &amp; Ubuntu (OpenGL 3.3)
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+<script src="/libs/bootstrap@5.3.3/bootstrap.bundle.min.js"></script>
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
+
+    /* How to hide non-active language blocks without collapsing iframe dimensions */
+    .data-en.d-none, 
+    .data-ru.d-none {
+        display: none !important;
+    }
+
+    /* Add this to prevent resolution drops during language toggles */
+    .ratio iframe {
+        width: 100%;
+        height: 100%;
+        content-visibility: visible;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold">
+            <span class="data-en">Loading WebP Textures with SDL3_image on Windows &amp; Ubuntu (OpenGL 3.3)</span>
+            <span class="data-ru">Загрузка текстур WebP с помощью SDL3_image под Windows и Ubuntu (OpenGL 3.3)</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">A step-by-step guide to configuring and integrating SDL3_image with WebP support and an OpenGL 3.3 context using CMake on Windows and Ubuntu.</span>
+            <span class="data-ru">Пошаговое руководство по настройке и интеграции библиотеки SDL3_image с поддержкой WebP и контекстом OpenGL 3.3 с использованием CMake под Windows и Ubuntu.</span>
+        </p>
+    </header>
+
+    <div class="alert alert-secondary mb-3">
+        <span class="data-en">Before proceeding, make sure you have installed SDL3, SDL3_image (with WebP support), and GLAD on your system using the prerequisite guides:</span>
+        <span class="data-ru">Перед продолжением убедитесь, что вы установили SDL3, SDL3_image (с поддержкой WebP) и GLAD в вашей системе, следуя предварительным инструкциям:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/tools/mingw/setup-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Windows (MinGW, CMake &amp; Ninja) Setup Guide</span>
+                    <span class="data-ru">Руководство по настройке Windows (MinGW, CMake и Ninja)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/ubuntu/setup-ubuntu-env" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Ubuntu C/C++ Development Environment Setup Guide</span>
+                    <span class="data-ru">Руководство по настройке среды разработки C/C++ на Ubuntu</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/mingw/build-sdl3-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 Static Library for Windows</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для Windows</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/ubuntu/build-sdl3-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 Static Library for Ubuntu</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для Ubuntu</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/mingw/build-sdl3-image-webp-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3_image Static Library with WebP Support for Windows (MinGW &amp; CMake)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3_image с поддержкой WebP для Windows (MinGW и CMake)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/sdl3-opengl/desktop/setup-glad-desktop" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Installing GLAD OpenGL Loader Library on Windows &amp; Ubuntu (OpenGL 3.3)</span>
+                    <span class="data-ru">Установка библиотеки-загрузчика OpenGL GLAD под Windows и Ubuntu (OpenGL 3.3)</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Step 1: Create Project Directory -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 1: Create Project Directory</span>
+            <span class="data-ru">Шаг 1: Создание директории проекта</span>
+        </h2>
+        <p>
+            <span class="data-en">Create a workspace folder and directory structure for your SDL3_image + OpenGL test project:</span>
+            <span class="data-ru">Создайте рабочую папку и структуру директорий для вашего тестового проекта SDL3_image + OpenGL:</span>
+        </p>
+
+        <!-- Windows Command -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (Command Prompt / PowerShell)</h3>
+        <pre><code class="language-bash">mkdir C:\projects\sdl3-image-webp-opengl-test\src
+mkdir C:\projects\sdl3-image-webp-opengl-test\assets\textures
+cd C:\projects\sdl3-image-webp-opengl-test</code></pre>
+
+        <!-- Ubuntu Command -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal)</h3>
+        <pre><code class="language-bash">mkdir -p ~/projects/sdl3-image-webp-opengl-test/src
+mkdir -p ~/projects/sdl3-image-webp-opengl-test/assets/textures
+cd ~/projects/sdl3-image-webp-opengl-test</code></pre>
+    </section>
+
+    <!-- Step 2: Download & Place Texture Asset -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 2: Download &amp; Place Texture Asset</span>
+            <span class="data-ru">Шаг 2: Скачивание и размещение текстурного ассета</span>
+        </h2>
+        <p>
+            <span class="data-en">Download the ready-to-use <code>clear_01.webp</code> texture:</span>
+            <span class="data-ru">Скачайте готовую к использованию текстуру <code>clear_01.webp</code>:</span>
+        </p>
+        <p>
+            <a href="/assets/img/tutorials/sdl3-opengl/desktop/loading-webp-textures-with-sdl3-image-opengl-desktop/clear_01.webp" download class="btn btn-primary btn-sm me-2">
+                <span class="data-en">Download clear_01.webp</span>
+                <span class="data-ru">Скачать clear_01.webp</span>
+            </a>
+            <a href="https://opengameart.org/content/crate-5" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm">
+                <span class="data-en">Original PNG on OpenGameArt (Crate #5)</span>
+                <span class="data-ru">Оригинальный PNG на OpenGameArt (Crate #5)</span>
+            </a>
+        </p>
+        <p>
+            <span class="data-en">Place the downloaded <code>clear_01.webp</code> file into your project's texture subfolder:</span>
+            <span class="data-ru">Поместите скачанный файл <code>clear_01.webp</code> в подпапку текстур проекта:</span>
+        </p>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows Path</h3>
+        <pre><code>C:\projects\sdl3-image-webp-opengl-test\assets\textures\clear_01.webp</code></pre>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu / WSL Command (Copying from Windows to WSL)</h3>
+        <p>
+            <span class="data-en">If you downloaded <code>clear_01.webp</code> inside your Windows directory, copy it directly to your WSL Linux directory using the Windows mount path (<code>/mnt/c/</code>):</span>
+            <span class="data-ru">Если вы скачали <code>clear_01.webp</code> в директорию Windows, скопируйте его напрямую в Linux-папку WSL через монтированный путь Windows (<code>/mnt/c/</code>):</span>
+        </p>
+        <pre><code class="language-bash">cp /mnt/c/projects/sdl3-image-webp-opengl-test/assets/textures/clear_01.webp \
+   ~/projects/sdl3-image-webp-opengl-test/assets/textures/</code></pre>
+    </section>
+
+    <!-- Step 3: Create Source Files -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 3: Create Source Files (src/main.cpp &amp; CMakeLists.txt)</span>
+            <span class="data-ru">Шаг 3: Создание исходных файлов (src/main.cpp и CMakeLists.txt)</span>
+        </h2>
+
+        <p>
+            <span class="data-en">You can create these files using Notepad / Sublime Text on Windows, or <code>nano</code> in the Ubuntu terminal:</span>
+            <span class="data-ru">Вы можете создать эти файлы через Notepad / Sublime Text в Windows или с помощью <code>nano</code> в терминале Ubuntu:</span>
+        </p>
+
+        <!-- Windows Quick File Creation -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (Terminal / Notepad)</h3>
+        <pre><code class="language-bash">notepad src\main.cpp
+notepad CMakeLists.txt</code></pre>
+
+        <!-- Ubuntu Quick File Creation -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal / Nano)</h3>
+        <pre><code class="language-bash">nano src/main.cpp
+nano CMakeLists.txt</code></pre>
+
+        <div class="alert alert-info py-2 my-3">
+            <strong><span class="data-en">Quick Nano Commands (Ubuntu):</span><span class="data-ru">Быстрые команды Nano (Ubuntu):</span></strong>
+            <span class="data-en">Paste code with Right Mouse Button (RMB) &rarr; Press <kbd>Ctrl</kbd> + <kbd>O</kbd> and <kbd>Enter</kbd> to save &rarr; Press <kbd>Ctrl</kbd> + <kbd>X</kbd> to exit.</span>
+            <span class="data-ru">Вставьте код правой кнопкой мыши (ПКМ) &rarr; Нажмите <kbd>Ctrl</kbd> + <kbd>O</kbd> и <kbd>Enter</kbd> для сохранения &rarr; Нажмите <kbd>Ctrl</kbd> + <kbd>X</kbd> для выхода.</span>
+        </div>
+
+        <!-- Code File 1 Option A -->
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">1A. File Contents for src/main.cpp (Classic Loop)</span>
+            <span class="data-ru">1A. Содержимое файла src/main.cpp (Классический цикл)</span>
+        </h3>
+        <pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;glad/glad.h&gt;
+#include &lt;SDL3/SDL.h&gt;
+#include &lt;SDL3/SDL_main.h&gt;
+#include &lt;SDL3_image/SDL_image.h&gt;
+
+#ifndef GL_EXT_texture_filter_anisotropic
+#define GL_EXT_texture_filter_anisotropic 1
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
+#endif
+
+static GLuint createTextureFromSurface(SDL_Surface *surface)
+{
+    GLuint texture;
+    glGenTextures(1, &amp;texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface-&gt;w, surface-&gt;h,
+        0, GL_RGBA, GL_UNSIGNED_BYTE, surface-&gt;pixels);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    return texture;
+}
+
+static GLuint createTexture(const char *path)
+{
+    // Use SDL_IOFromFile to correctly read the file from assets on Android and from disk on PC
+    SDL_IOStream *io = SDL_IOFromFile(path, "rb");
+    if (!io)
+    {
+        SDL_Log("Failed to open file stream for %s: %s", path, SDL_GetError());
+        return 0;
+    }
+
+    // Load the image from the SDL stream
+    SDL_Surface *surface = IMG_Load_IO(io, 1); // 1 (true) will automatically close and free the SDL_IOStream
+    if (!surface)
+    {
+        SDL_Log("Image loading failed: %s", SDL_GetError());
+        return 0;
+    }
+
+    // Convert to RGBA / ABGR8888 for OpenGL
+    SDL_Surface *optimizedSurface = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_ABGR8888);
+    SDL_DestroySurface(surface);
+
+    if (!optimizedSurface)
+    {
+        SDL_Log("Surface conversion failed: %s", SDL_GetError());
+        return 0;
+    }
+
+    GLuint textureID;
+    glGenTextures(1, &amp;textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    if (SDL_GL_ExtensionSupported("GL_EXT_texture_filter_anisotropic"))
+    {
+        float maxAnisotropy = 0.0f;
+        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &amp;maxAnisotropy);
+
+        // Set the quality to maximum (usually 8.0 or 16.0)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy);
+
+        printf("Anisotropic filtering enabled. Max: %.1f\n", maxAnisotropy);
+    }
+    else
+    {
+        SDL_Log("Anisotropic filtering not supported.");
+    }
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, optimizedSurface-&gt;w, optimizedSurface-&gt;h,
+        0, GL_RGBA, GL_UNSIGNED_BYTE, optimizedSurface-&gt;pixels);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    SDL_DestroySurface(optimizedSurface);
+
+    return textureID;
+}
+
+// Simple Shader Sources
+static const char* vertexShaderSource = R"(#version 330 core
+layout (location = 0) in vec2 aPos;
+layout (location = 1) in vec2 aTexCoord;
+
+out vec2 TexCoord;
+
+void main() {
+    gl_Position = vec4(aPos, 0.0, 1.0);
+    TexCoord = aTexCoord;
+}
+)";
+
+static const char* fragmentShaderSource = R"(#version 330 core
+out vec4 FragColor;
+in vec2 TexCoord;
+
+uniform sampler2D ourTexture;
+
+void main() {
+    FragColor = texture(ourTexture, TexCoord);
+}
+)";
+
+int main(int argc, char* argv[]) {
+    // 1. Initialize SDL3
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        std::cerr &lt;&lt; "SDL Initialization failed: " &lt;&lt; SDL_GetError() &lt;&lt; std::endl;
+        return -1;
+    }
+
+    // 2. Set OpenGL 3.3 Core Profile attributes
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+    // 3. Create SDL3 Window
+    SDL_Window* window = SDL_CreateWindow("SDL3_image + WebP (OpenGL 3.3) - Classic", 1280, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    if (!window) {
+        std::cerr &lt;&lt; "Window creation failed: " &lt;&lt; SDL_GetError() &lt;&lt; std::endl;
+        SDL_Quit();
+        return -1;
+    }
+
+    // 4. Create OpenGL Context
+    SDL_GLContext glContext = SDL_GL_CreateContext(window);
+    if (!glContext) {
+        std::cerr &lt;&lt; "OpenGL context creation failed: " &lt;&lt; SDL_GetError() &lt;&lt; std::endl;
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return -1;
+    }
+
+    SDL_GL_MakeCurrent(window, glContext);
+    SDL_GL_SetSwapInterval(1); // Enable VSync
+
+    // 5. Initialize GLAD loader
+    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+        std::cerr &lt;&lt; "Failed to initialize GLAD!" &lt;&lt; std::endl;
+        SDL_GL_DestroyContext(glContext);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return -1;
+    }
+
+    // 6. Compile Shaders & Create Quad VAO
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &amp;vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &amp;fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+
+    GLuint shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    float vertices[] = {
+        // Positions   // TexCoords
+        -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f,  1.0f, 1.0f,
+
+        -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  1.0f, 0.0f
+    };
+
+    GLuint VAO, VBO;
+    glGenVertexArrays(1, &amp;VAO);
+    glGenBuffers(1, &amp;VBO);
+
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // 7. Load WebP Texture using SDL3_image
+    GLuint texture = createTexture("assets/textures/clear_01.webp");
+    if (!texture) {
+        std::cerr &lt;&lt; "Failed to load texture assets/textures/clear_01.webp" &lt;&lt; std::endl;
+    }
+
+    bool running = true;
+
+    // 8. Main Event Loop
+    while (running) {
+        SDL_Event event;
+        while (SDL_PollEvent(&amp;event)) {
+            if (event.type == SDL_EVENT_QUIT) {
+                running = false;
+            }
+        }
+
+        int w, h;
+        SDL_GetWindowSizeInPixels(window, &amp;w, &amp;h);
+        glViewport(0, 0, w, h);
+
+        glClearColor(0.2f, 0.25f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        if (texture) {
+            glUseProgram(shaderProgram);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glBindVertexArray(VAO);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+        }
+
+        SDL_GL_SwapWindow(window);
+    }
+
+    // 9. Cleanup
+    if (texture) glDeleteTextures(1, &amp;texture);
+    glDeleteVertexArrays(1, &amp;VAO);
+    glDeleteBuffers(1, &amp;VBO);
+    glDeleteProgram(shaderProgram);
+
+    SDL_GL_DestroyContext(glContext);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
+    return 0;
+}</code></pre>
+
+        <!-- Code File 1 Option B -->
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">1B. File Contents for src/main.cpp (SDL3 Callbacks API)</span>
+            <span class="data-ru">1B. Содержимое файла src/main.cpp (SDL3 Callbacks API)</span>
+        </h3>
+        <pre><code class="language-cpp">#define SDL_MAIN_USE_CALLBACKS 1
+#include &lt;iostream&gt;
+#include &lt;glad/glad.h&gt;
+#include &lt;SDL3/SDL.h&gt;
+#include &lt;SDL3/SDL_main.h&gt;
+#include &lt;SDL3_image/SDL_image.h&gt;
+
+#ifndef GL_EXT_texture_filter_anisotropic
+#define GL_EXT_texture_filter_anisotropic 1
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
+#endif
+
+static GLuint createTextureFromSurface(SDL_Surface *surface)
+{
+    GLuint texture;
+    glGenTextures(1, &amp;texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface-&gt;w, surface-&gt;h,
+        0, GL_RGBA, GL_UNSIGNED_BYTE, surface-&gt;pixels);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    return texture;
+}
+
+static GLuint createTexture(const char *path)
+{
+    // Use SDL_IOFromFile to correctly read the file from assets on Android and from disk on PC
+    SDL_IOStream *io = SDL_IOFromFile(path, "rb");
+    if (!io)
+    {
+        SDL_Log("Failed to open file stream for %s: %s", path, SDL_GetError());
+        return 0;
+    }
+
+    // Load the image from the SDL stream
+    SDL_Surface *surface = IMG_Load_IO(io, 1); // 1 (true) will automatically close and free the SDL_IOStream
+    if (!surface)
+    {
+        SDL_Log("Image loading failed: %s", SDL_GetError());
+        return 0;
+    }
+
+    // Convert to RGBA / ABGR8888 for OpenGL
+    SDL_Surface *optimizedSurface = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_ABGR8888);
+    SDL_DestroySurface(surface);
+
+    if (!optimizedSurface)
+    {
+        SDL_Log("Surface conversion failed: %s", SDL_GetError());
+        return 0;
+    }
+
+    GLuint textureID;
+    glGenTextures(1, &amp;textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    if (SDL_GL_ExtensionSupported("GL_EXT_texture_filter_anisotropic"))
+    {
+        float maxAnisotropy = 0.0f;
+        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &amp;maxAnisotropy);
+
+        // Set the quality to maximum (usually 8.0 or 16.0)
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy);
+
+        printf("Anisotropic filtering enabled. Max: %.1f\n", maxAnisotropy);
+    }
+    else
+    {
+        SDL_Log("Anisotropic filtering not supported.");
+    }
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, optimizedSurface-&gt;w, optimizedSurface-&gt;h,
+        0, GL_RGBA, GL_UNSIGNED_BYTE, optimizedSurface-&gt;pixels);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    SDL_DestroySurface(optimizedSurface);
+
+    return textureID;
+}
+
+static const char* vertexShaderSource = R"(#version 330 core
+layout (location = 0) in vec2 aPos;
+layout (location = 1) in vec2 aTexCoord;
+
+out vec2 TexCoord;
+
+void main() {
+    gl_Position = vec4(aPos, 0.0, 1.0);
+    TexCoord = aTexCoord;
+}
+)";
+
+static const char* fragmentShaderSource = R"(#version 330 core
+out vec4 FragColor;
+in vec2 TexCoord;
+
+uniform sampler2D ourTexture;
+
+void main() {
+    FragColor = texture(ourTexture, TexCoord);
+}
+)";
+
+struct AppState {
+    SDL_Window* window = nullptr;
+    SDL_GLContext glContext = nullptr;
+    GLuint texture = 0;
+    GLuint shaderProgram = 0;
+    GLuint VAO = 0;
+    GLuint VBO = 0;
+};
+
+SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
+    if (!SDL_SetHint(SDL_HINT_MAIN_CALLBACK_RATE, "60")) {
+        return SDL_APP_FAILURE;
+    }
+
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        std::cerr &lt;&lt; "SDL Initialization failed: " &lt;&lt; SDL_GetError() &lt;&lt; std::endl;
+        return SDL_APP_FAILURE;
+    }
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+    AppState* state = new AppState();
+    *appstate = state;
+
+    state-&gt;window = SDL_CreateWindow("SDL3_image + WebP (OpenGL 3.3) - Callbacks", 1280, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    if (!state-&gt;window) {
+        return SDL_APP_FAILURE;
+    }
+
+    state-&gt;glContext = SDL_GL_CreateContext(state-&gt;window);
+    if (!state-&gt;glContext) {
+        return SDL_APP_FAILURE;
+    }
+
+    SDL_GL_MakeCurrent(state-&gt;window, state-&gt;glContext);
+
+    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+        std::cerr &lt;&lt; "Failed to initialize GLAD!" &lt;&lt; std::endl;
+        return SDL_APP_FAILURE;
+    }
+
+    // Shaders & Geometry
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &amp;vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &amp;fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+
+    state-&gt;shaderProgram = glCreateProgram();
+    glAttachShader(state-&gt;shaderProgram, vertexShader);
+    glAttachShader(state-&gt;shaderProgram, fragmentShader);
+    glLinkProgram(state-&gt;shaderProgram);
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    float vertices[] = {
+        // Positions   // TexCoords
+        -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f,  1.0f, 1.0f,
+
+        -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  1.0f, 0.0f
+    };
+
+    glGenVertexArrays(1, &amp;state-&gt;VAO);
+    glGenBuffers(1, &amp;state-&gt;VBO);
+
+    glBindVertexArray(state-&gt;VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, state-&gt;VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    // Load WebP Texture
+    state-&gt;texture = createTexture("assets/textures/clear_01.webp");
+
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
+    if (event-&gt;type == SDL_EVENT_QUIT) {
+        return SDL_APP_SUCCESS;
+    }
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppIterate(void* appstate) {
+    auto* state = static_cast&lt;AppState*&gt;(appstate);
+
+    int w, h;
+    SDL_GetWindowSizeInPixels(state-&gt;window, &amp;w, &amp;h);
+    glViewport(0, 0, w, h);
+
+    glClearColor(0.2f, 0.25f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    if (state-&gt;texture) {
+        glUseProgram(state-&gt;shaderProgram);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, state-&gt;texture);
+        glBindVertexArray(state-&gt;VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+    }
+
+    SDL_GL_SwapWindow(state-&gt;window);
+
+    return SDL_APP_CONTINUE;
+}
+
+void SDL_AppQuit(void* appstate, SDL_AppResult result) {
+    if (appstate) {
+        auto* state = static_cast&lt;AppState*&gt;(appstate);
+
+        if (state-&gt;texture) {
+            glDeleteTextures(1, &amp;state-&gt;texture);
+        }
+        if (state-&gt;VAO) {
+            glDeleteVertexArrays(1, &amp;state-&gt;VAO);
+        }
+        if (state-&gt;VBO) {
+            glDeleteBuffers(1, &amp;state-&gt;VBO);
+        }
+        if (state-&gt;shaderProgram) {
+            glDeleteProgram(state-&gt;shaderProgram);
+        }
+        if (state-&gt;glContext) {
+            SDL_GL_DestroyContext(state-&gt;glContext);
+        }
+        if (state-&gt;window) {
+            SDL_DestroyWindow(state-&gt;window);
+        }
+        delete state;
+    }
+    SDL_Quit();
+}</code></pre>
+
+        <!-- Informational Callout Box for Callbacks -->
+        <div class="alert alert-warning my-3">
+            <strong>
+                <span class="data-en">SDL3 Note: Classic Loop vs. Callbacks API</span>
+                <span class="data-ru">Заметка SDL3: Классический цикл vs. Callbacks API</span>
+            </strong>
+            <p class="mb-0 mt-1">
+                <span class="data-en">
+                    Option 1A uses the traditional <code>main()</code> event loop. Option 1B uses the new SDL3 recommended <strong>Callbacks API</strong> (via <code>SDL_MAIN_USE_CALLBACKS</code>). The Callbacks API hands main loop control over to the OS, preventing window rendering freezes during drag/resize operations and enabling seamless cross-platform support across WebAssembly, iOS, and Android.
+                </span>
+                <span class="data-ru">
+                    Вариант 1A использует традиционный цикл событий <code>main()</code>. Вариант 1B использует новый рекомендуемый в SDL3 <strong>Callbacks API</strong> (через <code>SDL_MAIN_USE_CALLBACKS</code>). Callbacks API передаёт управление основным циклом операционной системе, что предотвращает зависание рендеринга при перетаскивании или изменении размера окна и обеспечивает нативную кроссплатформенность для WebAssembly, iOS и Android.
+                </span>
+            </p>
+        </div>
+
+        <!-- Code File 2: CMakeLists.txt -->
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">2. File Contents for CMakeLists.txt</span>
+            <span class="data-ru">2. Содержимое файла CMakeLists.txt</span>
+        </h3>
+        <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Debug")
+endif()
+
+project(sdl3_image_webp_opengl_test CXX C)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# -----------------------------------------------------------------------------
+# Paths
+# -----------------------------------------------------------------------------
+if(WIN32)
+    set(GLAD_DIR         "C:/libs/glad-0.1.36/opengl-3.3")
+    set(SDL3_DIR         "C:/libs/sdl3-3.4.18-mingw/lib/cmake/SDL3")
+    set(SDL3_image_DIR   "C:/libs/sdl3_image-3.4.8-webp-mingw/lib/cmake/SDL3_image")
+    set(webp_ROOT        "C:/libs/webp-1.6.0-mingw")
+    set(webp_INCLUDE_DIR "C:/libs/webp-1.6.0-mingw/include")
+    set(webp_LIBRARY     "C:/libs/webp-1.6.0-mingw/lib/libwebp.a")
+else()
+    set(GLAD_DIR         "$ENV{HOME}/libs/glad-0.1.36/opengl-3.3")
+    set(SDL3_DIR         "$ENV{HOME}/libs/sdl3-3.4.18-ubuntu/lib/cmake/SDL3")
+    set(SDL3_image_DIR   "$ENV{HOME}/libs/sdl3_image-3.4.8-webp-ubuntu/lib/cmake/SDL3_image")
+    set(webp_ROOT        "$ENV{HOME}/libs/webp-1.6.0-ubuntu")
+    set(webp_INCLUDE_DIR "$ENV{HOME}/libs/webp-1.6.0-ubuntu/include")
+    set(webp_LIBRARY     "$ENV{HOME}/libs/webp-1.6.0-ubuntu/lib/libwebp.a")
+endif()
+
+# -----------------------------------------------------------------------------
+# Locate Official SDL3 and SDL3_image Packages
+# -----------------------------------------------------------------------------
+find_package(SDL3 REQUIRED CONFIG)
+find_package(SDL3_image REQUIRED CONFIG)
+
+# -----------------------------------------------------------------------------
+# Executable Target
+# -----------------------------------------------------------------------------
+add_executable(app
+    src/main.cpp
+    ${GLAD_DIR}/src/glad.c
+)
+
+# -----------------------------------------------------------------------------
+# Include Directories
+# -----------------------------------------------------------------------------
+target_include_directories(app PRIVATE
+    ${GLAD_DIR}/include
+)
+
+# -----------------------------------------------------------------------------
+# Copy Assets to Build Directory
+# -----------------------------------------------------------------------------
+add_custom_command(TARGET app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/assets
+        $&lt;TARGET_FILE_DIR:app&gt;/assets
+)
+
+# -----------------------------------------------------------------------------
+# Static C++ Runtime (Applied to BOTH Windows &amp; Ubuntu)
+# -----------------------------------------------------------------------------
+target_link_options(app PRIVATE -static-libgcc -static-libstdc++)
+
+# -----------------------------------------------------------------------------
+# Optimization &amp; Symbol Stripping (Release Builds Only)
+# -----------------------------------------------------------------------------
+if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+    target_compile_options(app PRIVATE -Os)
+    target_link_options(app PRIVATE -s)
+endif()
+
+# -----------------------------------------------------------------------------
+# Platform Linking &amp; Dependencies
+# -----------------------------------------------------------------------------
+if(WIN32)
+    target_link_libraries(app PRIVATE
+        SDL3_image::SDL3_image-static
+        SDL3::SDL3-static
+        opengl32
+        C:/libs/webp-1.6.0-mingw/lib/libwebpdemux.a
+        C:/libs/webp-1.6.0-mingw/lib/libwebpmux.a
+        C:/libs/webp-1.6.0-mingw/lib/libwebp.a
+        C:/libs/webp-1.6.0-mingw/lib/libsharpyuv.a
+    )
+
+    # Windows static linking &amp; subsystem selection
+    target_link_options(app PRIVATE -static)
+
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_link_options(app PRIVATE -mconsole)
+    else()
+        target_link_options(app PRIVATE -mwindows)
+    endif()
+else()
+    target_link_libraries(app PRIVATE
+        SDL3_image::SDL3_image-static
+        SDL3::SDL3-static
+        GL
+        $ENV{HOME}/libs/webp-1.6.0-ubuntu/lib/libwebpdemux.a
+        $ENV{HOME}/libs/webp-1.6.0-ubuntu/lib/libwebpmux.a
+        $ENV{HOME}/libs/webp-1.6.0-ubuntu/lib/libwebp.a
+        $ENV{HOME}/libs/webp-1.6.0-ubuntu/lib/libsharpyuv.a
+    )
+endif()</code></pre>
+    </section>
+
+    <!-- Step 4: Build & Execution Scripts -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 4: Create Build &amp; Execution Scripts</span>
+            <span class="data-ru">Шаг 4: Создание скриптов сборки и запуска</span>
+        </h2>
+
+        <!-- Windows Tab/Sub-block -->
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (MinGW / Batch Scripts)</h3>
+        <p class="fw-bold mb-1">config-win.bat</p>
+        <pre><code class="language-bash">cmake -G Ninja -S . -B dist/win</code></pre>
+
+        <p class="fw-bold mb-1">build-win.bat</p>
+        <pre><code class="language-bash">cmake --build dist/win</code></pre>
+
+        <p class="fw-bold mb-1">run-win.bat</p>
+        <pre><code class="language-bash">@echo off
+.\dist\win\app.exe</code></pre>
+
+        <p class="mt-3">
+            <span class="data-en">Run the scripts sequentially in Command Prompt or PowerShell:</span>
+            <span class="data-ru">Последовательно запустите скрипты в командной строке или PowerShell:</span>
+        </p>
+        <pre><code class="language-bash">config-win.bat
+build-win.bat
+run-win.bat</code></pre>
+
+        <!-- Ubuntu Tab/Sub-block -->
+        <h3 class="h6 fw-bold mt-4 text-primary">Ubuntu (Bash Scripts)</h3>
+        <p class="fw-bold mb-1">config-linux.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+cmake -G Ninja -S . -B dist/linux</code></pre>
+
+        <p class="fw-bold mb-1">build-linux.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+cmake --build dist/linux</code></pre>
+
+        <p class="fw-bold mb-1">run-linux.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+./dist/linux/app</code></pre>
+
+        <p class="mt-3">
+            <span class="data-en">Grant execute permissions on Ubuntu before running:</span>
+            <span class="data-ru">Предоставьте права на выполнение в Ubuntu перед запуском:</span>
+        </p>
+        <pre><code class="language-bash">chmod +x config-linux.sh build-linux.sh run-linux.sh
+./config-linux.sh
+./build-linux.sh
+./run-linux.sh</code></pre>
+    </section>
+
+    <!-- Step 5: Expected Output -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 5: Expected Output</span>
+            <span class="data-ru">Шаг 5: Ожидаемый результат</span>
+        </h2>
+
+        <p>
+            <span class="data-en">After running the build and execution scripts, a native desktop window will open displaying the textured crate quad rendered with OpenGL 3.3 and anisotropic filtering loaded directly from the WebP file via <code>SDL3_image</code>:</span>
+            <span class="data-ru">После запуска скриптов сборки и выполнения откроется нативное окно приложения, отображающее текстурированный прямоугольник с ящиком, отрендеренный с использованием OpenGL 3.3 и анизотропной фильтрации, загруженный напрямую из WebP файла через <code>SDL3_image</code>:</span>
+        </p>
+
+        <pre><code class="language-text">SDL3_image + WebP (OpenGL 3.3) - Classic</code></pre>
+        <p class="mt-2">
+            <span class="data-en">or (if using the Callbacks API version):</span>
+            <span class="data-ru">или (если используется версия с Callbacks API):</span>
+        </p>
+        <pre><code class="language-text">SDL3_image + WebP (OpenGL 3.3) - Callbacks</code></pre>
+    </section>
+
+    <!-- GitHub Repository Link -->
+    <section class="mt-5 pt-3 border-top text-center">
+        <p class="lead">
+            <span class="data-en">Complete source code for this project is available on GitHub:</span>
+            <span class="data-ru">Полный исходный код проекта доступен на GitHub:</span>
+        </p>
+        <a href="https://github.com/ivan-enzhaev/sdl3-image-webp-opengl-test" target="_blank" rel="noopener noreferrer" class="btn btn-dark btn-lg">
+            <span class="data-en">View on GitHub</span>
+            <span class="data-ru">Смотреть на GitHub</span>
+        </a>
+    </section>
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">
+                        <span class="data-en">Sberbank (Russia only)</span>
+                        <span class="data-ru">Сбербанк (только для РФ)</span>
+                    </h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number (Russia only)</span>
+                        <span class="data-ru">Перевод по номеру телефона (только для РФ)</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">USDT TRC20</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    // function setLanguage(lang) {
+    //     if (lang !== "en" && lang !== "ru") lang = "en";
+    //     document.documentElement.setAttribute("lang", lang);
+    //     localStorage.setItem("preferred-lang", lang);
+    //     document
+    //         .querySelectorAll(".lang-link")
+    //         .forEach((el) => el.classList.remove("active"));
+    //     const btn = document.getElementById("btn-" + lang);
+    //     if (btn) btn.classList.add("active");
+
+    //     updateVideoPlayerLanguage(lang);
+    // }
+
+    // function changeLanguage(lang) {
+    //     setLanguage(lang);
+    //     const url = new URL(window.location);
+    //     url.searchParams.set("lang", lang);
+    //     window.history.pushState({}, "", url);
+    // }
+
+    // // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+        
+    //     if (link) {
+    //         // Check if the link is intended to open in a new tab
+    //         if (link.target === "_blank") {
+    //             // Allow the browser to handle the click naturally, 
+    //             // but we still want to append the language param.
+    //             const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //             const targetUrl = new URL(link.href);
+    //             targetUrl.searchParams.set("lang", currentLang);
+                
+    //             // Update the href right before the browser follows it
+    //             link.href = targetUrl.toString();
+    //             return; // Exit the function so e.preventDefault() isn't called
+    //         }
+
+    //         // Existing logic for same-tab navigation
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // (function init() {
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     const langParam = urlParams.get("lang");
+    //     const savedLang = localStorage.getItem("preferred-lang");
+    //     setLanguage(langParam || savedLang || "en");
+    // })();
+
+    // window.onpopstate = function() {
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     setLanguage(urlParams.get("lang") || "en");
+    // };
+
+    // document.querySelectorAll('pre').forEach((pre) => {
+    //     // Create container and header
+    //     const container = document.createElement('div');
+    //     container.className = 'code-container';
+        
+    //     const header = document.createElement('div');
+    //     header.className = 'code-header';
+        
+    //     const button = document.createElement('button');
+    //     button.className = 'copy-button';
+    //     button.innerText = 'Copy';
+
+    //     // Wrap the pre tag
+    //     pre.parentNode.insertBefore(container, pre);
+    //     header.appendChild(button);
+    //     container.appendChild(header);
+    //     container.appendChild(pre);
+
+    //     // Copy Logic
+    //     button.addEventListener('click', () => {
+    //         const code = pre.querySelector('code').innerText;
+    //         navigator.clipboard.writeText(code).then(() => {
+    //             button.innerText = 'Copied!';
+    //             button.classList.add('copied');
+
+    //             setTimeout(() => {
+    //                 button.innerText = 'Copy';
+    //                 button.classList.remove('copied');
+    //             }, 2000);
+    //         });
+    //     });
+    // });
+
+    // document.addEventListener("DOMContentLoaded", () => {
+    //     const codeBlocks = document.querySelectorAll('code[data-url]');
+
+    //     codeBlocks.forEach(async (block) => {
+    //         const url = block.getAttribute('data-url');
+    //         if (!url) return;
+
+    //         try {
+    //             const response = await fetch(url);
+    //             if (!response.ok) throw new Error('Fetch failed');
+    //             const code = await response.text();
+                
+    //             // Set the content
+    //             block.textContent = code;
+                
+    //             // Re-run Prism highlight if available
+    //             if (typeof Prism !== 'undefined') {
+    //                 Prism.highlightElement(block);
+    //             }
+    //         } catch (err) {
+    //             console.error("Could not load code:", err);
+    //             block.textContent = "// Error: Could not load code from GitHub.";
+    //         }
+    //     });
+    // });
+
+    // function updateVideoPlayerLanguage(lang) {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     const targetSrc = lang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+    //     const targetTitle = lang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+    //     // Only update if the URL actually changed to prevent unneeded reloads
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // // Example listener: Call this function inside your existing language-switcher click handler:
+    // document.querySelectorAll('.lang-link').forEach(link => {
+    //     link.addEventListener('click', function() {
+    //         const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+    //         updateVideoPlayerLanguage(lang);
+    //     });
+    // });
+
+    // function initVideoPlayer() {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     // Detect language from URL query string (?lang=ru), or <html lang="..."> attribute
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     const currentLang = urlParams.get('lang') || document.documentElement.lang || 'en';
+
+    //     // Set correct video source on page load
+    //     const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+    //     const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // function loadVideoPlayer() {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     // Determine current language
+    //     const lang = document.documentElement.getAttribute('lang') || 
+    //                  localStorage.getItem('preferred-lang') || 
+    //                  'en';
+
+    //     const targetSrc = lang === 'ru' 
+    //         ? player.getAttribute('data-src-ru') 
+    //         : player.getAttribute('data-src-en');
+    //     const targetTitle = lang === 'ru' 
+    //         ? player.getAttribute('data-title-ru') 
+    //         : player.getAttribute('data-title-en');
+
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // function initVideoPlayerWhenVisible() {
+    //     // If opened in a background tab (middle click), wait until the user switches to this tab
+    //     if (document.hidden) {
+    //         document.addEventListener('visibilitychange', function onVisible() {
+    //             if (!document.hidden) {
+    //                 document.removeEventListener('visibilitychange', onVisible);
+    //                 loadVideoPlayer();
+    //             }
+    //         });
+    //     } else {
+    //         // Tab is active (normal left click) -> load immediately
+    //         loadVideoPlayer();
+    //     }
+    // }
+
+    // // Call on load
+    // if (document.readyState === 'loading') {
+    //     document.addEventListener('DOMContentLoaded', initVideoPlayerWhenVisible);
+    // } else {
+    //     initVideoPlayerWhenVisible();
+    // }
+
+    // 1. Language setting
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+
+        // When manually switching languages on an active tab, update immediately
+        if (!document.hidden) {
+            applyVideoPlayerSrc(lang);
+        }
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // 2. Core video updater
+    function applyVideoPlayerSrc(lang) {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        const currentLang = lang || document.documentElement.getAttribute("lang") || localStorage.getItem("preferred-lang") || "en";
+        const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        if (targetSrc && player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // 3. Deferred loader: waits for tab focus and real layout dimensions
+    function initVideoPlayer() {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        // Wait one render frame to guarantee full container width is computed
+                        requestAnimationFrame(() => {
+                            applyVideoPlayerSrc();
+                        });
+                        observer.disconnect();
+                    }
+                });
+            }, { threshold: 0.05 });
+
+            observer.observe(player);
+        } else {
+            applyVideoPlayerSrc();
+        }
+    }
+
+    // 4. Update language links on mousedown so middle-click gets ?lang= correctly
+    document.addEventListener("mousedown", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (!link) return;
+
+        const currentLang = document.documentElement.getAttribute("lang") || localStorage.getItem("preferred-lang") || "en";
+        const targetUrl = new URL(link.href, window.location.origin);
+        targetUrl.searchParams.set("lang", currentLang);
+        link.href = targetUrl.toString();
+    });
+
+    // 5. Normal click navigation
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (link && link.target !== "_blank") {
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(link.href, window.location.origin + window.location.pathname);
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    // 6. Language Switcher Buttons
+    document.querySelectorAll('.lang-link').forEach(link => {
+        link.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+            changeLanguage(lang);
+        });
+    });
+
+    // 7. Initialize language on page load
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    // 8. Initialize video player (runs once when DOM is ready)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initVideoPlayer);
+    } else {
+        initVideoPlayer();
+    }
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    // Code copy buttons
+    document.querySelectorAll('pre').forEach((pre) => {
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+
+    // External code blocks loader
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                block.textContent = code;
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
+        });
+    });
+</script>
+</body>
+
+</html>
