@@ -364,15 +364,69 @@ ninja install</code></pre>
         </li>
     </ol>
 
-    <!-- Step 5 -->
+    <!-- Step 6: Project Configuration & GitHub Project -->
     <h3 class="category-header mt-5">
-        <span class="data-en">6. Project Configuration (CMakeLists.txt)</span>
-        <span class="data-ru">6. Конфигурация проекта (CMakeLists.txt)</span>
+        <span class="data-en">6. Project Configuration &amp; Testing in Qt Creator</span>
+        <span class="data-ru">6. Конфигурация проекта и запуск в Qt Creator</span>
     </h3>
+
     <p>
-        <span class="data-en">In your application's <code>CMakeLists.txt</code>, configure the target with static link options and automatic strip (<code>-s</code>) for Release builds:</span>
-        <span class="data-ru">В файле <code>CMakeLists.txt</code> вашего проекта укажите флаг <code>-static</code> и автоматическое удаление отладочной информации (<code>-s</code>) только для Release-сборки:</span>
+        <span class="data-en">
+            You can clone or download the complete ready-to-run demo project directly from GitHub: 
+            <a href="https://github.com/ivan-enzhaev/OpenGLTestQt6" target="_blank" rel="noopener noreferrer" class="fw-bold">github.com/ivan-enzhaev/OpenGLTestQt6</a>
+        </span>
+        <span class="data-ru">
+            Вы можете клонировать или скачать готовый к запуску демонстрационный проект с GitHub: 
+            <a href="https://github.com/ivan-enzhaev/OpenGLTestQt6" target="_blank" rel="noopener noreferrer" class="fw-bold">github.com/ivan-enzhaev/OpenGLTestQt6</a>
+        </span>
     </p>
+
+    <pre><code class="language-bash">git clone https://github.com/ivan-enzhaev/OpenGLTestQt6.git</code></pre>
+
+    <h4 class="mt-4 fw-bold text-secondary">
+        <span class="data-en">How to Open and Run in Qt Creator:</span>
+        <span class="data-ru">Как открыть и запустить проект в Qt Creator:</span>
+    </h4>
+    <ol>
+        <li>
+            <span class="data-en">In Qt Creator, click <strong>File &gt; Open File or Project...</strong> (or press <code>Ctrl+O</code>).</span>
+            <span class="data-ru">В Qt Creator нажмите <strong>File &gt; Open File or Project...</strong> (или нажмите <code>Ctrl+O</code>).</span>
+        </li>
+        <li>
+            <span class="data-en">Navigate to the cloned repository folder and select the <code>CMakeLists.txt</code> file.</span>
+            <span class="data-ru">Перейдите в папку склонированного репозитория и выберите файл <code>CMakeLists.txt</code>.</span>
+        </li>
+        <li>
+            <span class="data-en">
+                In the <strong>Configure Project</strong> screen, select your kit <strong><code>Qt 6.12.0 Static (MinGW 16.2)</code></strong>. 
+                <br>
+                <strong>Important:</strong> Only <code>Debug</code> is checked by default. Make sure to also check the <strong><code>Release</code></strong> checkbox so that Qt Creator configures the optimized release build! Then click <strong>Configure Project</strong>.
+            </span>
+            <span class="data-ru">
+                На экране <strong>Configure Project</strong> выберите ваш Kit <strong><code>Qt 6.12.0 Static (MinGW 16.2)</code></strong>. 
+                <br>
+                <strong>Важно:</strong> По умолчанию галочка стоит только на <code>Debug</code>. Обязательно поставьте галочку напротив <strong><code>Release</code></strong>, чтобы Qt Creator сконфигурировал оптимизированную Release-сборку! После этого нажмите <strong>Configure Project</strong>.
+            </span>
+        </li>
+        <li>
+            <span class="data-en">Switch the active build configuration to <strong>Release</strong> (click the monitor icon in the bottom-left corner of Qt Creator or press <code>Ctrl+T</code>).</span>
+            <span class="data-ru">Переключите активную конфигурацию сборки на <strong>Release</strong> (нажмите на значок монитора в левом нижнем углу окна Qt Creator или нажмите <code>Ctrl+T</code>).</span>
+        </li>
+        <li>
+            <span class="data-en">Press <strong>Ctrl+R</strong> to build and launch! The resulting single executable in the release build folder will be stripped down to ~30 MB and runs without needing any external DLLs.</span>
+            <span class="data-ru">Нажмите <strong>Ctrl+R</strong> для сборки и запуска! Итоговый одиночный <code>.exe</code> файл в папке release-сборки будет автоматически сжат до ~30 МБ и запустится без каких-либо внешних DLL.</span>
+        </li>
+    </ol>
+
+    <h4 class="mt-4 fw-bold text-secondary">
+        <span class="data-en">CMakeLists.txt Reference:</span>
+        <span class="data-ru">Содержимое CMakeLists.txt:</span>
+    </h4>
+    <p>
+        <span class="data-en">Here is the clean <code>CMakeLists.txt</code> used in the repository, configured for static linking and automatic stripping:</span>
+        <span class="data-ru">Минимальный и чистый <code>CMakeLists.txt</code> из репозитория с флагом <code>-static</code> и авто-strip для Release:</span>
+    </p>
+
     <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
 project(OpenGLTestQt6 LANGUAGES CXX)
 
