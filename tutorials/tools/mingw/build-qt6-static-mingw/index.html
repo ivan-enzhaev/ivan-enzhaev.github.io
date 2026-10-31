@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    Building Static Qt 6 for Desktop OpenGL with MinGW GCC 16.2 &amp; CMake
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+<script src="/libs/bootstrap@5.3.3/bootstrap.bundle.min.js"></script>
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
+
+    /* How to hide non-active language blocks without collapsing iframe dimensions */
+    .data-en.d-none, 
+    .data-ru.d-none {
+        display: none !important;
+    }
+
+    /* Add this to prevent resolution drops during language toggles */
+    .ratio iframe {
+        width: 100%;
+        height: 100%;
+        content-visibility: visible;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold text-dark">
+            <span class="data-en">Building Static Qt 6 for Desktop OpenGL with MinGW GCC 16.2</span>
+            <span class="data-ru">Статическая сборка Qt 6 для Desktop OpenGL с MinGW GCC 16.2</span>
+        </h1>
+    </header>
+
+    <div class="alert alert-secondary mb-4">
+        <span class="data-en">
+            <strong>Key Results:</strong>
+            <ul class="mb-0 mt-2">
+                <li>Installation folder: <code>C:\Qt\6.12.0_static_mingw162</code> — only <strong>~496 MB</strong></li>
+                <li>Clone time: ~2 minutes (shallow clone of <code>qtbase</code> only)</li>
+                <li>Build time: ~20 minutes on an Intel Core i7-7700 with SSD</li>
+                <li>Release stripped <code>.exe</code>: ~30 MB (compresses down to ~12 MB in zip) with <strong>zero external DLL dependencies</strong>!</li>
+            </ul>
+        </span>
+        <span class="data-ru">
+            <strong>Ключевые результаты:</strong>
+            <ul class="mb-0 mt-2">
+                <li>Папка установки: <code>C:\Qt\6.12.0_static_mingw162</code> — всего <strong>~496 МБ</strong></li>
+                <li>Время клонирования: ~2 минуты (только <code>qtbase</code>)</li>
+                <li>Время сборки: ~20 минут на процессоре Intel Core i7-7700 с SSD</li>
+                <li>Финальный сжатый (stripped) <code>.exe</code>: ~30 МБ (около 12 МБ в архиве) <strong>без каких-либо внешних DLL</strong>!</li>
+            </ul>
+        </span>
+    </div>
+
+    <!-- Prerequisites -->
+    <h3 class="category-header">
+        <span class="data-en">1. Prerequisites</span>
+        <span class="data-ru">1. Необходимые инструменты</span>
+    </h3>
+    <p>
+        <span class="data-en">Before building, install the required toolchains and ensure their binary directories are added to your System <code>PATH</code>:</span>
+        <span class="data-ru">Перед началом сборки установите необходимые инструменты и убедитесь, что пути к ним добавлены в переменную <code>PATH</code>:</span>
+    </p>
+    <ul>
+        <li>
+            <span class="data-en"><strong>MinGW GCC 16.2.0 (WinLibs):</strong> Download from <a href="https://winlibs.com/" target="_blank" rel="noopener noreferrer">winlibs.com</a> and extract to <code>C:\mingw64_16.2</code> (Ninja is already included in WinLibs).</span>
+            <span class="data-ru"><strong>MinGW GCC 16.2.0 (WinLibs):</strong> Скачайте с <a href="https://winlibs.com/" target="_blank" rel="noopener noreferrer">winlibs.com</a> и распакуйте в <code>C:\mingw64_16.2</code> (утилита Ninja уже входит в комплект WinLibs).</span>
+        </li>
+        <li>
+            <span class="data-en"><strong>CMake:</strong> Download and install from <a href="https://cmake.org/download/" target="_blank" rel="noopener noreferrer">cmake.org</a> (select "Add CMake to system PATH").</span>
+            <span class="data-ru"><strong>CMake:</strong> Скачайте и установите с <a href="https://cmake.org/download/" target="_blank" rel="noopener noreferrer">cmake.org</a> (выберите пункт "Add CMake to system PATH").</span>
+        </li>
+        <li>
+            <span class="data-en"><strong>Qt Creator:</strong> Download standalone installer from <a href="https://github.com/qt-creator/qt-creator/releases" target="_blank" rel="noopener noreferrer">Qt Creator GitHub Releases</a>.</span>
+            <span class="data-ru"><strong>Qt Creator:</strong> Скачайте автономный установщик со страницы <a href="https://github.com/qt-creator/qt-creator/releases" target="_blank" rel="noopener noreferrer">GitHub релизов Qt Creator</a>.</span>
+        </li>
+    </ul>
+
+    <!-- Step 1 -->
+    <h3 class="category-header mt-5">
+        <span class="data-en">2. Clone Only qtbase</span>
+        <span class="data-ru">2. Клонирование только модуля qtbase</span>
+    </h3>
+    <p>
+        <span class="data-en">Because you only need <strong>Desktop OpenGL</strong>, <strong>QWindow</strong>, and <strong>QtWidgets</strong>, you do not need the full umbrella Qt repository or Perl. Everything you need is inside <code>qtbase</code>:</span>
+        <span class="data-ru">Так как для работы нужны только <strong>Desktop OpenGL</strong>, <strong>QWindow</strong> и <strong>QtWidgets</strong>, вам не требуется клонировать весь репозиторий Qt или устанавливать Perl. Всё необходимое уже находится внутри <code>qtbase</code>:</span>
+    </p>
+    <pre><code class="language-bash">mkdir C:\QtSource
+cd C:\QtSource
+
+# Shallow clone of qtbase only (~150 MB download)
+git clone --depth 1 -b v6.12.0 https://code.qt.io/qt/qtbase.git</code></pre>
+
+    <!-- Step 2 -->
+    <h3 class="category-header mt-5">
+        <span class="data-en">3. Configure for Static Build</span>
+        <span class="data-ru">3. Конфигурация статической сборки</span>
+    </h3>
+    <p>
+        <span class="data-en">Create a separate build folder and configure Qt using <code>configure.bat</code>:</span>
+        <span class="data-ru">Создайте отдельную папку для сборки и запустите конфигурацию с помощью <code>configure.bat</code>:</span>
+    </p>
+    <pre><code class="language-bash">mkdir C:\QtBuild
+cd C:\QtBuild
+
+C:\QtSource\qtbase\configure.bat ^
+  -static ^
+  -release ^
+  -prefix C:\Qt\6.12.0_static_mingw162 ^
+  -opengl desktop ^
+  -nomake examples ^
+  -nomake tests</code></pre>
+
+    <!-- Step 3 -->
+    <h3 class="category-header mt-5">
+        <span class="data-en">4. Compile and Install</span>
+        <span class="data-ru">4. Компиляция и установка</span>
+    </h3>
+    <p>
+        <span class="data-en">Run <code>ninja</code> to start building with all CPU threads, then install:</span>
+        <span class="data-ru">Запустите <code>ninja</code> для многопоточной компиляции, а затем установите:</span>
+    </p>
+    <pre><code class="language-bash">ninja
+ninja install</code></pre>
+    <div class="alert alert-info">
+        <span class="data-en">After <code>ninja install</code> completes, you can safely delete <code>C:\QtBuild</code> and <code>C:\QtSource</code> to free up SSD space.</span>
+        <span class="data-ru">После завершения <code>ninja install</code> вы можете безопасно удалить папки <code>C:\QtBuild</code> и <code>C:\QtSource</code> для освобождения места на диске.</span>
+    </div>
+
+    <!-- Step 4 -->
+    <h3 class="category-header mt-5">
+        <span class="data-en">5. Register Kit in Qt Creator</span>
+        <span class="data-ru">5. Настройка Kit в Qt Creator</span>
+    </h3>
+    <p>
+        <span class="data-en">Open Qt Creator and navigate to <strong>Edit &gt; Preferences</strong>:</span>
+        <span class="data-ru">Откройте Qt Creator и перейдите в <strong>Edit &gt; Preferences</strong>:</span>
+    </p>
+    <ol>
+        <li>
+            <span class="data-en"><strong>Qt Versions:</strong> Click <strong>Add</strong> and select <code>C:\Qt\6.12.0_static_mingw162\bin\qmake.exe</code></span>
+            <span class="data-ru"><strong>Qt Versions:</strong> Нажмите <strong>Add</strong> и укажите <code>C:\Qt\6.12.0_static_mingw162\bin\qmake.exe</code></span>
+        </li>
+        <li>
+            <span class="data-en"><strong>Compilers:</strong> Verify your WinLibs GCC 16.2 (C and C++) compilers are detected under <code>Auto-detected</code>.</span>
+            <span class="data-ru"><strong>Compilers:</strong> Убедитесь, что компиляторы WinLibs GCC 16.2 (C и C++) присутствуют в разделе <code>Auto-detected</code>.</span>
+        </li>
+        <li>
+            <span class="data-en"><strong>Debuggers:</strong> Click <strong>Add</strong>, set Name to <code>GDB (WinLibs MinGW 16.2)</code>, and point Path to your <code>gdb.exe</code> (e.g., <code>C:\mingw64_16.2\bin\gdb.exe</code>).</span>
+            <span class="data-ru"><strong>Debuggers:</strong> Нажмите <strong>Add</strong>, назовите <code>GDB (WinLibs MinGW 16.2)</code> и укажите путь к <code>gdb.exe</code> (например, <code>C:\mingw64_16.2\bin\gdb.exe</code>).</span>
+        </li>
+        <li>
+            <span class="data-en"><strong>Kits:</strong> Click <strong>Add</strong>:
+                <ul>
+                    <li><strong>Name:</strong> <code>Qt 6.12.0 Static (MinGW 16.2)</code></li>
+                    <li><strong>Compiler C/C++:</strong> WinLibs GCC 16.2</li>
+                    <li><strong>Debugger:</strong> <code>GDB (WinLibs MinGW 16.2)</code></li>
+                    <li><strong>Qt version:</strong> The static version registered in step 1</li>
+                    <li><strong>CMake Generator:</strong> <code>Ninja</code></li>
+                </ul>
+            </span>
+            <span class="data-ru"><strong>Kits:</strong> Нажмите <strong>Add</strong>:
+                <ul>
+                    <li><strong>Name:</strong> <code>Qt 6.12.0 Static (MinGW 16.2)</code></li>
+                    <li><strong>Compiler C/C++:</strong> WinLibs GCC 16.2</li>
+                    <li><strong>Debugger:</strong> <code>GDB (WinLibs MinGW 16.2)</code></li>
+                    <li><strong>Qt version:</strong> Добавленная статическая версия из шага 1</li>
+                    <li><strong>CMake Generator:</strong> <code>Ninja</code></li>
+                </ul>
+            </span>
+        </li>
+    </ol>
+
+    <!-- Step 5 -->
+    <h3 class="category-header mt-5">
+        <span class="data-en">6. Project Configuration (CMakeLists.txt)</span>
+        <span class="data-ru">6. Конфигурация проекта (CMakeLists.txt)</span>
+    </h3>
+    <p>
+        <span class="data-en">In your application's <code>CMakeLists.txt</code>, configure the target with static link options and automatic strip (<code>-s</code>) for Release builds:</span>
+        <span class="data-ru">В файле <code>CMakeLists.txt</code> вашего проекта укажите флаг <code>-static</code> и автоматическое удаление отладочной информации (<code>-s</code>) только для Release-сборки:</span>
+    </p>
+    <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+project(OpenGLTestQt6 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+
+find_package(Qt6 COMPONENTS Widgets OpenGLWidgets REQUIRED)
+
+add_executable(OpenGLTest WIN32
+    main.cpp
+    mainwindow.cpp
+    mainwindow.h
+    mainwindow.ui
+)
+
+target_link_libraries(OpenGLTest PRIVATE
+    Qt6::Widgets
+    Qt6::OpenGLWidgets
+    opengl32
+)
+
+if(MINGW)
+    target_link_options(OpenGLTest PRIVATE
+        -static
+        $<$&lt;CONFIG:Release&gt;:-s>
+    )
+endif()</code></pre>
+
+    <!-- License Note -->
+    <div class="alert alert-warning mt-5">
+        <h5 class="fw-bold">
+            <span class="data-en">Important Note on LGPLv3 &amp; Static Linking</span>
+            <span class="data-ru">Важное примечание о лицензии LGPLv3 и статической линковке</span>
+        </h5>
+        <span class="data-en">
+            Don't forget about this: If you distribute a statically built Qt <code>.exe</code> under the free LGPLv3 license, you must choose one of two options:
+            <ol class="mb-0 mt-2">
+                <li><strong>Make your project open source</strong> and share your full source code.</li>
+                <li><strong>Keep your source code private</strong>, but provide your compiled <code>.obj</code> files so users can relink the application with their own Qt library.</li>
+            </ol>
+        </span>
+        <span class="data-ru">
+            Не забывайте об этом: если вы распространяете статически собранный исполняемый файл Qt <code>.exe</code> под бесплатной лицензией LGPLv3, вам необходимо выбрать один из двух вариантов:
+            <ol class="mb-0 mt-2">
+                <li><strong>Сделать проект открытым (Open Source)</strong> и опубликовать весь исходный код.</li>
+                <li><strong>Оставить исходный код закрытым</strong>, но предоставить скомпилированные объектные файлы (<code>.obj</code>), чтобы пользователи могли перелинковать приложение со своей версией Qt.</li>
+            </ol>
+        </span>
+    </div>
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">
+                        <span class="data-en">Sberbank (Russia only)</span>
+                        <span class="data-ru">Сбербанк (только для РФ)</span>
+                    </h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number (Russia only)</span>
+                        <span class="data-ru">Перевод по номеру телефона (только для РФ)</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">USDT TRC20</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    // function setLanguage(lang) {
+    //     if (lang !== "en" && lang !== "ru") lang = "en";
+    //     document.documentElement.setAttribute("lang", lang);
+    //     localStorage.setItem("preferred-lang", lang);
+    //     document
+    //         .querySelectorAll(".lang-link")
+    //         .forEach((el) => el.classList.remove("active"));
+    //     const btn = document.getElementById("btn-" + lang);
+    //     if (btn) btn.classList.add("active");
+
+    //     updateVideoPlayerLanguage(lang);
+    // }
+
+    // function changeLanguage(lang) {
+    //     setLanguage(lang);
+    //     const url = new URL(window.location);
+    //     url.searchParams.set("lang", lang);
+    //     window.history.pushState({}, "", url);
+    // }
+
+    // // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+        
+    //     if (link) {
+    //         // Check if the link is intended to open in a new tab
+    //         if (link.target === "_blank") {
+    //             // Allow the browser to handle the click naturally, 
+    //             // but we still want to append the language param.
+    //             const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //             const targetUrl = new URL(link.href);
+    //             targetUrl.searchParams.set("lang", currentLang);
+                
+    //             // Update the href right before the browser follows it
+    //             link.href = targetUrl.toString();
+    //             return; // Exit the function so e.preventDefault() isn't called
+    //         }
+
+    //         // Existing logic for same-tab navigation
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // (function init() {
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     const langParam = urlParams.get("lang");
+    //     const savedLang = localStorage.getItem("preferred-lang");
+    //     setLanguage(langParam || savedLang || "en");
+    // })();
+
+    // window.onpopstate = function() {
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     setLanguage(urlParams.get("lang") || "en");
+    // };
+
+    // document.querySelectorAll('pre').forEach((pre) => {
+    //     // Create container and header
+    //     const container = document.createElement('div');
+    //     container.className = 'code-container';
+        
+    //     const header = document.createElement('div');
+    //     header.className = 'code-header';
+        
+    //     const button = document.createElement('button');
+    //     button.className = 'copy-button';
+    //     button.innerText = 'Copy';
+
+    //     // Wrap the pre tag
+    //     pre.parentNode.insertBefore(container, pre);
+    //     header.appendChild(button);
+    //     container.appendChild(header);
+    //     container.appendChild(pre);
+
+    //     // Copy Logic
+    //     button.addEventListener('click', () => {
+    //         const code = pre.querySelector('code').innerText;
+    //         navigator.clipboard.writeText(code).then(() => {
+    //             button.innerText = 'Copied!';
+    //             button.classList.add('copied');
+
+    //             setTimeout(() => {
+    //                 button.innerText = 'Copy';
+    //                 button.classList.remove('copied');
+    //             }, 2000);
+    //         });
+    //     });
+    // });
+
+    // document.addEventListener("DOMContentLoaded", () => {
+    //     const codeBlocks = document.querySelectorAll('code[data-url]');
+
+    //     codeBlocks.forEach(async (block) => {
+    //         const url = block.getAttribute('data-url');
+    //         if (!url) return;
+
+    //         try {
+    //             const response = await fetch(url);
+    //             if (!response.ok) throw new Error('Fetch failed');
+    //             const code = await response.text();
+                
+    //             // Set the content
+    //             block.textContent = code;
+                
+    //             // Re-run Prism highlight if available
+    //             if (typeof Prism !== 'undefined') {
+    //                 Prism.highlightElement(block);
+    //             }
+    //         } catch (err) {
+    //             console.error("Could not load code:", err);
+    //             block.textContent = "// Error: Could not load code from GitHub.";
+    //         }
+    //     });
+    // });
+
+    // function updateVideoPlayerLanguage(lang) {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     const targetSrc = lang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+    //     const targetTitle = lang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+    //     // Only update if the URL actually changed to prevent unneeded reloads
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // // Example listener: Call this function inside your existing language-switcher click handler:
+    // document.querySelectorAll('.lang-link').forEach(link => {
+    //     link.addEventListener('click', function() {
+    //         const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+    //         updateVideoPlayerLanguage(lang);
+    //     });
+    // });
+
+    // function initVideoPlayer() {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     // Detect language from URL query string (?lang=ru), or <html lang="..."> attribute
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     const currentLang = urlParams.get('lang') || document.documentElement.lang || 'en';
+
+    //     // Set correct video source on page load
+    //     const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+    //     const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // function loadVideoPlayer() {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     // Determine current language
+    //     const lang = document.documentElement.getAttribute('lang') || 
+    //                  localStorage.getItem('preferred-lang') || 
+    //                  'en';
+
+    //     const targetSrc = lang === 'ru' 
+    //         ? player.getAttribute('data-src-ru') 
+    //         : player.getAttribute('data-src-en');
+    //     const targetTitle = lang === 'ru' 
+    //         ? player.getAttribute('data-title-ru') 
+    //         : player.getAttribute('data-title-en');
+
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // function initVideoPlayerWhenVisible() {
+    //     // If opened in a background tab (middle click), wait until the user switches to this tab
+    //     if (document.hidden) {
+    //         document.addEventListener('visibilitychange', function onVisible() {
+    //             if (!document.hidden) {
+    //                 document.removeEventListener('visibilitychange', onVisible);
+    //                 loadVideoPlayer();
+    //             }
+    //         });
+    //     } else {
+    //         // Tab is active (normal left click) -> load immediately
+    //         loadVideoPlayer();
+    //     }
+    // }
+
+    // // Call on load
+    // if (document.readyState === 'loading') {
+    //     document.addEventListener('DOMContentLoaded', initVideoPlayerWhenVisible);
+    // } else {
+    //     initVideoPlayerWhenVisible();
+    // }
+
+    // 1. Language setting
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+
+        // When manually switching languages on an active tab, update immediately
+        if (!document.hidden) {
+            applyVideoPlayerSrc(lang);
+        }
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // 2. Core video updater
+    function applyVideoPlayerSrc(lang) {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        const currentLang = lang || document.documentElement.getAttribute("lang") || localStorage.getItem("preferred-lang") || "en";
+        const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        if (targetSrc && player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // 3. Deferred loader: waits for tab focus and real layout dimensions
+    function initVideoPlayer() {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        // Wait one render frame to guarantee full container width is computed
+                        requestAnimationFrame(() => {
+                            applyVideoPlayerSrc();
+                        });
+                        observer.disconnect();
+                    }
+                });
+            }, { threshold: 0.05 });
+
+            observer.observe(player);
+        } else {
+            applyVideoPlayerSrc();
+        }
+    }
+
+    // 4. Update language links on mousedown so middle-click gets ?lang= correctly
+    document.addEventListener("mousedown", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (!link) return;
+
+        const currentLang = document.documentElement.getAttribute("lang") || localStorage.getItem("preferred-lang") || "en";
+        const targetUrl = new URL(link.href, window.location.origin);
+        targetUrl.searchParams.set("lang", currentLang);
+        link.href = targetUrl.toString();
+    });
+
+    // 5. Normal click navigation
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (link && link.target !== "_blank") {
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(link.href, window.location.origin + window.location.pathname);
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    // 6. Language Switcher Buttons
+    document.querySelectorAll('.lang-link').forEach(link => {
+        link.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+            changeLanguage(lang);
+        });
+    });
+
+    // 7. Initialize language on page load
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    // 8. Initialize video player (runs once when DOM is ready)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initVideoPlayer);
+    } else {
+        initVideoPlayer();
+    }
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    // Code copy buttons
+    document.querySelectorAll('pre').forEach((pre) => {
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+
+    // External code blocks loader
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                block.textContent = code;
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
+        });
+    });
+</script>
+</body>
+
+</html>
