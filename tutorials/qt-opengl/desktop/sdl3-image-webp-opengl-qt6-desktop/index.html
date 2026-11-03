@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    Qt 6 + SDL3_image (WebP) + Modern OpenGL 3.3 Core (Desktop)
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+<script src="/libs/bootstrap@5.3.3/bootstrap.bundle.min.js"></script>
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
+
+    /* How to hide non-active language blocks without collapsing iframe dimensions */
+    .data-en.d-none, 
+    .data-ru.d-none {
+        display: none !important;
+    }
+
+    /* Add this to prevent resolution drops during language toggles */
+    .ratio iframe {
+        width: 100%;
+        height: 100%;
+        content-visibility: visible;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold">
+            <span class="data-en">Qt 6 + SDL3_image (WebP) + Modern OpenGL 3.3 Core (Desktop)</span>
+            <span class="data-ru">Qt 6 + SDL3_image (WebP) + Modern OpenGL 3.3 Core (Desktop)</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">A step-by-step guide to configuring and running a static desktop project integrating Qt 6 and SDL3_image with WebP support and an OpenGL 3.3 context on Windows and Ubuntu.</span>
+            <span class="data-ru">Пошаговое руководство по настройке и запуску статического десктопного проекта, объединяющего Qt 6 и SDL3_image с поддержкой WebP и контекстом OpenGL 3.3 под Windows и Ubuntu.</span>
+        </p>
+    </header>
+
+    <!-- Prerequisites -->
+    <div class="alert alert-secondary mb-4">
+        <span class="data-en">Before proceeding, make sure you have prepared the required static libraries for your operating system using the prerequisite guides:</span>
+        <span class="data-ru">Перед продолжением убедитесь, что вы подготовили необходимые статические библиотеки для вашей операционной системы, следуя предварительным инструкциям:</span>
+
+        <!-- General (GLAD) -->
+        <h6 class="fw-bold text-dark mt-3 mb-2">
+            <span class="data-en">General (OpenGL Loader):</span>
+            <span class="data-ru">Общее (Загрузчик OpenGL):</span>
+        </h6>
+        <ul class="mb-3">
+            <li>
+                <a href="/tutorials/sdl3-opengl/desktop/setup-glad-desktop" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Installing GLAD OpenGL Loader Library on Windows &amp; Ubuntu (OpenGL 3.3)</span>
+                    <span class="data-ru">Установка библиотеки-загрузчика OpenGL GLAD под Windows и Ubuntu (OpenGL 3.3)</span>
+                </a>
+            </li>
+        </ul>
+
+        <!-- Windows List -->
+        <h6 class="fw-bold text-dark mt-2 mb-2">
+            <span class="data-en">Windows (MinGW GCC 16.2):</span>
+            <span class="data-ru">Windows (MinGW GCC 16.2):</span>
+        </h6>
+        <ul class="mb-3">
+            <li>
+                <a href="/tutorials/tools/mingw/build-qt6-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building Static Qt 6 for Desktop OpenGL with MinGW GCC 16.2</span>
+                    <span class="data-ru">Статическая сборка Qt 6 для Desktop OpenGL с MinGW GCC 16.2</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/mingw/build-sdl3-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 Static Library for Windows</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для Windows</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/mingw/build-sdl3-image-webp-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3_image Static Library with WebP Support for Windows (MinGW &amp; CMake)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3_image с поддержкой WebP для Windows (MinGW и CMake)</span>
+                </a>
+            </li>
+        </ul>
+
+        <!-- Ubuntu List -->
+        <h6 class="fw-bold text-dark mt-2 mb-2">
+            <span class="data-en">Ubuntu &amp; Ubuntu WSL:</span>
+            <span class="data-ru">Ubuntu и Ubuntu WSL:</span>
+        </h6>
+        <ul class="mb-0">
+            <li>
+                <a href="/tutorials/tools/ubuntu/build-qt6-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building Static Qt 6 for Desktop OpenGL on Ubuntu &amp; Ubuntu WSL</span>
+                    <span class="data-ru">Статическая сборка Qt 6 для Desktop OpenGL в Ubuntu и Ubuntu WSL</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/ubuntu/build-sdl3-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 Static Library for Ubuntu</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для Ubuntu</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/ubuntu/build-sdl3-image-webp-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3_image Static Library with WebP Support for Ubuntu (GCC, CMake &amp; Ninja)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3_image с поддержкой WebP для Ubuntu (GCC, CMake и Ninja)</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Step 1: Clone Repository -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">1. Clone the Project Repository</span>
+            <span class="data-ru">1. Клонирование репозитория проекта</span>
+        </h2>
+        <p>
+            <span class="data-en">
+                You can clone or download the complete ready-to-run demo project directly from GitHub: 
+                <a href="https://github.com/ivan-enzhaev/sdl3-image-webp-opengl-qt6-desktop" target="_blank" rel="noopener noreferrer" class="fw-bold">github.com/ivan-enzhaev/sdl3-image-webp-opengl-qt6-desktop</a>
+            </span>
+            <span class="data-ru">
+                Вы можете клонировать или скачать готовый к запуску демонстрационный проект с GitHub: 
+                <a href="https://github.com/ivan-enzhaev/sdl3-image-webp-opengl-qt6-desktop" target="_blank" rel="noopener noreferrer" class="fw-bold">github.com/ivan-enzhaev/sdl3-image-webp-opengl-qt6-desktop</a>
+            </span>
+        </p>
+        <pre><code class="language-bash">git clone https://github.com/ivan-enzhaev/sdl3-image-webp-opengl-qt6-desktop.git</code></pre>
+    </section>
+
+    <!-- Step 2: Project Structure -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">2. Project Directory Structure</span>
+            <span class="data-ru">2. Структура каталогов проекта</span>
+        </h2>
+        <p>
+            <span class="data-en">The cloned repository contains the following files:</span>
+            <span class="data-ru">Склонированный репозиторий содержит следующие файлы:</span>
+        </p>
+        <pre><code class="language-text">sdl3-image-webp-opengl-qt6-desktop/
+├── assets/
+│   └── textures/
+│       └── clear_01.webp
+├── src/
+│   ├── main.cpp
+│   ├── mainwindow.h
+│   └── mainwindow.cpp
+└── CMakeLists.txt</code></pre>
+        <ul>
+            <li><strong><code>assets/textures/clear_01.webp</code></strong>: <span class="data-en">The WebP texture loaded at runtime.</span><span class="data-ru">Текстура формата WebP, загружаемая во время выполнения.</span></li>
+            <li><strong><code>src/mainwindow.h / src/mainwindow.cpp</code></strong>: <span class="data-en">Subclasses <code>QOpenGLWidget</code>, loads the WebP image via <code>IMG_Load_IO</code>, and renders the textured quad in an OpenGL 3.3 Core context.</span><span class="data-ru">Наследует <code>QOpenGLWidget</code>, загружает WebP-изображение через <code>IMG_Load_IO</code> и отрисовывает текстурированный прямоугольник в контексте OpenGL 3.3 Core.</span></li>
+            <li><strong><code>src/main.cpp</code></strong>: <span class="data-en">Initializes base SDL3 subsystems, sets OpenGL 3.3 Core profile format, and starts the Qt application.</span><span class="data-ru">Инициализирует базовые подсистемы SDL3, задаёт профиль OpenGL 3.3 Core и запускает приложение Qt.</span></li>
+            <li><strong><code>CMakeLists.txt</code></strong>: <span class="data-en">Configures static linking for Qt 6, GLAD, SDL3, SDL3_image, and libwebp.</span><span class="data-ru">Настраивает статическую компоновку с Qt 6, GLAD, SDL3, SDL3_image и libwebp.</span></li>
+        </ul>
+
+        <!-- Texture Attribution Note -->
+        <div class="alert alert-info py-2 mt-3">
+            <span class="data-en">
+                <strong>Texture Asset:</strong> The free texture <code>clear_01.png</code> used in this project was downloaded from OpenGameArt (<a href="https://opengameart.org/content/crate-5" target="_blank" rel="noopener noreferrer" class="fw-bold">Crate #5</a>) and converted to WebP format (<code>clear_01.webp</code>).
+            </span>
+            <span class="data-ru">
+                <strong>Текстурный ассет:</strong> Бесплатная текстура <code>clear_01.png</code>, используемая в данном проекте, была взята с сайта OpenGameArt (<a href="https://opengameart.org/content/crate-5" target="_blank" rel="noopener noreferrer" class="fw-bold">Crate #5</a>) и сконвертирована в формат WebP (<code>clear_01.webp</code>).
+            </span>
+        </div>
+    </section>
+
+    <!-- Step 3: Project Configuration & Testing in Qt Creator (Windows) -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">3. Project Configuration &amp; Testing in Qt Creator (Windows)</span>
+            <span class="data-ru">3. Конфигурация проекта и запуск в Qt Creator (Windows)</span>
+        </h2>
+
+        <h4 class="mt-3 fw-bold text-secondary">
+            <span class="data-en">How to Open and Run in Qt Creator:</span>
+            <span class="data-ru">Как открыть и запустить проект в Qt Creator:</span>
+        </h4>
+        <ol>
+            <li>
+                <span class="data-en">In Qt Creator, click <strong>File &gt; Open File or Project...</strong> (or press <code>Ctrl+O</code>).</span>
+                <span class="data-ru">В Qt Creator нажмите <strong>File &gt; Open File or Project...</strong> (или нажмите <code>Ctrl+O</code>).</span>
+            </li>
+            <li>
+                <span class="data-en">Navigate to the cloned repository folder and select the <code>CMakeLists.txt</code> file.</span>
+                <span class="data-ru">Перейдите в папку склонированного репозитория и выберите файл <code>CMakeLists.txt</code>.</span>
+            </li>
+            <li>
+                <span class="data-en">
+                    In the <strong>Configure Project</strong> screen, select your kit <strong><code>Qt 6.12.0 Static (MinGW 16.2)</code></strong>. 
+                    <br>
+                    <strong>Important:</strong> Only <code>Debug</code> is checked by default. Make sure to also check the <strong><code>Release</code></strong> checkbox so that Qt Creator configures the optimized release build! Then click <strong>Configure Project</strong>.
+                </span>
+                <span class="data-ru">
+                    На экране <strong>Configure Project</strong> выберите ваш Kit <strong><code>Qt 6.12.0 Static (MinGW 16.2)</code></strong>. 
+                    <br>
+                    <strong>Важно:</strong> По умолчанию галочка стоит только на <code>Debug</code>. Обязательно поставьте галочку напротив <strong><code>Release</code></strong>, чтобы Qt Creator сконфигурировал оптимизированную Release-сборку! После этого нажмите <strong>Configure Project</strong>.
+                </span>
+            </li>
+            <li>
+                <span class="data-en">Switch the active build configuration to <strong>Release</strong> (click the monitor icon in the bottom-left corner of Qt Creator or press <code>Ctrl+T</code>).</span>
+                <span class="data-ru">Переключите активную конфигурацию сборки на <strong>Release</strong> (нажмите на значок монитора в левом нижнем углу окна Qt Creator или нажмите <code>Ctrl+T</code>).</span>
+            </li>
+            <li>
+                <span class="data-en">Press <strong>Ctrl+R</strong> to build and launch! The resulting single executable in the release build folder will run without needing any external DLLs.</span>
+                <span class="data-ru">Нажмите <strong>Ctrl+R</strong> для сборки и запуска! Итоговый одиночный <code>.exe</code> файл в папке release-сборки запустится без необходимости наличия каких-либо внешних DLL.</span>
+            </li>
+        </ol>
+    </section>
+
+    <!-- Step 4: Build and Run on Ubuntu & Ubuntu WSL (Terminal) -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">4. Build and Run on Ubuntu &amp; Ubuntu WSL (Terminal)</span>
+            <span class="data-ru">4. Сборка и запуск на Ubuntu и Ubuntu WSL (Терминал)</span>
+        </h2>
+        <p>
+            <span class="data-en">On Ubuntu or Ubuntu WSL, configure and compile the project using CMake and Ninja from the terminal:</span>
+            <span class="data-ru">В Ubuntu или Ubuntu WSL сконфигурируйте и скомпилируйте проект с помощью CMake и Ninja через терминал:</span>
+        </p>
+
+        <pre><code class="language-bash">wsl -d Ubuntu
+
+mkdir dist &amp;&amp; cd dist
+
+# Configure pointing to your static Qt
+cmake -DCMAKE_PREFIX_PATH=$HOME/libs/qt-6.12.0-static-gcc \
+      -DCMAKE_BUILD_TYPE=Release \
+      -GNinja ..
+
+# Build
+ninja
+
+# Run! Window appears seamlessly on Windows desktop via WSLg
+./app</code></pre>
+    </section>
+
+    <!-- Step 5: Expected Output -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">5. Expected Output</span>
+            <span class="data-ru">5. Ожидаемый результат</span>
+        </h2>
+        <p>
+            <span class="data-en">When launched, the desktop application displays a 500x500 window with a custom OpenGL 3.3 Core rendering viewport containing a textured quad loaded from the <code>clear_01.webp</code> asset using <code>SDL3_image</code>.</span>
+            <span class="data-ru">При запуске откроется нативное десктопное окно (500x500) с областью вывода OpenGL 3.3 Core, отображающей текстурированный прямоугольник с ящиком из ассета <code>clear_01.webp</code>, загруженного с помощью <code>SDL3_image</code>.</span>
+        </p>
+    </section>
+
+    <!-- Final Link to GitHub Repository -->
+    <section class="mt-5 pt-3 border-top text-center">
+        <p class="lead">
+            <span class="data-en">Complete source code for this project is available on GitHub:</span>
+            <span class="data-ru">Полный исходный код проекта доступен на GitHub:</span>
+        </p>
+        <a href="https://github.com/ivan-enzhaev/sdl3-image-webp-opengl-qt6-desktop" target="_blank" rel="noopener noreferrer" class="btn btn-dark btn-lg">
+            <span class="data-en">View on GitHub</span>
+            <span class="data-ru">Смотреть на GitHub</span>
+        </a>
+    </section>
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">
+                        <span class="data-en">Sberbank (Russia only)</span>
+                        <span class="data-ru">Сбербанк (только для РФ)</span>
+                    </h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number (Russia only)</span>
+                        <span class="data-ru">Перевод по номеру телефона (только для РФ)</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">USDT TRC20</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    // function setLanguage(lang) {
+    //     if (lang !== "en" && lang !== "ru") lang = "en";
+    //     document.documentElement.setAttribute("lang", lang);
+    //     localStorage.setItem("preferred-lang", lang);
+    //     document
+    //         .querySelectorAll(".lang-link")
+    //         .forEach((el) => el.classList.remove("active"));
+    //     const btn = document.getElementById("btn-" + lang);
+    //     if (btn) btn.classList.add("active");
+
+    //     updateVideoPlayerLanguage(lang);
+    // }
+
+    // function changeLanguage(lang) {
+    //     setLanguage(lang);
+    //     const url = new URL(window.location);
+    //     url.searchParams.set("lang", lang);
+    //     window.history.pushState({}, "", url);
+    // }
+
+    // // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+        
+    //     if (link) {
+    //         // Check if the link is intended to open in a new tab
+    //         if (link.target === "_blank") {
+    //             // Allow the browser to handle the click naturally, 
+    //             // but we still want to append the language param.
+    //             const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //             const targetUrl = new URL(link.href);
+    //             targetUrl.searchParams.set("lang", currentLang);
+                
+    //             // Update the href right before the browser follows it
+    //             link.href = targetUrl.toString();
+    //             return; // Exit the function so e.preventDefault() isn't called
+    //         }
+
+    //         // Existing logic for same-tab navigation
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // (function init() {
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     const langParam = urlParams.get("lang");
+    //     const savedLang = localStorage.getItem("preferred-lang");
+    //     setLanguage(langParam || savedLang || "en");
+    // })();
+
+    // window.onpopstate = function() {
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     setLanguage(urlParams.get("lang") || "en");
+    // };
+
+    // document.querySelectorAll('pre').forEach((pre) => {
+    //     // Create container and header
+    //     const container = document.createElement('div');
+    //     container.className = 'code-container';
+        
+    //     const header = document.createElement('div');
+    //     header.className = 'code-header';
+        
+    //     const button = document.createElement('button');
+    //     button.className = 'copy-button';
+    //     button.innerText = 'Copy';
+
+    //     // Wrap the pre tag
+    //     pre.parentNode.insertBefore(container, pre);
+    //     header.appendChild(button);
+    //     container.appendChild(header);
+    //     container.appendChild(pre);
+
+    //     // Copy Logic
+    //     button.addEventListener('click', () => {
+    //         const code = pre.querySelector('code').innerText;
+    //         navigator.clipboard.writeText(code).then(() => {
+    //             button.innerText = 'Copied!';
+    //             button.classList.add('copied');
+
+    //             setTimeout(() => {
+    //                 button.innerText = 'Copy';
+    //                 button.classList.remove('copied');
+    //             }, 2000);
+    //         });
+    //     });
+    // });
+
+    // document.addEventListener("DOMContentLoaded", () => {
+    //     const codeBlocks = document.querySelectorAll('code[data-url]');
+
+    //     codeBlocks.forEach(async (block) => {
+    //         const url = block.getAttribute('data-url');
+    //         if (!url) return;
+
+    //         try {
+    //             const response = await fetch(url);
+    //             if (!response.ok) throw new Error('Fetch failed');
+    //             const code = await response.text();
+                
+    //             // Set the content
+    //             block.textContent = code;
+                
+    //             // Re-run Prism highlight if available
+    //             if (typeof Prism !== 'undefined') {
+    //                 Prism.highlightElement(block);
+    //             }
+    //         } catch (err) {
+    //             console.error("Could not load code:", err);
+    //             block.textContent = "// Error: Could not load code from GitHub.";
+    //         }
+    //     });
+    // });
+
+    // function updateVideoPlayerLanguage(lang) {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     const targetSrc = lang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+    //     const targetTitle = lang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+    //     // Only update if the URL actually changed to prevent unneeded reloads
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // // Example listener: Call this function inside your existing language-switcher click handler:
+    // document.querySelectorAll('.lang-link').forEach(link => {
+    //     link.addEventListener('click', function() {
+    //         const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+    //         updateVideoPlayerLanguage(lang);
+    //     });
+    // });
+
+    // function initVideoPlayer() {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     // Detect language from URL query string (?lang=ru), or <html lang="..."> attribute
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     const currentLang = urlParams.get('lang') || document.documentElement.lang || 'en';
+
+    //     // Set correct video source on page load
+    //     const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+    //     const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // function loadVideoPlayer() {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     // Determine current language
+    //     const lang = document.documentElement.getAttribute('lang') || 
+    //                  localStorage.getItem('preferred-lang') || 
+    //                  'en';
+
+    //     const targetSrc = lang === 'ru' 
+    //         ? player.getAttribute('data-src-ru') 
+    //         : player.getAttribute('data-src-en');
+    //     const targetTitle = lang === 'ru' 
+    //         ? player.getAttribute('data-title-ru') 
+    //         : player.getAttribute('data-title-en');
+
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // function initVideoPlayerWhenVisible() {
+    //     // If opened in a background tab (middle click), wait until the user switches to this tab
+    //     if (document.hidden) {
+    //         document.addEventListener('visibilitychange', function onVisible() {
+    //             if (!document.hidden) {
+    //                 document.removeEventListener('visibilitychange', onVisible);
+    //                 loadVideoPlayer();
+    //             }
+    //         });
+    //     } else {
+    //         // Tab is active (normal left click) -> load immediately
+    //         loadVideoPlayer();
+    //     }
+    // }
+
+    // // Call on load
+    // if (document.readyState === 'loading') {
+    //     document.addEventListener('DOMContentLoaded', initVideoPlayerWhenVisible);
+    // } else {
+    //     initVideoPlayerWhenVisible();
+    // }
+
+    // 1. Language setting
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+
+        // When manually switching languages on an active tab, update immediately
+        if (!document.hidden) {
+            applyVideoPlayerSrc(lang);
+        }
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // 2. Core video updater
+    function applyVideoPlayerSrc(lang) {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        const currentLang = lang || document.documentElement.getAttribute("lang") || localStorage.getItem("preferred-lang") || "en";
+        const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        if (targetSrc && player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // 3. Deferred loader: waits for tab focus and real layout dimensions
+    function initVideoPlayer() {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        // Wait one render frame to guarantee full container width is computed
+                        requestAnimationFrame(() => {
+                            applyVideoPlayerSrc();
+                        });
+                        observer.disconnect();
+                    }
+                });
+            }, { threshold: 0.05 });
+
+            observer.observe(player);
+        } else {
+            applyVideoPlayerSrc();
+        }
+    }
+
+    // 4. Update language links on mousedown so middle-click gets ?lang= correctly
+    document.addEventListener("mousedown", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (!link) return;
+
+        const currentLang = document.documentElement.getAttribute("lang") || localStorage.getItem("preferred-lang") || "en";
+        const targetUrl = new URL(link.href, window.location.origin);
+        targetUrl.searchParams.set("lang", currentLang);
+        link.href = targetUrl.toString();
+    });
+
+    // 5. Normal click navigation
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (link && link.target !== "_blank") {
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(link.href, window.location.origin + window.location.pathname);
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    // 6. Language Switcher Buttons
+    document.querySelectorAll('.lang-link').forEach(link => {
+        link.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+            changeLanguage(lang);
+        });
+    });
+
+    // 7. Initialize language on page load
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    // 8. Initialize video player (runs once when DOM is ready)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initVideoPlayer);
+    } else {
+        initVideoPlayer();
+    }
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    // Code copy buttons
+    document.querySelectorAll('pre').forEach((pre) => {
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+
+    // External code blocks loader
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                block.textContent = code;
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
+        });
+    });
+</script>
+</body>
+
+</html>
