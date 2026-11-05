@@ -260,17 +260,17 @@
             <span class="data-ru">Шаг 1: Скачивание исходного кода SDL3</span>
         </h2>
         <p>
-            <span class="data-en">Check and download the latest release (<code>3.4.18</code>) directly from the official SDL repository on GitHub:</span>
-            <span class="data-ru">Проверьте и скачайте последнюю версию (<code>3.4.18</code>) напрямую со страницы релизов SDL на GitHub:</span>
+            <span class="data-en">Check and download the latest release (<code>3.4.20</code>) directly from the official SDL repository on GitHub:</span>
+            <span class="data-ru">Проверьте и скачайте последнюю версию (<code>3.4.20</code>) напрямую со страницы релизов SDL на GitHub:</span>
         </p>
         <p class="d-flex flex-wrap gap-2">
             <a href="https://github.com/libsdl-org/SDL/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary">
                 <span class="data-en">Open SDL3 Releases (GitHub)</span>
                 <span class="data-ru">Открыть релизы SDL3 (GitHub)</span>
             </a>
-            <a href="https://github.com/libsdl-org/SDL/releases/download/release-3.4.18/SDL3-3.4.18.zip" class="btn btn-primary">
-                <span class="data-en">Download SDL3 3.4.18 (.zip)</span>
-                <span class="data-ru">Скачать SDL3 3.4.18 (.zip)</span>
+            <a href="https://github.com/libsdl-org/SDL/releases/download/release-3.4.20/SDL3-3.4.20.zip" class="btn btn-primary">
+                <span class="data-en">Download SDL3 3.4.20 (.zip)</span>
+                <span class="data-ru">Скачать SDL3 3.4.20 (.zip)</span>
             </a>
         </p>
         <div class="alert alert-warning my-3">
@@ -278,8 +278,8 @@
                 <span class="data-en">Important:</span>
                 <span class="data-ru">Важно:</span>
             </strong>
-            <span class="data-en">Make sure to download the main release archive (e.g. <code>SDL3-3.4.18.zip</code>) from the release assets, not the auto-generated "Source code (zip)" link at the bottom, which lacks pre-generated configuration files.</span>
-            <span class="data-ru">Обязательно скачивайте основной архив релиза (например, <code>SDL3-3.4.18.zip</code>) из файлов релиза, а не автоматически сгенерированный архив «Source code (zip)», в котором отсутствуют предварительно созданные файлы конфигурации.</span>
+            <span class="data-en">Make sure to download the main release archive (e.g. <code>SDL3-3.4.20.zip</code>) from the release assets, not the auto-generated "Source code (zip)" link at the bottom, which lacks pre-generated configuration files.</span>
+            <span class="data-ru">Обязательно скачивайте основной архив релиза (например, <code>SDL3-3.4.20.zip</code>) из файлов релиза, а не автоматически сгенерированный архив «Source code (zip)», в котором отсутствуют предварительно созданные файлы конфигурации.</span>
         </div>
     </section>
 
@@ -290,10 +290,10 @@
             <span class="data-ru">Шаг 2: Копирование шаблонного проекта Android</span>
         </h2>
         <p>
-            <span class="data-en">Extract <code>SDL3-3.4.18.zip</code> and locate the ready-to-use Gradle template project in:</span>
-            <span class="data-ru">Распакуйте <code>SDL3-3.4.18.zip</code> и найдите готовый шаблонный проект Gradle по пути:</span>
+            <span class="data-en">Extract <code>SDL3-3.4.20.zip</code> and locate the ready-to-use Gradle template project in:</span>
+            <span class="data-ru">Распакуйте <code>SDL3-3.4.20.zip</code> и найдите готовый шаблонный проект Gradle по пути:</span>
         </p>
-        <pre><code class="language-bash">SDL3-3.4.18/build-scripts/android-project</code></pre>
+        <pre><code class="language-bash">SDL3-3.4.20/build-scripts/android-project</code></pre>
         <p>
             <span class="data-en">Create your new application directory <code>C:\projects\android-app-sdl3-opengl-cpp</code> and copy the <code>android-project</code> folder into it.</span>
             <span class="data-ru">Создайте новую директорию приложения <code>C:\projects\android-app-sdl3-opengl-cpp</code> и скопируйте в неё папку <code>android-project</code>.</span>
@@ -471,7 +471,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # -----------------------------------------------------------------------------
 # Paths
 # -----------------------------------------------------------------------------
-set(SDL3_DIR "C:/libs/sdl3-3.4.18-android")
+set(SDL3_DIR "C:/libs/sdl3-3.4.20-android")
 
 # -----------------------------------------------------------------------------
 # Native Shared Library Target
@@ -505,13 +505,52 @@ target_link_libraries(main PRIVATE
             <span class="data-en">Step 8: OpenGL ES 3.0 Source Code (src/main.cpp)</span>
             <span class="data-ru">Шаг 8: Исходный код OpenGL ES 3.0 (src/main.cpp)</span>
         </h2>
+
+        <!-- Callbacks Explanation Box -->
+        <div class="card bg-light border-primary mb-4">
+            <div class="card-body">
+                <h5 class="card-title fw-bold text-primary">
+                    <span class="data-en">Why Use the SDL3 Callback Architecture on Android?</span>
+                    <span class="data-ru">Зачем использовать архитектуру колбэков SDL3 на Android?</span>
+                </h5>
+                <p class="card-text mb-2">
+                    <span class="data-en">SDL3 introduces a modern callback-driven model via <code>SDL_MAIN_USE_CALLBACKS</code>. Instead of controlling your own blocking <code>while (running)</code> loop, the operating system invokes your functions:</span>
+                    <span class="data-ru">В SDL3 представлена современная модель на основе функций обратного вызова (колбэков) через <code>SDL_MAIN_USE_CALLBACKS</code>. Вместо блокирующего цикла <code>while (running)</code> операционная система сама вызывает ваши функции:</span>
+                </p>
+                <ul class="mb-0">
+                    <li>
+                        <span class="data-en"><strong>Native Mobile Lifecycle:</strong> The OS (Android/iOS) directly controls frame scheduling, sleep, and suspend events without thread-locking workarounds.</span>
+                        <span class="data-ru"><strong>Нативный жизненный цикл мобильных ОС:</strong> Система (Android/iOS) напрямую управляет планированием кадров, сном и паузой приложения без блокировки потоков.</span>
+                    </li>
+                    <li>
+                        <span class="data-en"><strong>Battery &amp; Thermal Efficiency:</strong> When the app is minimized, SDL avoids spinning unnecessary loops in native background threads.</span>
+                        <span class="data-ru"><strong>Энергоэффективность и контроль нагрева:</strong> При сворачивании приложения SDL предотвращает холостую работу циклов в фоновом потоке.</span>
+                    </li>
+                    <li>
+                        <span class="data-en"><strong>Multiplatform Uniformity:</strong> Identical callback code runs flawlessly across Desktop, Android, iOS, and WebAssembly (Emscripten).</span>
+                        <span class="data-ru"><strong>Кроссплатформенная совместимость:</strong> Один и тот же код с колбэками работает без изменений на Desktop, Android, iOS и WebAssembly (Emscripten).</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         <p>
-            <span class="data-en">Create <code>src/main.cpp</code>. This modern C++ program requests an OpenGL ES 3.0 context, compiles vertex and fragment shaders using <code>#version 300 es</code>, uploads a colored triangle to a VAO/VBO, and renders it in the main loop:</span>
-            <span class="data-ru">Создайте файл <code>src/main.cpp</code>. Эта программа на современном C++ инициализирует контекст OpenGL ES 3.0, компилирует вершинный и фрагментный шейдеры с <code>#version 300 es</code>, загружает цветной треугольник в VAO/VBO и отрисовывает его в основном цикле:</span>
+            <span class="data-en">Define <code>SDL_MAIN_USE_CALLBACKS</code> before including <code>&lt;SDL3/SDL_main.h&gt;</code> and implement the four standard entry points: <code>SDL_AppInit</code>, <code>SDL_AppIterate</code>, <code>SDL_AppEvent</code>, and <code>SDL_AppQuit</code>:</span>
+            <span class="data-ru">Определите <code>SDL_MAIN_USE_CALLBACKS</code> перед подключением <code>&lt;SDL3/SDL_main.h&gt;</code> и реализуйте четыре стандартные функции: <code>SDL_AppInit</code>, <code>SDL_AppIterate</code>, <code>SDL_AppEvent</code> и <code>SDL_AppQuit</code>:</span>
         </p>
-        <pre><code class="language-cpp">#include &lt;SDL3/SDL.h&gt;
+
+        <pre><code class="language-cpp">#define SDL_MAIN_USE_CALLBACKS 1
+#include &lt;SDL3/SDL.h&gt;
 #include &lt;SDL3/SDL_main.h&gt;
 #include &lt;GLES3/gl3.h&gt;
+
+struct AppState {
+    SDL_Window* window = nullptr;
+    SDL_GLContext glContext = nullptr;
+    GLuint shaderProgram = 0;
+    GLuint VAO = 0;
+    GLuint VBO = 0;
+};
 
 const char* vertexShaderSource = 
     "#version 300 es\n"
@@ -532,7 +571,7 @@ const char* fragmentShaderSource =
     "    FragColor = vec4(vColor, 1.0);\n"
     "}\0";
 
-GLuint compileShader(GLenum type, const char* source) {
+static GLuint compileShader(GLenum type, const char* source) {
     GLuint shader = glCreateShader(type);
     glShaderSource(shader, 1, &amp;source, nullptr);
     glCompileShader(shader);
@@ -547,14 +586,18 @@ GLuint compileShader(GLenum type, const char* source) {
     return shader;
 }
 
-int main(int argc, char* argv[]) {
+/* Called once at application launch */
+SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
     (void)argc;
     (void)argv;
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
-        return 1;
+        return SDL_APP_FAILURE;
     }
+
+    auto* state = new AppState();
+    *appstate = state;
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
@@ -562,24 +605,21 @@ int main(int argc, char* argv[]) {
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-    SDL_Window* window = SDL_CreateWindow(
-        "SDL3 OpenGL ES 3.0",
+    state->window = SDL_CreateWindow(
+        "SDL3 OpenGL ES 3.0 Callbacks",
         800, 600,
         SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
     );
 
-    if (!window) {
+    if (!state->window) {
         SDL_Log("Failed to create window: %s", SDL_GetError());
-        SDL_Quit();
-        return 1;
+        return SDL_APP_FAILURE;
     }
 
-    SDL_GLContext glContext = SDL_GL_CreateContext(window);
-    if (!glContext) {
+    state->glContext = SDL_GL_CreateContext(state->window);
+    if (!state->glContext) {
         SDL_Log("Failed to create OpenGL context: %s", SDL_GetError());
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-        return 1;
+        return SDL_APP_FAILURE;
     }
 
     SDL_GL_SetSwapInterval(1);
@@ -587,10 +627,10 @@ int main(int argc, char* argv[]) {
     GLuint vertexShader = compileShader(GL_VERTEX_SHADER, vertexShaderSource);
     GLuint fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
 
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
+    state->shaderProgram = glCreateProgram();
+    glAttachShader(state->shaderProgram, vertexShader);
+    glAttachShader(state->shaderProgram, fragmentShader);
+    glLinkProgram(state->shaderProgram);
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
@@ -602,12 +642,11 @@ int main(int argc, char* argv[]) {
          0.5f, -0.5f,   0.0f, 0.0f, 1.0f  // bottom right (blue)
     };
 
-    GLuint VAO, VBO;
-    glGenVertexArrays(1, &amp;VAO);
-    glGenBuffers(1, &amp;VBO);
+    glGenVertexArrays(1, &amp;state->VAO);
+    glGenBuffers(1, &amp;state->VBO);
 
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindVertexArray(state->VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, state->VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // Position attribute
@@ -621,39 +660,53 @@ int main(int argc, char* argv[]) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    bool running = true;
-    SDL_Event event;
+    return SDL_APP_CONTINUE;
+}
 
-    while (running) {
-        while (SDL_PollEvent(&amp;event)) {
-            if (event.type == SDL_EVENT_QUIT) {
-                running = false;
-            }
-        }
-
-        int w, h;
-        SDL_GetWindowSizeInPixels(window, &amp;w, &amp;h);
-        glViewport(0, 0, w, h);
-
-        glClearColor(0.12f, 0.12f, 0.15f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        SDL_GL_SwapWindow(window);
+/* Called when an event arrives */
+SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
+    if (event->type == SDL_EVENT_QUIT) {
+        return SDL_APP_SUCCESS; // Signal clean exit
     }
+    return SDL_APP_CONTINUE;
+}
 
-    glDeleteVertexArrays(1, &amp;VAO);
-    glDeleteBuffers(1, &amp;VBO);
-    glDeleteProgram(shaderProgram);
+/* Called every frame */
+SDL_AppResult SDL_AppIterate(void* appstate) {
+    auto* state = static_cast&lt;AppState*&gt;(appstate);
 
-    SDL_GL_DestroyContext(glContext);
-    SDL_DestroyWindow(window);
+    int w, h;
+    SDL_GetWindowSizeInPixels(state->window, &amp;w, &amp;h);
+    glViewport(0, 0, w, h);
+
+    glClearColor(0.12f, 0.12f, 0.15f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glUseProgram(state->shaderProgram);
+    glBindVertexArray(state->VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    SDL_GL_SwapWindow(state->window);
+
+    return SDL_APP_CONTINUE;
+}
+
+/* Called once on termination to clean up resources */
+void SDL_AppQuit(void* appstate, SDL_AppResult result) {
+    (void)result;
+    if (appstate) {
+        auto* state = static_cast&lt;AppState*&gt;(appstate);
+
+        if (state->VAO) glDeleteVertexArrays(1, &amp;state->VAO);
+        if (state->VBO) glDeleteBuffers(1, &amp;state->VBO);
+        if (state->shaderProgram) glDeleteProgram(state->shaderProgram);
+
+        if (state->glContext) SDL_GL_DestroyContext(state->glContext);
+        if (state->window) SDL_DestroyWindow(state->window);
+
+        delete state;
+    }
     SDL_Quit();
-
-    return 0;
 }</code></pre>
     </section>
 

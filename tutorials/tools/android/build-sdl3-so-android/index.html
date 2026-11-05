@@ -254,17 +254,17 @@
             <span class="data-ru">Шаг 1: Скачивание исходного кода SDL3</span>
         </h2>
         <p>
-            <span class="data-en">Check and download the latest release (<code>3.4.18</code>) directly from the official SDL repository on GitHub:</span>
-            <span class="data-ru">Проверьте и скачайте последнюю версию (<code>3.4.18</code>) напрямую со страницы релизов SDL на GitHub:</span>
+            <span class="data-en">Check and download the latest release (<code>3.4.20</code>) directly from the official SDL repository on GitHub:</span>
+            <span class="data-ru">Проверьте и скачайте последнюю версию (<code>3.4.20</code>) напрямую со страницы релизов SDL на GitHub:</span>
         </p>
         <p>
             <a href="https://github.com/libsdl-org/SDL/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
                 <span class="data-en">Open SDL3 Releases (GitHub)</span>
                 <span class="data-ru">Открыть релизы SDL3 (GitHub)</span>
             </a>
-            <a href="https://github.com/libsdl-org/SDL/releases/download/release-3.4.18/SDL3-3.4.18.zip" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm ms-2">
-                <span class="data-en">Direct Download SDL3-3.4.18 (.zip)</span>
-                <span class="data-ru">Прямое скачивание SDL3-3.4.18 (.zip)</span>
+            <a href="https://github.com/libsdl-org/SDL/releases/download/release-3.4.20/SDL3-3.4.20.zip" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm ms-2">
+                <span class="data-en">Direct Download SDL3-3.4.20 (.zip)</span>
+                <span class="data-ru">Прямое скачивание SDL3-3.4.20 (.zip)</span>
             </a>
         </p>
         <div class="alert alert-warning my-3">
@@ -272,8 +272,8 @@
                 <span class="data-en">Warning:</span>
                 <span class="data-ru">Внимание:</span>
             </strong>
-            <span class="data-en">Download the official release archive <code>SDL3-3.4.18.zip</code> attached under "Assets", <strong>not</strong> the auto-generated GitHub "Source code" (.zip/.tar.gz) archives, as they lack necessary generated files and dependencies.</span>
-            <span class="data-ru">Скачивайте официальный архив релиза <code>SDL3-3.4.18.zip</code>, прикреплённый в блоке «Assets», а <strong>не</strong> автоматически сгенерированные исходные коды GitHub «Source code» (.zip/.tar.gz), так как в них отсутствуют необходимые сгенерированные файлы и зависимости.</span>
+            <span class="data-en">Download the official release archive <code>SDL3-3.4.20.zip</code> attached under "Assets", <strong>not</strong> the auto-generated GitHub "Source code" (.zip/.tar.gz) archives, as they lack necessary generated files and dependencies.</span>
+            <span class="data-ru">Скачивайте официальный архив релиза <code>SDL3-3.4.20.zip</code>, прикреплённый в блоке «Assets», а <strong>не</strong> автоматически сгенерированные исходные коды GitHub «Source code» (.zip/.tar.gz), так как в них отсутствуют необходимые сгенерированные файлы и зависимости.</span>
         </div>
         <p>
             <span class="data-en">Extract the downloaded archive to a convenient directory on your machine.</span>
@@ -310,10 +310,10 @@ cmake .. ^
   -DSDL_EXAMPLES=OFF ^
   -DSDL_TESTS=OFF ^
   -DCMAKE_BUILD_TYPE=Release ^
-  -DCMAKE_INSTALL_PREFIX=C:/libs/sdl3-3.4.18-android/arm64-v8a ^
+  -DCMAKE_INSTALL_PREFIX=C:/libs/sdl3-3.4.20-android/arm64-v8a ^
   -G "MinGW Makefiles"
 
-cmake --build . --config Release --parallel 8 --target install</code></pre>
+cmake --build . --config Release --parallel --target install</code></pre>
 
         <div class="alert alert-info mt-3">
             <strong>
