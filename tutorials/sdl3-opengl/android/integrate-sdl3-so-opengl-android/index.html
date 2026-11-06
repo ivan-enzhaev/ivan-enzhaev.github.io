@@ -293,10 +293,10 @@
             <span class="data-en">Extract <code>SDL3-3.4.20.zip</code> and locate the ready-to-use Gradle template project in:</span>
             <span class="data-ru">Распакуйте <code>SDL3-3.4.20.zip</code> и найдите готовый шаблонный проект Gradle по пути:</span>
         </p>
-        <pre><code class="language-bash">SDL3-3.4.20/build-scripts/android-project</code></pre>
+        <pre><code class="language-bash">SDL3-3.4.20/android-project</code></pre>
         <p>
-            <span class="data-en">Create your new application directory <code>C:\projects\android-app-sdl3-opengl-cpp</code> and copy the <code>android-project</code> folder into it.</span>
-            <span class="data-ru">Создайте новую директорию приложения <code>C:\projects\android-app-sdl3-opengl-cpp</code> и скопируйте в неё папку <code>android-project</code>.</span>
+            <span class="data-en">Create your new application directory <code>C:\projects\android-app-sdl3-opengl-cpp</code> and copy the <code>SDL3-3.4.20/android-project</code> folder into it.</span>
+            <span class="data-ru">Создайте новую директорию приложения <code>C:\projects\android-app-sdl3-opengl-cpp</code> и скопируйте в неё папку <code>SDL3-3.4.20/android-project</code>.</span>
         </p>
     </section>
 
@@ -417,8 +417,7 @@ dependencies {
             <span class="data-en">Update <code>android:name</code> inside the <code>&lt;activity&gt;</code> tag from <code>"SDLActivity"</code> to your custom activity:</span>
             <span class="data-ru">Замените значение <code>android:name</code> внутри тега <code>&lt;activity&gt;</code> с <code>"SDLActivity"</code> на вашу активность:</span>
         </p>
-        <pre><code class="language-markup">&lt;activity
-    android:name="com.example.myapp.MyActivity"</code></pre>
+        <pre><code class="language-markup">&lt;activity android:name="com.example.myapp.MyActivity"</code></pre>
     </section>
 
     <!-- Step 6: Custom Activity -->
