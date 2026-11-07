@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    Action Queue and Cutscene System with SDL3 Callbacks, cglm, and OpenGL
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+<script src="/libs/bootstrap@5.3.3/bootstrap.bundle.min.js"></script>
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
+
+    /* How to hide non-active language blocks without collapsing iframe dimensions */
+    .data-en.d-none, 
+    .data-ru.d-none {
+        display: none !important;
+    }
+
+    /* Add this to prevent resolution drops during language toggles */
+    .ratio iframe {
+        width: 100%;
+        height: 100%;
+        content-visibility: visible;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold">
+            <span class="data-en">Action Queue &amp; Cutscene System with SDL3 Callbacks, cglm, and OpenGL</span>
+            <span class="data-ru">Система очереди действий и кат-сцен с SDL3 Callbacks, cglm и OpenGL</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">A beginner-friendly guide to implementing the <strong>Action / Command Queue Pattern</strong> in modern C++ (C++20) using the official <strong>SDL3 Callbacks API</strong>, <strong>cglm</strong> for orthographic projection, view, and MVP matrix math, and OpenGL. Learn how to sequence animations, smoothly interpolate transformations (Lerp), and create organic pulsing effects using sine wave trigonometry.</span>
+            <span class="data-ru">Руководство для начинающих по реализации <strong>паттерна очереди действий/команд (Action / Command Queue)</strong> на современном C++ (C++20) с использованием официального <strong>SDL3 Callbacks API</strong>, библиотеки <strong>cglm</strong> для вычисления ортографической проекции, видовой матрицы и матрицы MVP, а также OpenGL. Узнайте, как выстраивать цепочки анимаций, плавно интерполировать трансформации (Lerp) и создавать органичный эффект пульсации с помощью тригонометрии синуса.</span>
+        </p>
+    </header>
+
+    <!-- Architecture Overview -->
+    <div class="alert alert-info mb-4">
+        <h5 class="alert-heading fw-bold">
+            <span class="data-en">Pattern Overview</span>
+            <span class="data-ru">Обзор паттерна</span>
+        </h5>
+        <p class="mb-0">
+            <span class="data-en">This code implements an <strong>Action Queue / Command Pattern</strong> commonly used in game engines (similar to <em>Tweens</em> in Godot/Unity or <em>Actions</em> in Cocos2d) to chain animations and scripted cutscenes sequentially without spaghetti state machines.</span>
+            <span class="data-ru">Этот код реализует <strong>паттерн Action Queue / Command</strong>, широко применяемый в игровых движках (аналог <em>Tweens</em> в Godot/Unity или <em>Actions</em> в Cocos2d) для последовательного выстраивания анимаций и скриптовых кат-сцен без громоздких конечных автоматов.</span>
+        </p>
+    </div>
+
+    <!-- Note on SDL3 Callbacks API -->
+    <div class="alert alert-primary mb-4">
+        <h5 class="alert-heading fw-bold">
+            <span class="data-en">Why the SDL3 Callbacks API &amp; cglm?</span>
+            <span class="data-ru">Почему именно SDL3 Callbacks API и cglm?</span>
+        </h5>
+        <p class="mb-0">
+            <span class="data-en"><strong>SDL3 Callbacks API</strong> (<code>SDL_AppInit</code>, <code>SDL_AppIterate</code>, <code>SDL_AppEvent</code>, <code>SDL_AppQuit</code>) is the official cross-platform standard in SDL3, guaranteeing seamless execution across Desktop, Mobile, and WebAssembly. Combined with <strong>cglm</strong> (a lightweight, blazing-fast mathematics library), we construct orthographic (<code>glm_ortho</code>), view (<code>glm_lookat</code>), and model transformations directly into a final <code>uMVP</code> matrix sent to the shader.</span>
+            <span class="data-ru"><strong>SDL3 Callbacks API</strong> (<code>SDL_AppInit</code>, <code>SDL_AppIterate</code>, <code>SDL_AppEvent</code>, <code>SDL_AppQuit</code>) — это официальный кроссплатформенный стандарт в SDL3, гарантирующий работу на Desktop, Mobile и WebAssembly. В связке с <strong>cglm</strong> (легковесной и быстрой математической библиотекой) мы рассчитываем ортографическую проекцию (<code>glm_ortho</code>), камеру (<code>glm_lookat</code>) и трансформации модели в единую матрицу <code>uMVP</code>, передаваемую в шейдер.</span>
+        </p>
+    </div>
+
+    <!-- Prerequisites -->
+    <div class="alert alert-secondary mb-4">
+        <span class="data-en">Before proceeding, ensure you have installed the required libraries on your system:</span>
+        <span class="data-ru">Перед началом убедитесь, что в вашей системе установлены необходимые библиотеки:</span>
+        <ul class="mb-0 mt-2">
+            <li>
+                <a href="/tutorials/tools/shared/setup-cglm" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Installing cglm C/C++ Mathematics Library</span>
+                    <span class="data-ru">Установка математической C/C++ библиотеки cglm</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/sdl3-opengl/desktop/setup-glad-desktop" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Installing GLAD OpenGL Loader Library</span>
+                    <span class="data-ru">Установка библиотеки-загрузчика OpenGL GLAD</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/mingw/build-sdl3-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 Static Library for Windows (MinGW &amp; CMake)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для Windows (MinGW и CMake)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/ubuntu/build-sdl3-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 Static Library for Ubuntu (GCC, CMake &amp; Ninja)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для Ubuntu (GCC, CMake и Ninja)</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Detailed Class Breakdown -->
+    <section class="mb-5">
+        <h2 class="h4 fw-bold mb-4">
+            <span class="data-en">Core Architecture: In-Depth Class Breakdown</span>
+            <span class="data-ru">Основная архитектура: подробный разбор классов</span>
+        </h2>
+
+        <!-- 1. ActionStatus -->
+        <div class="card mb-4 border shadow-sm">
+            <div class="card-header bg-light">
+                <h3 class="h5 fw-bold mb-0 text-primary">1. enum class ActionStatus</h3>
+            </div>
+            <div class="card-body">
+<pre><code class="language-cpp">enum class ActionStatus {
+    Running,
+    Finished
+};</code></pre>
+                <ul>
+                    <li>
+                        <strong><span class="data-en">Purpose:</span><span class="data-ru">Назначение:</span></strong>
+                        <span class="data-en">A strongly-typed state return for each action.</span>
+                        <span class="data-ru">Строго типизированный возврат статуса для каждого действия.</span>
+                    </li>
+                    <li>
+                        <strong><span class="data-en">Role:</span><span class="data-ru">Роль:</span></strong>
+                        <span class="data-en">Tells the <code>ActionQueue</code> whether the current action is still running or has completed its work and should be discarded.</span>
+                        <span class="data-ru">Сообщает <code>ActionQueue</code>, выполняется ли ещё текущее действие или оно завершило свою работу и должно быть удалено из очереди.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 2. Action -->
+        <div class="card mb-4 border shadow-sm">
+            <div class="card-header bg-light">
+                <h3 class="h5 fw-bold mb-0 text-primary">2. class Action (The Abstract Base Class)</h3>
+            </div>
+            <div class="card-body">
+<pre><code class="language-cpp">class Action {
+public:
+    virtual ~Action() = default;
+    virtual void on_start() {}
+    virtual ActionStatus update(float dt) = 0;
+};</code></pre>
+                <p>
+                    <strong><span class="data-en">Purpose:</span><span class="data-ru">Назначение:</span></strong>
+                    <span class="data-en">The interface / contract representing any timed or progressive task.</span>
+                    <span class="data-ru">Базовый интерфейс/контракт, представляющий любую задачу, распределённую по времени.</span>
+                </p>
+                <p class="fw-bold mb-2">
+                    <span class="data-en">Key Components:</span>
+                    <span class="data-ru">Ключевые компоненты:</span>
+                </p>
+                <ul>
+                    <li>
+                        <code>virtual ~Action() = default;</code>: 
+                        <span class="data-en">Ensures that when derived classes held by <code>std::unique_ptr&lt;Action&gt;</code> are deleted, their specific destructors are invoked properly (preventing memory leaks).</span>
+                        <span class="data-ru">Гарантирует, что при удалении производных классов, управляемых <code>std::unique_ptr&lt;Action&gt;</code>, корректно вызывается их деструктор (предотвращая утечки памяти).</span>
+                    </li>
+                    <li>
+                        <code>virtual void on_start()</code>: 
+                        <span class="data-en">An optional lifecycle hook called <strong>only once</strong> on the very first frame the action begins executing. This is crucial for capturing initial states (e.g., current angle or color) at runtime rather than when the action is created.</span>
+                        <span class="data-ru">Опциональный хук жизненного цикла, вызываемый <strong>ровно один раз</strong> в самый первый кадр начала выполнения действия. Он необходим для фиксации начального состояния (например, текущего угла или цвета) в рантайме, а не в момент создания объекта.</span>
+                    </li>
+                    <li>
+                        <code>virtual ActionStatus update(float dt) = 0;</code>: 
+                        <span class="data-en">Pure virtual function. Every derived action must implement how it progresses over a delta-time step (<code>dt</code>). It returns <code>ActionStatus::Running</code> while active and <code>ActionStatus::Finished</code> when done.</span>
+                        <span class="data-ru">Чисто виртуальная функция. Каждое производное действие обязано реализовать изменение своего состояния за дельта-тайм (<code>dt</code>). Возвращает <code>ActionStatus::Running</code> во время работы и <code>ActionStatus::Finished</code> по завершении.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 3. ActionQueue -->
+        <div class="card mb-4 border shadow-sm">
+            <div class="card-header bg-light">
+                <h3 class="h5 fw-bold mb-0 text-primary">3. class ActionQueue (The Sequencer / Manager)</h3>
+            </div>
+            <div class="card-body">
+<pre><code class="language-cpp">class ActionQueue {
+public:
+    void push(std::unique_ptr&lt;Action&gt; action);
+    void update(float dt);
+    bool is_empty() const;
+    void clear();
+
+private:
+    std::deque&lt;std::unique_ptr&lt;Action&gt;&gt; queue;
+    bool started = false;
+};</code></pre>
+                <p>
+                    <strong><span class="data-en">Purpose:</span><span class="data-ru">Назначение:</span></strong>
+                    <span class="data-en">Manages a FIFO (First-In, First-Out) sequential pipeline of polymorphic actions.</span>
+                    <span class="data-ru">Управляет последовательным конвейером полиморфных действий по принципу FIFO (первым пришел — первым ушел).</span>
+                </p>
+                <p class="fw-bold mb-2">
+                    <span class="data-en">Key Mechanisms:</span>
+                    <span class="data-ru">Ключевые механизмы:</span>
+                </p>
+                <ul>
+                    <li>
+                        <code>std::deque&lt;std::unique_ptr&lt;Action&gt;&gt;</code>: 
+                        <span class="data-en">Holds ownership of the actions. <code>std::unique_ptr</code> guarantees that each action is automatically deleted from memory as soon as it is popped.</span>
+                        <span class="data-ru">Владеет действиями. <code>std::unique_ptr</code> гарантирует, что каждый экземпляр действия автоматически удаляется из памяти сразу после извлечения из очереди.</span>
+                    </li>
+                    <li>
+                        <code>push(std::unique_ptr&lt;Action&gt; action)</code>: 
+                        <span class="data-en">Adds a new action to the back of the queue using <code>std::move</code>.</span>
+                        <span class="data-ru">Добавляет новое действие в конец очереди с помощью <code>std::move</code>.</span>
+                    </li>
+                    <li>
+                        <code>update(float dt)</code>:
+                        <ul>
+                            <li><span class="data-en">Returns immediately if the queue is empty.</span><span class="data-ru">Немедленно возвращает управление, если очередь пуста.</span></li>
+                            <li><span class="data-en">If <code>!started</code>, triggers <code>on_start()</code> on the action at the front of the queue, then sets <code>started = true</code>.</span><span class="data-ru">Если <code>!started</code>, вызывает <code>on_start()</code> у первого действия в очереди и устанавливает <code>started = true</code>.</span></li>
+                            <li><span class="data-en">Calls <code>queue.front()-&gt;update(dt)</code>.</span><span class="data-ru">Вызывает <code>queue.front()-&gt;update(dt)</code>.</span></li>
+                            <li><span class="data-en">When <code>update(dt)</code> returns <code>ActionStatus::Finished</code>, it calls <code>queue.pop_front()</code> (deleting the action) and resets <code>started = false</code>, so the next action in line will have its <code>on_start()</code> invoked on the next frame.</span><span class="data-ru">Когда <code>update(dt)</code> возвращает <code>ActionStatus::Finished</code>, вызывается <code>queue.pop_front()</code> (удаляя действие) и сбрасывается <code>started = false</code>, чтобы у следующего действия в очереди на следующем кадре сработал <code>on_start()</code>.</span></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <code>is_empty() &amp; clear()</code>: 
+                        <span class="data-en">Utility methods to inspect or flush the queue.</span>
+                        <span class="data-ru">Вспомогательные методы для проверки на пустоту и полной очистки очереди.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 4. AppState -->
+        <div class="card mb-4 border shadow-sm">
+            <div class="card-header bg-light">
+                <h3 class="h5 fw-bold mb-0 text-primary">4. struct AppState (The Context / Data Store)</h3>
+            </div>
+            <div class="card-body">
+<pre><code class="language-cpp">struct AppState {
+    SDL_Window* window = nullptr;
+    SDL_GLContext glContext = nullptr;
+
+    GLuint shaderProgram = 0;
+    GLuint VAO = 0;
+    GLuint VBO = 0;
+    GLint uMVPLoc = -1;
+
+    // Transformation variables modified by our Action Queue
+    float rotationAngle = 0.0f; // in radians
+    float scale = 1.0f;
+    float clearColor[3] = { 0.12f, 0.12f, 0.15f };
+
+    uint64_t lastTicks = 0;
+    ActionQueue actionQueue;
+};</code></pre>
+                <ul>
+                    <li>
+                        <strong><span class="data-en">Purpose:</span><span class="data-ru">Назначение:</span></strong>
+                        <span class="data-en">The central data structure holding the graphics state, window handles, render uniforms, and the <code>ActionQueue</code> itself.</span>
+                        <span class="data-ru">Центральная структура данных, хранящая графические дескрипторы, контекст окна, униформы шейдеров и саму <code>ActionQueue</code>.</span>
+                    </li>
+                    <li>
+                        <strong><span class="data-en">Role with Actions:</span><span class="data-ru">Связь с действиями:</span></strong>
+                        <span class="data-en">A pointer to <code>AppState</code> (<code>AppState*</code>) is passed into each concrete action so the action can directly manipulate the shared animation properties (<code>rotationAngle</code>, <code>scale</code>, <code>clearColor</code>).</span>
+                        <span class="data-ru">Указатель на <code>AppState</code> (<code>AppState*</code>) передаётся в каждое конкретное действие, позволяя ему напрямую изменять разделяемые анимируемые параметры (<code>rotationAngle</code>, <code>scale</code>, <code>clearColor</code>).</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 5. Concrete Actions -->
+        <div class="card mb-4 border shadow-sm">
+            <div class="card-header bg-light">
+                <h3 class="h5 fw-bold mb-0 text-primary">5. Concrete Action Classes</h3>
+            </div>
+            <div class="card-body">
+                <p>
+                    <span class="data-en">Each concrete action inherits from <code>Action</code> and implements a specific animation behavior:</span>
+                    <span class="data-ru">Каждое конкретное действие наследуется от <code>Action</code> и реализует заданное поведение анимации:</span>
+                </p>
+
+                <!-- 5A -->
+                <h5 class="fw-bold mt-3 text-secondary">A. RotateAction (Linear Interpolation / Lerp)</h5>
+                <ul>
+                    <li><strong><span class="data-en">Constructor:</span><span class="data-ru">Конструктор:</span></strong> <span class="data-en">Takes target angle (<code>targetAngleRad</code>) and <code>duration</code>.</span><span class="data-ru">Принимает целевой угол (<code>targetAngleRad</code>) и длительность <code>duration</code>.</span></li>
+                    <li><strong><code>on_start()</code>:</strong> <span class="data-en">Reads current <code>state-&gt;rotationAngle</code> as <code>startAngle</code>. This ensures smooth continuity even if previous rotations left the object at an arbitrary angle.</span><span class="data-ru">Запоминает текущий <code>state-&gt;rotationAngle</code> как <code>startAngle</code>. Это гарантирует непрерывность, даже если предыдущее вращение завершилось под произвольным углом.</span></li>
+                    <li><strong><code>update(float dt)</code>:</strong>
+                        <ul>
+                            <li><span class="data-en">Accumulates elapsed time: <code>elapsed += dt</code>.</span><span class="data-ru">Накапливает прошедшее время: <code>elapsed += dt</code>.</span></li>
+                            <li><span class="data-en">Normalizes time <code>t &isin; [0.0, 1.0]</code>: <code>t = min(1.0f, elapsed / duration)</code>.</span><span class="data-ru">Нормализует время <code>t &isin; [0.0, 1.0]</code>: <code>t = min(1.0f, elapsed / duration)</code>.</span></li>
+                            <li><span class="data-en">Interpolates: <code>state-&gt;rotationAngle = startAngle + (target - startAngle) * t</code>.</span><span class="data-ru">Интерполирует: <code>state-&gt;rotationAngle = startAngle + (target - startAngle) * t</code>.</span></li>
+                            <li><span class="data-en">Returns <code>Finished</code> once <code>t &ge; 1.0f</code>.</span><span class="data-ru">Возвращает <code>Finished</code>, как только <code>t &ge; 1.0f</code>.</span></li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <!-- 5B -->
+                <h5 class="fw-bold mt-4 text-secondary">B. PulseAction (Mathematical / Sinusoidal Wave)</h5>
+                <ul>
+                    <li><strong><span class="data-en">Constructor:</span><span class="data-ru">Конструктор:</span></strong> <span class="data-en">Takes <code>maxScale</code> and <code>duration</code>.</span><span class="data-ru">Принимает <code>maxScale</code> и длительность <code>duration</code>.</span></li>
+                    <li><strong><code>update(float dt)</code>:</strong>
+                        <p class="mb-1"><span class="data-en">Uses the half-period of a sine wave: <code>state-&gt;scale = 1.0f + (maxScale - 1.0f) * std::sin(t * 3.14159265f);</code> where <code>t &isin; [0.0, 1.0]</code>.</span><span class="data-ru">Использует полупериод синусоиды: <code>state-&gt;scale = 1.0f + (maxScale - 1.0f) * std::sin(t * 3.14159265f);</code> где <code>t &isin; [0.0, 1.0]</code>.</span></p>
+                        <ul>
+                            <li><strong>At t = 0.0:</strong> <code>sin(0) = 0.0</code> &rarr; <code>scale = 1.0</code> (<span class="data-en">Original size</span><span class="data-ru">Исходный размер</span>)</li>
+                            <li><strong>At t = 0.5:</strong> <code>sin(&pi; / 2) = 1.0</code> &rarr; <code>scale = maxScale</code> (<span class="data-en">Peak scale</span><span class="data-ru">Пиковый масштаб</span>)</li>
+                            <li><strong>At t = 1.0:</strong> <code>sin(&pi;) = 0.0</code> &rarr; <code>scale = 1.0</code> (<span class="data-en">Original size</span><span class="data-ru">Исходный размер</span>)</li>
+                        </ul>
+                        <span class="data-en">Smoothly scales up and down back to original size in a single action.</span>
+                        <span class="data-ru">Плавно увеличивает и уменьшает объект обратно до исходного размера в рамках одного действия.</span>
+                    </li>
+                </ul>
+
+                <!-- 5C -->
+                <h5 class="fw-bold mt-4 text-secondary">C. FadeColorAction (RGB Vector Interpolation)</h5>
+                <ul>
+                    <li><strong><span class="data-en">Constructor:</span><span class="data-ru">Конструктор:</span></strong> <span class="data-en">Takes target RGB values (<code>targetR, targetG, targetB</code>) and <code>duration</code>.</span><span class="data-ru">Принимает целевые значения цвета RGB (<code>targetR, targetG, targetB</code>) и <code>duration</code>.</span></li>
+                    <li><strong><code>on_start()</code>:</strong> <span class="data-en">Captures current background colors: <code>startR = state-&gt;clearColor[0]</code>, etc.</span><span class="data-ru">Фиксирует текущий цвет фона: <code>startR = state-&gt;clearColor[0]</code> и т.д.</span></li>
+                    <li><strong><code>update(float dt)</code>:</strong> <span class="data-en">Simultaneously lerps each of the red, green, and blue components from their starting values to the target values over <code>duration</code>.</span><span class="data-ru">Синхронно интерполирует каждую из составляющих (красную, зелёную и синюю) от начальных к целевым значениям за время <code>duration</code>.</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- How they tie together -->
+        <div class="card mb-4 border shadow-sm">
+            <div class="card-header bg-light">
+                <h3 class="h5 fw-bold mb-0 text-primary">
+                    <span class="data-en">How They Tie Together in the Game Loop</span>
+                    <span class="data-ru">Связка компонентов в игровом цикле</span>
+                </h3>
+            </div>
+            <div class="card-body">
+<pre><code class="language-text">[setupCutscene(state)]
+    Pushes: RotateAction -> PulseAction -> FadeColorAction -> RotateAction -> FadeColorAction
+
+[Every Frame in SDL_AppIterate()]
+    1. dt = (currentTicks - lastTicks)
+    2. state->actionQueue.update(dt)
+       ├── Frame 1 of an Action: calls on_start()
+       ├── Every Frame: calls update(dt) -> modifies state->rotationAngle, scale, or clearColor
+       └── Last Frame: returns Finished -> ActionQueue pops it -> moves to next
+    3. If actionQueue.is_empty(), setupCutscene(state) is called again to loop.
+    4. cglm calculates ortho, view, model -> multiplies into uMVP.
+    5. Render pipeline passes uMVP and draws geometry.</code></pre>
+            </div>
+        </div>
+
+        <!-- Architectural Highlights -->
+        <div class="card border shadow-sm">
+            <div class="card-header bg-light">
+                <h3 class="h5 fw-bold mb-0 text-primary">
+                    <span class="data-en">Architectural Highlights</span>
+                    <span class="data-ru">Ключевые преимущества архитектуры</span>
+                </h3>
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li>
+                        <strong><span class="data-en">Separation of Concerns:</span><span class="data-ru">Разделение ответственности:</span></strong>
+                        <span class="data-en">Rendering logic in <code>SDL_AppIterate</code> doesn't care how properties change; it just transforms and draws whatever values are stored in <code>AppState</code>.</span>
+                        <span class="data-ru">Логика отрисовки в <code>SDL_AppIterate</code> не заботится о том, как меняются параметры; она просто трансформирует и рисует актуальные значения из <code>AppState</code>.</span>
+                    </li>
+                    <li>
+                        <strong><span class="data-en">Extensibility:</span><span class="data-ru">Расширяемость:</span></strong>
+                        <span class="data-en">Adding new actions (e.g., <code>TranslateAction</code>, <code>WaitAction</code>, <code>PlaySoundAction</code>) requires only subclassing <code>Action</code> without altering <code>ActionQueue</code> or OpenGL rendering code.</span>
+                        <span class="data-ru">Добавление новых действий (например, <code>TranslateAction</code>, <code>WaitAction</code>, <code>PlaySoundAction</code>) требует лишь создания нового наследника <code>Action</code> без изменения <code>ActionQueue</code> или кода рендеринга.</span>
+                    </li>
+                    <li>
+                        <strong><span class="data-en">Safe Memory Management:</span><span class="data-ru">Безопасное управление памятью:</span></strong>
+                        <span class="data-en">Using <code>std::unique_ptr</code> with <code>std::deque</code> eliminates manual <code>new</code>/<code>delete</code> calls for dynamic action instances.</span>
+                        <span class="data-ru">Использование <code>std::unique_ptr</code> вместе с <code>std::deque</code> полностью исключает ручные вызовы <code>new</code>/<code>delete</code> для динамических экземпляров действий.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step 1: Project Directory Structure -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 1: Create Project Directory Structure</span>
+            <span class="data-ru">Шаг 1: Создание структуры директории проекта</span>
+        </h2>
+        <p>
+            <span class="data-en">Create your workspace directory for the project and a <code>src</code> subdirectory for C++ source files:</span>
+            <span class="data-ru">Создайте рабочую директорию проекта и подпапку <code>src</code> для исходных файлов C++:</span>
+        </p>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (Command Prompt / PowerShell)</h3>
+        <pre><code class="language-bash">mkdir C:\projects\action-queue-cutscene-sdl3-opengl-desktop
+mkdir C:\projects\action-queue-cutscene-sdl3-opengl-desktop\src
+cd C:\projects\action-queue-cutscene-sdl3-opengl-desktop</code></pre>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu / WSL (Terminal)</h3>
+        <pre><code class="language-bash">mkdir -p ~/projects/action-queue-cutscene-sdl3-opengl-desktop/src
+cd ~/projects/action-queue-cutscene-sdl3-opengl-desktop</code></pre>
+    </section>
+
+    <!-- Step 2: Source Files -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 2: Create Source Files (src/main.cpp &amp; CMakeLists.txt)</span>
+            <span class="data-ru">Шаг 2: Создание исходных файлов (src/main.cpp и CMakeLists.txt)</span>
+        </h2>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (Terminal / Notepad)</h3>
+        <pre><code class="language-bash">notepad src\main.cpp
+notepad CMakeLists.txt</code></pre>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal / Nano)</h3>
+        <pre><code class="language-bash">nano src/main.cpp
+nano CMakeLists.txt</code></pre>
+
+        <!-- src/main.cpp (SDL3 Callbacks API with cglm) -->
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">1. File Contents for src/main.cpp (SDL3 Callbacks API + cglm)</span>
+            <span class="data-ru">1. Содержимое файла src/main.cpp (SDL3 Callbacks API + cglm)</span>
+        </h3>
+        <pre><code class="language-cpp">#define SDL_MAIN_USE_CALLBACKS 1
+#include &lt;glad/glad.h&gt;
+#include &lt;SDL3/SDL.h&gt;
+#include &lt;SDL3/SDL_main.h&gt;
+#include &lt;cglm/cglm.h&gt;
+
+#include &lt;vector&gt;
+#include &lt;deque&gt;
+#include &lt;memory&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+
+// ============================================================================
+// Action / Command Queue System
+// ============================================================================
+
+enum class ActionStatus {
+    Running,
+    Finished
+};
+
+class Action {
+public:
+    virtual ~Action() = default;
+    virtual void on_start() {}
+    virtual ActionStatus update(float dt) = 0;
+};
+
+class ActionQueue {
+public:
+    void push(std::unique_ptr&lt;Action&gt; action) {
+        queue.push_back(std::move(action));
+    }
+
+    void update(float dt) {
+        if (queue.empty()) return;
+
+        if (!started) {
+            queue.front()-&gt;on_start();
+            started = true;
+        }
+
+        if (queue.front()-&gt;update(dt) == ActionStatus::Finished) {
+            queue.pop_front();
+            started = false; // Next action will call on_start() on next frame
+        }
+    }
+
+    bool is_empty() const { return queue.empty(); }
+    void clear() { queue.clear(); started = false; }
+
+private:
+    std::deque&lt;std::unique_ptr&lt;Action&gt;&gt; queue;
+    bool started = false;
+};
+
+// ============================================================================
+// Application &amp; Render State
+// ============================================================================
+
+struct AppState {
+    SDL_Window* window = nullptr;
+    SDL_GLContext glContext = nullptr;
+
+    GLuint shaderProgram = 0;
+    GLuint VAO = 0;
+    GLuint VBO = 0;
+    GLint uMVPLoc = -1;
+
+    // Transformation variables modified by our Action Queue
+    float rotationAngle = 0.0f; // in radians
+    float scale = 1.0f;
+    float clearColor[3] = { 0.12f, 0.12f, 0.15f };
+
+    uint64_t lastTicks = 0;
+    ActionQueue actionQueue;
+};
+
+// ============================================================================
+// Concrete Cutscene Actions
+// ============================================================================
+
+class RotateAction : public Action {
+public:
+    RotateAction(AppState* state, float targetAngleRad, float duration)
+        : state(state), target(targetAngleRad), duration(duration) {}
+
+    void on_start() override {
+        startAngle = state-&gt;rotationAngle;
+        elapsed = 0.0f;
+    }
+
+    ActionStatus update(float dt) override {
+        elapsed += dt;
+        float t = (duration &gt; 0.0f) ? std::min(1.0f, elapsed / duration) : 1.0f;
+        state-&gt;rotationAngle = startAngle + (target - startAngle) * t;
+        return (t &gt;= 1.0f) ? ActionStatus::Finished : ActionStatus::Running;
+    }
+
+private:
+    AppState* state;
+    float startAngle = 0.0f;
+    float target;
+    float duration;
+    float elapsed = 0.0f;
+};
+
+class PulseAction : public Action {
+public:
+    PulseAction(AppState* state, float maxScale, float duration)
+        : state(state), maxScale(maxScale), duration(duration) {}
+
+    ActionStatus update(float dt) override {
+        elapsed += dt;
+        float t = std::min(1.0f, elapsed / duration);
+        state-&gt;scale = 1.0f + (maxScale - 1.0f) * std::sin(t * 3.14159265f);
+        return (t &gt;= 1.0f) ? ActionStatus::Finished : ActionStatus::Running;
+    }
+
+private:
+    AppState* state;
+    float maxScale;
+    float duration;
+    float elapsed = 0.0f;
+};
+
+class FadeColorAction : public Action {
+public:
+    FadeColorAction(AppState* state, float r, float g, float b, float duration)
+        : state(state), targetR(r), targetG(g), targetB(b), duration(duration) {}
+
+    void on_start() override {
+        startR = state-&gt;clearColor[0];
+        startG = state-&gt;clearColor[1];
+        startB = state-&gt;clearColor[2];
+        elapsed = 0.0f;
+    }
+
+    ActionStatus update(float dt) override {
+        elapsed += dt;
+        float t = (duration &gt; 0.0f) ? std::min(1.0f, elapsed / duration) : 1.0f;
+        state-&gt;clearColor[0] = startR + (targetR - startR) * t;
+        state-&gt;clearColor[1] = startG + (targetG - startG) * t;
+        state-&gt;clearColor[2] = startB + (targetB - startB) * t;
+        return (t &gt;= 1.0f) ? ActionStatus::Finished : ActionStatus::Running;
+    }
+
+private:
+    AppState* state;
+    float startR = 0, startG = 0, startB = 0;
+    float targetR, targetG, targetB;
+    float duration;
+    float elapsed = 0.0f;
+};
+
+static void setupCutscene(AppState* state) {
+    // Step 1: Rotate 360 degrees (2*PI) in 1.5 seconds
+    state-&gt;actionQueue.push(std::make_unique&lt;RotateAction&gt;(state, 6.2831853f, 1.5f));
+
+    // Step 2: Pulse scale up to 1.8x and back in 1.0 second
+    state-&gt;actionQueue.push(std::make_unique&lt;PulseAction&gt;(state, 1.8f, 1.0f));
+
+    // Step 3: Shift background to vibrant purple over 1.0 second
+    state-&gt;actionQueue.push(std::make_unique&lt;FadeColorAction&gt;(state, 0.35f, 0.10f, 0.45f, 1.0f));
+
+    // Step 4: Rotate back to 0 in 1.2 seconds
+    state-&gt;actionQueue.push(std::make_unique&lt;RotateAction&gt;(state, 0.0f, 1.2f));
+
+    // Step 5: Shift background back to dark slate in 1.0 second
+    state-&gt;actionQueue.push(std::make_unique&lt;FadeColorAction&gt;(state, 0.12f, 0.12f, 0.15f, 1.0f));
+}
+
+// ============================================================================
+// OpenGL Shaders
+// ============================================================================
+
+const char* vertexShaderSource = 
+    "#version 330 core\n"
+    "layout (location = 0) in vec2 aPos;\n"
+    "layout (location = 1) in vec3 aColor;\n"
+    "uniform mat4 uMVP;\n"
+    "out vec3 vColor;\n"
+    "void main() {\n"
+    "    gl_Position = uMVP * vec4(aPos, 0.0, 1.0);\n"
+    "    vColor = aColor;\n"
+    "}\0";
+
+const char* fragmentShaderSource = 
+    "#version 330 core\n"
+    "in vec3 vColor;\n"
+    "out vec4 FragColor;\n"
+    "void main() {\n"
+    "    FragColor = vec4(vColor, 1.0);\n"
+    "}\0";
+
+static GLuint compileShader(GLenum type, const char* source) {
+    GLuint shader = glCreateShader(type);
+    glShaderSource(shader, 1, &amp;source, nullptr);
+    glCompileShader(shader);
+    return shader;
+}
+
+// ============================================================================
+// SDL3 Callbacks
+// ============================================================================
+
+SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[]) {
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    auto* state = new AppState();
+    *appstate = state;
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+    state-&gt;window = SDL_CreateWindow(
+        "Action Queue Cutscene Demo (SDL3 Callbacks + cglm)",
+        800, 600,
+        SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
+    );
+
+    if (!state-&gt;window) {
+        SDL_Log("Failed to create window: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    state-&gt;glContext = SDL_GL_CreateContext(state-&gt;window);
+    if (!state-&gt;glContext) {
+        SDL_Log("Failed to create OpenGL context: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    SDL_GL_MakeCurrent(state-&gt;window, state-&gt;glContext);
+    SDL_GL_SetSwapInterval(1);
+
+    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+        SDL_Log("Failed to initialize GLAD");
+        return SDL_APP_FAILURE;
+    }
+
+    GLuint vs = compileShader(GL_VERTEX_SHADER, vertexShaderSource);
+    GLuint fs = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
+
+    state-&gt;shaderProgram = glCreateProgram();
+    glAttachShader(state-&gt;shaderProgram, vs);
+    glAttachShader(state-&gt;shaderProgram, fs);
+    glLinkProgram(state-&gt;shaderProgram);
+
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+
+    state-&gt;uMVPLoc = glGetUniformLocation(state-&gt;shaderProgram, "uMVP");
+
+    float vertices[] = {
+         0.0f,  0.5f,   1.0f, 0.2f, 0.2f, // top (red)
+        -0.5f, -0.5f,   0.2f, 1.0f, 0.2f, // bottom-left (green)
+         0.5f, -0.5f,   0.2f, 0.4f, 1.0f  // bottom-right (blue)
+    };
+
+    glGenVertexArrays(1, &amp;state-&gt;VAO);
+    glGenBuffers(1, &amp;state-&gt;VBO);
+
+    glBindVertexArray(state-&gt;VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, state-&gt;VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    state-&gt;lastTicks = SDL_GetTicksNS();
+    setupCutscene(state);
+
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event) {
+    if (event-&gt;type == SDL_EVENT_QUIT) {
+        return SDL_APP_SUCCESS;
+    }
+    return SDL_APP_CONTINUE;
+}
+
+SDL_AppResult SDL_AppIterate(void* appstate) {
+    auto* state = static_cast&lt;AppState*&gt;(appstate);
+
+    uint64_t currentTicks = SDL_GetTicksNS();
+    float dt = static_cast&lt;float&gt;(currentTicks - state-&gt;lastTicks) / 1e9f;
+    state-&gt;lastTicks = currentTicks;
+
+    // 1. Advance the Action Queue
+    state-&gt;actionQueue.update(dt);
+
+    // If the sequence finished, loop it again
+    if (state-&gt;actionQueue.is_empty()) {
+        setupCutscene(state);
+    }
+
+    // 2. Render Frame
+    int w, h;
+    SDL_GetWindowSizeInPixels(state-&gt;window, &amp;w, &amp;h);
+    glViewport(0, 0, w, h);
+
+    glClearColor(state-&gt;clearColor[0], state-&gt;clearColor[1], state-&gt;clearColor[2], 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glUseProgram(state-&gt;shaderProgram);
+
+    // 3. Matrix Math using cglm
+    float aspect = (h &gt; 0) ? static_cast&lt;float&gt;(w) / static_cast&lt;float&gt;(h) : 1.0f;
+
+    mat4 proj, view, model, vp, mvp;
+
+    // Orthographic projection preserving aspect ratio
+    glm_ortho(-aspect, aspect, -1.0f, 1.0f, -1.0f, 1.0f, proj);
+
+    // Standard view matrix (camera looking down -Z axis)
+    vec3 eye = {0.0f, 0.0f, 1.0f};
+    vec3 center = {0.0f, 0.0f, 0.0f};
+    vec3 up = {0.0f, 1.0f, 0.0f};
+    glm_lookat(eye, center, up, view);
+
+    // Model transformation: rotation around Z axis + uniform scale
+    glm_mat4_identity(model);
+    vec3 axisZ = {0.0f, 0.0f, 1.0f};
+    glm_rotate(model, state-&gt;rotationAngle, axisZ);
+    glm_scale_uni(model, state-&gt;scale);
+
+    // Multiply: MVP = Projection * View * Model
+    glm_mat4_mul(proj, view, vp);
+    glm_mat4_mul(vp, model, mvp);
+
+    // Send the combined MVP matrix to the shader uniform
+    glUniformMatrix4fv(state-&gt;uMVPLoc, 1, GL_FALSE, (const GLfloat*)mvp);
+
+    glBindVertexArray(state-&gt;VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    SDL_GL_SwapWindow(state-&gt;window);
+    return SDL_APP_CONTINUE;
+}
+
+void SDL_AppQuit(void* appstate, SDL_AppResult result) {
+    if (appstate) {
+        auto* state = static_cast&lt;AppState*&gt;(appstate);
+        if (state-&gt;VAO) glDeleteVertexArrays(1, &amp;state-&gt;VAO);
+        if (state-&gt;VBO) glDeleteBuffers(1, &amp;state-&gt;VBO);
+        if (state-&gt;shaderProgram) glDeleteProgram(state-&gt;shaderProgram);
+        if (state-&gt;glContext) SDL_GL_DestroyContext(state-&gt;glContext);
+        if (state-&gt;window) SDL_DestroyWindow(state-&gt;window);
+        delete state;
+    }
+    SDL_Quit();
+}</code></pre>
+
+        <!-- CMakeLists.txt -->
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">2. File Contents for CMakeLists.txt</span>
+            <span class="data-ru">2. Содержимое файла CMakeLists.txt</span>
+        </h3>
+        <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Debug")
+endif()
+
+project(action-queue-cutscene-sdl3-opengl-desktop CXX C)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(OpenGL REQUIRED)
+
+if(WIN32)
+    set(SDL3_DIR "C:/libs/sdl3-3.4.16-mingw/lib/cmake/SDL3")
+    set(CGLM_INCLUDE_DIR "C:/libs/cglm-0.9.6/include")
+    set(GLAD_INCLUDE_DIR "C:/libs/glad-0.1.36/opengl-3.3/include")
+    set(GLAD_SOURCE "C:/libs/glad-0.1.36/opengl-3.3/src/glad.c")
+else()
+    set(SDL3_DIR "$ENV{HOME}/libs/sdl3-3.4.16-ubuntu/lib/cmake/SDL3")
+    set(CGLM_INCLUDE_DIR "$ENV{HOME}/libs/cglm-0.9.6/include")
+    set(GLAD_INCLUDE_DIR "$ENV{HOME}/libs/glad-0.1.36/opengl-3.3/include")
+    set(GLAD_SOURCE "$ENV{HOME}/libs/glad-0.1.36/opengl-3.3/src/glad.c")
+endif()
+
+find_package(SDL3 REQUIRED CONFIG)
+
+add_executable(app
+    src/main.cpp
+    ${GLAD_SOURCE}
+)
+
+target_include_directories(app PRIVATE
+    ${CGLM_INCLUDE_DIR}
+    ${GLAD_INCLUDE_DIR}
+)
+
+if(WIN32)
+    target_compile_options(app PRIVATE -Os)
+    target_link_options(app PRIVATE -static -s -static-libgcc)
+
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_link_options(app PRIVATE -mconsole)
+    else()
+        target_link_options(app PRIVATE -mwindows)
+    endif()
+
+    target_link_libraries(app PRIVATE
+        SDL3::SDL3-static
+        OpenGL::GL
+    )
+else()
+    target_link_libraries(app PRIVATE
+        SDL3::SDL3-static
+        OpenGL::GL
+    )
+endif()</code></pre>
+    </section>
+
+    <!-- Step 3: Build & Execution Scripts -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 3: Create Build &amp; Execution Scripts</span>
+            <span class="data-ru">Шаг 3: Создание скриптов сборки и запуска</span>
+        </h2>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (MinGW / Batch Scripts)</h3>
+        <p class="fw-bold mb-1">config-win.bat</p>
+        <pre><code class="language-bash">cmake -G Ninja -S . -B dist/win</code></pre>
+
+        <p class="fw-bold mb-1">build-win.bat</p>
+        <pre><code class="language-bash">cmake --build dist/win</code></pre>
+
+        <p class="fw-bold mb-1">run-win.bat</p>
+        <pre><code class="language-bash">@echo off
+.\dist\win\app.exe</code></pre>
+
+        <p class="mt-3">
+            <span class="data-en">Run sequentially in Command Prompt or PowerShell:</span>
+            <span class="data-ru">Последовательно запустите в командной строке или PowerShell:</span>
+        </p>
+        <pre><code class="language-bash">config-win.bat
+build-win.bat
+run-win.bat</code></pre>
+
+        <h3 class="h6 fw-bold mt-4 text-primary">Ubuntu (Bash Scripts)</h3>
+        <p class="fw-bold mb-1">config-linux.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+cmake -G Ninja -S . -B dist/linux</code></pre>
+
+        <p class="fw-bold mb-1">build-linux.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+cmake --build dist/linux</code></pre>
+
+        <p class="fw-bold mb-1">run-linux.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+./dist/linux/app</code></pre>
+
+        <p class="mt-3">
+            <span class="data-en">Grant execution permissions and execute on Ubuntu:</span>
+            <span class="data-ru">Предоставьте права на запуск и выполните под Ubuntu:</span>
+        </p>
+        <pre><code class="language-bash">chmod +x config-linux.sh build-linux.sh run-linux.sh
+./config-linux.sh
+./build-linux.sh
+./run-linux.sh</code></pre>
+    </section>
+
+    <!-- Step 4: Expected Output -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 4: Expected Output</span>
+            <span class="data-ru">Шаг 4: Ожидаемый результат</span>
+        </h2>
+        <p>
+            <span class="data-en">Upon execution, a window will appear rendering an RGB triangle that executes the full 5-stage cutscene loop in a continuous sequence, transformed via cglm's MVP matrix:</span>
+            <span class="data-ru">После запуска приложения откроется окно с RGB-треугольником, последовательно и непрерывно выполняющим 5 этапов кат-сцены и трансформируемым с помощью матрицы MVP из cglm:</span>
+        </p>
+        <ol>
+            <li><strong>Rotate:</strong> <span class="data-en">Full 360-degree rotation clockwise over 1.5s.</span><span class="data-ru">Полный оборот на 360 градусов по часовой стрелке за 1.5 секунды.</span></li>
+            <li><strong>Pulse:</strong> <span class="data-en">Smoothly expands to 1.8x scale and returns to normal size over 1.0s.</span><span class="data-ru">Плавно вырастает до 1.8x и возвращается к исходному размеру за 1.0 секунду.</span></li>
+            <li><strong>Fade In Color:</strong> <span class="data-en">The background shifts to vibrant purple over 1.0s.</span><span class="data-ru">Фон плавно переходит в глубокий фиолетовый за 1.0 секунду.</span></li>
+            <li><strong>Rotate Back:</strong> <span class="data-en">Rotates back to 0 radians over 1.2s.</span><span class="data-ru">Вращается обратно в исходное положение за 1.2 секунды.</span></li>
+            <li><strong>Fade Out Color:</strong> <span class="data-en">Background returns to dark slate over 1.0s, and the queue loops automatically.</span><span class="data-ru">Фон возвращается к тёмно-сланцевому цвету за 1.0 секунду, после чего очередь автоматически перезапускается.</span></li>
+        </ol>
+    </section>
+
+    <!-- GitHub Repository Link -->
+    <section class="mt-5 pt-4 border-top text-center">
+        <p class="lead mb-3">
+            <span class="data-en">Complete unified source code and scripts are available on GitHub:</span>
+            <span class="data-ru">Полный исходный код и скрипты сборки доступны на GitHub:</span>
+        </p>
+        <a href="https://github.com/ivan-enzhaev/action-queue-cutscene-sdl3-opengl-desktop" target="_blank" rel="noopener noreferrer" class="btn btn-dark btn-lg px-4 shadow-sm">
+            <span class="data-en">View on GitHub</span>
+            <span class="data-ru">Смотреть на GitHub</span>
+        </a>
+    </section>
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">
+                        <span class="data-en">Sberbank (Russia only)</span>
+                        <span class="data-ru">Сбербанк (только для РФ)</span>
+                    </h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number (Russia only)</span>
+                        <span class="data-ru">Перевод по номеру телефона (только для РФ)</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">USDT TRC20</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    // function setLanguage(lang) {
+    //     if (lang !== "en" && lang !== "ru") lang = "en";
+    //     document.documentElement.setAttribute("lang", lang);
+    //     localStorage.setItem("preferred-lang", lang);
+    //     document
+    //         .querySelectorAll(".lang-link")
+    //         .forEach((el) => el.classList.remove("active"));
+    //     const btn = document.getElementById("btn-" + lang);
+    //     if (btn) btn.classList.add("active");
+
+    //     updateVideoPlayerLanguage(lang);
+    // }
+
+    // function changeLanguage(lang) {
+    //     setLanguage(lang);
+    //     const url = new URL(window.location);
+    //     url.searchParams.set("lang", lang);
+    //     window.history.pushState({}, "", url);
+    // }
+
+    // // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+        
+    //     if (link) {
+    //         // Check if the link is intended to open in a new tab
+    //         if (link.target === "_blank") {
+    //             // Allow the browser to handle the click naturally, 
+    //             // but we still want to append the language param.
+    //             const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //             const targetUrl = new URL(link.href);
+    //             targetUrl.searchParams.set("lang", currentLang);
+                
+    //             // Update the href right before the browser follows it
+    //             link.href = targetUrl.toString();
+    //             return; // Exit the function so e.preventDefault() isn't called
+    //         }
+
+    //         // Existing logic for same-tab navigation
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // (function init() {
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     const langParam = urlParams.get("lang");
+    //     const savedLang = localStorage.getItem("preferred-lang");
+    //     setLanguage(langParam || savedLang || "en");
+    // })();
+
+    // window.onpopstate = function() {
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     setLanguage(urlParams.get("lang") || "en");
+    // };
+
+    // document.querySelectorAll('pre').forEach((pre) => {
+    //     // Create container and header
+    //     const container = document.createElement('div');
+    //     container.className = 'code-container';
+        
+    //     const header = document.createElement('div');
+    //     header.className = 'code-header';
+        
+    //     const button = document.createElement('button');
+    //     button.className = 'copy-button';
+    //     button.innerText = 'Copy';
+
+    //     // Wrap the pre tag
+    //     pre.parentNode.insertBefore(container, pre);
+    //     header.appendChild(button);
+    //     container.appendChild(header);
+    //     container.appendChild(pre);
+
+    //     // Copy Logic
+    //     button.addEventListener('click', () => {
+    //         const code = pre.querySelector('code').innerText;
+    //         navigator.clipboard.writeText(code).then(() => {
+    //             button.innerText = 'Copied!';
+    //             button.classList.add('copied');
+
+    //             setTimeout(() => {
+    //                 button.innerText = 'Copy';
+    //                 button.classList.remove('copied');
+    //             }, 2000);
+    //         });
+    //     });
+    // });
+
+    // document.addEventListener("DOMContentLoaded", () => {
+    //     const codeBlocks = document.querySelectorAll('code[data-url]');
+
+    //     codeBlocks.forEach(async (block) => {
+    //         const url = block.getAttribute('data-url');
+    //         if (!url) return;
+
+    //         try {
+    //             const response = await fetch(url);
+    //             if (!response.ok) throw new Error('Fetch failed');
+    //             const code = await response.text();
+                
+    //             // Set the content
+    //             block.textContent = code;
+                
+    //             // Re-run Prism highlight if available
+    //             if (typeof Prism !== 'undefined') {
+    //                 Prism.highlightElement(block);
+    //             }
+    //         } catch (err) {
+    //             console.error("Could not load code:", err);
+    //             block.textContent = "// Error: Could not load code from GitHub.";
+    //         }
+    //     });
+    // });
+
+    // function updateVideoPlayerLanguage(lang) {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     const targetSrc = lang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+    //     const targetTitle = lang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+    //     // Only update if the URL actually changed to prevent unneeded reloads
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // // Example listener: Call this function inside your existing language-switcher click handler:
+    // document.querySelectorAll('.lang-link').forEach(link => {
+    //     link.addEventListener('click', function() {
+    //         const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+    //         updateVideoPlayerLanguage(lang);
+    //     });
+    // });
+
+    // function initVideoPlayer() {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     // Detect language from URL query string (?lang=ru), or <html lang="..."> attribute
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     const currentLang = urlParams.get('lang') || document.documentElement.lang || 'en';
+
+    //     // Set correct video source on page load
+    //     const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+    //     const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // function loadVideoPlayer() {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     // Determine current language
+    //     const lang = document.documentElement.getAttribute('lang') || 
+    //                  localStorage.getItem('preferred-lang') || 
+    //                  'en';
+
+    //     const targetSrc = lang === 'ru' 
+    //         ? player.getAttribute('data-src-ru') 
+    //         : player.getAttribute('data-src-en');
+    //     const targetTitle = lang === 'ru' 
+    //         ? player.getAttribute('data-title-ru') 
+    //         : player.getAttribute('data-title-en');
+
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // function initVideoPlayerWhenVisible() {
+    //     // If opened in a background tab (middle click), wait until the user switches to this tab
+    //     if (document.hidden) {
+    //         document.addEventListener('visibilitychange', function onVisible() {
+    //             if (!document.hidden) {
+    //                 document.removeEventListener('visibilitychange', onVisible);
+    //                 loadVideoPlayer();
+    //             }
+    //         });
+    //     } else {
+    //         // Tab is active (normal left click) -> load immediately
+    //         loadVideoPlayer();
+    //     }
+    // }
+
+    // // Call on load
+    // if (document.readyState === 'loading') {
+    //     document.addEventListener('DOMContentLoaded', initVideoPlayerWhenVisible);
+    // } else {
+    //     initVideoPlayerWhenVisible();
+    // }
+
+    // 1. Language setting
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+
+        // When manually switching languages on an active tab, update immediately
+        if (!document.hidden) {
+            applyVideoPlayerSrc(lang);
+        }
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // 2. Core video updater
+    function applyVideoPlayerSrc(lang) {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        const currentLang = lang || document.documentElement.getAttribute("lang") || localStorage.getItem("preferred-lang") || "en";
+        const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        if (targetSrc && player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // 3. Deferred loader: waits for tab focus and real layout dimensions
+    function initVideoPlayer() {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        // Wait one render frame to guarantee full container width is computed
+                        requestAnimationFrame(() => {
+                            applyVideoPlayerSrc();
+                        });
+                        observer.disconnect();
+                    }
+                });
+            }, { threshold: 0.05 });
+
+            observer.observe(player);
+        } else {
+            applyVideoPlayerSrc();
+        }
+    }
+
+    // 4. Update language links on mousedown so middle-click gets ?lang= correctly
+    document.addEventListener("mousedown", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (!link) return;
+
+        const currentLang = document.documentElement.getAttribute("lang") || localStorage.getItem("preferred-lang") || "en";
+        const targetUrl = new URL(link.href, window.location.origin);
+        targetUrl.searchParams.set("lang", currentLang);
+        link.href = targetUrl.toString();
+    });
+
+    // 5. Normal click navigation
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (link && link.target !== "_blank") {
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(link.href, window.location.origin + window.location.pathname);
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    // 6. Language Switcher Buttons
+    document.querySelectorAll('.lang-link').forEach(link => {
+        link.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+            changeLanguage(lang);
+        });
+    });
+
+    // 7. Initialize language on page load
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    // 8. Initialize video player (runs once when DOM is ready)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initVideoPlayer);
+    } else {
+        initVideoPlayer();
+    }
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    // Code copy buttons
+    document.querySelectorAll('pre').forEach((pre) => {
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+
+    // External code blocks loader
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                block.textContent = code;
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
+        });
+    });
+</script>
+</body>
+
+</html>
