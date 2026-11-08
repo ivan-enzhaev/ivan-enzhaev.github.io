@@ -1181,6 +1181,97 @@ set -e
 
         <pre><code class="language-text">SDL3 ozz-animation Y-Bot Model</code></pre>
     </section>
+
+<section class="mb-4">
+    <h2 class="h4 fw-bold mb-3">
+        <span class="data-en">OzzSDLStream::Read Method Explanation</span>
+        <span class="data-ru">Объяснение метода OzzSDLStream::Read</span>
+    </h2>
+
+    <p>
+        <span class="data-en">This function implements the virtual <code>ozz::io::Stream::Read()</code> method using SDL3's <code>SDL_ReadIO()</code> API. It acts as an adapter bridging ozz-animation archives (<code>ozz::io::IArchive</code>) and SDL3 file streams (<code>SDL_IOStream</code>):</span>
+        <span class="data-ru">Эта функция реализует виртуальный метод <code>ozz::io::Stream::Read()</code> с использованием API SDL3 <code>SDL_ReadIO()</code>. Она служит адаптером между архивами ozz-animation (<code>ozz::io::IArchive</code>) и потоками данных SDL3 (<code>SDL_IOStream</code>):</span>
+    </p>
+
+    <pre><code class="language-cpp">size_t Read(void *buffer, size_t size) override
+{
+    size_t total = 0;
+    while (total &lt; size)
+    {
+        size_t read = SDL_ReadIO(io_, (uint8_t *)buffer + total, size - total);
+        if (read == 0)
+            break;
+        total += read;
+    }
+    return total;
+}</code></pre>
+
+    <h3 class="h5 fw-bold mt-4 mb-2">
+        <span class="data-en">Line-by-Line Breakdown</span>
+        <span class="data-ru">Построчный разбор</span>
+    </h3>
+
+    <ul class="list-unstyled">
+        <li class="mb-3">
+            <code>size_t Read(void *buffer, size_t size) override</code>
+            <br />
+            <span class="data-en">Overrides the pure virtual read method from <code>ozz::io::Stream</code>. It accepts a destination memory pointer <code>buffer</code> and the number of bytes <code>size</code> requested by the ozz deserializer.</span>
+            <span class="data-ru">Переопределяет виртуальный метод чтения из <code>ozz::io::Stream</code>. Принимает указатель на целевой буфер памяти <code>buffer</code> и количество байт <code>size</code>, запрошенных десериализатором ozz.</span>
+        </li>
+
+        <li class="mb-3">
+            <code>size_t total = 0; while (total &lt; size)</code>
+            <br />
+            <span class="data-en">Initializes a byte counter to track progress and runs a loop until all requested bytes are gathered.</span>
+            <span class="data-ru">Инициализирует счётчик байт и выполняет цикл до тех пор, пока не будет прочитан весь запрошенный объём данных.</span>
+        </li>
+
+        <li class="mb-3">
+            <code>(uint8_t *)buffer + total</code>
+            <br />
+            <span class="data-en">In C++, pointer arithmetic cannot be performed directly on <code>void*</code>. Casting to <code>uint8_t*</code> allows byte-level offsetting so each consecutive read appends immediately after the previously read bytes.</span>
+            <span class="data-ru">В C++ нельзя выполнять адресную арифметику над <code>void*</code>. Приведение к <code>uint8_t*</code> позволяет выполнять побайтовое смещение, благодаря чему каждая следующая порция данных записывается строго вслед за предыдущей.</span>
+        </li>
+
+        <li class="mb-3">
+            <code>size_t read = SDL_ReadIO(io_, (uint8_t *)buffer + total, size - total);</code>
+            <br />
+            <span class="data-en">Invokes SDL3's stream read operation, requesting only the remaining bytes (<code>size - total</code>). Returns the actual number of bytes read in this pass.</span>
+            <span class="data-ru">Вызывает операцию чтения SDL3, запрашивая только недостающие байты (<code>size - total</code>). Возвращает фактическое число прочитанных байт за данный вызов.</span>
+        </li>
+
+        <li class="mb-3">
+            <code>if (read == 0) break;</code>
+            <br />
+            <span class="data-en">In SDL3, <code>SDL_ReadIO</code> returns 0 on End-of-File (EOF) or unrecoverable error. The loop breaks immediately to avoid an infinite loop.</span>
+            <span class="data-ru">В SDL3 <code>SDL_ReadIO</code> возвращает 0 при достижении конца файла (EOF) или возникновении ошибки. Цикл сразу прерывается для предотвращения бесконечного зацикливания.</span>
+        </li>
+
+        <li class="mb-3">
+            <code>total += read;</code>
+            <br />
+            <span class="data-en">Accumulates the number of bytes read in the current iteration.</span>
+            <span class="data-ru">Прибавляет число прочитанных в текущей итерации байт к общей сумме.</span>
+        </li>
+
+        <li class="mb-3">
+            <code>return total;</code>
+            <br />
+            <span class="data-en">Returns the total number of bytes successfully read (equals <code>size</code> on complete success, or less if EOF was reached early).</span>
+            <span class="data-ru">Возвращает общее количество успешно прочитанных байт (равно <code>size</code> при полном успехе либо меньше, если конец файла наступил раньше).</span>
+        </li>
+    </ul>
+
+    <h3 class="h5 fw-bold mt-4 mb-2">
+        <span class="data-en">Why the Loop is Necessary (Handling Partial Reads)</span>
+        <span class="data-ru">Зачем нужен цикл (обработка частичного чтения)</span>
+    </h3>
+
+    <p>
+        <span class="data-en">Low-level I/O operations are not guaranteed to deliver the entire requested chunk in a single call (often referred to as a "short read"). The <code>while</code> loop guarantees that the stream continuously accumulates data until the entire expected data structure (skeleton, animation curves, or joint matrices) is fully loaded without memory corruption.</span>
+        <span class="data-ru">Низкоуровневые операции ввода-вывода не гарантируют передачу всего запрошенного блока данных за один вызов («короткое чтение»). Цикл <code>while</code> гарантирует непрерывный добор данных, пока вся структура (скелет, анимационные кривые или матрицы суставов) не будет загружена целиком без повреждения памяти.</span>
+    </p>
+    </section>
 </div>
 
         
