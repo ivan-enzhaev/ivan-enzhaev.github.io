@@ -217,7 +217,7 @@
     <main class="flex-grow-1">
         
 <div class="container bg-white p-5 shadow-sm rounded mb-5">
-    <header class="mb-5 border-bottom pb-3">
+    <header class="mb-4 border-bottom pb-3">
         <h1 class="fw-bold">
             <span class="data-en">Playing Chicken Dance Animation for Y-Bot using ozz-animation, SDL3 Callbacks, cgltf, and OpenGL 3.3</span>
             <span class="data-ru">Воспроизведение анимации танец цыпленка для Y-Bot с использованием ozz-animation, коллбэков SDL3, cgltf и OpenGL 3.3</span>
@@ -228,7 +228,66 @@
         </p>
     </header>
 
-    <div class="alert alert-secondary mb-3">
+    <!-- Clickable Table of Contents -->
+    <nav class="card border-0 bg-light p-4 mb-4">
+        <h2 class="h5 fw-bold mb-3">
+            <span class="data-en">Table of Contents</span>
+            <span class="data-ru">Содержание</span>
+        </h2>
+        <ol class="mb-0 ps-3">
+            <li class="mb-2">
+                <a href="#prerequisites" class="text-decoration-none">
+                    <span class="data-en">Prerequisites &amp; Library Installation</span>
+                    <span class="data-ru">Необходимые библиотеки и установка</span>
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="#create-project-dir" class="text-decoration-none">
+                    <span class="data-en">Create Project Directory</span>
+                    <span class="data-ru">Создание директории проекта</span>
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="#download-assets" class="text-decoration-none">
+                    <span class="data-en">Download Model, Texture &amp; Animation Assets</span>
+                    <span class="data-ru">Скачивание файлов модели, текстуры и анимации</span>
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="#source-files" class="text-decoration-none">
+                    <span class="data-en">Source Files (main.cpp &amp; CMakeLists.txt)</span>
+                    <span class="data-ru">Исходные файлы (main.cpp и CMakeLists.txt)</span>
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="#build-and-run" class="text-decoration-none">
+                    <span class="data-en">Build &amp; Execution Scripts</span>
+                    <span class="data-ru">Скрипты сборки и запуска</span>
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="#expected-output" class="text-decoration-none">
+                    <span class="data-en">Expected Output</span>
+                    <span class="data-ru">Ожидаемый результат</span>
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="#ozz-sdl-stream" class="text-decoration-none">
+                    <span class="data-en">Understanding the OzzSDLStream Adapter Class</span>
+                    <span class="data-ru">Разбор класса-адаптера OzzSDLStream</span>
+                </a>
+            </li>
+            <li class="mb-0">
+                <a href="#stream-explanation" class="text-decoration-none">
+                    <span class="data-en">Deep Dive: OzzSDLStream::Read Method</span>
+                    <span class="data-ru">Подробный разбор метода OzzSDLStream::Read</span>
+                </a>
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Prerequisites -->
+    <div id="prerequisites" class="alert alert-secondary mb-4">
         <span class="data-en">Before proceeding, make sure you have built and installed all required libraries on your system using the appropriate guides:</span>
         <span class="data-ru">Перед продолжением убедитесь, что вы собрали и установили все необходимые библиотеки в вашей системе, следуя соответствующим инструкциям:</span>
         <ul class="mb-0 mt-2">
@@ -277,33 +336,32 @@
         </ul>
     </div>
 
-    <section class="mb-4">
+    <!-- 1. Create Project Directory -->
+    <section id="create-project-dir" class="mb-5">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 1: Create Project Directory</span>
-            <span class="data-ru">Шаг 1: Создание директории проекта</span>
+            <span class="data-en">Create Project Directory</span>
+            <span class="data-ru">Создание директории проекта</span>
         </h2>
         <p>
             <span class="data-en">Create a workspace folder and a new directory for your ozz-animation project:</span>
             <span class="data-ru">Создайте рабочую папку для проектов и новую директорию для вашего проекта ozz-animation:</span>
         </p>
 
-        <!-- Windows Command -->
         <h3 class="h6 fw-bold mt-3 text-primary">Windows (Command Prompt / PowerShell)</h3>
         <pre><code class="language-bash">mkdir C:\projects\y-bot-ozz-animation-opengl-sdl3-cpp
 mkdir C:\projects\y-bot-ozz-animation-opengl-sdl3-cpp\assets\models\y-bot
 cd C:\projects\y-bot-ozz-animation-opengl-sdl3-cpp</code></pre>
 
-        <!-- Ubuntu Command -->
         <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal)</h3>
         <pre><code class="language-bash">mkdir -p ~/projects/y-bot-ozz-animation-opengl-sdl3-cpp/assets/models/y-bot
 cd ~/projects/y-bot-ozz-animation-opengl-sdl3-cpp</code></pre>
     </section>
 
-    <!-- Step 2: Download & Copy Asset -->
-    <section class="mb-4">
+    <!-- 2. Download & Place Assets -->
+    <section id="download-assets" class="mb-5">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 2: Download &amp; Place Model, Texture, Skeleton &amp; Animation Assets</span>
-            <span class="data-ru">Шаг 2: Скачивание и размещение файлов модели, текстуры, скелета и анимации</span>
+            <span class="data-en">Download &amp; Place Model, Texture, Skeleton &amp; Animation Assets</span>
+            <span class="data-ru">Скачивание и размещение файлов модели, текстуры, скелета и анимации</span>
         </h2>
         <p>
             <span class="data-en">Download the Y-Bot 3D binary glTF model file, its JPEG texture, skeleton data, and chicken dance animation files:</span>
@@ -347,10 +405,11 @@ C:\projects\y-bot-ozz-animation-opengl-sdl3-cpp\assets\models\y-bot\animation.oz
     ~/projects/y-bot-ozz-animation-opengl-sdl3-cpp/assets/models/y-bot/</code></pre>
     </section>
 
-    <section class="mb-4">
+    <!-- 3. Source Files -->
+    <section id="source-files" class="mb-5">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 3: Create Source Files (main.cpp &amp; CMakeLists.txt)</span>
-            <span class="data-ru">Шаг 3: Создание исходных файлов (main.cpp и CMakeLists.txt)</span>
+            <span class="data-en">Source Files (main.cpp &amp; CMakeLists.txt)</span>
+            <span class="data-ru">Исходные файлы (main.cpp и CMakeLists.txt)</span>
         </h2>
 
         <p>
@@ -358,12 +417,10 @@ C:\projects\y-bot-ozz-animation-opengl-sdl3-cpp\assets\models\y-bot\animation.oz
             <span class="data-ru">Вы можете создать эти файлы через Блокнот / Sublime Text в Windows или с помощью <code>nano</code> в терминале Ubuntu:</span>
         </p>
 
-        <!-- Windows Quick File Creation -->
         <h3 class="h6 fw-bold mt-3 text-primary">Windows (Terminal / Notepad)</h3>
         <pre><code class="language-bash">notepad main.cpp
 notepad CMakeLists.txt</code></pre>
 
-        <!-- Ubuntu Quick File Creation -->
         <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal / Nano)</h3>
         <pre><code class="language-bash">nano main.cpp
 nano CMakeLists.txt</code></pre>
@@ -374,7 +431,6 @@ nano CMakeLists.txt</code></pre>
             <span class="data-ru">Вставьте код правой кнопкой мыши (ПКМ) &rarr; Нажмите <kbd>Ctrl</kbd> + <kbd>O</kbd> и <kbd>Enter</kbd> для сохранения &rarr; Нажмите <kbd>Ctrl</kbd> + <kbd>X</kbd> для выхода.</span>
         </div>
 
-        <!-- Code File Contents for main.cpp (SDL3 Callbacks API) -->
         <h3 class="h6 fw-bold mt-4">
             <span class="data-en">File Contents for main.cpp (SDL3 Callbacks API)</span>
             <span class="data-ru">Содержимое файла main.cpp (SDL3 Callbacks API)</span>
@@ -888,14 +944,12 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
     float deltaTime = static_cast&lt;float&gt;(currentTicks - state-&gt;lastTicks) / 1e9f;
     state-&gt;lastTicks = currentTicks;
 
-    // Advance and loop animation time
     if (state-&gt;ozzAnimation.duration() &gt; 0.0f) {
         state-&gt;ozzAnimationTime += deltaTime;
         if (state-&gt;ozzAnimationTime &gt; state-&gt;ozzAnimation.duration()) {
             state-&gt;ozzAnimationTime = fmod(state-&gt;ozzAnimationTime, state-&gt;ozzAnimation.duration());
         }
 
-        // Sampling job
         ozz::animation::SamplingJob sampling_job;
         sampling_job.animation = &state-&gt;ozzAnimation;
         sampling_job.ratio = state-&gt;ozzAnimationTime / state-&gt;ozzAnimation.duration();
@@ -931,7 +985,6 @@ SDL_AppResult SDL_AppIterate(void* appstate) {
     glUseProgram(state-&gt;shaderProgram);
     glUniformMatrix4fv(state-&gt;mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));
 
-    // Prepare active joint matrix palette for skinning
     const int activeJointIndices[] = {
         2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 
         22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 
@@ -997,7 +1050,6 @@ void SDL_AppQuit(void* appstate, SDL_AppResult result) {
     SDL_Quit();
 }</code></pre>
 
-        <!-- Informational Callout Box for Callbacks -->
         <div class="alert alert-warning my-3">
             <strong>
                 <span class="data-en">SDL3 Note: Callbacks API</span>
@@ -1013,10 +1065,9 @@ void SDL_AppQuit(void* appstate, SDL_AppResult result) {
             </p>
         </div>
 
-        <!-- Code File 2 -->
         <h3 class="h6 fw-bold mt-4">
-            <span class="data-en">2. File Contents for CMakeLists.txt</span>
-            <span class="data-ru">2. Содержимое файла CMakeLists.txt</span>
+            <span class="data-en">File Contents for CMakeLists.txt</span>
+            <span class="data-ru">Содержимое файла CMakeLists.txt</span>
         </h3>
         <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
 
@@ -1113,14 +1164,13 @@ else()
 endif()</code></pre>
     </section>
 
-    <!-- Step 4: Build & Execution Scripts -->
-    <section class="mb-4">
+    <!-- 4. Build & Execution Scripts -->
+    <section id="build-and-run" class="mb-5">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 4: Create Build &amp; Execution Scripts</span>
-            <span class="data-ru">Шаг 4: Создание скриптов сборки и запуска</span>
+            <span class="data-en">Build &amp; Execution Scripts</span>
+            <span class="data-ru">Скрипты сборки и запуска</span>
         </h2>
 
-        <!-- Windows Tab/Sub-block -->
         <h3 class="h6 fw-bold mt-3 text-primary">Windows (MinGW / Batch Scripts)</h3>
         <p class="fw-bold mb-1">config-exe.bat</p>
         <pre><code class="language-bash">cmake -G Ninja -S . -B dist/win</code></pre>
@@ -1140,7 +1190,6 @@ endif()</code></pre>
 build-exe.bat
 run-exe.bat</code></pre>
 
-        <!-- Ubuntu Tab/Sub-block -->
         <h3 class="h6 fw-bold mt-4 text-primary">Ubuntu (Bash Scripts)</h3>
         <p class="fw-bold mb-1">config-bin.sh</p>
         <pre><code class="language-bash">#!/usr/bin/env bash
@@ -1167,11 +1216,11 @@ set -e
 ./run-bin.sh</code></pre>
     </section>
 
-    <!-- Step 5: Expected Output -->
-    <section class="mb-4">
+    <!-- 5. Expected Output -->
+    <section id="expected-output" class="mb-5">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Step 5: Expected Output</span>
-            <span class="data-ru">Шаг 5: Ожидаемый результат</span>
+            <span class="data-en">Expected Output</span>
+            <span class="data-ru">Ожидаемый результат</span>
         </h2>
 
         <p>
@@ -1182,18 +1231,197 @@ set -e
         <pre><code class="language-text">SDL3 ozz-animation Y-Bot Model</code></pre>
     </section>
 
-<section class="mb-4">
+<section id="ozz-sdl-stream" class="mb-5">
     <h2 class="h4 fw-bold mb-3">
-        <span class="data-en">OzzSDLStream::Read Method Explanation</span>
-        <span class="data-ru">Объяснение метода OzzSDLStream::Read</span>
+        <span class="data-en">Understanding the OzzSDLStream Adapter Class</span>
+        <span class="data-ru">Разбор класса-адаптера OzzSDLStream</span>
     </h2>
 
     <p>
-        <span class="data-en">This function implements the virtual <code>ozz::io::Stream::Read()</code> method using SDL3's <code>SDL_ReadIO()</code> API. It acts as an adapter bridging ozz-animation archives (<code>ozz::io::IArchive</code>) and SDL3 file streams (<code>SDL_IOStream</code>):</span>
-        <span class="data-ru">Эта функция реализует виртуальный метод <code>ozz::io::Stream::Read()</code> с использованием API SDL3 <code>SDL_ReadIO()</code>. Она служит адаптером между архивами ozz-animation (<code>ozz::io::IArchive</code>) и потоками данных SDL3 (<code>SDL_IOStream</code>):</span>
+        <span class="data-en">
+            The <code>ozz-animation</code> runtime uses an abstract stream interface (<code>ozz::io::Stream</code>) to read and deserialize skeletons and animations via its archive system (<code>ozz::io::IArchive</code>). By wrapping SDL3's modern <code>SDL_IOStream</code>, we enable loading <code>.ozz</code> assets across any platform supported by SDL without depending on standard C file streams:
+        </span>
+        <span class="data-ru">
+            Библиотека <code>ozz-animation</code> использует абстрактный интерфейс потоков (<code>ozz::io::Stream</code>) для чтения и десериализации скелетов и анимаций через систему архивов (<code>ozz::io::IArchive</code>). Оборачивая современный <code>SDL_IOStream</code> из SDL3, мы обеспечиваем загрузку ассетов <code>.ozz</code> на любой платформе, поддерживаемой SDL, без привязки к стандартным файловым потокам C:
+        </span>
     </p>
 
-    <pre><code class="language-cpp">size_t Read(void *buffer, size_t size) override
+    <pre><code class="language-cpp">// Custom SDL3 stream wrapper for ozz-animation archives
+class OzzSDLStream : public ozz::io::Stream
+{
+public:
+    OzzSDLStream(SDL_IOStream *io)
+        : io_(io)
+        , opened_(io != nullptr)
+    {
+        if (io_)
+            SDL_SeekIO(io_, 0, SDL_IO_SEEK_SET);
+    }
+
+    ~OzzSDLStream()
+    {
+        if (io_)
+            SDL_CloseIO(io_);
+    }
+
+    bool opened() const override { return opened_; }
+
+    size_t Read(void *buffer, size_t size) override
+    {
+        size_t total = 0;
+        while (total &lt; size)
+        {
+            size_t read = SDL_ReadIO(io_, (uint8_t *)buffer + total, size - total);
+            if (read == 0)
+                break;
+            total += read;
+        }
+        return total;
+    }
+
+    size_t Write(const void *, size_t) override { return 0; }
+
+    int Seek(int offset, Origin origin) override
+    {
+        SDL_IOWhence whence = SDL_IO_SEEK_SET;
+        if (origin == kCurrent)
+            whence = SDL_IO_SEEK_CUR;
+        else if (origin == kEnd)
+            whence = SDL_IO_SEEK_END;
+
+        Sint64 pos = SDL_SeekIO(io_, offset, whence);
+        return pos &gt;= 0 ? 0 : -1;
+    }
+
+    int Tell() const override
+    {
+        Sint64 pos = SDL_TellIO(io_);
+        return pos &gt;= 0 ? (int)pos : -1;
+    }
+
+    size_t Size() const override
+    {
+        Sint64 size = SDL_GetIOSize(io_);
+        return size &gt;= 0 ? (size_t)size : 0;
+    }
+
+private:
+    SDL_IOStream *io_;
+    bool opened_;
+};</code></pre>
+
+    <h3 class="h5 fw-bold mt-4 mb-3">
+        <span class="data-en">Class Methods Breakdown</span>
+        <span class="data-ru">Разбор методов класса</span>
+    </h3>
+
+    <ul class="list-unstyled">
+        <!-- Constructor & Destructor -->
+        <li class="mb-4">
+            <h4 class="h6 fw-bold text-primary mb-1">
+                <code>OzzSDLStream(SDL_IOStream *io)</code> &amp; <code>~OzzSDLStream()</code>
+            </h4>
+            <span class="data-en">
+                Takes ownership of the opened <code>SDL_IOStream*</code>, rewinds the stream position to the beginning (<code>SDL_SeekIO(io_, 0, SDL_IO_SEEK_SET)</code>), and safely closes it with <code>SDL_CloseIO(io_)</code> when the stream object goes out of scope (RAII pattern).
+            </span>
+            <span class="data-ru">
+                Принимает владение открытым <code>SDL_IOStream*</code>, сбрасывает позицию чтения в начало файла (<code>SDL_SeekIO(io_, 0, SDL_IO_SEEK_SET)</code>) и гарантированно закрывает поток с помощью <code>SDL_CloseIO(io_)</code> при выходе из области видимости по паттерну RAII.
+            </span>
+        </li>
+
+        <!-- opened -->
+        <li class="mb-4">
+            <h4 class="h6 fw-bold text-primary mb-1">
+                <code>bool opened() const override</code>
+            </h4>
+            <span class="data-en">
+                Reports whether the underlying stream handle was successfully opened and is valid for read operations.
+            </span>
+            <span class="data-ru">
+                Сообщает, был ли исходный дескриптор потока успешно открыт и готов ли он к операциям чтения.
+            </span>
+        </li>
+
+        <!-- Read -->
+        <li class="mb-4">
+            <h4 class="h6 fw-bold text-primary mb-1">
+                <code>size_t Read(void *buffer, size_t size) override</code>
+            </h4>
+            <span class="data-en">
+                Reads <code>size</code> bytes into <code>buffer</code>. Uses a <code>while</code> loop with pointer arithmetic (<code>(uint8_t *)buffer + total</code>) to handle short/partial reads from disk until either all requested bytes are gathered or End-Of-File / error occurs.
+            </span>
+            <span class="data-ru">
+                Считывает <code>size</code> байт в буфер <code>buffer</code>. Использует цикл <code>while</code> с адресной арифметикой (<code>(uint8_t *)buffer + total</code>) для корректной обработки неполных (частичных) чтений, пока не будет получен весь блок данных или не встретится EOF/ошибка.
+            </span>
+        </li>
+
+        <!-- Write -->
+        <li class="mb-4">
+            <h4 class="h6 fw-bold text-primary mb-1">
+                <code>size_t Write(const void *, size_t) override</code>
+            </h4>
+            <span class="data-en">
+                Returns <code>0</code> because this stream is strictly read-only for loading pre-baked skeleton and animation data.
+            </span>
+            <span class="data-ru">
+                Возвращает <code>0</code>, так как данный поток предназначен исключительно для чтения готовых файлов скелета и анимации.
+            </span>
+        </li>
+
+        <!-- Seek -->
+        <li class="mb-4">
+            <h4 class="h6 fw-bold text-primary mb-1">
+                <code>int Seek(int offset, Origin origin) override</code>
+            </h4>
+            <span class="data-en">
+                Maps Ozz's seek origin enum (<code>kCurrent</code>, <code>kEnd</code>, and default beginning) to SDL3's <code>SDL_IOWhence</code> constants (<code>SDL_IO_SEEK_CUR</code>, <code>SDL_IO_SEEK_END</code>, <code>SDL_IO_SEEK_SET</code>). Returns <code>0</code> on success and <code>-1</code> on error.
+            </span>
+            <span class="data-ru">
+                Сопоставляет перечисление точки отсчета Ozz (<code>kCurrent</code>, <code>kEnd</code> и начало по умолчанию) с константами SDL3 <code>SDL_IOWhence</code> (<code>SDL_IO_SEEK_CUR</code>, <code>SDL_IO_SEEK_END</code>, <code>SDL_IO_SEEK_SET</code>). Возвращает <code>0</code> при успехе и <code>-1</code> при ошибке.
+            </span>
+        </li>
+
+        <!-- Tell -->
+        <li class="mb-4">
+            <h4 class="h6 fw-bold text-primary mb-1">
+                <code>int Tell() const override</code>
+            </h4>
+            <span class="data-en">
+                Queries the current byte offset within the stream via <code>SDL_TellIO(io_)</code>.
+            </span>
+            <span class="data-ru">
+                Запрашивает текущее смещение в байтах внутри потока через <code>SDL_TellIO(io_)</code>.
+            </span>
+        </li>
+
+        <!-- Size -->
+        <li class="mb-2">
+            <h4 class="h6 fw-bold text-primary mb-1">
+                <code>size_t Size() const override</code>
+            </h4>
+            <span class="data-en">
+                Returns the total byte size of the file using SDL3's <code>SDL_GetIOSize(io_)</code>.
+            </span>
+            <span class="data-ru">
+                Возвращает общий размер файла в байтах с помощью встроенной функции SDL3 <code>SDL_GetIOSize(io_)</code>.
+            </span>
+        </li>
+    </ul>
+</section>
+
+    <!-- Deep Dive: OzzSDLStream::Read Method Explanation -->
+    <section id="stream-explanation" class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Deep Dive: OzzSDLStream::Read Method</span>
+            <span class="data-ru">Подробный разбор метода OzzSDLStream::Read</span>
+        </h2>
+
+        <p>
+            <span class="data-en">This function implements the virtual <code>ozz::io::Stream::Read()</code> method using SDL3's <code>SDL_ReadIO()</code> API. It acts as an adapter bridging ozz-animation archives (<code>ozz::io::IArchive</code>) and SDL3 file streams (<code>SDL_IOStream</code>):</span>
+            <span class="data-ru">Эта функция реализует виртуальный метод <code>ozz::io::Stream::Read()</code> с использованием API SDL3 <code>SDL_ReadIO()</code>. Она служит адаптером между архивами ozz-animation (<code>ozz::io::IArchive</code>) и потоками данных SDL3 (<code>SDL_IOStream</code>):</span>
+        </p>
+
+        <pre><code class="language-cpp">size_t Read(void *buffer, size_t size) override
 {
     size_t total = 0;
     while (total &lt; size)
@@ -1206,71 +1434,71 @@ set -e
     return total;
 }</code></pre>
 
-    <h3 class="h5 fw-bold mt-4 mb-2">
-        <span class="data-en">Line-by-Line Breakdown</span>
-        <span class="data-ru">Построчный разбор</span>
-    </h3>
+        <h3 class="h5 fw-bold mt-4 mb-2">
+            <span class="data-en">Line-by-Line Breakdown</span>
+            <span class="data-ru">Построчный разбор</span>
+        </h3>
 
-    <ul class="list-unstyled">
-        <li class="mb-3">
-            <code>size_t Read(void *buffer, size_t size) override</code>
-            <br />
-            <span class="data-en">Overrides the pure virtual read method from <code>ozz::io::Stream</code>. It accepts a destination memory pointer <code>buffer</code> and the number of bytes <code>size</code> requested by the ozz deserializer.</span>
-            <span class="data-ru">Переопределяет виртуальный метод чтения из <code>ozz::io::Stream</code>. Принимает указатель на целевой буфер памяти <code>buffer</code> и количество байт <code>size</code>, запрошенных десериализатором ozz.</span>
-        </li>
+        <ul class="list-unstyled">
+            <li class="mb-3">
+                <code>size_t Read(void *buffer, size_t size) override</code>
+                <br />
+                <span class="data-en">Overrides the pure virtual read method from <code>ozz::io::Stream</code>. It accepts a destination memory pointer <code>buffer</code> and the number of bytes <code>size</code> requested by the ozz deserializer.</span>
+                <span class="data-ru">Переопределяет виртуальный метод чтения из <code>ozz::io::Stream</code>. Принимает указатель на целевой буфер памяти <code>buffer</code> и количество байт <code>size</code>, запрошенных десериализатором ozz.</span>
+            </li>
 
-        <li class="mb-3">
-            <code>size_t total = 0; while (total &lt; size)</code>
-            <br />
-            <span class="data-en">Initializes a byte counter to track progress and runs a loop until all requested bytes are gathered.</span>
-            <span class="data-ru">Инициализирует счётчик байт и выполняет цикл до тех пор, пока не будет прочитан весь запрошенный объём данных.</span>
-        </li>
+            <li class="mb-3">
+                <code>size_t total = 0; while (total &lt; size)</code>
+                <br />
+                <span class="data-en">Initializes a byte counter to track progress and runs a loop until all requested bytes are gathered.</span>
+                <span class="data-ru">Инициализирует счётчик байт и выполняет цикл до тех пор, пока не будет прочитан весь запрошенный объём данных.</span>
+            </li>
 
-        <li class="mb-3">
-            <code>(uint8_t *)buffer + total</code>
-            <br />
-            <span class="data-en">In C++, pointer arithmetic cannot be performed directly on <code>void*</code>. Casting to <code>uint8_t*</code> allows byte-level offsetting so each consecutive read appends immediately after the previously read bytes.</span>
-            <span class="data-ru">В C++ нельзя выполнять адресную арифметику над <code>void*</code>. Приведение к <code>uint8_t*</code> позволяет выполнять побайтовое смещение, благодаря чему каждая следующая порция данных записывается строго вслед за предыдущей.</span>
-        </li>
+            <li class="mb-3">
+                <code>(uint8_t *)buffer + total</code>
+                <br />
+                <span class="data-en">In C++, pointer arithmetic cannot be performed directly on <code>void*</code>. Casting to <code>uint8_t*</code> allows byte-level offsetting so each consecutive read appends immediately after the previously read bytes.</span>
+                <span class="data-ru">В C++ нельзя выполнять адресную арифметику над <code>void*</code>. Приведение к <code>uint8_t*</code> позволяет выполнять побайтовое смещение, благодаря чему каждая следующая порция данных записывается строго вслед за предыдущей.</span>
+            </li>
 
-        <li class="mb-3">
-            <code>size_t read = SDL_ReadIO(io_, (uint8_t *)buffer + total, size - total);</code>
-            <br />
-            <span class="data-en">Invokes SDL3's stream read operation, requesting only the remaining bytes (<code>size - total</code>). Returns the actual number of bytes read in this pass.</span>
-            <span class="data-ru">Вызывает операцию чтения SDL3, запрашивая только недостающие байты (<code>size - total</code>). Возвращает фактическое число прочитанных байт за данный вызов.</span>
-        </li>
+            <li class="mb-3">
+                <code>size_t read = SDL_ReadIO(io_, (uint8_t *)buffer + total, size - total);</code>
+                <br />
+                <span class="data-en">Invokes SDL3's stream read operation, requesting only the remaining bytes (<code>size - total</code>). Returns the actual number of bytes read in this pass.</span>
+                <span class="data-ru">Вызывает операцию чтения SDL3, запрашивая только недостающие байты (<code>size - total</code>). Возвращает фактическое число прочитанных байт за данный вызов.</span>
+            </li>
 
-        <li class="mb-3">
-            <code>if (read == 0) break;</code>
-            <br />
-            <span class="data-en">In SDL3, <code>SDL_ReadIO</code> returns 0 on End-of-File (EOF) or unrecoverable error. The loop breaks immediately to avoid an infinite loop.</span>
-            <span class="data-ru">В SDL3 <code>SDL_ReadIO</code> возвращает 0 при достижении конца файла (EOF) или возникновении ошибки. Цикл сразу прерывается для предотвращения бесконечного зацикливания.</span>
-        </li>
+            <li class="mb-3">
+                <code>if (read == 0) break;</code>
+                <br />
+                <span class="data-en">In SDL3, <code>SDL_ReadIO</code> returns 0 on End-of-File (EOF) or unrecoverable error. The loop breaks immediately to avoid an infinite loop.</span>
+                <span class="data-ru">В SDL3 <code>SDL_ReadIO</code> возвращает 0 при достижении конца файла (EOF) или возникновении ошибки. Цикл сразу прерывается для предотвращения бесконечного зацикливания.</span>
+            </li>
 
-        <li class="mb-3">
-            <code>total += read;</code>
-            <br />
-            <span class="data-en">Accumulates the number of bytes read in the current iteration.</span>
-            <span class="data-ru">Прибавляет число прочитанных в текущей итерации байт к общей сумме.</span>
-        </li>
+            <li class="mb-3">
+                <code>total += read;</code>
+                <br />
+                <span class="data-en">Accumulates the number of bytes read in the current iteration.</span>
+                <span class="data-ru">Прибавляет число прочитанных в текущей итерации байт к общей сумме.</span>
+            </li>
 
-        <li class="mb-3">
-            <code>return total;</code>
-            <br />
-            <span class="data-en">Returns the total number of bytes successfully read (equals <code>size</code> on complete success, or less if EOF was reached early).</span>
-            <span class="data-ru">Возвращает общее количество успешно прочитанных байт (равно <code>size</code> при полном успехе либо меньше, если конец файла наступил раньше).</span>
-        </li>
-    </ul>
+            <li class="mb-3">
+                <code>return total;</code>
+                <br />
+                <span class="data-en">Returns the total number of bytes successfully read (equals <code>size</code> on complete success, or less if EOF was reached early).</span>
+                <span class="data-ru">Возвращает общее количество успешно прочитанных байт (равно <code>size</code> при полном успехе либо меньше, если конец файла наступил раньше).</span>
+            </li>
+        </ul>
 
-    <h3 class="h5 fw-bold mt-4 mb-2">
-        <span class="data-en">Why the Loop is Necessary (Handling Partial Reads)</span>
-        <span class="data-ru">Зачем нужен цикл (обработка частичного чтения)</span>
-    </h3>
+        <h3 class="h5 fw-bold mt-4 mb-2">
+            <span class="data-en">Why the Loop is Necessary (Handling Partial Reads)</span>
+            <span class="data-ru">Зачем нужен цикл (обработка частичного чтения)</span>
+        </h3>
 
-    <p>
-        <span class="data-en">Low-level I/O operations are not guaranteed to deliver the entire requested chunk in a single call (often referred to as a "short read"). The <code>while</code> loop guarantees that the stream continuously accumulates data until the entire expected data structure (skeleton, animation curves, or joint matrices) is fully loaded without memory corruption.</span>
-        <span class="data-ru">Низкоуровневые операции ввода-вывода не гарантируют передачу всего запрошенного блока данных за один вызов («короткое чтение»). Цикл <code>while</code> гарантирует непрерывный добор данных, пока вся структура (скелет, анимационные кривые или матрицы суставов) не будет загружена целиком без повреждения памяти.</span>
-    </p>
+        <p>
+            <span class="data-en">Low-level I/O operations are not guaranteed to deliver the entire requested chunk in a single call (often referred to as a "short read"). The <code>while</code> loop guarantees that the stream continuously accumulates data until the entire expected data structure (skeleton, animation curves, or joint matrices) is fully loaded without memory corruption.</span>
+            <span class="data-ru">Низкоуровневые операции ввода-вывода не гарантируют передачу всего запрошенного блока данных за один вызов («короткое чтение»). Цикл <code>while</code> гарантирует непрерывный добор данных, пока вся структура (скелет, анимационные кривые или матрицы суставов) не будет загружена целиком без повреждения памяти.</span>
+        </p>
     </section>
 </div>
 
