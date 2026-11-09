@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    Building SFML 3 Static Library for Ubuntu &amp; WSL (GCC, CMake &amp; Ninja)
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+<script src="/libs/bootstrap@5.3.3/bootstrap.bundle.min.js"></script>
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
+
+    /* How to hide non-active language blocks without collapsing iframe dimensions */
+    .data-en.d-none, 
+    .data-ru.d-none {
+        display: none !important;
+    }
+
+    /* Add this to prevent resolution drops during language toggles */
+    .ratio iframe {
+        width: 100%;
+        height: 100%;
+        content-visibility: visible;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-5 border-bottom pb-3">
+        <h1 class="fw-bold">
+            <span class="data-en">Building SFML 3 Static Library for Ubuntu &amp; WSL (GCC, CMake &amp; Ninja)</span>
+            <span class="data-ru">Сборка статической библиотеки SFML 3 для Ubuntu и WSL (GCC, CMake и Ninja)</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">A guide to compiling SFML 3 source code into static libraries on Ubuntu (native or via Windows WSL2) for Desktop, GUI, or Headless Server setups using CMake, Ninja, and GCC.</span>
+            <span class="data-ru">Руководство по компиляции исходного кода SFML 3 в статические библиотеки в Ubuntu (нативно или через Windows WSL2) для десктопа, GUI или headless-сервера с помощью CMake, Ninja и GCC.</span>
+        </p>
+    </header>
+
+    <div class="alert alert-secondary mb-3">
+        <span class="data-en">If you haven't set up C/C++ development tools on your Ubuntu machine or WSL distribution, follow the</span>
+        <span class="data-ru">Если вы еще не настроили инструменты разработки C/C++ на вашей системе Ubuntu или в дистрибутиве WSL, следуйте инструкции:</span>
+        <a href="/tutorials/tools/ubuntu/setup-ubuntu-env" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+            <span class="data-en">Ubuntu C/C++ Development Environment Setup Guide</span>
+            <span class="data-ru">Руководство по настройке среды разработки C/C++ на Ubuntu</span>
+        </a>
+    </div>
+
+    <!-- WSL Setup & Commands for Windows Users -->
+    <div class="alert alert-light border p-4 mb-4">
+        <h5 class="fw-bold mb-3">
+            <span class="data-en">Windows Setup (WSL2 &amp; Ubuntu):</span>
+            <span class="data-ru">Настройка для пользователей Windows (WSL2 и Ubuntu):</span>
+        </h5>
+        
+        <p class="mb-2">
+            <span class="data-en">1. If WSL is not installed yet, open <strong>CMD</strong> or <strong>PowerShell</strong> as Administrator and install Ubuntu:</span>
+            <span class="data-ru">1. Если WSL еще не установлен, откройте <strong>CMD</strong> или <strong>PowerShell</strong> от имени администратора и установите Ubuntu:</span>
+        </p>
+        <pre><code class="language-bat">wsl --install -d Ubuntu</code></pre>
+
+        <p class="mb-2 mt-3">
+            <span class="data-en">2. Launch your Ubuntu distribution from <strong>CMD</strong> or <strong>PowerShell</strong>:</span>
+            <span class="data-ru">2. Запустите дистрибутив Ubuntu из <strong>CMD</strong> или <strong>PowerShell</strong>:</span>
+        </p>
+        <pre><code class="language-bat">wsl -d Ubuntu</code></pre>
+    </div>
+
+    <!-- Step 1: Install Dependencies -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 1: Install Dependencies</span>
+            <span class="data-ru">Шаг 1: Установка зависимостей</span>
+        </h2>
+        <p>
+            <span class="data-en">Select your target environment to view the required system packages:</span>
+            <span class="data-ru">Выберите вашу целевую среду для просмотра необходимых системных пакетов:</span>
+        </p>
+
+        <!-- Tabs for Step 1 -->
+        <ul class="nav nav-tabs mb-3">
+            <li class="nav-item">
+                <button type="button" class="nav-link active fw-bold tab-btn-step1" data-target="deps-desktop-pane">
+                    <span class="data-en">Desktop / WSL2 (GUI &amp; Audio)</span>
+                    <span class="data-ru">Десктоп / WSL2 (Графика и звук)</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button type="button" class="nav-link fw-bold tab-btn-step1" data-target="deps-headless-pane">
+                    <span class="data-en">Headless Server / CI / VPS</span>
+                    <span class="data-ru">Headless-сервер / CI / VPS</span>
+                </button>
+            </li>
+        </ul>
+
+        <div>
+            <!-- Desktop / WSL2 Dependencies -->
+            <div id="deps-desktop-pane" class="tab-pane-step1">
+                <p class="text-muted">
+                    <span class="data-en">Install the development headers required for X11, UDev (joysticks/gamepads), HarfBuzz/FreeType (fonts), OpenGL, and audio backends:</span>
+                    <span class="data-ru">Установите заголовочные файлы для X11, UDev (джойстики и геймпады), HarfBuzz/FreeType (шрифты), OpenGL и аудиосистем:</span>
+                </p>
+                <pre><code class="language-bash">sudo apt update &amp;&amp; sudo apt install -y \
+  build-essential cmake ninja-build wget nano \
+  libudev-dev \
+  libx11-dev libxrandr-dev libxcursor-dev libxi-dev \
+  libgl1-mesa-dev libegl1-mesa-dev \
+  libharfbuzz-dev libfreetype-dev \
+  libasound2-dev libopenal-dev libvorbis-dev libflac-dev</code></pre>
+            </div>
+
+            <!-- Headless Dependencies -->
+            <div id="deps-headless-pane" class="tab-pane-step1 d-none">
+                <p class="text-muted">
+                    <span class="data-en">For a minimal build without graphics or audio, only the core build tools are required:</span>
+                    <span class="data-ru">Для минимальной сборки без графики и звука требуются только базовые инструменты сборки:</span>
+                </p>
+                <pre><code class="language-bash">sudo apt update &amp;&amp; sudo apt install -y build-essential cmake ninja-build wget nano</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step 2: Download Source Code -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 2: Download SFML 3 Source Code</span>
+            <span class="data-ru">Шаг 2: Скачивание исходного кода SFML 3</span>
+        </h2>
+        <p>
+            <span class="data-en">Check and download the latest release (<code>3.1.0</code>) directly from the official SFML repository on GitHub:</span>
+            <span class="data-ru">Проверьте и скачайте последнюю версию (<code>3.1.0</code>) напрямую со страницы релизов SFML на GitHub:</span>
+        </p>
+        <p>
+            <a href="https://github.com/SFML/SFML/releases" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
+                <span class="data-en">Open SFML Releases (GitHub)</span>
+                <span class="data-ru">Открыть релизы SFML (GitHub)</span>
+            </a>
+            <a href="https://github.com/SFML/SFML/archive/refs/tags/3.1.0.tar.gz" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm ms-2">
+                <span class="data-en">Direct Download SFML-3.1.0 (.tar.gz)</span>
+                <span class="data-ru">Прямое скачивание SFML-3.1.0 (.tar.gz)</span>
+            </a>
+        </p>
+        <p>
+            <span class="data-en">You can download and extract it directly via <code>wget</code> in the terminal (native Ubuntu terminal or WSL bash):</span>
+            <span class="data-ru">Вы можете скачать и распаковать архив напрямую с помощью <code>wget</code> в терминале (в нативном терминале Ubuntu или в консоли WSL):</span>
+        </p>
+        <pre><code class="language-bash">cd ~
+wget https://github.com/SFML/SFML/archive/refs/tags/3.1.0.tar.gz -O SFML-3.1.0.tar.gz
+tar -xzf SFML-3.1.0.tar.gz
+cd SFML-3.1.0</code></pre>
+    </section>
+
+    <!-- Step 3: Create Build Script -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 3: Create the Build Script</span>
+            <span class="data-ru">Шаг 3: Создание скрипта сборки</span>
+        </h2>
+        <p>
+            <span class="data-en">In the root directory of the extracted SFML 3 source folder, open the <code>nano</code> text editor to create a script named <code>build-ubuntu-static.sh</code>:</span>
+            <span class="data-ru">В корневой директории извлеченного исходного кода SFML 3 откройте текстовый редактор <code>nano</code> для создания файла <code>build-ubuntu-static.sh</code>:</span>
+        </p>
+        <pre><code class="language-bash">nano build-ubuntu-static.sh</code></pre>
+        
+        <div class="alert alert-secondary py-2 px-3 mb-3">
+            <span class="data-en"><strong>How to use nano:</strong> Copy the code below, <strong>right-click</strong> in the terminal to paste it, press <kbd>Ctrl</kbd> + <kbd>O</kbd> (then <kbd>Enter</kbd>) to save, and press <kbd>Ctrl</kbd> + <kbd>X</kbd> to exit.</span>
+            <span class="data-ru"><strong>Как пользоваться nano:</strong> Скопируйте код ниже, нажмите <strong>правую кнопку мыши</strong> в терминале для вставки, нажмите <kbd>Ctrl</kbd> + <kbd>O</kbd> (затем <kbd>Enter</kbd>) для сохранения и <kbd>Ctrl</kbd> + <kbd>X</kbd> для выхода.</span>
+        </div>
+
+        <p>
+            <span class="data-en">Choose your environment and paste the corresponding script:</span>
+            <span class="data-ru">Выберите вашу среду и вставьте соответствующий скрипт:</span>
+        </p>
+
+        <!-- Tabs for Step 3 -->
+        <ul class="nav nav-tabs mb-3">
+            <li class="nav-item">
+                <button type="button" class="nav-link active fw-bold tab-btn-step3" data-target="script-desktop-pane">
+                    <span class="data-en">Desktop / WSL2</span>
+                    <span class="data-ru">Десктоп / WSL2</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button type="button" class="nav-link fw-bold tab-btn-step3" data-target="script-headless-pane">
+                    <span class="data-en">Headless Server</span>
+                    <span class="data-ru">Headless-сервер</span>
+                </button>
+            </li>
+        </ul>
+
+        <div>
+            <!-- Desktop / WSL Script -->
+            <div id="script-desktop-pane" class="tab-pane-step3">
+                <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+
+BUILD_DIR="build-ubuntu-static"
+
+rm -rf "$BUILD_DIR"
+mkdir -p "$BUILD_DIR"
+cd "$BUILD_DIR"
+
+cmake .. \
+  -GNinja \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX="$HOME/libs/sfml-3.1.0-ubuntu" \
+  -DBUILD_SHARED_LIBS=OFF \
+  -DSFML_BUILD_NETWORK=OFF \
+  -DSFML_BUILD_EXAMPLES=OFF \
+  -DSFML_BUILD_TEST_SUITE=OFF \
+  -DSFML_BUILD_DOC=OFF
+
+cmake --build . --config Release --parallel --target install</code></pre>
+            </div>
+
+            <!-- Headless Script -->
+            <div id="script-headless-pane" class="tab-pane-step3 d-none">
+                <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+
+BUILD_DIR="build-ubuntu-static"
+
+rm -rf "$BUILD_DIR"
+mkdir -p "$BUILD_DIR"
+cd "$BUILD_DIR"
+
+cmake .. \
+  -GNinja \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX="$HOME/libs/sfml-3.1.0-ubuntu" \
+  -DBUILD_SHARED_LIBS=OFF \
+  -DSFML_BUILD_NETWORK=OFF \
+  -DSFML_BUILD_EXAMPLES=OFF \
+  -DSFML_BUILD_TEST_SUITE=OFF \
+  -DSFML_BUILD_DOC=OFF \
+  -DSFML_BUILD_AUDIO=OFF \
+  -DSFML_BUILD_GRAPHICS=OFF \
+  -DSFML_BUILD_WINDOW=OFF
+
+cmake --build . --config Release --parallel --target install</code></pre>
+            </div>
+        </div>
+
+        <div class="alert alert-info mt-3">
+            <strong>
+                <span class="data-en">Note:</span>
+                <span class="data-ru">Примечание:</span>
+            </strong>
+            <span class="data-en">Setting <code>-DSFML_BUILD_NETWORK=OFF</code> excludes the Network module, avoiding external dependencies on Mbed TLS and Libssh2. Ensure that <code>CMAKE_INSTALL_PREFIX</code> matches your preferred installation path.</span>
+            <span class="data-ru">Параметр <code>-DSFML_BUILD_NETWORK=OFF</code> исключает модуль Network, избавляя от внешних зависимостей Mbed TLS и Libssh2. Убедитесь, что <code>CMAKE_INSTALL_PREFIX</code> соответствует удобному для вас пути установки.</span>
+        </div>
+    </section>
+
+    <!-- Step 4: Run, Compile, and Clean Up -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 4: Run, Compile, and Clean Up</span>
+            <span class="data-ru">Шаг 4: Запуск, сборка и очистка</span>
+        </h2>
+        <p>
+            <span class="data-en">Grant execution permissions to the script and run it in your terminal:</span>
+            <span class="data-ru">Сделайте скрипт исполняемым и запустите его в терминале:</span>
+        </p>
+        <pre><code class="language-bash">chmod +x build-ubuntu-static.sh
+./build-ubuntu-static.sh</code></pre>
+        <p>
+            <span class="data-en">Upon completion, your static libraries (<code>libsfml-graphics-s.a</code>, <code>libsfml-window-s.a</code>, <code>libsfml-system-s.a</code>, and <code>libsfml-audio-s.a</code>) along with header files will be installed in your specified <code>CMAKE_INSTALL_PREFIX</code> directory (e.g. <code>~/libs/sfml-3.1.0-ubuntu</code>).</span>
+            <span class="data-ru">После успешного завершения собранные статические библиотеки (<code>libsfml-graphics-s.a</code>, <code>libsfml-window-s.a</code>, <code>libsfml-system-s.a</code> и <code>libsfml-audio-s.a</code>) вместе с заголовочными файлами будут установлены по пути, указанному в <code>CMAKE_INSTALL_PREFIX</code> (например, <code>~/libs/sfml-3.1.0-ubuntu</code>).</span>
+        </p>
+        <p>
+            <span class="data-en">Once installed, you can safely remove the temporary source directory and the downloaded archive:</span>
+            <span class="data-ru">После установки вы можете безопасно удалить временную директорию с исходным кодом и скачанный архив:</span>
+        </p>
+        <pre><code class="language-bash">cd ~ &amp;&amp; rm -rf ~/SFML-3.1.0 ~/SFML-3.1.0.tar.gz</code></pre>
+    </section>
+
+    <!-- Step 5: Next Steps -->
+    <section class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Step 5: Next Steps</span>
+            <span class="data-ru">Шаг 5: Следующие шаги</span>
+        </h2>
+        <p>
+            <span class="data-en">Now that you have compiled and installed the SFML 3 static libraries, you can integrate them into your C++ projects using CMake:</span>
+            <span class="data-ru">Теперь, когда вы собрали и установили статические библиотеки SFML 3, вы можете интегрировать их в свои C++ проекты с помощью CMake:</span>
+        </p>
+        <div class="d-grid gap-2 d-md-flex flex-md-column align-items-start">
+            <p class="mb-2">
+                <a href="/tutorials/sfml3/desktop/integrate-sfml3-static-desktop" class="btn btn-outline-primary fw-bold lang-link-dynamic">
+                    <span class="data-en">Integrating SFML 3 Static Library with CMake on Windows &amp; Ubuntu/WSL</span>
+                    <span class="data-ru">Интеграция статической библиотеки SFML 3 с CMake под Windows и Ubuntu/WSL</span>
+                </a>
+            </p>
+        </div>
+    </section>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    function setupTabs(btnClass, paneClass) {
+        const buttons = document.querySelectorAll('.' + btnClass);
+        const panes = document.querySelectorAll('.' + paneClass);
+
+        buttons.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const targetId = btn.getAttribute('data-target');
+
+                buttons.forEach(b => b.classList.remove('active'));
+                panes.forEach(p => p.classList.add('d-none'));
+
+                btn.classList.add('active');
+                const activePane = document.getElementById(targetId);
+                if (activePane) {
+                    activePane.classList.remove('d-none');
+                }
+            });
+        });
+    }
+
+    setupTabs('tab-btn-step1', 'tab-pane-step1');
+    setupTabs('tab-btn-step3', 'tab-pane-step3');
+});
+</script>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">
+                        <span class="data-en">Sberbank (Russia only)</span>
+                        <span class="data-ru">Сбербанк (только для РФ)</span>
+                    </h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number (Russia only)</span>
+                        <span class="data-ru">Перевод по номеру телефона (только для РФ)</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">USDT TRC20</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    // function setLanguage(lang) {
+    //     if (lang !== "en" && lang !== "ru") lang = "en";
+    //     document.documentElement.setAttribute("lang", lang);
+    //     localStorage.setItem("preferred-lang", lang);
+    //     document
+    //         .querySelectorAll(".lang-link")
+    //         .forEach((el) => el.classList.remove("active"));
+    //     const btn = document.getElementById("btn-" + lang);
+    //     if (btn) btn.classList.add("active");
+
+    //     updateVideoPlayerLanguage(lang);
+    // }
+
+    // function changeLanguage(lang) {
+    //     setLanguage(lang);
+    //     const url = new URL(window.location);
+    //     url.searchParams.set("lang", lang);
+    //     window.history.pushState({}, "", url);
+    // }
+
+    // // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+        
+    //     if (link) {
+    //         // Check if the link is intended to open in a new tab
+    //         if (link.target === "_blank") {
+    //             // Allow the browser to handle the click naturally, 
+    //             // but we still want to append the language param.
+    //             const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //             const targetUrl = new URL(link.href);
+    //             targetUrl.searchParams.set("lang", currentLang);
+                
+    //             // Update the href right before the browser follows it
+    //             link.href = targetUrl.toString();
+    //             return; // Exit the function so e.preventDefault() isn't called
+    //         }
+
+    //         // Existing logic for same-tab navigation
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // (function init() {
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     const langParam = urlParams.get("lang");
+    //     const savedLang = localStorage.getItem("preferred-lang");
+    //     setLanguage(langParam || savedLang || "en");
+    // })();
+
+    // window.onpopstate = function() {
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     setLanguage(urlParams.get("lang") || "en");
+    // };
+
+    // document.querySelectorAll('pre').forEach((pre) => {
+    //     // Create container and header
+    //     const container = document.createElement('div');
+    //     container.className = 'code-container';
+        
+    //     const header = document.createElement('div');
+    //     header.className = 'code-header';
+        
+    //     const button = document.createElement('button');
+    //     button.className = 'copy-button';
+    //     button.innerText = 'Copy';
+
+    //     // Wrap the pre tag
+    //     pre.parentNode.insertBefore(container, pre);
+    //     header.appendChild(button);
+    //     container.appendChild(header);
+    //     container.appendChild(pre);
+
+    //     // Copy Logic
+    //     button.addEventListener('click', () => {
+    //         const code = pre.querySelector('code').innerText;
+    //         navigator.clipboard.writeText(code).then(() => {
+    //             button.innerText = 'Copied!';
+    //             button.classList.add('copied');
+
+    //             setTimeout(() => {
+    //                 button.innerText = 'Copy';
+    //                 button.classList.remove('copied');
+    //             }, 2000);
+    //         });
+    //     });
+    // });
+
+    // document.addEventListener("DOMContentLoaded", () => {
+    //     const codeBlocks = document.querySelectorAll('code[data-url]');
+
+    //     codeBlocks.forEach(async (block) => {
+    //         const url = block.getAttribute('data-url');
+    //         if (!url) return;
+
+    //         try {
+    //             const response = await fetch(url);
+    //             if (!response.ok) throw new Error('Fetch failed');
+    //             const code = await response.text();
+                
+    //             // Set the content
+    //             block.textContent = code;
+                
+    //             // Re-run Prism highlight if available
+    //             if (typeof Prism !== 'undefined') {
+    //                 Prism.highlightElement(block);
+    //             }
+    //         } catch (err) {
+    //             console.error("Could not load code:", err);
+    //             block.textContent = "// Error: Could not load code from GitHub.";
+    //         }
+    //     });
+    // });
+
+    // function updateVideoPlayerLanguage(lang) {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     const targetSrc = lang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+    //     const targetTitle = lang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+    //     // Only update if the URL actually changed to prevent unneeded reloads
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // // Example listener: Call this function inside your existing language-switcher click handler:
+    // document.querySelectorAll('.lang-link').forEach(link => {
+    //     link.addEventListener('click', function() {
+    //         const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+    //         updateVideoPlayerLanguage(lang);
+    //     });
+    // });
+
+    // function initVideoPlayer() {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     // Detect language from URL query string (?lang=ru), or <html lang="..."> attribute
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     const currentLang = urlParams.get('lang') || document.documentElement.lang || 'en';
+
+    //     // Set correct video source on page load
+    //     const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+    //     const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // function loadVideoPlayer() {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     // Determine current language
+    //     const lang = document.documentElement.getAttribute('lang') || 
+    //                  localStorage.getItem('preferred-lang') || 
+    //                  'en';
+
+    //     const targetSrc = lang === 'ru' 
+    //         ? player.getAttribute('data-src-ru') 
+    //         : player.getAttribute('data-src-en');
+    //     const targetTitle = lang === 'ru' 
+    //         ? player.getAttribute('data-title-ru') 
+    //         : player.getAttribute('data-title-en');
+
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // function initVideoPlayerWhenVisible() {
+    //     // If opened in a background tab (middle click), wait until the user switches to this tab
+    //     if (document.hidden) {
+    //         document.addEventListener('visibilitychange', function onVisible() {
+    //             if (!document.hidden) {
+    //                 document.removeEventListener('visibilitychange', onVisible);
+    //                 loadVideoPlayer();
+    //             }
+    //         });
+    //     } else {
+    //         // Tab is active (normal left click) -> load immediately
+    //         loadVideoPlayer();
+    //     }
+    // }
+
+    // // Call on load
+    // if (document.readyState === 'loading') {
+    //     document.addEventListener('DOMContentLoaded', initVideoPlayerWhenVisible);
+    // } else {
+    //     initVideoPlayerWhenVisible();
+    // }
+
+    // 1. Language setting
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+
+        // When manually switching languages on an active tab, update immediately
+        if (!document.hidden) {
+            applyVideoPlayerSrc(lang);
+        }
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // 2. Core video updater
+    function applyVideoPlayerSrc(lang) {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        const currentLang = lang || document.documentElement.getAttribute("lang") || localStorage.getItem("preferred-lang") || "en";
+        const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        if (targetSrc && player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // 3. Deferred loader: waits for tab focus and real layout dimensions
+    function initVideoPlayer() {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        // Wait one render frame to guarantee full container width is computed
+                        requestAnimationFrame(() => {
+                            applyVideoPlayerSrc();
+                        });
+                        observer.disconnect();
+                    }
+                });
+            }, { threshold: 0.05 });
+
+            observer.observe(player);
+        } else {
+            applyVideoPlayerSrc();
+        }
+    }
+
+    // 4. Update language links on mousedown so middle-click gets ?lang= correctly
+    document.addEventListener("mousedown", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (!link) return;
+
+        const currentLang = document.documentElement.getAttribute("lang") || localStorage.getItem("preferred-lang") || "en";
+        const targetUrl = new URL(link.href, window.location.origin);
+        targetUrl.searchParams.set("lang", currentLang);
+        link.href = targetUrl.toString();
+    });
+
+    // 5. Normal click navigation
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (link && link.target !== "_blank") {
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(link.href, window.location.origin + window.location.pathname);
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    // 6. Language Switcher Buttons
+    document.querySelectorAll('.lang-link').forEach(link => {
+        link.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+            changeLanguage(lang);
+        });
+    });
+
+    // 7. Initialize language on page load
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    // 8. Initialize video player (runs once when DOM is ready)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initVideoPlayer);
+    } else {
+        initVideoPlayer();
+    }
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    // Code copy buttons
+    document.querySelectorAll('pre').forEach((pre) => {
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+
+    // External code blocks loader
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                block.textContent = code;
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
+        });
+    });
+</script>
+</body>
+
+</html>
