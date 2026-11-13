@@ -1,0 +1,2282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+  
+    Playing Chicken Dance Animation for Y-Bot using ozz-animation, Qt 6 (QOpenGLWindow), cgltf, cglm, and OpenGL 3.3
+  
+  | Ivan Enzhaev
+</title>
+
+<link href="/libs/bootstrap@5.3.3/bootstrap.min.css" rel="stylesheet">
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+<script src="/libs/bootstrap@5.3.3/bootstrap.bundle.min.js"></script>
+
+
+<link href="/libs/prism/1.30.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+
+<style>
+    .card {
+        transition: transform 0.2s;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .category-header {
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    .badge-tech {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    [lang="ru"] .data-en {
+        display: none;
+    }
+
+    [lang="en"] .data-ru {
+        display: none;
+    }
+
+    .lang-link {
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .lang-link.active {
+        color: #fff;
+    }
+
+    .lang-divider {
+        color: rgba(255, 255, 255, 0.3);
+        margin: 0 5px;
+    }
+
+    block {
+        display: contents;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px; /* This prevents the navbar from covering your title */
+    }
+
+    #support-section:focus {
+        outline: none;
+        caret-color: transparent;
+    }
+
+    /* Container to hold the code and the button */
+    .code-container {
+        position: relative;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        overflow: hidden; /* This keeps the pre corners from sticking out */
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Create a "header" area for the button */
+    .code-header {
+        background-color: #f1f3f5; /* Slightly darker than code background */
+        display: flex;
+        justify-content: flex-end; /* Pins button to the right */
+        padding: 6px 10px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .copy-button {
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        background-color: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-button:hover {
+        background-color: #e9ecef;
+        border-color: #adb5bd;
+        color: #212529;
+    }
+
+    .copy-button.copied {
+        color: #ffffff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    pre {
+        margin: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+        background-color: #f8f9fa;
+        
+        /* RETURN SCROLL BARS HERE */
+        overflow-x: auto !important; /* Horizontal scroll */
+        overflow-y: auto !important; /* Vertical scroll if height exceeded */
+        max-height: 500px;           /* Height limit before vertical scroll appears */
+        display: block;              /* Standard block behavior for pre */
+    }
+
+    pre code {
+        white-space: pre !important; 
+        word-wrap: normal !important;
+        word-break: normal !important;
+    }
+
+    pre::-webkit-scrollbar {
+        height: 8px; /* Horizontal bar height */
+        width: 8px;  /* Vertical bar width */
+    }
+
+    pre::-webkit-scrollbar-track {
+        background: #f1f3f5;
+    }
+
+    pre::-webkit-scrollbar-thumb {
+        background: #adb5bd;
+        border-radius: 4px;
+    }
+
+    pre::-webkit-scrollbar-thumb:hover {
+        background: #6c757d;
+    }
+
+    pre code[data-url]:empty::before {
+        content: "Loading code from GitHub...";
+        display: block;
+        padding: 1rem;
+        color: #888;
+        font-style: italic;
+    }
+
+    /* How to hide non-active language blocks without collapsing iframe dimensions */
+    .data-en.d-none, 
+    .data-ru.d-none {
+        display: none !important;
+    }
+
+    /* Add this to prevent resolution drops during language toggles */
+    .ratio iframe {
+        width: 100%;
+        height: 100%;
+        content-visibility: visible;
+    }
+</style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand navbar-dark bg-dark mb-5 shadow sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">Ivan Enzhaev Tutorials</a>
+
+        <div class="navbar-nav ms-auto d-flex align-items-center">
+            
+            
+            
+                <a class="nav-link me-3" href="#support-section">
+                    <span class="data-en">Support</span>
+                    <span class="data-ru">Поддержать</span>
+                </a>
+            
+
+            
+            <span class="nav-item d-flex align-items-center">
+                <a class="lang-link active" id="btn-en" onclick="changeLanguage('en')" href="javascript:void(0)">EN</a>
+                <span class="lang-divider">|</span>
+                <a class="lang-link" id="btn-ru" onclick="changeLanguage('ru')" href="javascript:void(0)">RU</a>
+            </span>
+            
+        </div>
+    </div>
+</nav>
+
+    <main class="flex-grow-1">
+        
+<div class="container bg-white p-5 shadow-sm rounded mb-5">
+    <header class="mb-4 border-bottom pb-3">
+        <h1 class="fw-bold">
+            <span class="data-en">Playing Chicken Dance Animation for Y-Bot using ozz-animation, Qt 6 (QOpenGLWindow), cgltf, cglm, and OpenGL 3.3</span>
+            <span class="data-ru">Воспроизведение анимации танец цыпленка для Y-Bot с использованием ozz-animation, Qt 6 (QOpenGLWindow), cgltf, cglm и OpenGL 3.3</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">A step-by-step guide to configuring and integrating ozz-animation, cgltf, cglm, GLAD, SDL3_image, and Qt 6 static libraries to render an animated Y-Bot model via QOpenGLWindow on Windows and Ubuntu.</span>
+            <span class="data-ru">Пошаговое руководство по настройке и интеграции статических библиотек ozz-animation, cgltf, cglm, GLAD, SDL3_image и Qt 6 для рендеринга анимированной модели Y-Bot через QOpenGLWindow под Windows и Ubuntu.</span>
+        </p>
+    </header>
+
+    <!-- Clickable Table of Contents -->
+    <nav class="card border-0 bg-light p-4 mb-4">
+        <h2 class="h5 fw-bold mb-3">
+            <span class="data-en">Table of Contents</span>
+            <span class="data-ru">Содержание</span>
+        </h2>
+        <ol class="mb-0 ps-3">
+            <li class="mb-2">
+                <a href="#prerequisites" class="text-decoration-none">
+                    <span class="data-en">Prerequisites &amp; Library Installation</span>
+                    <span class="data-ru">Необходимые библиотеки и установка</span>
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="#create-project-dir" class="text-decoration-none">
+                    <span class="data-en">Create Project Directory</span>
+                    <span class="data-ru">Создание директории проекта</span>
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="#download-assets" class="text-decoration-none">
+                    <span class="data-en">Download Model, Texture &amp; Animation Assets</span>
+                    <span class="data-ru">Скачивание файлов модели, текстуры и анимации</span>
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="#source-files" class="text-decoration-none">
+                    <span class="data-en">Source Files (src/main.cpp, src/mainwindow.h, src/mainwindow.cpp &amp; CMakeLists.txt)</span>
+                    <span class="data-ru">Исходные файлы (src/main.cpp, src/mainwindow.h, src/mainwindow.cpp и CMakeLists.txt)</span>
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="#build-and-run" class="text-decoration-none">
+                    <span class="data-en">Build &amp; Execution Scripts</span>
+                    <span class="data-ru">Скрипты сборки и запуска</span>
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="#expected-output" class="text-decoration-none">
+                    <span class="data-en">Expected Output</span>
+                    <span class="data-ru">Ожидаемый результат</span>
+                </a>
+            </li>
+            <li class="mb-2">
+                <a href="#ozz-sdl-stream" class="text-decoration-none">
+                    <span class="data-en">Understanding the OzzSDLStream Adapter Class</span>
+                    <span class="data-ru">Разбор класса-адаптера OzzSDLStream</span>
+                </a>
+            </li>
+            <li class="mb-0">
+                <a href="#stream-explanation" class="text-decoration-none">
+                    <span class="data-en">Deep Dive: OzzSDLStream::Read Method</span>
+                    <span class="data-ru">Подробный разбор метода OzzSDLStream::Read</span>
+                </a>
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Prerequisites -->
+    <div id="prerequisites" class="alert alert-secondary mb-4">
+        <span class="data-en">Before proceeding, make sure you have prepared the required static libraries for your operating system using the prerequisite guides:</span>
+        <span class="data-ru">Перед продолжением убедитесь, что вы подготовили необходимые статические библиотеки для вашей операционной системы, следуя предварительным инструкциям:</span>
+
+        <!-- General (GLAD, cglm & cgltf) -->
+        <h6 class="fw-bold text-dark mt-3 mb-2">
+            <span class="data-en">General (OpenGL Loader, Math &amp; glTF Libraries):</span>
+            <span class="data-ru">Общее (Загрузчик OpenGL, математическая библиотека и загрузчик glTF):</span>
+        </h6>
+        <ul class="mb-3">
+            <li>
+                <a href="/tutorials/sdl3-opengl/desktop/setup-glad-desktop" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Installing GLAD OpenGL Loader Library on Windows &amp; Ubuntu (OpenGL 3.3)</span>
+                    <span class="data-ru">Установка библиотеки-загрузчика OpenGL GLAD под Windows и Ubuntu (OpenGL 3.3)</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/shared/setup-cglm" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Installing cglm Library</span>
+                    <span class="data-ru">Установка библиотеки cglm</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/shared/setup-cgltf" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Installing cgltf C glTF Loading Library</span>
+                    <span class="data-ru">Установка C-библиотеки загрузки glTF cgltf</span>
+                </a>
+            </li>
+        </ul>
+
+        <!-- Windows List -->
+        <h6 class="fw-bold text-dark mt-2 mb-2">
+            <span class="data-en">Windows (MinGW GCC 16.2):</span>
+            <span class="data-ru">Windows (MinGW GCC 16.2):</span>
+        </h6>
+        <ul class="mb-3">
+            <li>
+                <a href="/tutorials/tools/mingw/build-qt6-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building Static Qt 6 for Desktop OpenGL with MinGW GCC 16.2</span>
+                    <span class="data-ru">Статическая сборка Qt 6 для Desktop OpenGL с MinGW GCC 16.2</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/mingw/build-sdl3-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 Static Library for Windows</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для Windows</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/mingw/build-sdl3-image-webp-static-mingw" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3_image Static Library with WebP Support for Windows (MinGW &amp; CMake)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3_image с поддержкой WebP для Windows (MinGW и CMake)</span>
+                </a>
+            </li>
+        </ul>
+
+        <!-- Ubuntu List -->
+        <h6 class="fw-bold text-dark mt-2 mb-2">
+            <span class="data-en">Ubuntu &amp; Ubuntu WSL:</span>
+            <span class="data-ru">Ubuntu и Ubuntu WSL:</span>
+        </h6>
+        <ul class="mb-0">
+            <li>
+                <a href="/tutorials/tools/ubuntu/build-qt6-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building Static Qt 6 for Desktop OpenGL on Ubuntu &amp; Ubuntu WSL</span>
+                    <span class="data-ru">Статическая сборка Qt 6 для Desktop OpenGL в Ubuntu и Ubuntu WSL</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/ubuntu/build-sdl3-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3 Static Library for Ubuntu</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3 для Ubuntu</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tutorials/tools/ubuntu/build-sdl3-image-webp-static-ubuntu" class="fw-bold text-dark lang-link-dynamic" target="_blank" rel="noopener noreferrer">
+                    <span class="data-en">Building SDL3_image Static Library with WebP Support for Ubuntu (GCC, CMake &amp; Ninja)</span>
+                    <span class="data-ru">Сборка статической библиотеки SDL3_image с поддержкой WebP для Ubuntu (GCC, CMake и Ninja)</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 1. Create Project Directory -->
+    <section id="create-project-dir" class="mb-5">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Create Project Directory</span>
+            <span class="data-ru">Создание директории проекта</span>
+        </h2>
+        <p>
+            <span class="data-en">Create a workspace folder and a new directory for your Qt 6 ozz-animation project:</span>
+            <span class="data-ru">Создайте рабочую папку для проектов и новую директорию для вашего проекта Qt 6 ozz-animation:</span>
+        </p>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (Command Prompt / PowerShell)</h3>
+        <pre><code class="language-bash">mkdir C:\projects\y-bot-ozz-animation-cglm-opengl-qt6-cpp-desktop
+mkdir C:\projects\y-bot-ozz-animation-cglm-opengl-qt6-cpp-desktop\src
+mkdir C:\projects\y-bot-ozz-animation-cglm-opengl-qt6-cpp-desktop\assets\models\y-bot
+cd C:\projects\y-bot-ozz-animation-cglm-opengl-qt6-cpp-desktop</code></pre>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal)</h3>
+        <pre><code class="language-bash">mkdir -p ~/projects/y-bot-ozz-animation-cglm-opengl-qt6-cpp-desktop/src
+mkdir -p ~/projects/y-bot-ozz-animation-cglm-opengl-qt6-cpp-desktop/assets/models/y-bot
+cd ~/projects/y-bot-ozz-animation-cglm-opengl-qt6-cpp-desktop</code></pre>
+    </section>
+
+    <!-- 2. Download & Place Assets -->
+    <section id="download-assets" class="mb-5">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Download &amp; Place Model, Texture, Skeleton &amp; Animation Assets</span>
+            <span class="data-ru">Скачивание и размещение файлов модели, текстуры, скелета и анимации</span>
+        </h2>
+        <p>
+            <span class="data-en">Download the Y-Bot 3D binary glTF model file, its WebP texture, skeleton data, and chicken dance animation files:</span>
+            <span class="data-ru">Скачайте бинарный файл 3D-модели glTF Y-Bot, её текстуру WebP, данные скелета и файлы анимации танца цыпленка:</span>
+        </p>
+        <p class="mb-2">
+            <a href="/assets/models/y-bot/y-bot.glb" download target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm me-2 mb-2">
+                <span class="data-en">Download y-bot.glb</span>
+                <span class="data-ru">Скачать y-bot.glb</span>
+            </a>
+            <a href="/assets/models/y-bot/y-bot.webp" download target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm me-2 mb-2">
+                <span class="data-en">Download y-bot.webp</span>
+                <span class="data-ru">Скачать y-bot.webp</span>
+            </a>
+            <a href="/assets/models/y-bot/skeleton.ozz" download target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm me-2 mb-2">
+                <span class="data-en">Download skeleton.ozz</span>
+                <span class="data-ru">Скачать skeleton.ozz</span>
+            </a>
+            <a href="/assets/models/y-bot/animation.ozz" download target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm mb-2">
+                <span class="data-en">Download animation.ozz</span>
+                <span class="data-ru">Скачать animation.ozz</span>
+            </a>
+        </p>
+        <p>
+            <span class="data-en">Place <code>y-bot.glb</code>, <code>y-bot.webp</code>, <code>skeleton.ozz</code>, and <code>animation.ozz</code> into your project's <code>assets/models/y-bot/</code> directory.</span>
+            <span class="data-ru">Поместите файлы <code>y-bot.glb</code>, <code>y-bot.webp</code>, <code>skeleton.ozz</code> и <code>animation.ozz</code> в папку вашего проекта <code>assets/models/y-bot/</code>.</span>
+        </p>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows Path</h3>
+        <pre><code>C:\projects\y-bot-ozz-animation-cglm-opengl-qt6-cpp-desktop\assets\models\y-bot\y-bot.glb
+C:\projects\y-bot-ozz-animation-cglm-opengl-qt6-cpp-desktop\assets\models\y-bot\y-bot.webp
+C:\projects\y-bot-ozz-animation-cglm-opengl-qt6-cpp-desktop\assets\models\y-bot\skeleton.ozz
+C:\projects\y-bot-ozz-animation-cglm-opengl-qt6-cpp-desktop\assets\models\y-bot\animation.ozz</code></pre>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu / WSL Command (Copying from Windows to WSL)</h3>
+        <p>
+            <span class="data-en">If you downloaded and placed the assets inside your Windows project directory, copy them directly to your WSL Linux directory using the Windows mount path (<code>/mnt/c/</code>):</span>
+            <span class="data-ru">Если вы скачали и поместили ассеты в Windows-папку проекта, скопируйте их напрямую в Linux-папку WSL через монтированный путь Windows (<code>/mnt/c/</code>):</span>
+        </p>
+        <pre><code class="language-bash">cp /mnt/c/projects/y-bot-ozz-animation-cglm-opengl-qt6-cpp-desktop/assets/models/y-bot/* \
+    ~/projects/y-bot-ozz-animation-cglm-opengl-qt6-cpp-desktop/assets/models/y-bot/</code></pre>
+    </section>
+
+    <!-- 3. Source Files -->
+    <section id="source-files" class="mb-5">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Source Files (src/main.cpp, src/mainwindow.h, src/mainwindow.cpp &amp; CMakeLists.txt)</span>
+            <span class="data-ru">Исходные файлы (src/main.cpp, src/mainwindow.h, src/mainwindow.cpp и CMakeLists.txt)</span>
+        </h2>
+
+        <p>
+            <span class="data-en">You can create these files using Notepad / Sublime Text on Windows, or <code>nano</code> in Ubuntu terminal:</span>
+            <span class="data-ru">Вы можете создать эти файлы через Блокнот / Sublime Text в Windows или с помощью <code>nano</code> в терминале Ubuntu:</span>
+        </p>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (Terminal / Notepad)</h3>
+        <pre><code class="language-bash">notepad src\main.cpp
+notepad src\mainwindow.h
+notepad src\mainwindow.cpp
+notepad CMakeLists.txt</code></pre>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal / Nano)</h3>
+        <pre><code class="language-bash">nano src/main.cpp
+nano src/mainwindow.h
+nano src/mainwindow.cpp
+nano CMakeLists.txt</code></pre>
+
+        <div class="alert alert-info py-2 my-3">
+            <strong><span class="data-en">Quick Nano Commands (Ubuntu):</span><span class="data-ru">Быстрые команды Nano (Ubuntu):</span></strong>
+            <span class="data-en">Paste code with Right Mouse Button (RMB) &rarr; Press <kbd>Ctrl</kbd> + <kbd>O</kbd> and <kbd>Enter</kbd> to save &rarr; Press <kbd>Ctrl</kbd> + <kbd>X</kbd> to exit.</span>
+            <span class="data-ru">Вставьте код правой кнопкой мыши (ПКМ) &rarr; Нажмите <kbd>Ctrl</kbd> + <kbd>O</kbd> и <kbd>Enter</kbd> для сохранения &rarr; Нажмите <kbd>Ctrl</kbd> + <kbd>X</kbd> для выхода.</span>
+        </div>
+
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">File Contents for src/main.cpp</span>
+            <span class="data-ru">Содержимое файла src/main.cpp</span>
+        </h3>
+        <pre><code class="language-cpp">#if defined(__linux__)
+#include &lt;QtPlugin&gt;
+Q_IMPORT_PLUGIN(QWaylandIntegrationPlugin)
+#endif
+
+#include "mainwindow.h"
+
+#include &lt;QGuiApplication&gt;
+#include &lt;QSurfaceFormat&gt;
+#include &lt;SDL3/SDL.h&gt;
+
+int main(int argc, char *argv[])
+{
+    SDL_Init(0);
+
+    QSurfaceFormat format;
+    format.setVersion(3, 3);
+    format.setProfile(QSurfaceFormat::CoreProfile);
+    format.setDepthBufferSize(24);
+    format.setSwapInterval(1);
+    QSurfaceFormat::setDefaultFormat(format);
+
+    // QGuiApplication instead of QApplication (no widget engine overhead)
+    QGuiApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+
+    int exitCode = a.exec();
+
+    SDL_Quit();
+    return exitCode;
+}</code></pre>
+
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">File Contents for src/mainwindow.h</span>
+            <span class="data-ru">Содержимое файла src/mainwindow.h</span>
+        </h3>
+        <pre><code class="language-cpp">#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
+#include &lt;glad/glad.h&gt;
+
+#include &lt;cglm/cglm.h&gt;
+#include &lt;cglm/affine.h&gt;
+#include &lt;cglm/cam.h&gt;
+#include &lt;cglm/mat4.h&gt;
+
+// Ozz-animation headers (math headers must precede containers using ozz types)
+#include &lt;ozz/base/maths/simd_math.h&gt;
+#include &lt;ozz/base/maths/soa_transform.h&gt;
+#include &lt;ozz/animation/runtime/animation.h&gt;
+#include &lt;ozz/animation/runtime/sampling_job.h&gt;
+#include &lt;ozz/animation/runtime/skeleton.h&gt;
+#include &lt;ozz/base/containers/vector.h&gt;
+
+#include &lt;QOpenGLWindow&gt;
+#include &lt;QOpenGLContext&gt;
+#include &lt;QTimer&gt;
+#include &lt;QElapsedTimer&gt;
+
+#include &lt;vector&gt;
+
+struct InverseBindMatrix {
+    mat4 m;
+};
+
+class MainWindow : public QOpenGLWindow
+{
+    Q_OBJECT
+public:
+    MainWindow();
+    ~MainWindow() override;
+
+protected:
+    void initializeGL() override;
+    void resizeGL(int w, int h) override;
+    void paintGL() override;
+
+private:
+    bool loadModelGLB(const char *path);
+    GLuint createTextureWithSDL3(const char *path);
+
+    GLuint m_shaderProgram = 0;
+    GLuint m_vao = 0;
+    GLuint m_posVbo = 0;
+    GLuint m_uvVbo = 0;
+    GLuint m_jointsVbo = 0;
+    GLuint m_weightsVbo = 0;
+    GLuint m_ebo = 0;
+    GLuint m_texture = 0;
+
+    GLsizei m_indexCount = 0;
+    GLenum m_indexType = GL_UNSIGNED_SHORT;
+    GLint m_mvpLoc = -1;
+    GLint m_texLoc = -1;
+    GLint m_jointMatricesLoc = -1;
+
+    // Ozz-animation variables
+    ozz::animation::Skeleton m_ozzSkeleton;
+    ozz::animation::Animation m_ozzAnimation;
+    ozz::animation::SamplingJob::Context m_ozzSamplingContext;
+    float m_ozzAnimationTime = 0.0f;
+    ozz::vector&lt;ozz::math::Float4x4&gt; m_ozzModelMatrices;
+    std::vector&lt;InverseBindMatrix&gt; m_ybotInverseBindMatrices;
+
+    QTimer *m_timer = nullptr;
+    QElapsedTimer m_elapsedTimer;
+    qint64 m_lastNsecs = 0;
+};
+
+#endif // MAINWINDOW_H</code></pre>
+
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">File Contents for src/mainwindow.cpp (Pure QOpenGLWindow with cglm)</span>
+            <span class="data-ru">Содержимое файла src/mainwindow.cpp (QOpenGLWindow с cglm)</span>
+        </h3>
+        <pre><code class="language-cpp">#include "mainwindow.h"
+
+#define CGLTF_IMPLEMENTATION
+#include &lt;cgltf.h&gt;
+
+#include &lt;SDL3/SDL.h&gt;
+#include &lt;SDL3_image/SDL_image.h&gt;
+
+#include &lt;ozz/animation/runtime/local_to_model_job.h&gt;
+#include &lt;ozz/base/io/archive.h&gt;
+#include &lt;ozz/base/io/stream.h&gt;
+
+#include &lt;QDebug&gt;
+
+#include &lt;cmath&gt;
+#include &lt;cstring&gt;
+#include &lt;utility&gt;
+
+// Custom SDL3 stream wrapper for ozz-animation archives
+class OzzSDLStream : public ozz::io::Stream
+{
+public:
+    OzzSDLStream(SDL_IOStream *io)
+        : io_(io)
+        , opened_(io != nullptr)
+    {
+        if (io_)
+            SDL_SeekIO(io_, 0, SDL_IO_SEEK_SET);
+    }
+
+    ~OzzSDLStream()
+    {
+        if (io_)
+            SDL_CloseIO(io_);
+    }
+
+    bool opened() const override { return opened_; }
+
+    size_t Read(void *buffer, size_t size) override
+    {
+        size_t total = 0;
+        while (total &lt; size)
+        {
+            size_t read = SDL_ReadIO(io_, (uint8_t *)buffer + total, size - total);
+            if (read == 0)
+                break;
+            total += read;
+        }
+        return total;
+    }
+
+    size_t Write(const void *, size_t) override { return 0; }
+
+    int Seek(int offset, Origin origin) override
+    {
+        SDL_IOWhence whence = SDL_IO_SEEK_SET;
+        if (origin == kCurrent)
+            whence = SDL_IO_SEEK_CUR;
+        else if (origin == kEnd)
+            whence = SDL_IO_SEEK_END;
+
+        Sint64 pos = SDL_SeekIO(io_, offset, whence);
+        return pos &gt;= 0 ? 0 : -1;
+    }
+
+    int Tell() const override
+    {
+        Sint64 pos = SDL_TellIO(io_);
+        return pos &gt;= 0 ? (int)pos : -1;
+    }
+
+    size_t Size() const override
+    {
+        Sint64 size = SDL_GetIOSize(io_);
+        return size &gt;= 0 ? (size_t)size : 0;
+    }
+
+private:
+    SDL_IOStream *io_;
+    bool opened_;
+};
+
+// -----------------------------------------------------------------------------
+// Shaders: Skinning Matrix Palette, MVP Matrix &amp; WebP Texture Mapping
+// -----------------------------------------------------------------------------
+static const char *skinningVertexShaderSource = R"(#version 330 core
+layout (location = 0) in vec3 aPosition;
+layout (location = 1) in vec2 aTexCoord;
+layout (location = 2) in vec4 aJoints;  // Up to 4 influencing joints per vertex
+layout (location = 3) in vec4 aWeights; // Weights corresponding to each joint
+
+out vec2 vTexCoord;
+
+uniform mat4 uMvpMatrix;
+
+const int MAX_JOINTS = 100;
+uniform mat4 uJointMatrices[MAX_JOINTS];
+
+void main()
+{
+    mat4 skinMatrix =
+          aWeights.x * uJointMatrices[int(aJoints.x)]
+        + aWeights.y * uJointMatrices[int(aJoints.y)]
+        + aWeights.z * uJointMatrices[int(aJoints.z)]
+        + aWeights.w * uJointMatrices[int(aJoints.w)];
+
+    vec4 skinnedPos = skinMatrix * vec4(aPosition, 1.0);
+
+    vTexCoord = aTexCoord;
+    gl_Position = uMvpMatrix * skinnedPos;
+}
+)";
+
+static const char *skinningFragmentShaderSource = R"(#version 330 core
+in vec2 vTexCoord;
+uniform sampler2D ourTexture;
+out vec4 fragColor;
+
+void main()
+{
+    fragColor = texture(ourTexture, vTexCoord);
+}
+)";
+
+// ==========================================
+// MainWindow Implementation (Pure QOpenGLWindow)
+// ==========================================
+MainWindow::MainWindow()
+    : QOpenGLWindow(QOpenGLWindow::NoPartialUpdate)
+{
+    setTitle("Qt 6 ozz-animation Y-Bot Model (cglm)");
+    resize(800, 450);
+}
+
+MainWindow::~MainWindow()
+{
+    makeCurrent();
+    if (m_texture) glDeleteTextures(1, &amp;m_texture);
+    if (m_vao) glDeleteVertexArrays(1, &amp;m_vao);
+    if (m_posVbo) glDeleteBuffers(1, &amp;m_posVbo);
+    if (m_uvVbo) glDeleteBuffers(1, &amp;m_uvVbo);
+    if (m_jointsVbo) glDeleteBuffers(1, &amp;m_jointsVbo);
+    if (m_weightsVbo) glDeleteBuffers(1, &amp;m_weightsVbo);
+    if (m_ebo) glDeleteBuffers(1, &amp;m_ebo);
+    if (m_shaderProgram) glDeleteProgram(m_shaderProgram);
+    doneCurrent();
+}
+
+GLuint MainWindow::createTextureWithSDL3(const char *path)
+{
+    SDL_IOStream *io = SDL_IOFromFile(path, "rb");
+    if (!io) {
+        qWarning() &lt;&lt; "Failed to open file stream for" &lt;&lt; path &lt;&lt; SDL_GetError();
+        return 0;
+    }
+
+    SDL_Surface *surface = IMG_Load_IO(io, 1);
+    if (!surface) {
+        qWarning() &lt;&lt; "Image loading failed:" &lt;&lt; SDL_GetError();
+        return 0;
+    }
+
+    SDL_Surface *optSurface = SDL_ConvertSurface(surface, SDL_PIXELFORMAT_ABGR8888);
+    SDL_DestroySurface(surface);
+    if (!optSurface) {
+        qWarning() &lt;&lt; "Surface conversion failed:" &lt;&lt; SDL_GetError();
+        return 0;
+    }
+
+    GLuint textureID = 0;
+    glGenTextures(1, &amp;textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, optSurface-&gt;w, optSurface-&gt;h,
+                 0, GL_RGBA, GL_UNSIGNED_BYTE, optSurface-&gt;pixels);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    SDL_DestroySurface(optSurface);
+    return textureID;
+}
+
+bool MainWindow::loadModelGLB(const char *path)
+{
+    size_t glbSize = 0;
+    void *glbData = SDL_LoadFile(path, &amp;glbSize);
+    if (!glbData) {
+        qWarning() &lt;&lt; "Failed to load Y-Bot model file into memory:" &lt;&lt; SDL_GetError();
+        return false;
+    }
+
+    cgltf_options options = {};
+    cgltf_data *data = nullptr;
+    if (cgltf_parse(&amp;options, glbData, glbSize, &amp;data) != cgltf_result_success)
+    {
+        qWarning() &lt;&lt; "Failed to parse Y-Bot GLB model:" &lt;&lt; path;
+        SDL_free(glbData);
+        return false;
+    }
+
+    cgltf_load_buffers(&amp;options, data, path);
+
+    if (data-&gt;meshes_count == 0 || data-&gt;meshes[0].primitives_count == 0)
+    {
+        cgltf_free(data);
+        SDL_free(glbData);
+        return false;
+    }
+
+    cgltf_primitive &amp;prim = data-&gt;meshes[0].primitives[0];
+    cgltf_accessor *posAccessor = nullptr;
+    cgltf_accessor *uvAccessor = nullptr;
+    cgltf_accessor *jointsAccessor = nullptr;
+    cgltf_accessor *weightsAccessor = nullptr;
+    cgltf_accessor *indexAccessor = prim.indices;
+
+    for (cgltf_size i = 0; i &lt; prim.attributes_count; ++i)
+    {
+        if (prim.attributes[i].type == cgltf_attribute_type_position)
+            posAccessor = prim.attributes[i].data;
+        else if (prim.attributes[i].type == cgltf_attribute_type_texcoord)
+            uvAccessor = prim.attributes[i].data;
+        else if (prim.attributes[i].type == cgltf_attribute_type_joints)
+            jointsAccessor = prim.attributes[i].data;
+        else if (prim.attributes[i].type == cgltf_attribute_type_weights)
+            weightsAccessor = prim.attributes[i].data;
+    }
+
+    glGenVertexArrays(1, &amp;m_vao);
+    glBindVertexArray(m_vao);
+
+    // Positions (Location = 0)
+    if (posAccessor &amp;&amp; posAccessor-&gt;buffer_view &amp;&amp; posAccessor-&gt;buffer_view-&gt;buffer)
+    {
+        const uint8_t *base = static_cast&lt;const uint8_t *&gt;(posAccessor-&gt;buffer_view-&gt;buffer-&gt;data);
+        const void *positions = base + posAccessor-&gt;buffer_view-&gt;offset + posAccessor-&gt;offset;
+        size_t posSize = posAccessor-&gt;count * 3 * sizeof(float);
+
+        glGenBuffers(1, &amp;m_posVbo);
+        glBindBuffer(GL_ARRAY_BUFFER, m_posVbo);
+        glBufferData(GL_ARRAY_BUFFER, posSize, positions, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+    }
+
+    // Texture UVs (Location = 1)
+    if (uvAccessor &amp;&amp; uvAccessor-&gt;buffer_view &amp;&amp; uvAccessor-&gt;buffer_view-&gt;buffer)
+    {
+        const uint8_t *base = static_cast&lt;const uint8_t *&gt;(uvAccessor-&gt;buffer_view-&gt;buffer-&gt;data);
+        const void *uvs = base + uvAccessor-&gt;buffer_view-&gt;offset + uvAccessor-&gt;offset;
+        size_t uvSize = uvAccessor-&gt;count * 2 * sizeof(float);
+
+        glGenBuffers(1, &amp;m_uvVbo);
+        glBindBuffer(GL_ARRAY_BUFFER, m_uvVbo);
+        glBufferData(GL_ARRAY_BUFFER, uvSize, uvs, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
+    }
+
+    // Joint Indices (Location = 2)
+    if (jointsAccessor &amp;&amp; jointsAccessor-&gt;buffer_view &amp;&amp; jointsAccessor-&gt;buffer_view-&gt;buffer)
+    {
+        const uint8_t *base = static_cast&lt;const uint8_t *&gt;(jointsAccessor-&gt;buffer_view-&gt;buffer-&gt;data);
+        const void *jointsData = base + jointsAccessor-&gt;buffer_view-&gt;offset + jointsAccessor-&gt;offset;
+        size_t jointsSize = jointsAccessor-&gt;count * jointsAccessor-&gt;stride;
+
+        glGenBuffers(1, &amp;m_jointsVbo);
+        glBindBuffer(GL_ARRAY_BUFFER, m_jointsVbo);
+        glBufferData(GL_ARRAY_BUFFER, jointsSize, jointsData, GL_STATIC_DRAW);
+
+        GLenum jointGlType = GL_UNSIGNED_SHORT;
+        size_t componentSize = sizeof(unsigned short);
+        if (jointsAccessor-&gt;component_type == cgltf_component_type_r_8u) {
+            jointGlType = GL_UNSIGNED_BYTE;
+            componentSize = sizeof(unsigned char);
+        }
+
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 4, jointGlType, GL_FALSE, 4 * componentSize, (void *)0);
+    }
+
+    // Joint Weights (Location = 3)
+    if (weightsAccessor &amp;&amp; weightsAccessor-&gt;buffer_view &amp;&amp; weightsAccessor-&gt;buffer_view-&gt;buffer)
+    {
+        const uint8_t *base = static_cast&lt;const uint8_t *&gt;(weightsAccessor-&gt;buffer_view-&gt;buffer-&gt;data);
+        const void *weightsData = base + weightsAccessor-&gt;buffer_view-&gt;offset + weightsAccessor-&gt;offset;
+        size_t weightsSize = weightsAccessor-&gt;count * 4 * sizeof(float);
+
+        glGenBuffers(1, &amp;m_weightsVbo);
+        glBindBuffer(GL_ARRAY_BUFFER, m_weightsVbo);
+        glBufferData(GL_ARRAY_BUFFER, weightsSize, weightsData, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)0);
+    }
+
+    // Element Indices (EBO)
+    if (indexAccessor &amp;&amp; indexAccessor-&gt;buffer_view &amp;&amp; indexAccessor-&gt;buffer_view-&gt;buffer)
+    {
+        const uint8_t *base = static_cast&lt;const uint8_t *&gt;(indexAccessor-&gt;buffer_view-&gt;buffer-&gt;data);
+        const void *indices = base + indexAccessor-&gt;buffer_view-&gt;offset + indexAccessor-&gt;offset;
+        size_t indexSize = indexAccessor-&gt;count * indexAccessor-&gt;stride;
+
+        glGenBuffers(1, &amp;m_ebo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexSize, indices, GL_STATIC_DRAW);
+
+        if (indexAccessor-&gt;component_type == cgltf_component_type_r_32u)
+            m_indexType = GL_UNSIGNED_INT;
+        else if (indexAccessor-&gt;component_type == cgltf_component_type_r_16u)
+            m_indexType = GL_UNSIGNED_SHORT;
+        else if (indexAccessor-&gt;component_type == cgltf_component_type_r_8u)
+            m_indexType = GL_UNSIGNED_BYTE;
+
+        m_indexCount = static_cast&lt;GLsizei&gt;(indexAccessor-&gt;count);
+    }
+
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // Inverse Bind Matrices
+    if (data-&gt;skins_count &gt; 0)
+    {
+        cgltf_skin &amp;skin = data-&gt;skins[0];
+        if (skin.inverse_bind_matrices)
+        {
+            cgltf_accessor *ibmAccessor = skin.inverse_bind_matrices;
+            size_t numJointsInSkin = skin.joints_count;
+            m_ybotInverseBindMatrices.resize(numJointsInSkin);
+            const float *ibmData = reinterpret_cast&lt;const float *&gt;(
+                static_cast&lt;const uint8_t *&gt;(ibmAccessor-&gt;buffer_view-&gt;buffer-&gt;data) +
+                ibmAccessor-&gt;buffer_view-&gt;offset +
+                ibmAccessor-&gt;offset);
+            for (size_t i = 0; i &lt; numJointsInSkin; ++i) {
+                memcpy(m_ybotInverseBindMatrices[i].m, &amp;ibmData[i * 16], 16 * sizeof(float));
+            }
+        }
+    }
+
+    cgltf_free(data);
+    SDL_free(glbData);
+    return true;
+}
+
+void MainWindow::initializeGL()
+{
+    gladLoadGLLoader([](const char *name) -&gt; void * {
+        return reinterpret_cast&lt;void *&gt;(QOpenGLContext::currentContext()-&gt;getProcAddress(name));
+    });
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vs, 1, &amp;skinningVertexShaderSource, nullptr);
+    glCompileShader(vs);
+
+    GLint success;
+    char infoLog[512];
+    glGetShaderiv(vs, GL_COMPILE_STATUS, &amp;success);
+    if (!success) {
+        glGetShaderInfoLog(vs, 512, nullptr, infoLog);
+        qWarning() &lt;&lt; "Vertex Shader Compilation Failed:" &lt;&lt; infoLog;
+    }
+
+    GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fs, 1, &amp;skinningFragmentShaderSource, nullptr);
+    glCompileShader(fs);
+
+    glGetShaderiv(fs, GL_COMPILE_STATUS, &amp;success);
+    if (!success) {
+        glGetShaderInfoLog(fs, 512, nullptr, infoLog);
+        qWarning() &lt;&lt; "Fragment Shader Compilation Failed:" &lt;&lt; infoLog;
+    }
+
+    m_shaderProgram = glCreateProgram();
+    glAttachShader(m_shaderProgram, vs);
+    glAttachShader(m_shaderProgram, fs);
+    glLinkProgram(m_shaderProgram);
+
+    glGetProgramiv(m_shaderProgram, GL_LINK_STATUS, &amp;success);
+    if (!success) {
+        glGetProgramInfoLog(m_shaderProgram, 512, nullptr, infoLog);
+        qWarning() &lt;&lt; "Shader Program Link Failed:" &lt;&lt; infoLog;
+    }
+
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+
+    m_mvpLoc = glGetUniformLocation(m_shaderProgram, "uMvpMatrix");
+    m_texLoc = glGetUniformLocation(m_shaderProgram, "ourTexture");
+    m_jointMatricesLoc = glGetUniformLocation(m_shaderProgram, "uJointMatrices");
+
+    // Load Ozz Skeleton
+    const char *skeletonPath = "assets/models/y-bot/skeleton.ozz";
+    SDL_IOStream *skeletonIo = SDL_IOFromFile(skeletonPath, "rb");
+    if (skeletonIo) {
+        OzzSDLStream stream(skeletonIo);
+        ozz::io::IArchive archive(&amp;stream);
+        if (archive.TestTag&lt;ozz::animation::Skeleton&gt;()) {
+            ozz::animation::Skeleton tempSkeleton;
+            archive &gt;&gt; tempSkeleton;
+            m_ozzSkeleton = std::move(tempSkeleton);
+        } else {
+            qWarning() &lt;&lt; "CRITICAL: Archive tag mismatch for Skeleton!";
+        }
+    } else {
+        qWarning() &lt;&lt; "Failed to open ozz skeleton:" &lt;&lt; skeletonPath;
+    }
+
+    // Load Ozz Animation
+    const char *animationPath = "assets/models/y-bot/animation.ozz";
+    SDL_IOStream *animIo = SDL_IOFromFile(animationPath, "rb");
+    if (animIo) {
+        OzzSDLStream stream(animIo);
+        ozz::io::IArchive archive(&amp;stream);
+        archive &gt;&gt; m_ozzAnimation;
+    } else {
+        qWarning() &lt;&lt; "Failed to open ozz animation:" &lt;&lt; animationPath;
+    }
+
+    m_ozzSamplingContext.Resize(m_ozzSkeleton.num_joints());
+    m_ozzAnimationTime = 0.0f;
+    m_ozzModelMatrices.resize(m_ozzSkeleton.num_joints());
+
+    loadModelGLB("assets/models/y-bot/y-bot.glb");
+    m_texture = createTextureWithSDL3("assets/models/y-bot/y-bot.webp");
+
+    // -------------------------------------------------------------------------
+    // Exact equivalent of SDL_HINT_MAIN_CALLBACK_RATE = "60"
+    // Timer fires once every 16ms and sleeps the rest of the time.
+    // -------------------------------------------------------------------------
+    m_elapsedTimer.start();
+    m_lastNsecs = 0;
+    m_timer = new QTimer(this);
+    m_timer-&gt;setTimerType(Qt::PreciseTimer);
+    connect(m_timer, &amp;QTimer::timeout, this, QOverload&lt;&gt;::of(&amp;QOpenGLWindow::update));
+    m_timer-&gt;start(16); // 60 FPS
+}
+
+void MainWindow::resizeGL(int w, int h)
+{
+    glViewport(0, 0, w, h);
+}
+
+void MainWindow::paintGL()
+{
+    qint64 currentNsecs = m_elapsedTimer.nsecsElapsed();
+    float deltaTime = static_cast&lt;float&gt;(currentNsecs - m_lastNsecs) / 1e9f;
+    m_lastNsecs = currentNsecs;
+
+    if (m_ozzAnimation.duration() &gt; 0.0f) {
+        m_ozzAnimationTime += deltaTime;
+        if (m_ozzAnimationTime &gt; m_ozzAnimation.duration()) {
+            m_ozzAnimationTime = std::fmod(m_ozzAnimationTime, m_ozzAnimation.duration());
+        }
+
+        ozz::animation::SamplingJob sampling_job;
+        sampling_job.animation = &amp;m_ozzAnimation;
+        sampling_job.ratio = m_ozzAnimationTime / m_ozzAnimation.duration();
+        sampling_job.context = &amp;m_ozzSamplingContext;
+
+        ozz::vector&lt;ozz::math::SoaTransform&gt; locals;
+        locals.resize(m_ozzSkeleton.num_soa_joints());
+        sampling_job.output = make_span(locals);
+
+        if (sampling_job.Run()) {
+            ozz::animation::LocalToModelJob conv_job;
+            conv_job.skeleton = &amp;m_ozzSkeleton;
+            conv_job.input = make_span(locals);
+            conv_job.output = make_span(m_ozzModelMatrices);
+            conv_job.Run();
+        }
+    }
+
+    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    if (m_texture &amp;&amp; m_indexCount &gt; 0 &amp;&amp; !m_ozzModelMatrices.empty())
+    {
+        glUseProgram(m_shaderProgram);
+
+        // Model Matrix
+        mat4 model;
+        glm_mat4_identity(model);
+
+        // View Matrix (Frame Y-Bot)
+        mat4 view;
+        vec3 eye = {0.0f, 1.2f, 3.0f};
+        vec3 center = {0.0f, 0.9f, 0.0f};
+        vec3 up = {0.0f, 1.0f, 0.0f};
+        glm_lookat(eye, center, up, view);
+
+        // Perspective Projection Matrix
+        mat4 projection;
+        float aspect = (height() &gt; 0) ? (float)width() / (float)height() : 1.0f;
+        glm_perspective(glm_rad(45.0f), aspect, 0.1f, 100.0f, projection);
+
+        mat4 view_model;
+        glm_mat4_mul(view, model, view_model);
+
+        mat4 mvp;
+        glm_mat4_mul(projection, view_model, mvp);
+
+        glUniformMatrix4fv(m_mvpLoc, 1, GL_FALSE, (const GLfloat *)mvp);
+
+        const int activeJointIndices[] = {
+            2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 
+            22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 
+            40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 
+            58, 59, 60, 61, 62, 63, 64, 65, 66
+        };
+        const int numActiveJoints = 65;
+        std::vector&lt;float&gt; jointMatricesData(numActiveJoints * 16);
+
+        for (int idx = 0; idx &lt; numActiveJoints; ++idx) {
+            int i = activeJointIndices[idx];
+            const ozz::math::Float4x4 &amp;m = m_ozzModelMatrices[i];
+
+            mat4 ozzMat;
+            memcpy(ozzMat, &amp;m.cols[0], 16 * sizeof(float));
+            mat4 finalJointMat;
+
+            if (idx &lt; (int)m_ybotInverseBindMatrices.size()) {
+                glm_mat4_mul(ozzMat, m_ybotInverseBindMatrices[idx].m, finalJointMat);
+            } else {
+                glm_mat4_copy(ozzMat, finalJointMat);
+            }
+
+            memcpy(&amp;jointMatricesData[idx * 16], finalJointMat, 16 * sizeof(float));
+        }
+
+        glUniformMatrix4fv(m_jointMatricesLoc, numActiveJoints, GL_FALSE, jointMatricesData.data());
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, m_texture);
+        glUniform1i(m_texLoc, 0);
+
+        glBindVertexArray(m_vao);
+        glDrawElements(GL_TRIANGLES, m_indexCount, m_indexType, 0);
+        glBindVertexArray(0);
+    }
+
+    // DO NOT call requestUpdate() here. The QTimer handles the 60 FPS tick rate.
+}</code></pre>
+
+        <div class="alert alert-warning my-3">
+            <strong>
+                <span class="data-en">Qt 6 Note: Pure QOpenGLWindow &amp; QGuiApplication</span>
+                <span class="data-ru">Заметка Qt 6: QOpenGLWindow и QGuiApplication</span>
+            </strong>
+            <p class="mb-0 mt-1">
+                <span class="data-en">
+                    This implementation uses <code>QGuiApplication</code> and <code>QOpenGLWindow</code> (with <code>QOpenGLWindow::NoPartialUpdate</code>) to eliminate widget engine overhead, combined with a precise 16ms <code>QTimer</code> matching the 60 FPS callback rate of SDL3. On Linux, <code>Q_IMPORT_PLUGIN(QWaylandIntegrationPlugin)</code> ensures static Wayland support.
+                </span>
+                <span class="data-ru">
+                    Эта реализация использует <code>QGuiApplication</code> и <code>QOpenGLWindow</code> (с <code>QOpenGLWindow::NoPartialUpdate</code>), чтобы избежать накладных расходов подсистемы виджетов, в паре с точным 16-миллисекундным <code>QTimer</code>, эквивалентным частоте 60 FPS коллбэков SDL3. В Linux макрос <code>Q_IMPORT_PLUGIN(QWaylandIntegrationPlugin)</code> обеспечивает статическую поддержку Wayland.
+                </span>
+            </p>
+        </div>
+
+        <h3 class="h6 fw-bold mt-4">
+            <span class="data-en">File Contents for CMakeLists.txt</span>
+            <span class="data-ru">Содержимое файла CMakeLists.txt</span>
+        </h3>
+        <pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Debug")
+endif()
+
+project(y-bot-ozz-animation-cglm-opengl-qt6-cpp-desktop CXX C)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
+# -----------------------------------------------------------------------------
+# Paths
+# -----------------------------------------------------------------------------
+if(WIN32)
+    set(GLAD_DIR          "C:/libs/glad-0.1.36/opengl-3.3")
+    set(CGLTF_INCLUDE_DIR "C:/libs/cgltf-1.15")
+    set(CGLM_DIR          "C:/libs/cglm-0.9.6")
+    set(SDL3_DIR          "C:/libs/sdl3-3.4.18-mingw/lib/cmake/SDL3")
+    set(SDL3_image_DIR    "C:/libs/sdl3_image-3.4.8-webp-mingw/lib/cmake/SDL3_image")
+    set(webp_ROOT         "C:/libs/webp-1.6.0-mingw")
+    set(webp_INCLUDE_DIR  "C:/libs/webp-1.6.0-mingw/include")
+    set(webp_LIBRARY      "C:/libs/webp-1.6.0-mingw/lib/libwebp.a")
+    set(OZZ_DIR           "C:/libs/ozz-animation-0.17.0-mingw")
+else()
+    set(GLAD_DIR          "$ENV{HOME}/libs/glad-0.1.36/opengl-3.3")
+    set(CGLTF_INCLUDE_DIR "$ENV{HOME}/libs/cgltf-1.15")
+    set(CGLM_DIR          "$ENV{HOME}/libs/cglm-0.9.6")
+    set(SDL3_DIR          "$ENV{HOME}/libs/sdl3-3.4.18-ubuntu/lib/cmake/SDL3")
+    set(SDL3_image_DIR    "$ENV{HOME}/libs/sdl3_image-3.4.8-webp-ubuntu/lib/cmake/SDL3_image")
+    set(webp_ROOT         "$ENV{HOME}/libs/webp-1.6.0-ubuntu")
+    set(webp_INCLUDE_DIR  "$ENV{HOME}/libs/webp-1.6.0-ubuntu/include")
+    set(webp_LIBRARY      "$ENV{HOME}/libs/webp-1.6.0-ubuntu/lib/libwebp.a")
+    set(OZZ_DIR           "$ENV{HOME}/libs/ozz-animation-0.17.0-ubuntu")
+endif()
+
+# -----------------------------------------------------------------------------
+# Locate Packages
+# -----------------------------------------------------------------------------
+find_package(Qt6 REQUIRED COMPONENTS Widgets OpenGLWidgets)
+
+# Wayland is only present and required on Linux (Ubuntu / WSL)
+if(UNIX AND NOT APPLE)
+    find_package(Qt6 REQUIRED COMPONENTS WaylandClient)
+endif()
+
+find_package(SDL3 REQUIRED CONFIG)
+find_package(SDL3_image REQUIRED CONFIG)
+
+# -----------------------------------------------------------------------------
+# Fix Ninja issue: Clear bogus relative link paths from SDL3_image static target
+# -----------------------------------------------------------------------------
+if(TARGET SDL3_image::SDL3_image-static)
+    set_target_properties(SDL3_image::SDL3_image-static PROPERTIES INTERFACE_LINK_LIBRARIES "")
+endif()
+
+# -----------------------------------------------------------------------------
+# Executable Target (qt_add_executable for static plugin support)
+# -----------------------------------------------------------------------------
+qt_add_executable(app
+    src/main.cpp
+    src/mainwindow.h
+    src/mainwindow.cpp
+    ${GLAD_DIR}/src/glad.c
+)
+
+# -----------------------------------------------------------------------------
+# Include Directories &amp; Definitions
+# -----------------------------------------------------------------------------
+target_include_directories(app PRIVATE
+    ${GLAD_DIR}/include
+    ${CGLTF_INCLUDE_DIR}
+    ${CGLM_DIR}/include
+    ${webp_INCLUDE_DIR}
+    ${OZZ_DIR}/include
+)
+
+# -----------------------------------------------------------------------------
+# Copy Assets to Build Directory
+# -----------------------------------------------------------------------------
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/assets")
+    add_custom_command(TARGET app POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E remove_directory "$&lt;TARGET_FILE_DIR:app&gt;/assets"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+            "$&lt;TARGET_FILE_DIR:app&gt;/assets"
+        COMMENT "Copying assets directory"
+    )
+endif()
+
+# -----------------------------------------------------------------------------
+# Link Flags &amp; Stripping (Applied to BOTH Windows &amp; Ubuntu)
+# -----------------------------------------------------------------------------
+target_link_options(app PRIVATE -static-libgcc -static-libstdc++)
+
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_link_options(app PRIVATE -s)
+endif()
+
+if(WIN32)
+    target_link_libraries(app PRIVATE
+        Qt6::Widgets
+        Qt6::OpenGLWidgets
+        SDL3_image::SDL3_image-static
+        SDL3::SDL3-static
+        opengl32
+        C:/libs/webp-1.6.0-mingw/lib/libwebpdemux.a
+        C:/libs/webp-1.6.0-mingw/lib/libwebpmux.a
+        C:/libs/webp-1.6.0-mingw/lib/libwebp.a
+        C:/libs/webp-1.6.0-mingw/lib/libsharpyuv.a
+        ${OZZ_DIR}/lib/libozz_animation_offline_r.a
+        ${OZZ_DIR}/lib/libozz_animation_r.a
+        ${OZZ_DIR}/lib/libozz_geometry_r.a
+        ${OZZ_DIR}/lib/libozz_options_r.a
+        ${OZZ_DIR}/lib/libozz_base_r.a
+    )
+
+    # Full static linking and subsystem selection only on Windows
+    target_link_options(app PRIVATE -static)
+
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_link_options(app PRIVATE -mconsole)
+    else()
+        target_compile_options(app PRIVATE -Os)
+        target_link_options(app PRIVATE -mwindows)
+    endif()
+else()
+    target_link_libraries(app PRIVATE
+        $ENV{HOME}/libs/qt-6.12.0-static-gcc/plugins/platforms/libqwayland.a
+        Qt6::Widgets
+        Qt6::OpenGLWidgets
+        Qt6::WaylandClient
+        SDL3_image::SDL3_image-static
+        SDL3::SDL3-static
+        GL
+        $ENV{HOME}/libs/webp-1.6.0-ubuntu/lib/libwebpdemux.a
+        $ENV{HOME}/libs/webp-1.6.0-ubuntu/lib/libwebpmux.a
+        $ENV{HOME}/libs/webp-1.6.0-ubuntu/lib/libwebp.a
+        $ENV{HOME}/libs/webp-1.6.0-ubuntu/lib/libsharpyuv.a
+        ${OZZ_DIR}/lib/libozz_animation_offline_r.a
+        ${OZZ_DIR}/lib/libozz_animation_r.a
+        ${OZZ_DIR}/lib/libozz_geometry_r.a
+        ${OZZ_DIR}/lib/libozz_options_r.a
+        ${OZZ_DIR}/lib/libozz_base_r.a
+    )
+endif()</code></pre>
+    </section>
+
+    <!-- 4. Build & Execution Scripts -->
+    <section id="build-and-run" class="mb-5">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Build &amp; Execution Scripts</span>
+            <span class="data-ru">Скрипты сборки и запуска</span>
+        </h2>
+
+        <h3 class="h6 fw-bold mt-3 text-primary">Windows (MinGW / Batch Scripts)</h3>
+        <p class="fw-bold mb-1">config-win.bat</p>
+        <pre><code class="language-bash">@echo off
+cmake -G Ninja -S . -B dist/win ^
+  -DCMAKE_PREFIX_PATH="C:/Qt/6.12.0_static_mingw162" ^
+  -DCMAKE_BUILD_TYPE=Release</code></pre>
+
+        <p class="fw-bold mb-1">build-win.bat</p>
+        <pre><code class="language-bash">@echo off
+cmake --build dist/win</code></pre>
+
+        <p class="fw-bold mb-1">run-win.bat</p>
+        <pre><code class="language-bash">@echo off
+.\dist\win\app.exe</code></pre>
+
+        <p class="mt-3">
+            <span class="data-en">Run the scripts sequentially in Command Prompt or PowerShell:</span>
+            <span class="data-ru">Последовательно запустите скрипты в командной строке или PowerShell:</span>
+        </p>
+        <pre><code class="language-bash">config-win.bat
+build-win.bat
+run-win.bat</code></pre>
+
+        <h3 class="h6 fw-bold mt-4 text-primary">Ubuntu (Bash Scripts)</h3>
+        <p class="fw-bold mb-1">config-linux.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+cmake -G Ninja -S . -B dist/linux \
+  -DCMAKE_PREFIX_PATH="$HOME/libs/qt-6.12.0-static-gcc" \
+  -DCMAKE_BUILD_TYPE=Release</code></pre>
+
+        <p class="fw-bold mb-1">build-linux.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+cmake --build dist/linux</code></pre>
+
+        <p class="fw-bold mb-1">run-linux.sh</p>
+        <pre><code class="language-bash">#!/usr/bin/env bash
+set -e
+./dist/linux/app</code></pre>
+
+        <p class="mt-3">
+            <span class="data-en">Grant execute permissions on Ubuntu before running:</span>
+            <span class="data-ru">Предоставьте права на выполнение в Ubuntu перед запуском:</span>
+        </p>
+        <pre><code class="language-bash">chmod +x config-linux.sh build-linux.sh run-linux.sh
+./config-linux.sh
+./build-linux.sh
+./run-linux.sh</code></pre>
+    </section>
+
+    <!-- 5. Expected Output -->
+    <section id="expected-output" class="mb-5">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Expected Output</span>
+            <span class="data-ru">Ожидаемый результат</span>
+        </h2>
+
+        <p>
+            <span class="data-en">After running the build and execution scripts, a Qt window should appear displaying the animated Y-Bot character performing the chicken dance:</span>
+            <span class="data-ru">После запуска скриптов сборки и выполнения появится окно Qt с отображением анимированного персонажа Y-Bot, исполняющего танец цыпленка:</span>
+        </p>
+
+        <pre><code class="language-text">Qt 6 ozz-animation Y-Bot Model (cglm)</code></pre>
+    </section>
+
+<section id="ozz-sdl-stream" class="mb-5">
+    <h2 class="h4 fw-bold mb-3">
+        <span class="data-en">Understanding the OzzSDLStream Adapter Class</span>
+        <span class="data-ru">Разбор класса-адаптера OzzSDLStream</span>
+    </h2>
+
+    <p>
+        <span class="data-en">
+            The <code>ozz-animation</code> runtime uses an abstract stream interface (<code>ozz::io::Stream</code>) to read and deserialize skeletons and animations via its archive system (<code>ozz::io::IArchive</code>). By wrapping SDL3's modern <code>SDL_IOStream</code>, we enable loading <code>.ozz</code> assets across any platform supported by SDL without depending on standard C file streams:
+        </span>
+        <span class="data-ru">
+            Библиотека <code>ozz-animation</code> использует абстрактный интерфейс потоков (<code>ozz::io::Stream</code>) для чтения и десериализации скелетов и анимаций через систему архивов (<code>ozz::io::IArchive</code>). Оборачивая современный <code>SDL_IOStream</code> из SDL3, мы обеспечиваем загрузку ассетов <code>.ozz</code> на любой платформе, поддерживаемой SDL, без привязки к стандартным файловым потокам C:
+        </span>
+    </p>
+
+    <pre><code class="language-cpp">// Custom SDL3 stream wrapper for ozz-animation archives
+class OzzSDLStream : public ozz::io::Stream
+{
+public:
+    OzzSDLStream(SDL_IOStream *io)
+        : io_(io)
+        , opened_(io != nullptr)
+    {
+        if (io_)
+            SDL_SeekIO(io_, 0, SDL_IO_SEEK_SET);
+    }
+
+    ~OzzSDLStream()
+    {
+        if (io_)
+            SDL_CloseIO(io_);
+    }
+
+    bool opened() const override { return opened_; }
+
+    size_t Read(void *buffer, size_t size) override
+    {
+        size_t total = 0;
+        while (total &lt; size)
+        {
+            size_t read = SDL_ReadIO(io_, (uint8_t *)buffer + total, size - total);
+            if (read == 0)
+                break;
+            total += read;
+        }
+        return total;
+    }
+
+    size_t Write(const void *, size_t) override { return 0; }
+
+    int Seek(int offset, Origin origin) override
+    {
+        SDL_IOWhence whence = SDL_IO_SEEK_SET;
+        if (origin == kCurrent)
+            whence = SDL_IO_SEEK_CUR;
+        else if (origin == kEnd)
+            whence = SDL_IO_SEEK_END;
+
+        Sint64 pos = SDL_SeekIO(io_, offset, whence);
+        return pos &gt;= 0 ? 0 : -1;
+    }
+
+    int Tell() const override
+    {
+        Sint64 pos = SDL_TellIO(io_);
+        return pos &gt;= 0 ? (int)pos : -1;
+    }
+
+    size_t Size() const override
+    {
+        Sint64 size = SDL_GetIOSize(io_);
+        return size &gt;= 0 ? (size_t)size : 0;
+    }
+
+private:
+    SDL_IOStream *io_;
+    bool opened_;
+};</code></pre>
+
+    <h3 class="h5 fw-bold mt-4 mb-3">
+        <span class="data-en">Class Methods Breakdown</span>
+        <span class="data-ru">Разбор методов класса</span>
+    </h3>
+
+    <ul class="list-unstyled">
+        <!-- Constructor & Destructor -->
+        <li class="mb-4">
+            <h4 class="h6 fw-bold text-primary mb-1">
+                <code>OzzSDLStream(SDL_IOStream *io)</code> &amp; <code>~OzzSDLStream()</code>
+            </h4>
+            <span class="data-en">
+                Takes ownership of the opened <code>SDL_IOStream*</code>, rewinds the stream position to the beginning (<code>SDL_SeekIO(io_, 0, SDL_IO_SEEK_SET)</code>), and safely closes it with <code>SDL_CloseIO(io_)</code> when the stream object goes out of scope (RAII pattern).
+            </span>
+            <span class="data-ru">
+                Принимает владение открытым <code>SDL_IOStream*</code>, сбрасывает позицию чтения в начало файла (<code>SDL_SeekIO(io_, 0, SDL_IO_SEEK_SET)</code>) и гарантированно закрывает поток с помощью <code>SDL_CloseIO(io_)</code> при выходе из области видимости по паттерну RAII.
+            </span>
+        </li>
+
+        <!-- opened -->
+        <li class="mb-4">
+            <h4 class="h6 fw-bold text-primary mb-1">
+                <code>bool opened() const override</code>
+            </h4>
+            <span class="data-en">
+                Reports whether the underlying stream handle was successfully opened and is valid for read operations.
+            </span>
+            <span class="data-ru">
+                Сообщает, был ли исходный дескриптор потока успешно открыт и готов ли он к операциям чтения.
+            </span>
+        </li>
+
+        <!-- Read -->
+        <li class="mb-4">
+            <h4 class="h6 fw-bold text-primary mb-1">
+                <code>size_t Read(void *buffer, size_t size) override</code>
+            </h4>
+            <span class="data-en">
+                Reads <code>size</code> bytes into <code>buffer</code>. Uses a <code>while</code> loop with pointer arithmetic (<code>(uint8_t *)buffer + total</code>) to handle short/partial reads from disk until either all requested bytes are gathered or End-Of-File / error occurs.
+            </span>
+            <span class="data-ru">
+                Считывает <code>size</code> байт в буфер <code>buffer</code>. Использует цикл <code>while</code> с адресной арифметикой (<code>(uint8_t *)buffer + total</code>) для корректной обработки неполных (частичных) чтений, пока не будет получен весь блок данных или не встретится EOF/ошибка.
+            </span>
+        </li>
+
+        <!-- Write -->
+        <li class="mb-4">
+            <h4 class="h6 fw-bold text-primary mb-1">
+                <code>size_t Write(const void *, size_t) override</code>
+            </h4>
+            <span class="data-en">
+                Returns <code>0</code> because this stream is strictly read-only for loading pre-baked skeleton and animation data.
+            </span>
+            <span class="data-ru">
+                Возвращает <code>0</code>, так как данный поток предназначен исключительно для чтения готовых файлов скелета и анимации.
+            </span>
+        </li>
+
+        <!-- Seek -->
+        <li class="mb-4">
+            <h4 class="h6 fw-bold text-primary mb-1">
+                <code>int Seek(int offset, Origin origin) override</code>
+            </h4>
+            <span class="data-en">
+                Maps Ozz's seek origin enum (<code>kCurrent</code>, <code>kEnd</code>, and default beginning) to SDL3's <code>SDL_IOWhence</code> constants (<code>SDL_IO_SEEK_CUR</code>, <code>SDL_IO_SEEK_END</code>, <code>SDL_IO_SEEK_SET</code>). Returns <code>0</code> on success and <code>-1</code> on error.
+            </span>
+            <span class="data-ru">
+                Сопоставляет перечисление точки отсчета Ozz (<code>kCurrent</code>, <code>kEnd</code> и начало по умолчанию) с константами SDL3 <code>SDL_IOWhence</code> (<code>SDL_IO_SEEK_CUR</code>, <code>SDL_IO_SEEK_END</code>, <code>SDL_IO_SEEK_SET</code>). Возвращает <code>0</code> при успехе и <code>-1</code> при ошибке.
+            </span>
+        </li>
+
+        <!-- Tell -->
+        <li class="mb-4">
+            <h4 class="h6 fw-bold text-primary mb-1">
+                <code>int Tell() const override</code>
+            </h4>
+            <span class="data-en">
+                Queries the current byte offset within the stream via <code>SDL_TellIO(io_)</code>.
+            </span>
+            <span class="data-ru">
+                Запрашивает текущее смещение в байтах внутри потока через <code>SDL_TellIO(io_)</code>.
+            </span>
+        </li>
+
+        <!-- Size -->
+        <li class="mb-2">
+            <h4 class="h6 fw-bold text-primary mb-1">
+                <code>size_t Size() const override</code>
+            </h4>
+            <span class="data-en">
+                Returns the total byte size of the file using SDL3's <code>SDL_GetIOSize(io_)</code>.
+            </span>
+            <span class="data-ru">
+                Возвращает общий размер файла в байтах с помощью встроенной функции SDL3 <code>SDL_GetIOSize(io_)</code>.
+            </span>
+        </li>
+    </ul>
+</section>
+
+    <!-- Deep Dive: OzzSDLStream::Read Method Explanation -->
+    <section id="stream-explanation" class="mb-4">
+        <h2 class="h4 fw-bold mb-3">
+            <span class="data-en">Deep Dive: OzzSDLStream::Read Method</span>
+            <span class="data-ru">Подробный разбор метода OzzSDLStream::Read</span>
+        </h2>
+
+        <p>
+            <span class="data-en">This function implements the virtual <code>ozz::io::Stream::Read()</code> method using SDL3's <code>SDL_ReadIO()</code> API. It acts as an adapter bridging ozz-animation archives (<code>ozz::io::IArchive</code>) and SDL3 file streams (<code>SDL_IOStream</code>):</span>
+            <span class="data-ru">Эта функция реализует виртуальный метод <code>ozz::io::Stream::Read()</code> с использованием API SDL3 <code>SDL_ReadIO()</code>. Она служит адаптером между архивами ozz-animation (<code>ozz::io::IArchive</code>) и потоками данных SDL3 (<code>SDL_IOStream</code>):</span>
+        </p>
+
+        <pre><code class="language-cpp">size_t Read(void *buffer, size_t size) override
+{
+    size_t total = 0;
+    while (total &lt; size)
+    {
+        size_t read = SDL_ReadIO(io_, (uint8_t *)buffer + total, size - total);
+        if (read == 0)
+            break;
+        total += read;
+    }
+    return total;
+}</code></pre>
+
+        <h3 class="h5 fw-bold mt-4 mb-2">
+            <span class="data-en">Line-by-Line Breakdown</span>
+            <span class="data-ru">Построчный разбор</span>
+        </h3>
+
+        <ul class="list-unstyled">
+            <li class="mb-3">
+                <code>size_t Read(void *buffer, size_t size) override</code>
+                <br />
+                <span class="data-en">Overrides the pure virtual read method from <code>ozz::io::Stream</code>. It accepts a destination memory pointer <code>buffer</code> and the number of bytes <code>size</code> requested by the ozz deserializer.</span>
+                <span class="data-ru">Переопределяет виртуальный метод чтения из <code>ozz::io::Stream</code>. Принимает указатель на целевой буфер памяти <code>buffer</code> и количество байт <code>size</code>, запрошенных десериализатором ozz.</span>
+            </li>
+
+            <li class="mb-3">
+                <code>size_t total = 0; while (total &lt; size)</code>
+                <br />
+                <span class="data-en">Initializes a byte counter to track progress and runs a loop until all requested bytes are gathered.</span>
+                <span class="data-ru">Инициализирует счётчик байт и выполняет цикл до тех пор, пока не будет прочитан весь запрошенный объём данных.</span>
+            </li>
+
+            <li class="mb-3">
+                <code>(uint8_t *)buffer + total</code>
+                <br />
+                <span class="data-en">In C++, pointer arithmetic cannot be performed directly on <code>void*</code>. Casting to <code>uint8_t*</code> allows byte-level offsetting so each consecutive read appends immediately after the previously read bytes.</span>
+                <span class="data-ru">В C++ нельзя выполнять адресную арифметику над <code>void*</code>. Приведение к <code>uint8_t*</code> позволяет выполнять побайтовое смещение, благодаря чему каждая следующая порция данных записывается строго вслед за предыдущей.</span>
+            </li>
+
+            <li class="mb-3">
+                <code>size_t read = SDL_ReadIO(io_, (uint8_t *)buffer + total, size - total);</code>
+                <br />
+                <span class="data-en">Invokes SDL3's stream read operation, requesting only the remaining bytes (<code>size - total</code>). Returns the actual number of bytes read in this pass.</span>
+                <span class="data-ru">Вызывает операцию чтения SDL3, запрашивая только недостающие байты (<code>size - total</code>). Возвращает фактическое число прочитанных байт за данный вызов.</span>
+            </li>
+
+            <li class="mb-3">
+                <code>if (read == 0) break;</code>
+                <br />
+                <span class="data-en">In SDL3, <code>SDL_ReadIO</code> returns 0 on End-of-File (EOF) or unrecoverable error. The loop breaks immediately to avoid an infinite loop.</span>
+                <span class="data-ru">В SDL3 <code>SDL_ReadIO</code> возвращает 0 при достижении конца файла (EOF) или возникновении ошибки. Цикл сразу прерывается для предотвращения бесконечного зацикливания.</span>
+            </li>
+
+            <li class="mb-3">
+                <code>total += read;</code>
+                <br />
+                <span class="data-en">Accumulates the number of bytes read in the current iteration.</span>
+                <span class="data-ru">Прибавляет число прочитанных в текущей итерации байт к общей сумме.</span>
+            </li>
+
+            <li class="mb-3">
+                <code>return total;</code>
+                <br />
+                <span class="data-en">Returns the total number of bytes successfully read (equals <code>size</code> on complete success, or less if EOF was reached early).</span>
+                <span class="data-ru">Возвращает общее количество успешно прочитанных байт (равно <code>size</code> при полном успехе либо меньше, если конец файла наступил раньше).</span>
+            </li>
+        </ul>
+
+        <h3 class="h5 fw-bold mt-4 mb-2">
+            <span class="data-en">Why the Loop is Necessary (Handling Partial Reads)</span>
+            <span class="data-ru">Зачем нужен цикл (обработка частичного чтения)</span>
+        </h3>
+
+        <p>
+            <span class="data-en">Low-level I/O operations are not guaranteed to deliver the entire requested chunk in a single call (often referred to as a "short read"). The <code>while</code> loop guarantees that the stream continuously accumulates data until the entire expected data structure (skeleton, animation curves, or joint matrices) is fully loaded without memory corruption.</span>
+            <span class="data-ru">Низкоуровневые операции ввода-вывода не гарантируют передачу всего запрошенного блока данных за один вызов («короткое чтение»). Цикл <code>while</code> гарантирует непрерывный добор данных, пока вся структура (скелет, анимационные кривые или матрицы суставов) не будет загружена целиком без повреждения памяти.</span>
+        </p>
+    </section>
+
+    <!-- Final Link to GitHub Repository -->
+    <section class="mt-5 pt-3 border-top text-center">
+        <p class="lead">
+            <span class="data-en">Complete source code for this project is available on GitHub:</span>
+            <span class="data-ru">Полный исходный код проекта доступен на GitHub:</span>
+        </p>
+        <a href="https://github.com/ivan-enzhaev/y-bot-ozz-animation-cglm-opengl-qt6-cpp-desktop" target="_blank" rel="noopener noreferrer" class="btn btn-dark btn-lg">
+            <span class="data-en">View on GitHub</span>
+            <span class="data-ru">Смотреть на GitHub</span>
+        </a>
+    </section>
+</div>
+
+        
+        
+            <div class="container mb-5">
+                <hr class="my-5">
+                <div id="support-section" class="container pb-5" tabindex="-1">
+    <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <span class="data-en">Support My Work</span>
+            <span class="data-ru">Поддержать проект</span>
+        </h1>
+        <p class="lead text-muted">
+            <span class="data-en">If these tutorials helped you, consider buying me a coffee!</span>
+            <span class="data-ru">Если эти туториалы вам помогли, вы можете поддержать автора.</span>
+        </p>
+    </header>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-success">
+                        <i class="bi bi-bank" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">
+                        <span class="data-en">Sberbank (Russia only)</span>
+                        <span class="data-ru">Сбербанк (только для РФ)</span>
+                    </h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/sberbank-qr.png" alt="Sberbank SBP QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Direct transfer via phone number (Russia only)</span>
+                        <span class="data-ru">Перевод по номеру телефона (только для РФ)</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace fw-bold mb-3">
+                        +7 (917) 212-29-59
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('+79172122959', this)">
+                        <span class="data-en">Copy Number</span>
+                        <span class="data-ru">Копировать номер</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3 text-warning">
+                        <i class="bi bi-currency-bitcoin" style="font-size: 2rem;"></i>
+                    </div>
+                    <h4 class="fw-bold">USDT TRC20</h4>
+
+                    <div class="mb-3">
+                        <img src="/assets/img/bybit-qr.png" alt="USDT TRC20 QR Code" class="img-fluid rounded border" style="max-width: 150px;">
+                    </div>
+
+                    <p class="text-muted small">
+                        <span class="data-en">Support via Cryptocurrency</span>
+                        <span class="data-ru">Поддержка криптовалютой</span>
+                    </p>
+                    <div class="bg-light p-3 rounded font-monospace small mb-3 text-break">
+                        <!-- TYourActualBybitWalletAddressHere... -->
+                        TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp
+                    </div>
+                    <button class="btn btn-outline-warning btn-sm text-dark" onclick="copyToClipboard('TMtY1YifNf6FKvgeFmqKGQR4NStKr3csGp', this)">
+                        <span class="data-en">Copy Address</span>
+                        <span class="data-ru">Копировать адрес</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="/" class="btn btn-link text-muted lang-link-dynamic">
+            <span class="data-en">← Back to Tutorials</span>
+            <span class="data-ru">← Назад к туториалам</span>
+        </a>
+    </div>
+</div>
+
+<script>
+// function copyToClipboard(text) {
+//     navigator.clipboard.writeText(text).then(() => {
+//         alert("Copied to clipboard / Скопировано!");
+//     });
+// }
+
+function copyToClipboard(text, button) {
+    // 1. Get the current language from the <html> tag
+    const currentLang = document.documentElement.getAttribute("lang") || "en";
+    
+    // 2. Define the feedback text
+    const feedback = {
+        'en': 'Copied!',
+        'ru': 'Скопировано!'
+    };
+
+    // 3. Store the original HTML to restore it later
+    const originalHTML = button.innerHTML;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Update button appearance
+        button.innerText = feedback[currentLang] || feedback['en'];
+        button.classList.add('copied');
+        button.disabled = true; // Optional: prevent double clicks
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove('copied');
+            button.disabled = false;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
+</script>
+            </div>
+        
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+    <div class="container text-center">
+        <small>&copy; 2026 Ivan Enzhaev.
+            <span class="data-en">Built with Bootstrap 5.</span>
+            <span class="data-ru">Создано с помощью Bootstrap 5.</span>
+        </small>
+    </div>
+</footer>
+    
+<block>
+    <script src="/libs/prism/1.30.0/prism.min.js"></script>
+
+    
+    <block>
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-c.min.js"></script>
+            <script src="/libs/prism/1.30.0/components/prism-cpp.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-cmake.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+    <block>
+        
+
+        
+
+        
+        <block>
+            <script src="/libs/prism/1.30.0/components/prism-bash.min.js"></script>
+        </block>
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+
+        
+    </block>
+    
+</block>
+
+
+<script>
+    // function setLanguage(lang) {
+    //     if (lang !== "en" && lang !== "ru") lang = "en";
+    //     document.documentElement.setAttribute("lang", lang);
+    //     localStorage.setItem("preferred-lang", lang);
+    //     document
+    //         .querySelectorAll(".lang-link")
+    //         .forEach((el) => el.classList.remove("active"));
+    //     const btn = document.getElementById("btn-" + lang);
+    //     if (btn) btn.classList.add("active");
+
+    //     updateVideoPlayerLanguage(lang);
+    // }
+
+    // function changeLanguage(lang) {
+    //     setLanguage(lang);
+    //     const url = new URL(window.location);
+    //     url.searchParams.set("lang", lang);
+    //     window.history.pushState({}, "", url);
+    // }
+
+    // // Logic for dynamic links (persisting language across pages)
+    // document.addEventListener("click", function(e) {
+    //     const link = e.target.closest(".lang-link-dynamic");
+        
+    //     if (link) {
+    //         // Check if the link is intended to open in a new tab
+    //         if (link.target === "_blank") {
+    //             // Allow the browser to handle the click naturally, 
+    //             // but we still want to append the language param.
+    //             const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //             const targetUrl = new URL(link.href);
+    //             targetUrl.searchParams.set("lang", currentLang);
+                
+    //             // Update the href right before the browser follows it
+    //             link.href = targetUrl.toString();
+    //             return; // Exit the function so e.preventDefault() isn't called
+    //         }
+
+    //         // Existing logic for same-tab navigation
+    //         e.preventDefault();
+    //         const currentLang = document.documentElement.getAttribute("lang") || "en";
+    //         const targetUrl = new URL(
+    //             link.href,
+    //             window.location.origin + window.location.pathname,
+    //         );
+    //         targetUrl.searchParams.set("lang", currentLang);
+    //         window.location.href = targetUrl.toString();
+    //     }
+    // });
+
+    // (function init() {
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     const langParam = urlParams.get("lang");
+    //     const savedLang = localStorage.getItem("preferred-lang");
+    //     setLanguage(langParam || savedLang || "en");
+    // })();
+
+    // window.onpopstate = function() {
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     setLanguage(urlParams.get("lang") || "en");
+    // };
+
+    // document.querySelectorAll('pre').forEach((pre) => {
+    //     // Create container and header
+    //     const container = document.createElement('div');
+    //     container.className = 'code-container';
+        
+    //     const header = document.createElement('div');
+    //     header.className = 'code-header';
+        
+    //     const button = document.createElement('button');
+    //     button.className = 'copy-button';
+    //     button.innerText = 'Copy';
+
+    //     // Wrap the pre tag
+    //     pre.parentNode.insertBefore(container, pre);
+    //     header.appendChild(button);
+    //     container.appendChild(header);
+    //     container.appendChild(pre);
+
+    //     // Copy Logic
+    //     button.addEventListener('click', () => {
+    //         const code = pre.querySelector('code').innerText;
+    //         navigator.clipboard.writeText(code).then(() => {
+    //             button.innerText = 'Copied!';
+    //             button.classList.add('copied');
+
+    //             setTimeout(() => {
+    //                 button.innerText = 'Copy';
+    //                 button.classList.remove('copied');
+    //             }, 2000);
+    //         });
+    //     });
+    // });
+
+    // document.addEventListener("DOMContentLoaded", () => {
+    //     const codeBlocks = document.querySelectorAll('code[data-url]');
+
+    //     codeBlocks.forEach(async (block) => {
+    //         const url = block.getAttribute('data-url');
+    //         if (!url) return;
+
+    //         try {
+    //             const response = await fetch(url);
+    //             if (!response.ok) throw new Error('Fetch failed');
+    //             const code = await response.text();
+                
+    //             // Set the content
+    //             block.textContent = code;
+                
+    //             // Re-run Prism highlight if available
+    //             if (typeof Prism !== 'undefined') {
+    //                 Prism.highlightElement(block);
+    //             }
+    //         } catch (err) {
+    //             console.error("Could not load code:", err);
+    //             block.textContent = "// Error: Could not load code from GitHub.";
+    //         }
+    //     });
+    // });
+
+    // function updateVideoPlayerLanguage(lang) {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     const targetSrc = lang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+    //     const targetTitle = lang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+    //     // Only update if the URL actually changed to prevent unneeded reloads
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // // Example listener: Call this function inside your existing language-switcher click handler:
+    // document.querySelectorAll('.lang-link').forEach(link => {
+    //     link.addEventListener('click', function() {
+    //         const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+    //         updateVideoPlayerLanguage(lang);
+    //     });
+    // });
+
+    // function initVideoPlayer() {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     // Detect language from URL query string (?lang=ru), or <html lang="..."> attribute
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     const currentLang = urlParams.get('lang') || document.documentElement.lang || 'en';
+
+    //     // Set correct video source on page load
+    //     const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+    //     const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // function loadVideoPlayer() {
+    //     const player = document.getElementById('main-video-player');
+    //     if (!player) return;
+
+    //     // Determine current language
+    //     const lang = document.documentElement.getAttribute('lang') || 
+    //                  localStorage.getItem('preferred-lang') || 
+    //                  'en';
+
+    //     const targetSrc = lang === 'ru' 
+    //         ? player.getAttribute('data-src-ru') 
+    //         : player.getAttribute('data-src-en');
+    //     const targetTitle = lang === 'ru' 
+    //         ? player.getAttribute('data-title-ru') 
+    //         : player.getAttribute('data-title-en');
+
+    //     if (player.src !== targetSrc) {
+    //         player.src = targetSrc;
+    //         player.title = targetTitle;
+    //     }
+    // }
+
+    // function initVideoPlayerWhenVisible() {
+    //     // If opened in a background tab (middle click), wait until the user switches to this tab
+    //     if (document.hidden) {
+    //         document.addEventListener('visibilitychange', function onVisible() {
+    //             if (!document.hidden) {
+    //                 document.removeEventListener('visibilitychange', onVisible);
+    //                 loadVideoPlayer();
+    //             }
+    //         });
+    //     } else {
+    //         // Tab is active (normal left click) -> load immediately
+    //         loadVideoPlayer();
+    //     }
+    // }
+
+    // // Call on load
+    // if (document.readyState === 'loading') {
+    //     document.addEventListener('DOMContentLoaded', initVideoPlayerWhenVisible);
+    // } else {
+    //     initVideoPlayerWhenVisible();
+    // }
+
+    // 1. Language setting
+    function setLanguage(lang) {
+        if (lang !== "en" && lang !== "ru") lang = "en";
+        document.documentElement.setAttribute("lang", lang);
+        localStorage.setItem("preferred-lang", lang);
+        document
+            .querySelectorAll(".lang-link")
+            .forEach((el) => el.classList.remove("active"));
+        const btn = document.getElementById("btn-" + lang);
+        if (btn) btn.classList.add("active");
+
+        // When manually switching languages on an active tab, update immediately
+        if (!document.hidden) {
+            applyVideoPlayerSrc(lang);
+        }
+    }
+
+    function changeLanguage(lang) {
+        setLanguage(lang);
+        const url = new URL(window.location);
+        url.searchParams.set("lang", lang);
+        window.history.pushState({}, "", url);
+    }
+
+    // 2. Core video updater
+    function applyVideoPlayerSrc(lang) {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        const currentLang = lang || document.documentElement.getAttribute("lang") || localStorage.getItem("preferred-lang") || "en";
+        const targetSrc = currentLang === 'ru' ? player.getAttribute('data-src-ru') : player.getAttribute('data-src-en');
+        const targetTitle = currentLang === 'ru' ? player.getAttribute('data-title-ru') : player.getAttribute('data-title-en');
+
+        if (targetSrc && player.src !== targetSrc) {
+            player.src = targetSrc;
+            player.title = targetTitle;
+        }
+    }
+
+    // 3. Deferred loader: waits for tab focus and real layout dimensions
+    function initVideoPlayer() {
+        const player = document.getElementById('main-video-player');
+        if (!player) return;
+
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        // Wait one render frame to guarantee full container width is computed
+                        requestAnimationFrame(() => {
+                            applyVideoPlayerSrc();
+                        });
+                        observer.disconnect();
+                    }
+                });
+            }, { threshold: 0.05 });
+
+            observer.observe(player);
+        } else {
+            applyVideoPlayerSrc();
+        }
+    }
+
+    // 4. Update language links on mousedown so middle-click gets ?lang= correctly
+    document.addEventListener("mousedown", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (!link) return;
+
+        const currentLang = document.documentElement.getAttribute("lang") || localStorage.getItem("preferred-lang") || "en";
+        const targetUrl = new URL(link.href, window.location.origin);
+        targetUrl.searchParams.set("lang", currentLang);
+        link.href = targetUrl.toString();
+    });
+
+    // 5. Normal click navigation
+    document.addEventListener("click", function(e) {
+        const link = e.target.closest(".lang-link-dynamic");
+        if (link && link.target !== "_blank") {
+            e.preventDefault();
+            const currentLang = document.documentElement.getAttribute("lang") || "en";
+            const targetUrl = new URL(link.href, window.location.origin + window.location.pathname);
+            targetUrl.searchParams.set("lang", currentLang);
+            window.location.href = targetUrl.toString();
+        }
+    });
+
+    // 6. Language Switcher Buttons
+    document.querySelectorAll('.lang-link').forEach(link => {
+        link.addEventListener('click', function() {
+            const lang = this.getAttribute('data-lang') || (this.innerText.toLowerCase().includes('ru') ? 'ru' : 'en');
+            changeLanguage(lang);
+        });
+    });
+
+    // 7. Initialize language on page load
+    (function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get("lang");
+        const savedLang = localStorage.getItem("preferred-lang");
+        setLanguage(langParam || savedLang || "en");
+    })();
+
+    // 8. Initialize video player (runs once when DOM is ready)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initVideoPlayer);
+    } else {
+        initVideoPlayer();
+    }
+
+    window.onpopstate = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        setLanguage(urlParams.get("lang") || "en");
+    };
+
+    // Code copy buttons
+    document.querySelectorAll('pre').forEach((pre) => {
+        const container = document.createElement('div');
+        container.className = 'code-container';
+        const header = document.createElement('div');
+        header.className = 'code-header';
+        const button = document.createElement('button');
+        button.className = 'copy-button';
+        button.innerText = 'Copy';
+
+        pre.parentNode.insertBefore(container, pre);
+        header.appendChild(button);
+        container.appendChild(header);
+        container.appendChild(pre);
+
+        button.addEventListener('click', () => {
+            const code = pre.querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                button.innerText = 'Copied!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.innerText = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
+
+    // External code blocks loader
+    document.addEventListener("DOMContentLoaded", () => {
+        const codeBlocks = document.querySelectorAll('code[data-url]');
+        codeBlocks.forEach(async (block) => {
+            const url = block.getAttribute('data-url');
+            if (!url) return;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Fetch failed');
+                const code = await response.text();
+                block.textContent = code;
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightElement(block);
+                }
+            } catch (err) {
+                console.error("Could not load code:", err);
+                block.textContent = "// Error: Could not load code from GitHub.";
+            }
+        });
+    });
+</script>
+</body>
+
+</html>
