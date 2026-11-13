@@ -255,8 +255,8 @@
             </li>
             <li class="mb-2">
                 <a href="#source-files" class="text-decoration-none">
-                    <span class="data-en">Source Files (main.cpp &amp; CMakeLists.txt)</span>
-                    <span class="data-ru">Исходные файлы (main.cpp и CMakeLists.txt)</span>
+                    <span class="data-en">Source Files (src/main.cpp &amp; CMakeLists.txt)</span>
+                    <span class="data-ru">Исходные файлы (src/main.cpp и CMakeLists.txt)</span>
                 </a>
             </li>
             <li class="mb-2">
@@ -348,13 +348,15 @@
         </p>
 
         <h3 class="h6 fw-bold mt-3 text-primary">Windows (Command Prompt / PowerShell)</h3>
-        <pre><code class="language-bash">mkdir C:\projects\y-bot-ozz-animation-cglm-opengl-sdl3-cpp
-mkdir C:\projects\y-bot-ozz-animation-cglm-opengl-sdl3-cpp\assets\models\y-bot
-cd C:\projects\y-bot-ozz-animation-cglm-opengl-sdl3-cpp</code></pre>
+        <pre><code class="language-bash">mkdir C:\projects\y-bot-ozz-animation-cglm-opengl-sdl3-cpp-desktop
+mkdir C:\projects\y-bot-ozz-animation-cglm-opengl-sdl3-cpp-desktop\src
+mkdir C:\projects\y-bot-ozz-animation-cglm-opengl-sdl3-cpp-desktop\assets\models\y-bot
+cd C:\projects\y-bot-ozz-animation-cglm-opengl-sdl3-cpp-desktop</code></pre>
 
         <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal)</h3>
-        <pre><code class="language-bash">mkdir -p ~/projects/y-bot-ozz-animation-cglm-opengl-sdl3-cpp/assets/models/y-bot
-cd ~/projects/y-bot-ozz-animation-cglm-opengl-sdl3-cpp</code></pre>
+        <pre><code class="language-bash">mkdir -p ~/projects/y-bot-ozz-animation-cglm-opengl-sdl3-cpp-desktop/src
+mkdir -p ~/projects/y-bot-ozz-animation-cglm-opengl-sdl3-cpp-desktop/assets/models/y-bot
+cd ~/projects/y-bot-ozz-animation-cglm-opengl-sdl3-cpp-desktop</code></pre>
     </section>
 
     <!-- 2. Download & Place Assets -->
@@ -391,25 +393,25 @@ cd ~/projects/y-bot-ozz-animation-cglm-opengl-sdl3-cpp</code></pre>
         </p>
 
         <h3 class="h6 fw-bold mt-3 text-primary">Windows Path</h3>
-        <pre><code>C:\projects\y-bot-ozz-animation-cglm-opengl-sdl3-cpp\assets\models\y-bot\y-bot.glb
-C:\projects\y-bot-ozz-animation-cglm-opengl-sdl3-cpp\assets\models\y-bot\y-bot.jpg
-C:\projects\y-bot-ozz-animation-cglm-opengl-sdl3-cpp\assets\models\y-bot\skeleton.ozz
-C:\projects\y-bot-ozz-animation-cglm-opengl-sdl3-cpp\assets\models\y-bot\animation.ozz</code></pre>
+        <pre><code>C:\projects\y-bot-ozz-animation-cglm-opengl-sdl3-cpp-desktop\assets\models\y-bot\y-bot.glb
+C:\projects\y-bot-ozz-animation-cglm-opengl-sdl3-cpp-desktop\assets\models\y-bot\y-bot.jpg
+C:\projects\y-bot-ozz-animation-cglm-opengl-sdl3-cpp-desktop\assets\models\y-bot\skeleton.ozz
+C:\projects\y-bot-ozz-animation-cglm-opengl-sdl3-cpp-desktop\assets\models\y-bot\animation.ozz</code></pre>
 
         <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu / WSL Command (Copying from Windows to WSL)</h3>
         <p>
             <span class="data-en">If you downloaded and placed the assets inside your Windows project directory, copy them directly to your WSL Linux directory using the Windows mount path (<code>/mnt/c/</code>):</span>
             <span class="data-ru">Если вы скачали и поместили ассеты в Windows-папку проекта, скопируйте их напрямую в Linux-папку WSL через монтированный путь Windows (<code>/mnt/c/</code>):</span>
         </p>
-        <pre><code class="language-bash">cp /mnt/c/projects/y-bot-ozz-animation-cglm-opengl-sdl3-cpp/assets/models/y-bot/* \
-    ~/projects/y-bot-ozz-animation-cglm-opengl-sdl3-cpp/assets/models/y-bot/</code></pre>
+        <pre><code class="language-bash">cp /mnt/c/projects/y-bot-ozz-animation-cglm-opengl-sdl3-cpp-desktop/assets/models/y-bot/* \
+    ~/projects/y-bot-ozz-animation-cglm-opengl-sdl3-cpp-desktop/assets/models/y-bot/</code></pre>
     </section>
 
     <!-- 3. Source Files -->
     <section id="source-files" class="mb-5">
         <h2 class="h4 fw-bold mb-3">
-            <span class="data-en">Source Files (main.cpp &amp; CMakeLists.txt)</span>
-            <span class="data-ru">Исходные файлы (main.cpp и CMakeLists.txt)</span>
+            <span class="data-en">Source Files (src/main.cpp &amp; CMakeLists.txt)</span>
+            <span class="data-ru">Исходные файлы (src/main.cpp и CMakeLists.txt)</span>
         </h2>
 
         <p>
@@ -418,11 +420,11 @@ C:\projects\y-bot-ozz-animation-cglm-opengl-sdl3-cpp\assets\models\y-bot\animati
         </p>
 
         <h3 class="h6 fw-bold mt-3 text-primary">Windows (Terminal / Notepad)</h3>
-        <pre><code class="language-bash">notepad main.cpp
+        <pre><code class="language-bash">notepad src\main.cpp
 notepad CMakeLists.txt</code></pre>
 
         <h3 class="h6 fw-bold mt-3 text-primary">Ubuntu (Terminal / Nano)</h3>
-        <pre><code class="language-bash">nano main.cpp
+        <pre><code class="language-bash">nano src/main.cpp
 nano CMakeLists.txt</code></pre>
 
         <div class="alert alert-info py-2 my-3">
@@ -432,8 +434,8 @@ nano CMakeLists.txt</code></pre>
         </div>
 
         <h3 class="h6 fw-bold mt-4">
-            <span class="data-en">File Contents for main.cpp (SDL3 Callbacks API with cglm)</span>
-            <span class="data-ru">Содержимое файла main.cpp (SDL3 Callbacks API с cglm)</span>
+            <span class="data-en">File Contents for src/main.cpp (SDL3 Callbacks API with cglm)</span>
+            <span class="data-ru">Содержимое файла src/main.cpp (SDL3 Callbacks API с cglm)</span>
         </h3>
         <pre><code class="language-cpp">#define SDL_MAIN_USE_CALLBACKS 1
 #include &lt;glad/glad.h&gt;
@@ -1086,7 +1088,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
-project(y-bot-ozz-animation-cglm-opengl-sdl3-cpp CXX C)
+project(y-bot-ozz-animation-cglm-opengl-sdl3-cpp-desktop CXX C)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -1119,7 +1121,7 @@ else()
 endif()
 
 add_executable(app
-    main.cpp
+    src/main.cpp
     ${GLAD_SOURCE}
 )
 
@@ -1141,13 +1143,19 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/assets")
     )
 endif()
 
+target_link_options(app PRIVATE -static-libgcc -static-libstdc++)
+
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_link_options(app PRIVATE -s)
+endif()
+
 if(WIN32)
-    target_compile_options(app PRIVATE -Os)
-    target_link_options(app PRIVATE -static -s -static-libgcc)
+    target_link_options(app PRIVATE -static)
 
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         target_link_options(app PRIVATE -mconsole)
     else()
+        target_compile_options(app PRIVATE -Os)
         target_link_options(app PRIVATE -mwindows)
     endif()
 
@@ -1510,6 +1518,18 @@ private:
             <span class="data-en">Low-level I/O operations are not guaranteed to deliver the entire requested chunk in a single call (often referred to as a "short read"). The <code>while</code> loop guarantees that the stream continuously accumulates data until the entire expected data structure (skeleton, animation curves, or joint matrices) is fully loaded without memory corruption.</span>
             <span class="data-ru">Низкоуровневые операции ввода-вывода не гарантируют передачу всего запрошенного блока данных за один вызов («короткое чтение»). Цикл <code>while</code> гарантирует непрерывный добор данных, пока вся структура (скелет, анимационные кривые или матрицы суставов) не будет загружена целиком без повреждения памяти.</span>
         </p>
+    </section>
+
+    <!-- Final Link to GitHub Repository -->
+    <section class="mt-5 pt-3 border-top text-center">
+        <p class="lead">
+            <span class="data-en">Complete source code for this project is available on GitHub:</span>
+            <span class="data-ru">Полный исходный код проекта доступен на GitHub:</span>
+        </p>
+        <a href="https://github.com/ivan-enzhaev/y-bot-ozz-animation-cglm-opengl-sdl3-cpp-desktop" target="_blank" rel="noopener noreferrer" class="btn btn-dark btn-lg">
+            <span class="data-en">View on GitHub</span>
+            <span class="data-ru">Смотреть на GitHub</span>
+        </a>
     </section>
 </div>
 
