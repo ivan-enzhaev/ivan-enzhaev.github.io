@@ -270,7 +270,7 @@
         <pre><code class="language-bash">sudo apt update &amp;&amp; sudo apt install -y wget unzip
 
 cd ~
-wget https://github.com/mackron/miniaudio/archive/refs/tags/0.11.21.zip -O miniaudio-0.11.21.zip</code></pre>
+wget https://github.com/mackron/miniaudio/archive/refs/tags/0.11.26.zip -O miniaudio-0.11.26.zip</code></pre>
     </section>
 
     <!-- Step 2: Extract Header -->
@@ -285,8 +285,8 @@ wget https://github.com/mackron/miniaudio/archive/refs/tags/0.11.21.zip -O minia
             <span class="data-ru">Вариант A: Windows</span>
         </h3>
         <p>
-            <span class="data-en">Extract the downloaded archive so that <code>miniaudio.h</code> is placed in <code>C:\libs\miniaudio-0.11.21\include\miniaudio.h</code>.</span>
-            <span class="data-ru">Распакуйте скачанный архив так, чтобы файл <code>miniaudio.h</code> находился в <code>C:\libs\miniaudio-0.11.21\include\miniaudio.h</code>.</span>
+            <span class="data-en">Create the folder <code>C:\libs\miniaudio-0.11.26\include</code>, open the downloaded archive, and extract <strong>only</strong> the <code>miniaudio.h</code> header file (ignoring all other files and folders) so that its path is <code>C:\libs\miniaudio-0.11.26\include\miniaudio.h</code>.</span>
+            <span class="data-ru">Создайте папку <code>C:\libs\miniaudio-0.11.26\include</code>, откройте скачанный архив и извлеките из него <strong>только</strong> заголовочный файл <code>miniaudio.h</code> (остальные файлы и папки извлекать не нужно), чтобы получился путь <code>C:\libs\miniaudio-0.11.26\include\miniaudio.h</code>.</span>
         </p>
 
         <h3 class="h6 fw-bold mt-3">
@@ -294,12 +294,12 @@ wget https://github.com/mackron/miniaudio/archive/refs/tags/0.11.21.zip -O minia
             <span class="data-ru">Вариант B: Ubuntu</span>
         </h3>
         <p>
-            <span class="data-en">Create the include directory and extract <code>miniaudio.h</code> into <code>~/libs/miniaudio-0.11.21/include</code>:</span>
-            <span class="data-ru">Создайте папку include и распакуйте <code>miniaudio.h</code> в <code>~/libs/miniaudio-0.11.21/include</code>:</span>
+            <span class="data-en">Create the include directory and extract <code>miniaudio.h</code> into <code>~/libs/miniaudio-0.11.26/include</code>:</span>
+            <span class="data-ru">Создайте папку include и распакуйте <code>miniaudio.h</code> в <code>~/libs/miniaudio-0.11.26/include</code>:</span>
         </p>
-        <pre><code class="language-bash">mkdir -p ~/libs/miniaudio-0.11.21/include
-unzip -j miniaudio-0.11.21.zip "miniaudio-0.11.21/miniaudio.h" -d ~/libs/miniaudio-0.11.21/include/
-rm -f miniaudio-0.11.21.zip</code></pre>
+        <pre><code class="language-bash">mkdir -p ~/libs/miniaudio-0.11.26/include
+unzip -j miniaudio-0.11.26.zip "miniaudio-0.11.26/miniaudio.h" -d ~/libs/miniaudio-0.11.26/include/
+rm -f miniaudio-0.11.26.zip</code></pre>
     </section>
 
     <!-- Step 3: Project Directory -->
@@ -380,10 +380,10 @@ project(miniaudio_test C)
 add_executable(app main.c)
 
 if(WIN32)
-    target_include_directories(app PRIVATE C:/libs/miniaudio-0.11.21/include)
+    target_include_directories(app PRIVATE C:/libs/miniaudio-0.11.26/include)
 else()
     # On Linux, find miniaudio headers in ~/libs
-    target_include_directories(app PRIVATE $ENV{HOME}/libs/miniaudio-0.11.21/include)
+    target_include_directories(app PRIVATE $ENV{HOME}/libs/miniaudio-0.11.26/include)
     
     # Link the standard math library (-lm) and thread library (-lpthread)
     target_link_libraries(app PRIVATE m pthread)
