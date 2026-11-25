@@ -5310,48 +5310,64 @@ document.addEventListener('DOMContentLoaded', () => {
     const noResults = document.getElementById('noSearchResults');
     if (searchInputs.length === 0) return;
 
+    let wasFiltered = false;
+
     const performSearch = (query) => {
         if (clearBtn) {
             clearBtn.classList.toggle('d-none', query.length === 0);
         }
 
-        let totalVisibleMatches = 0;
         const activeTabPane = document.querySelector('.tab-pane.active');
-        if (!activeTabPane) return;
+        const allTabPanes = document.querySelectorAll('#backendTabsContent .tab-pane');
+        let totalVisibleMatches = 0;
 
-        const categoryCols = activeTabPane.querySelectorAll('.category-card-col');
+        if (query !== '' || wasFiltered) {
+            allTabPanes.forEach(tabPane => {
+                const isActivePane = tabPane === activeTabPane;
+                const categoryCols = tabPane.querySelectorAll('.category-card-col');
 
-        categoryCols.forEach(cardCol => {
-            const items = cardCol.querySelectorAll('.tutorial-item');
-            let hasMatchInCard = false;
+                categoryCols.forEach(cardCol => {
+                    const items = cardCol.querySelectorAll('.tutorial-item');
+                    let hasMatchInCard = false;
 
-            items.forEach(item => {
-                // textContent searches across both language titles reliably
-                const titleText = (item.querySelector('.tutorial-title')?.textContent || '').toLowerCase();
-                const isMatch = query === '' || titleText.includes(query);
-                item.classList.toggle('d-none', !isMatch);
-                if (isMatch) hasMatchInCard = true;
+                    items.forEach(item => {
+                        // textContent searches across both language titles reliably
+                        const titleText = (item.querySelector('.tutorial-title')?.textContent || '').toLowerCase();
+                        const isMatch = query === '' || titleText.includes(query);
+                        item.classList.toggle('d-none', !isMatch);
+                        if (isMatch) hasMatchInCard = true;
+                    });
+
+                    // Hide or show the entire card column
+                    cardCol.classList.toggle('d-none', !hasMatchInCard && query !== '');
+
+                    // Auto-expand collapse if a hidden tutorial matches the search query
+                    const collapseEl = cardCol.querySelector('.overflow-collapse');
+                    const toggleBtn = cardCol.querySelector('.collapse-toggle-btn');
+
+                    if (collapseEl) {
+                        if (query !== '' && hasMatchInCard) {
+                            collapseEl.classList.add('show');
+                            if (toggleBtn) toggleBtn.classList.add('d-none');
+                        } else if (query === '') {
+                            collapseEl.classList.remove('show');
+                            if (toggleBtn) {
+                                toggleBtn.classList.remove('d-none');
+                                toggleBtn.setAttribute('aria-expanded', 'false');
+                                const icon = toggleBtn.querySelector('.toggle-icon');
+                                if (icon) icon.textContent = '▼';
+                                toggleBtn.querySelectorAll('.toggle-label-more').forEach(el => el.classList.remove('d-none'));
+                                toggleBtn.querySelectorAll('.toggle-label-less').forEach(el => el.classList.add('d-none'));
+                            }
+                        }
+                    }
+
+                    if (isActivePane && hasMatchInCard) totalVisibleMatches++;
+                });
             });
 
-            // Hide or show the entire card column
-            cardCol.classList.toggle('d-none', !hasMatchInCard && query !== '');
-
-            // Auto-expand collapse if a hidden tutorial matches the search query
-            const collapseEl = cardCol.querySelector('.overflow-collapse');
-            const toggleBtn = cardCol.querySelector('.collapse-toggle-btn');
-
-            if (collapseEl) {
-                if (query !== '' && hasMatchInCard) {
-                    collapseEl.classList.add('show');
-                    if (toggleBtn) toggleBtn.classList.add('d-none');
-                } else if (query === '') {
-                    collapseEl.classList.remove('show');
-                    if (toggleBtn) toggleBtn.classList.remove('d-none');
-                }
-            }
-
-            if (hasMatchInCard) totalVisibleMatches++;
-        });
+            wasFiltered = query !== '';
+        }
 
         if (noResults) {
             noResults.classList.toggle('d-none', totalVisibleMatches > 0 || query === '');
@@ -5376,14 +5392,12 @@ document.addEventListener('DOMContentLoaded', () => {
         visibleInput?.focus();
     });
 
-    // Re-apply filter when changing tabs
+    // Re-apply filter and update "No results" banner when changing tabs
     const tabButtons = document.querySelectorAll('#backendTabs button[data-bs-toggle="pill"]');
     tabButtons.forEach(tab => {
         tab.addEventListener('shown.bs.tab', () => {
             const currentQuery = (searchInputs[0]?.value || '').trim().toLowerCase();
-            if (currentQuery !== '') {
-                performSearch(currentQuery);
-            }
+            performSearch(currentQuery);
         });
     });
 });
